@@ -44,7 +44,7 @@ class EventFeature extends AbstractFeature implements EventsCapableInterface
                             ? $eventManager
                             : new EventManager;
 
-        $this->eventManager->addIdentifiers(array(
+        $this->eventManager->setIdentifiers(array(
             'Zend\Db\TableGateway\TableGateway',
         ));
 
