@@ -47,12 +47,17 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
     const SQL_STAR = '*';
     const ORDER_ASCENDING = 'ASC';
     const ORDER_DESCENDING = 'DESC';
+    const COMBINE = 'combine';
+    const COMBINE_UNION = 'union';
+    const COMBINE_EXCEPT = 'except';
+    const COMBINE_INTERSECT = 'intersect';
     /**#@-*/
 
     /**
      * @var array Specifications
      */
     protected $specifications = array(
+        'statementStart' => '%1$s',
         self::SELECT => array(
             'SELECT %1$s FROM %2$s' => array(
                 array(1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', '),
@@ -82,7 +87,9 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             )
         ),
         self::LIMIT  => 'LIMIT %1$s',
-        self::OFFSET => 'OFFSET %1$s'
+        self::OFFSET => 'OFFSET %1$s',
+        'statementEnd' => '%1$s',
+        self::COMBINE => '%1$s ( %2$s )',
     );
 
     /**
@@ -144,6 +151,11 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
      * @var int|null
      */
     protected $offset = null;
+
+    /**
+     * @var array
+     */
+    protected $combine = array();
 
     /**
      * Constructor
@@ -427,6 +439,26 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
     }
 
     /**
+     * @param Select $select
+     * @param string $type
+     * @param string $modifier
+     * @return Select
+     * @throws Exception\InvalidArgumentException
+     */
+    public function combine(Select $select, $type = self::COMBINE_UNION, $modifier = '')
+    {
+        if ($this->combine !== array()) {
+            throw new Exception\InvalidArgumentException('This Select object is already combined and cannot be combined with multiple Selects objects');
+        }
+        $this->combine = array(
+            'select' => $select,
+            'type' => $type,
+            'modifier' => $modifier
+        );
+        return $this;
+    }
+
+    /**
      * @param string $part
      * @return Select
      * @throws Exception\InvalidArgumentException
@@ -469,6 +501,9 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             case self::ORDER:
                 $this->order = null;
                 break;
+            case self::COMBINE:
+                $this->combine = array();
+                break;
         }
         return $this;
     }
@@ -494,7 +529,8 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             self::GROUP      => $this->group,
             self::HAVING     => $this->having,
             self::LIMIT      => $this->limit,
-            self::OFFSET     => $this->offset
+            self::OFFSET     => $this->offset,
+            self::COMBINE    => $this->combine
         );
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
@@ -583,6 +619,20 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             $sql .= ' AS ' . $alias;
         }
         return $sql;
+    }
+
+    protected function processStatementStart(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    {
+        if ($this->combine !== array()) {
+            return array('(');
+        }
+    }
+
+    protected function processStatementEnd(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    {
+        if ($this->combine !== array()) {
+            return array(')');
+        }
     }
 
     /**
@@ -888,6 +938,28 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
         }
 
         return array($platform->quoteValue($offset));
+    }
+
+    protected function processCombine(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    {
+        if ($this->combine == array()) {
+            return null;
+        }
+
+        $type = $this->combine['type'];
+        if ($this->combine['modifier']) {
+            $type .= ' ' . $this->combine['modifier'];
+        }
+        $type = strtoupper($type);
+
+        if ($driver) {
+            $sql = $this->processSubSelect($this->combine['select'], $platform, $driver, $parameterContainer);
+            return array($type, $sql);
+        }
+        return array(
+            $type,
+            $this->processSubSelect($this->combine['select'], $platform)
+        );
     }
 
     /**
