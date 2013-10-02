@@ -42,13 +42,11 @@ class Like implements PredicateInterface
     }
 
     /**
-     * @param  string $identifier
-     * @return self
+     * @param $identifier
      */
     public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
-        return $this;
     }
 
     /**
@@ -60,13 +58,11 @@ class Like implements PredicateInterface
     }
 
     /**
-     * @param  string $like
-     * @return self
+     * @param $like
      */
     public function setLike($like)
     {
         $this->like = $like;
-        return $this;
     }
 
     /**
@@ -78,13 +74,11 @@ class Like implements PredicateInterface
     }
 
     /**
-     * @param  string $specification
-     * @return self
+     * @param $specification
      */
     public function setSpecification($specification)
     {
         $this->specification = $specification;
-        return $this;
     }
 
     /**
