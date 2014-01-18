@@ -42,9 +42,6 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         foreach (get_object_vars($this->select) as $name => $value) {
             $this->{$name} = $value;
         }
-        if ($this->limit === null && $this->offset !== null) {
-            $this->specifications[self::LIMIT] = 'LIMIT 18446744073709551615';
-        }
         parent::prepareStatement($adapter, $statementContainer);
     }
 
@@ -58,23 +55,17 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         foreach (get_object_vars($this->select) as $name => $value) {
             $this->{$name} = $value;
         }
-        if ($this->limit === null && $this->offset !== null) {
-            $this->specifications[self::LIMIT] = 'LIMIT 18446744073709551615';
-        }
         return parent::getSqlString($platform);
     }
 
     protected function processLimit(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
     {
-        if ($this->limit === null && $this->offset !== null) {
-            return array('');
-        }
         if ($this->limit === null) {
             return null;
         }
         if ($driver) {
             $sql = $driver->formatParameterName('limit');
-            $parameterContainer->offsetSet('limit', $this->limit, ParameterContainer::TYPE_INTEGER);
+            $parameterContainer->offsetSet('limit', (int) $this->limit, ParameterContainer::TYPE_INTEGER);
         } else {
             $sql = $this->limit;
         }
@@ -88,7 +79,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             return null;
         }
         if ($driver) {
-            $parameterContainer->offsetSet('offset', $this->offset, ParameterContainer::TYPE_INTEGER);
+            $parameterContainer->offsetSet('offset', (int) $this->offset, ParameterContainer::TYPE_INTEGER);
             return array($driver->formatParameterName('offset'));
         }
 

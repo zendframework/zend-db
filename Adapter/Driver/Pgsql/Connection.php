@@ -231,16 +231,6 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * In transaction
-     *
-     * @return bool
-     */
-    public function inTransaction()
-    {
-        return $this->inTransaction;
-    }
-
-    /**
      * @return void
      */
     public function commit()
@@ -286,6 +276,8 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
         if ($this->profiler) {
             $this->profiler->profilerFinish($sql);
         }
+
+        //var_dump(pg_result_status($resultResource));
 
         // if the returnValue is something other than a pg result resource, bypass wrapping it
         if ($resultResource === false) {

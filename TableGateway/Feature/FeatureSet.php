@@ -10,7 +10,6 @@
 namespace Zend\Db\TableGateway\Feature;
 
 use Zend\Db\TableGateway\AbstractTableGateway;
-use Zend\Db\TableGateway\TableGatewayInterface;
 
 class FeatureSet
 {
@@ -66,10 +65,8 @@ class FeatureSet
 
     public function addFeature(AbstractFeature $feature)
     {
-        if ($this->tableGateway instanceof TableGatewayInterface) {
-            $feature->setTableGateway($this->tableGateway);
-        }
         $this->features[] = $feature;
+        $feature->setTableGateway($feature);
         return $this;
     }
 

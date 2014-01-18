@@ -237,7 +237,7 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
         if ($this->resource instanceof \mysqli) {
             $this->resource->close();
         }
-        $this->resource = null;
+        unset($this->resource);
     }
 
     /**
@@ -253,16 +253,6 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
 
         $this->resource->autocommit(false);
         $this->inTransaction = true;
-    }
-
-    /**
-     * In transaction
-     *
-     * @return bool
-     */
-    public function inTransaction()
-    {
-        return $this->inTransaction;
     }
 
     /**
@@ -294,7 +284,7 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
         }
 
         if (!$this->inTransaction) {
-            throw new Exception\RuntimeException('Must call beginTransaction() before you can rollback.');
+            throw new Exception\RuntimeException('Must call commit() before you can rollback.');
         }
 
         $this->resource->rollback();

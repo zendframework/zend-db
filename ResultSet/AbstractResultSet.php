@@ -10,6 +10,7 @@
 namespace Zend\Db\ResultSet;
 
 use ArrayIterator;
+use ArrayObject;
 use Countable;
 use Iterator;
 use IteratorAggregate;
@@ -267,7 +268,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
                 $return[] = $row;
             } elseif (method_exists($row, 'toArray')) {
                 $return[] = $row->toArray();
-            } elseif (method_exists($row, 'getArrayCopy')) {
+            } elseif ($row instanceof ArrayObject) {
                 $return[] = $row->getArrayCopy();
             } else {
                 throw new Exception\RuntimeException(
