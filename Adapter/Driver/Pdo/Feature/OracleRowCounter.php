@@ -51,12 +51,12 @@ class OracleRowCounter extends AbstractFeature
      */
     public function getCountForSql($sql)
     {
-        if (stripos($sql, 'select') === false) {
+        if (!stripos($sql, 'select')) {
             return null;
         }
         $countSql = 'SELECT COUNT(*) as count FROM (' . $sql . ')';
         /** @var $pdo \PDO */
-        $pdo = $this->driver->getConnection()->getResource();
+        $pdo = $this->pdoDriver->getConnection()->getResource();
         $result = $pdo->query($countSql);
         $countRow = $result->fetch(\PDO::FETCH_ASSOC);
         return $countRow['count'];
