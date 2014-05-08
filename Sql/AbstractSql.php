@@ -189,13 +189,7 @@ abstract class AbstractSql
             $parameterContainer->merge($stmtContainer->getParameterContainer()->getNamedArray());
             $sql = $stmtContainer->getSql();
         } else {
-            if ($this instanceof PlatformDecoratorInterface) {
-                $subselectDecorator = clone $this;
-                $subselectDecorator->setSubject($subselect);
-                $sql = $subselectDecorator->getSqlString($platform);
-            } else {
-                $sql = $subselect->getSqlString($platform);
-            }
+            $sql = $subselect->getSqlString($platform);
         }
         return $sql;
     }
