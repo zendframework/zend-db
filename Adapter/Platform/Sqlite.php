@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -107,16 +107,12 @@ class Sqlite implements PlatformInterface
      */
     public function quoteValue($value)
     {
-        $resource = $this->resource;
-
-        if ($resource instanceof DriverInterface) {
-            $resource = $resource->getConnection()->getResource();
+        if ($this->resource instanceof DriverInterface) {
+            $this->resource = $this->resource->getConnection()->getResource();
         }
-
-        if ($resource instanceof \PDO) {
-            return $resource->quote($value);
+        if ($this->resource instanceof \PDO) {
+            return $this->resource->quote($value);
         }
-
         trigger_error(
             'Attempting to quote a value in ' . __CLASS__ . ' without extension/driver support '
                 . 'can introduce security vulnerabilities in a production environment.'
@@ -134,16 +130,12 @@ class Sqlite implements PlatformInterface
      */
     public function quoteTrustedValue($value)
     {
-        $resource = $this->resource;
-
-        if ($resource instanceof DriverInterface) {
-            $resource = $resource->getConnection()->getResource();
+        if ($this->resource instanceof DriverInterface) {
+            $this->resource = $this->resource->getConnection()->getResource();
         }
-
-        if ($resource instanceof \PDO) {
-            return $resource->quote($value);
+        if ($this->resource instanceof \PDO) {
+            return $this->resource->quote($value);
         }
-
         return '\'' . addcslashes($value, "\x00\n\r\\'\"\x1a") . '\'';
     }
 

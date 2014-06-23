@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -17,13 +17,14 @@ class In implements PredicateInterface
     protected $identifier;
     protected $valueSet;
 
-    protected $specification = '%s IN %s';
+    protected $selectSpecification = '%s IN %s';
+    protected $valueSpecSpecification = '%%s IN (%s)';
 
     /**
      * Constructor
      *
-     * @param null|string|array $identifier
-     * @param null|array|Select $valueSet
+     * @param  null|string $identifier
+     * @param  array $valueSet
      */
     public function __construct($identifier = null, $valueSet = null)
     {
@@ -38,20 +39,19 @@ class In implements PredicateInterface
     /**
      * Set identifier for comparison
      *
-     * @param  string|array $identifier
+     * @param  string $identifier
      * @return In
      */
     public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
-
         return $this;
     }
 
     /**
      * Get identifier of comparison
      *
-     * @return null|string|array
+     * @return null|string
      */
     public function getIdentifier()
     {
@@ -61,7 +61,7 @@ class In implements PredicateInterface
     /**
      * Set set of values for IN comparison
      *
-     * @param  array|Select                       $valueSet
+     * @param  array $valueSet
      * @throws Exception\InvalidArgumentException
      * @return In
      */
@@ -73,15 +73,9 @@ class In implements PredicateInterface
             );
         }
         $this->valueSet = $valueSet;
-
         return $this;
     }
 
-    /**
-     * Gets set of values in IN comparision
-     *
-     * @return array|Select
-     */
     public function getValueSet()
     {
         return $this->valueSet;
@@ -94,39 +88,23 @@ class In implements PredicateInterface
      */
     public function getExpressionData()
     {
-        $identifier = $this->getIdentifier();
         $values = $this->getValueSet();
-        $replacements = array();
-
-        if (is_array($identifier)) {
-            $identifierSpecFragment = '(' . implode(', ', array_fill(0, count($identifier), '%s')) . ')';
-            $types = array_fill(0, count($identifier), self::TYPE_IDENTIFIER);
-            $replacements = $identifier;
-        } else {
-            $identifierSpecFragment = '%s';
-            $replacements[] = $identifier;
-            $types = array(self::TYPE_IDENTIFIER);
-        }
-
         if ($values instanceof Select) {
-            $specification = vsprintf(
-                $this->specification,
-                array($identifierSpecFragment, '%s')
-            );
-            $replacements[] = $values;
-            $types[] = self::TYPE_VALUE;
+            $specification = $this->selectSpecification;
+            $types = array(self::TYPE_VALUE);
+            $values = array($values);
         } else {
-            $specification = vsprintf(
-                $this->specification,
-                array($identifierSpecFragment, '(' . implode(', ', array_fill(0, count($values), '%s')) . ')')
-            );
-            $replacements = array_merge($replacements, $values);
-            $types = array_merge($types, array_fill(0, count($values), self::TYPE_VALUE));
+            $specification = sprintf($this->valueSpecSpecification, implode(', ', array_fill(0, count($values), '%s')));
+            $types = array_fill(0, count($values), self::TYPE_VALUE);
         }
+
+        $identifier = $this->getIdentifier();
+        array_unshift($values, $identifier);
+        array_unshift($types, self::TYPE_IDENTIFIER);
 
         return array(array(
             $specification,
-            $replacements,
+            $values,
             $types,
         ));
     }
