@@ -15,9 +15,7 @@ use Zend\Db\Adapter\Profiler;
 
 class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
 {
-    /**
-     *  @var IbmDb2
-     */
+    /** @var IbmDb2 */
     protected $driver = null;
 
     /**
@@ -36,30 +34,9 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
     protected $profiler = null;
 
     /**
-     * In transaction
-     *
-     * @var bool
-     */
-    protected $inTransaction = false;
-
-    /**
-     * i5 OS
-     *
-     * @var bool
-     */
-    protected $i5;
-
-    /**
-     * Previous autocommit set
-     *
-     * @var mixed
-     */
-    protected $prevAutocommit;
-
-    /**
      * Constructor
      *
-     * @param  array|resource|null                $connectionParameters (ibm_db2 connection resource)
+     * @param array|resource|null $connectionParameters (ibm_db2 connection resource)
      * @throws Exception\InvalidArgumentException
      */
     public function __construct($connectionParameters = null)
@@ -78,7 +55,7 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
     /**
      * Set driver
      *
-     * @param  IbmDb2     $driver
+     * @param IbmDb2 $driver
      * @return Connection
      */
     public function setDriver(IbmDb2 $driver)
@@ -88,7 +65,7 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @param  Profiler\ProfilerInterface $profiler
+     * @param Profiler\ProfilerInterface $profiler
      * @return Connection
      */
     public function setProfiler(Profiler\ProfilerInterface $profiler)
@@ -106,7 +83,7 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @param  array      $connectionParameters
+     * @param array $connectionParameters
      * @return Connection
      */
     public function setConnectionParameters(array $connectionParameters)
@@ -124,7 +101,7 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @param  resource   $resource DB2 resource
+     * @param  resource $resource DB2 resource
      * @return Connection
      */
     public function setResource($resource)
@@ -164,7 +141,7 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
     /**
      * Connect
      *
-     * @return self
+     * @return ConnectionInterface
      */
     public function connect()
     {
@@ -182,7 +159,6 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
                     return $p[$name];
                 }
             }
-
             return null;
         };
 
@@ -191,9 +167,12 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
         $password     = $findParameterValue(array('password', 'pwd', 'PWD'));
         $isPersistent = $findParameterValue(array('persistent', 'PERSISTENT', 'Persistent'));
         $options      = (isset($p['driver_options']) ? $p['driver_options'] : array());
-        $connect      = ((bool) $isPersistent) ? 'db2_pconnect' : 'db2_connect';
 
-        $this->resource = $connect($database, $username, $password, $options);
+        if ($isPersistent) {
+            $this->resource = db2_pconnect($database, $username, $password, $options);
+        } else {
+            $this->resource = db2_connect($database, $username, $password, $options);
+        }
 
         if ($this->resource === false) {
             throw new Exception\RuntimeException(sprintf(
@@ -201,7 +180,6 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
                 __METHOD__
             ));
         }
-
         return $this;
     }
 
@@ -226,7 +204,6 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
             db2_close($this->resource);
             $this->resource = null;
         }
-
         return $this;
     }
 
@@ -237,30 +214,7 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
      */
     public function beginTransaction()
     {
-        if ($this->isI5() && !ini_get('ibm_db2.i5_allow_commit')) {
-            throw new Exception\RuntimeException(
-                'DB2 transactions are not enabled, you need to set the ibm_db2.i5_allow_commit=1 in your php.ini'
-            );
-        }
-
-        if (!$this->isConnected()) {
-            $this->connect();
-        }
-
-        $this->prevAutocommit = db2_autocommit($this->resource);
-        db2_autocommit($this->resource, DB2_AUTOCOMMIT_OFF);
-        $this->inTransaction = true;
-        return $this;
-    }
-
-    /**
-     * In transaction
-     *
-     * @return bool
-     */
-    public function inTransaction()
-    {
-        return $this->inTransaction;
+        // TODO: Implement beginTransaction() method.
     }
 
     /**
@@ -270,20 +224,7 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
      */
     public function commit()
     {
-        if (!$this->isConnected()) {
-            $this->connect();
-        }
-
-        if (!db2_commit($this->resource)) {
-            throw new Exception\RuntimeException("The commit has not been successful");
-        }
-
-        if ($this->prevAutocommit) {
-            db2_autocommit($this->resource, $this->prevAutocommit);
-        }
-
-        $this->inTransaction = false;
-        return $this;
+        // TODO: Implement commit() method.
     }
 
     /**
@@ -293,24 +234,7 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
      */
     public function rollback()
     {
-        if (!$this->resource) {
-            throw new Exception\RuntimeException('Must be connected before you can rollback.');
-        }
-
-        if (!$this->inTransaction) {
-            throw new Exception\RuntimeException('Must call beginTransaction() before you can rollback.');
-        }
-
-        if (!db2_rollback($this->resource)) {
-            throw new Exception\RuntimeException('The rollback has not been successful');
-        }
-
-        if ($this->prevAutocommit) {
-            db2_autocommit($this->resource, $this->prevAutocommit);
-        }
-
-        $this->inTransaction = false;
-        return $this;
+        // TODO: Implement rollback() method.
     }
 
     /**
@@ -342,7 +266,8 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
             throw new Exception\InvalidQueryException(db2_stmt_errormsg());
         }
 
-        return $this->driver->createResult(($resultResource === true) ? $this->resource : $resultResource);
+        $resultPrototype = $this->driver->createResult(($resultResource === true) ? $this->resource : $resultResource);
+        return $resultPrototype;
     }
 
     /**
@@ -354,20 +279,5 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
     public function getLastGeneratedValue($name = null)
     {
         return db2_last_insert_id($this->resource);
-    }
-
-    /**
-     * Determine if the OS is OS400 (AS400, IBM i)
-     *
-     * @return bool
-     */
-    protected function isI5()
-    {
-        if (isset($this->i5)) {
-            return $this->i5;
-        }
-
-        $this->i5 = php_uname('s') == 'OS400' ? true : false;
-        return $this->i5;
     }
 }
