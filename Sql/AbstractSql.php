@@ -55,6 +55,7 @@ abstract class AbstractSql
         $expressionParamIndex = &$this->instanceParameterIndex[$namedParameterPrefix];
 
         foreach ($parts as $part) {
+
             // if it is a string, simply tack it onto the return sql "specification" string
             if (is_string($part)) {
                 $sql .= $part;
@@ -86,6 +87,7 @@ abstract class AbstractSql
                         $parameterContainer->merge($innerStatementContainer->getParameterContainer());
                     }
                 } elseif (isset($types[$vIndex]) && $types[$vIndex] == ExpressionInterface::TYPE_VALUE) {
+
                     // if prepareType is set, it means that this particular value must be
                     // passed back to the statement in a way it can be used as a placeholder value
                     if ($driver) {

@@ -247,6 +247,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
             default:
                 throw new Exception\InvalidArgumentException('Invalid magic property on adapter');
         }
+
     }
 
     /**
