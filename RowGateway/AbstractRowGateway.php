@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -16,6 +16,7 @@ use Zend\Db\Sql\TableIdentifier;
 
 abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayInterface
 {
+
     /**
      * @var bool
      */
@@ -126,6 +127,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         $this->initialize();
 
         if ($this->rowExistsInDatabase()) {
+
             // UPDATE
 
             $data = $this->data;
@@ -156,6 +158,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
                 }
             }
         } else {
+
             // INSERT
             $insert = $this->sql->insert();
             $insert->values($this->data);
@@ -177,6 +180,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
             foreach ($this->primaryKeyColumn as $pkColumn) {
                 $where[$pkColumn] = $this->primaryKeyData[$pkColumn];
             }
+
         }
 
         // refresh data
