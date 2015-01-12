@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -207,9 +207,9 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
      */
     public function quantifier($quantifier)
     {
-        if (!is_string($quantifier) && !$quantifier instanceof ExpressionInterface) {
+        if (!is_string($quantifier) && !$quantifier instanceof Expression) {
             throw new Exception\InvalidArgumentException(
-                'Quantifier must be one of DISTINCT, ALL, or some platform specific object implementing ExpressionInterface'
+                'Quantifier must be one of DISTINCT, ALL, or some platform specific Expression object'
             );
         }
         $this->quantifier = $quantifier;
@@ -630,6 +630,7 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
         // process table columns
         $columns = array();
         foreach ($this->columns as $columnIndexOrAs => $column) {
+
             $columnName = '';
             if ($column === self::SQL_STAR) {
                 $columns[] = array($fromTable . self::SQL_STAR);
@@ -823,7 +824,7 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
         }
         $orders = array();
         foreach ($this->order as $k => $v) {
-            if ($v instanceof ExpressionInterface) {
+            if ($v instanceof Expression) {
                 /** @var $orderParts \Zend\Db\Adapter\StatementContainer */
                 $orderParts = $this->processExpression($v, $platform, $driver);
                 if ($parameterContainer) {
