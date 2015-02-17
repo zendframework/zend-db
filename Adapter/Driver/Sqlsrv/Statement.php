@@ -1,10 +1,9 @@
 <?php
-
 /**
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -17,6 +16,7 @@ use Zend\Db\Adapter\Profiler;
 
 class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
+
     /**
      * @var resource
      */
@@ -62,16 +62,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * @var bool
      */
     protected $isPrepared = false;
-
-    /**
-     * @var array
-     */
-    protected $prepareParams = array();
-
-    /**
-     * @var array
-     */
-    protected $prepareOptions = array();
 
     /**
      * Set driver
@@ -192,31 +182,24 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 
     /**
      * @param string $sql
-     * @param array $options
      * @throws Exception\RuntimeException
      * @return Statement
      */
-    public function prepare($sql = null, array $options = array())
+    public function prepare($sql = null)
     {
         if ($this->isPrepared) {
             throw new Exception\RuntimeException('Already prepared');
         }
         $sql = ($sql) ?: $this->sql;
-        $options = ($options) ?: $this->prepareOptions;
 
         $pRef = &$this->parameterReferences;
         for ($position = 0, $count = substr_count($sql, '?'); $position < $count; $position++) {
-            if (!isset($this->prepareParams[$position])) {
-                $pRef[$position] = array('', SQLSRV_PARAM_IN, null, null);
-            } else {
-                $pRef[$position] = &$this->prepareParams[$position];
-            }
+            $pRef[$position] = array('', SQLSRV_PARAM_IN, null, null);
         }
 
-        $this->resource = sqlsrv_prepare($this->sqlsrv, $sql, $pRef, $options);
+        $this->resource = sqlsrv_prepare($this->sqlsrv, $sql, $pRef);
 
         $this->isPrepared = true;
-
         return $this;
     }
 
@@ -237,7 +220,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      */
     public function execute($parameters = null)
     {
-        /** END Standard ParameterContainer Merging Block */
         if (!$this->isPrepared) {
             $this->prepare();
         }
@@ -259,6 +241,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         if ($this->parameterContainer->count() > 0) {
             $this->bindParametersFromContainer();
         }
+        /** END Standard ParameterContainer Merging Block */
 
         if ($this->profiler) {
             $this->profiler->profilerStart($this);
@@ -293,21 +276,14 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         foreach ($values as $value) {
             $this->parameterReferences[$position++][0] = $value;
         }
-    }
 
-    /**
-     * @param array $prepareParams
-     */
-    public function setPrepareParams(array $prepareParams)
-    {
-        $this->prepareParams = $prepareParams;
-    }
-
-    /**
-     * @param array $prepareOptions
-     */
-    public function setPrepareOptions(array $prepareOptions)
-    {
-        $this->prepareOptions = $prepareOptions;
+        // @todo bind errata
+        //foreach ($this->parameterContainer as $name => &$value) {
+        //    $p[$position][0] = $value;
+        //    $position++;
+        //    if ($this->parameterContainer->offsetHasErrata($name)) {
+        //        $p[$position][3] = $this->parameterContainer->offsetGetErrata($name);
+        //    }
+        //}
     }
 }

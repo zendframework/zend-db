@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -187,9 +187,6 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
                 case 'dbname':
                     $params['Database'] = (string) $value;
                     break;
-                case 'charset':
-                    $params['CharacterSet'] = (string) $value;
-                    break;
                 case 'driver_options':
                 case 'options':
                     $params = array_merge($params, (array) $value);
@@ -234,28 +231,11 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
      */
     public function beginTransaction()
     {
-        if (!$this->resource) {
-            $this->connect();
-        }
-        if (sqlsrv_begin_transaction($this->resource) === false) {
-            throw new Exception\RuntimeException(
-                'Begin transaction failed',
-                null,
-                new ErrorException(sqlsrv_errors())
-            );
-        }
-
+        // http://msdn.microsoft.com/en-us/library/cc296151.aspx
+        /*
+        $this->resource->autocommit(false);
         $this->inTransaction = true;
-    }
-
-    /**
-     * In transaction
-     *
-     * @return bool
-     */
-    public function inTransaction()
-    {
-        return $this->inTransaction;
+        */
     }
 
     /**
@@ -264,14 +244,15 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
     public function commit()
     {
         // http://msdn.microsoft.com/en-us/library/cc296194.aspx
-
+        /*
         if (!$this->resource) {
             $this->connect();
         }
 
-        $this->inTransaction = false;
+        $this->resource->commit();
 
-        return sqlsrv_commit($this->resource);
+        $this->inTransaction = false;
+        */
     }
 
     /**
@@ -280,12 +261,18 @@ class Connection implements ConnectionInterface, Profiler\ProfilerAwareInterface
     public function rollback()
     {
         // http://msdn.microsoft.com/en-us/library/cc296176.aspx
-
+        /*
         if (!$this->resource) {
-            throw new Exception\RuntimeException('Must be connected before you can rollback.');
+            throw new \Exception('Must be connected before you can rollback.');
         }
 
-        return sqlsrv_rollback($this->resource);
+        if (!$this->_inCommit) {
+            throw new \Exception('Must call commit() before you can rollback.');
+        }
+
+        $this->resource->rollback();
+        return $this;
+        */
     }
 
     /**
