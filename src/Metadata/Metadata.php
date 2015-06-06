@@ -33,7 +33,7 @@ class Metadata implements MetadataInterface
     public function __construct(Adapter $adapter)
     {
         $this->adapter = $adapter;
-        $this->source = $this->createSourceFromAdapter($adapter);
+        $this->source  = $this->createSourceFromAdapter($adapter);
     }
 
     /**
@@ -41,6 +41,7 @@ class Metadata implements MetadataInterface
      *
      * @param  Adapter $adapter
      * @return Source\AbstractSource
+     * @throws \Exception
      */
     protected function createSourceFromAdapter(Adapter $adapter)
     {
