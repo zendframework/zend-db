@@ -9,6 +9,7 @@
 
 namespace ZendTest\Db\Metadata;
 
+use Zend\Db\Adapter\Platform\AbstractPlatform;
 use Zend\Db\Adapter\Platform\Mysql as MysqlPlatform;
 use Zend\Db\Adapter\Platform\SqlServer as SqlServerPlatform;
 use Zend\Db\Adapter\Platform\Sqlite as SqlitePlatform;
@@ -18,43 +19,13 @@ use Zend\Db\Metadata\Metadata;
 
 class MetadataTest extends \PHPUnit_Framework_TestCase
 {
-    public function testTheConstructorSetsTheAdaptersAndTheSource()
-    {
-        $platformMock = new MysqlPlatform();
-
-        /** @var \Zend\Db\Adapter\Adapter $adapterMock */
-        $adapterMock = $this->getMockBuilder('Zend\Db\Adapter\Adapter')
-                            ->disableOriginalConstructor()
-                            ->getMock();
-
-        $adapterMock->expects($this->once())
-                    ->method('getPlatform')
-                    ->willReturn($platformMock);
-
-        $metadata = new Metadata($adapterMock);
-
-        $adapterReflectionProperty = new \ReflectionProperty($metadata, 'adapter');
-        $adapterReflectionProperty->setAccessible(true);
-        $adapterPropertyValue = $adapterReflectionProperty->getValue($metadata);
-
-        $sourceReflectionProperty = new \ReflectionProperty($metadata, 'source');
-        $sourceReflectionProperty->setAccessible(true);
-        $sourcePropertyValue = $sourceReflectionProperty->getValue($metadata);
-
-        $this->assertSame($adapterMock, $adapterPropertyValue);
-        $this->assertInstanceOf(
-            'Zend\Db\Metadata\Source\MysqlMetadata',
-            $sourcePropertyValue
-        );
-    }
-
     /**
      * @dataProvider createSourceFromAdapterDataProvider
      *
-     * @param $platform
-     * @param $sourceExpectation
+     * @param AbstractPlatform $platform
+     * @param string           $sourceExpectation
      */
-    public function testCreateSourceFromAdapterCreatesPlatformSpecificSource($platform, $sourceExpectation)
+    public function testTheConstructorSetsTheAdaptersAndTheSource($platform, $sourceExpectation)
     {
         /** @var \Zend\Db\Adapter\Adapter $adapterMock */
         $adapterMock = $this->getMockBuilder('Zend\Db\Adapter\Adapter')
@@ -67,11 +38,8 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 
         $metadata = new Metadata($adapterMock);
 
-        $sourceReflectionProperty = new \ReflectionProperty($metadata, 'source');
-        $sourceReflectionProperty->setAccessible(true);
-        $sourcePropertyValue = $sourceReflectionProperty->getValue($metadata);
-
-        $this->assertInstanceOf($sourceExpectation, $sourcePropertyValue);
+        $this->assertAttributeSame($adapterMock, 'adapter', $metadata);
+        $this->assertAttributeInstanceOf($sourceExpectation, 'source', $metadata);
     }
 
     public static function createSourceFromAdapterDataProvider()

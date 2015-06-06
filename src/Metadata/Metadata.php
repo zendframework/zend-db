@@ -41,7 +41,7 @@ class Metadata implements MetadataInterface
      *
      * @param  Adapter $adapter
      * @return Source\AbstractSource
-     * @throws \Exception
+     * @throws \Exception if the source cannot be created from the adapter
      */
     protected function createSourceFromAdapter(Adapter $adapter)
     {
