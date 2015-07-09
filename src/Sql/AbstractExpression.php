@@ -33,7 +33,7 @@ abstract class AbstractExpression implements ExpressionInterface
      */
     protected function normalizeArgument($argument, $defaultType = self::TYPE_VALUE)
     {
-        if ($argument instanceof ExpressionInterface || $argument instanceof SqlInterface) {
+        if ($argument instanceof ExpressionInterface || $argument instanceof SqlObjectInterface) {
             return $this->buildNormalizedArgument($argument, self::TYPE_VALUE);
         }
 
@@ -44,7 +44,7 @@ abstract class AbstractExpression implements ExpressionInterface
         if (is_array($argument)) {
             $value = current($argument);
 
-            if ($value instanceof ExpressionInterface || $value instanceof SqlInterface) {
+            if ($value instanceof ExpressionInterface || $value instanceof SqlObjectInterface) {
                 return $this->buildNormalizedArgument($value, self::TYPE_VALUE);
             }
 
@@ -63,7 +63,7 @@ abstract class AbstractExpression implements ExpressionInterface
             'scalar',
             'array',
             'Zend\Db\Sql\ExpressionInterface',
-            'Zend\Db\Sql\SqlInterface',
+            'Zend\Db\Sql\SqlObjectInterface',
             is_object($argument) ? get_class($argument) : gettype($argument)
         ));
     }

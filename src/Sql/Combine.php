@@ -16,7 +16,7 @@ use Zend\Db\Adapter\ParameterContainer;
 /**
  * Combine SQL statement - allows combining multiple select statements into one
  */
-class Combine extends AbstractPreparableSql
+class Combine extends AbstractPreparableSqlObject
 {
     const COLUMNS = 'columns';
     const COMBINE = 'combine';

@@ -10,9 +10,9 @@
 namespace Zend\Db\Sql\Ddl;
 
 use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Sql\AbstractSql;
+use Zend\Db\Sql\AbstractSqlObject;
 
-class AlterTable extends AbstractSql implements SqlInterface
+class AlterTable extends AbstractSqlObject implements SqlObjectInterface
 {
     const ADD_COLUMNS      = 'addColumns';
     const ADD_CONSTRAINTS  = 'addConstraints';

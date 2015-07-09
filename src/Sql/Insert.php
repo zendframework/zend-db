@@ -13,7 +13,7 @@ use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 
-class Insert extends AbstractPreparableSql
+class Insert extends AbstractPreparableSqlObject
 {
     /**#@+
      * Constants

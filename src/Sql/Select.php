@@ -18,7 +18,7 @@ use Zend\Db\Adapter\Platform\PlatformInterface;
  * @property Where $where
  * @property Having $having
  */
-class Select extends AbstractPreparableSql
+class Select extends AbstractPreparableSqlObject
 {
     /**#@+
      * Constant

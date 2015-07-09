@@ -18,7 +18,7 @@ use Zend\Stdlib\PriorityList;
  *
  * @property Where $where
  */
-class Update extends AbstractPreparableSql
+class Update extends AbstractPreparableSqlObject
 {
     /**@#++
      * @const
