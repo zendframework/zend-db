@@ -23,7 +23,7 @@ class ColumnBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function getExpressionData($column, Context $context)
+    public function build($column, Context $context)
     {
         $this->validateSqlObject($column, 'Zend\Db\Sql\Ddl\Column\Column', __METHOD__);
         $spec = $this->specification;
@@ -43,15 +43,15 @@ class ColumnBuilder extends AbstractSqlBuilder
         }
 
         $data = [[
-            $spec,
-            $params,
+            'spec' => $spec,
+            'params' => $params,
         ]];
 
         foreach ($column->getConstraints() as $constraint) {
             $data[] = ' ';
             $data = array_merge(
                 $data,
-                $this->platformBuilder->getPlatformBuilder($constraint, $context)->getExpressionData($constraint, $context)
+                $this->platformBuilder->getPlatformBuilder($constraint, $context)->build($constraint, $context)
             );
         }
 

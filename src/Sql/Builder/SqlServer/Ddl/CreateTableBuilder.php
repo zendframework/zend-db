@@ -24,8 +24,11 @@ class CreateTableBuilder extends BaseBuilder
     {
         $table = ($sqlObject->isTemporary ? '#' : '') . ltrim($sqlObject->table, '#');
         return [
-            '',
-            $context->getPlatform()->quoteIdentifier($table),
+            'spec' => $this->tableSpecification,
+            'params' => [
+                '',
+                $context->getPlatform()->quoteIdentifier($table),
+            ],
         ];
     }
 }

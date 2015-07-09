@@ -15,7 +15,7 @@ use Zend\Db\Sql\Builder\Context;
 
 class AbstractTimestampColumnBuilder extends ColumnBuilder
 {
-    public function getExpressionData($column, Context $context)
+    public function build($column, Context $context)
     {
         $this->validateSqlObject($column, 'Zend\Db\Sql\Ddl\Column\AbstractTimestampColumn', __METHOD__);
         $spec = $this->specification;
@@ -42,8 +42,8 @@ class AbstractTimestampColumnBuilder extends ColumnBuilder
         }
 
         $data = [[
-            $spec,
-            $params,
+            'spec' => $spec,
+            'params' => $params,
         ]];
 
         foreach ($column->getConstraints() as $constraint) {

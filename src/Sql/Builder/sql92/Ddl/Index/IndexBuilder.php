@@ -26,7 +26,7 @@ class IndexBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function getExpressionData($index, Context $context)
+    public function build($index, Context $context)
     {
         $this->validateSqlObject($index, 'Zend\Db\Sql\Ddl\Index\AbstractIndex', __METHOD__);
         $properties = [
@@ -40,8 +40,8 @@ class IndexBuilder extends AbstractSqlBuilder
         }
 
         return [[
-            str_replace('...', rtrim($spec, ', '), $this->specification),
-            $properties,
+            'spec' => str_replace('...', rtrim($spec, ', '), $this->specification),
+            'params' => $properties,
         ]];
     }
 }

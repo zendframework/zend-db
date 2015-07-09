@@ -36,7 +36,7 @@ class AbstractBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function getExpressionData($constraint, Context $context)
+    public function build($constraint, Context $context)
     {
         $this->validateSqlObject($constraint, 'Zend\Db\Sql\Ddl\Constraint\ConstraintInterface', __METHOD__);
         $parameters = [];
@@ -60,8 +60,8 @@ class AbstractBuilder extends AbstractSqlBuilder
         }
 
         return [[
-            $spec,
-            $parameters,
+            'spec' => $spec,
+            'params' => $parameters,
         ]];
     }
 }

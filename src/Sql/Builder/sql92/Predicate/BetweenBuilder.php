@@ -21,12 +21,12 @@ class BetweenBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function getExpressionData($expression, Context $context)
+    public function build($expression, Context $context)
     {
         $this->validateSqlObject($expression, 'Zend\Db\Sql\Predicate\Between', __METHOD__);
         return [[
-            $this->specification,
-            [
+            'spec' => $this->specification,
+            'params' => [
                 $expression->getIdentifier(),
                 $expression->getMinValue(),
                 $expression->getMaxValue(),

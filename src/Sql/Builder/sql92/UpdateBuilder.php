@@ -15,32 +15,62 @@ use Zend\Db\Sql\Builder\Context;
 
 class UpdateBuilder extends AbstractSqlBuilder
 {
-    const SPECIFICATION_UPDATE = 'update';
-    const SPECIFICATION_SET = 'set';
-    const SPECIFICATION_WHERE = 'where';
-    const SPECIFICATION_JOIN = 'joins';
-
-    protected $specifications = [
-        self::SPECIFICATION_UPDATE => 'UPDATE %1$s',
-        self::SPECIFICATION_JOIN => [
-            '%1$s' => [
-                [3 => '%1$s JOIN %2$s ON %3$s', 'combinedby' => ' ']
-            ]
+    protected $updateSpecification = 'UPDATE %1$s';
+    protected $whereSpecification = 'WHERE %1$s';
+    /*protected $joinsSpecification = [
+        '%1$s' => [
+            [3 => '%1$s JOIN %2$s ON %3$s', 'combinedby' => ' ']
+        ]
+    ];*/
+    protected $joinsSpecification = [
+        'forEach' => [
+            'byArgNumber' => [
+                2 => [
+                    'byCount' => [
+                        1 => '%1$s', 2 => '%1$s AS %2$s'
+                    ],
+                ],
+            ],
+            'format' => '%1$s JOIN %2$s ON %3$s',
         ],
-        self::SPECIFICATION_SET => 'SET %1$s',
-        self::SPECIFICATION_WHERE => 'WHERE %1$s',
+        'implode' => ' ',
+    ];
+    protected $setSpecification = [
+        'byArgNumber' => [
+            1 => [
+                'forEach' => '%1$s = %2$s',
+                'implode' => ', ',
+            ],
+        ],
+        'format' => 'SET %1$s',
     ];
 
     /**
      * @param Update $sqlObject
      * @param Context $context
-     * @return string
+     * @return array
+     */
+    public function build($sqlObject, Context $context)
+    {
+        $this->validateSqlObject($sqlObject, 'Zend\Db\Sql\Update', __METHOD__);
+        return [
+            $this->build_Update($sqlObject, $context),
+            $this->build_Joins($sqlObject, $context),
+            $this->build_Set($sqlObject, $context),
+            $this->build_Where($sqlObject, $context),
+        ];
+    }
+
+    /**
+     * @param Update $sqlObject
+     * @param Context $context
+     * @return array
      */
     protected function build_Update(Update $sqlObject, Context $context)
     {
         return sprintf(
-            $this->specifications[static::SPECIFICATION_UPDATE],
-            $this->resolveTable($sqlObject->table, $context)
+            $this->updateSpecification,
+            $this->nornalizeTable($sqlObject->table, $context)['name']
         );
     }
 
@@ -53,37 +83,38 @@ class UpdateBuilder extends AbstractSqlBuilder
     {
         $setSql = [];
         foreach ($sqlObject->set as $column => $value) {
-            $prefix = $context->getPlatform()->quoteIdentifier($column) . ' = ';
             if (is_scalar($value) && $context->getParameterContainer()) {
-                $setSql[] = $prefix . $context->getDriver()->formatParameterName($column);
                 $context->getParameterContainer()->offsetSet($column, $value);
+                $value = $context->getDriver()->formatParameterName($column);
             } else {
-                $setSql[] = $prefix . $this->resolveColumnValue(
-                    $value,
-                    $context
-                );
+                $value = $this->resolveColumnValue($value, $context);
             }
+            $setSql[] = [
+                $context->getPlatform()->quoteIdentifier($column),
+                $value
+            ];
         }
-
-        return sprintf(
-            $this->specifications[self::SPECIFICATION_SET],
-            implode(', ', $setSql)
-        );
+        return [
+            'spec' => $this->setSpecification,
+            'params' => [
+                $setSql
+            ],
+        ];
     }
 
     /**
      * @param Update $sqlObject
      * @param Context $context
-     * @return string|null
+     * @return array|null
      */
     protected function build_Where(Update $sqlObject, Context $context)
     {
         if ($sqlObject->where->count() == 0) {
             return;
         }
-        return sprintf(
-            $this->specifications[self::SPECIFICATION_WHERE],
-            $this->buildSqlString($sqlObject->where, $context)
-        );
+        return [
+            'spec' => $this->whereSpecification,
+            'params' => $sqlObject->where
+        ];
     }
 }

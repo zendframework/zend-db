@@ -15,12 +15,12 @@ use Zend\Db\Sql\Select;
 
 class SelectBuilder extends BaseBuilder
 {
-    protected function build_Limit(Select $sqlObject, Context $context)
+    protected function build_Limit(Select $sqlObject, Context $context, &$sqls = null)
     {
         return;
     }
 
-    protected function build_Offset(Select $sqlObject, Context $context, &$sqls = null, &$parameters = null)
+    protected function build_Offset(Select $sqlObject, Context $context, &$sqls = null)
     {
         $LIMIT = $sqlObject->limit;
         $OFFSET = $sqlObject->offset;
@@ -28,7 +28,7 @@ class SelectBuilder extends BaseBuilder
             return;
         }
 
-        $selectParameters = $parameters[self::SPECIFICATION_SELECT];
+        $selectParameters = $sqls['select']['params'];
 
         /** if this is a DISTINCT query then real SELECT part goes to second element in array **/
         $parameterIndex = 0;
@@ -51,42 +51,54 @@ class SelectBuilder extends BaseBuilder
         }
 
         // first, produce column list without compound names (using the AS portion only)
-        array_unshift($sqls, $this->createSqlFromSpecificationAndParameters(
-            ['SELECT %1$s FROM (' => current($this->specifications[self::SPECIFICATION_SELECT])],
-            $selectParameters
-        ));
+        $SSS = $sqls['select'];
+        $SSS['spec']['format'] = 'SELECT %1$s FROM (';
 
-        if ($context->getParameterContainer()) {
-            $parameterContainer = $context->getParameterContainer();
+        array_unshift($sqls, [
+            'spec' => $SSS['spec'],
+            'params' => $selectParameters,
+        ]);
+
+        if ($parameterContainer = $context->getParameterContainer()) {
             // create bottom part of query, with offset and limit using row_number
-            $limitParamName = $context->getDriver()->formatParameterName('limit');
-            $offsetParamName = $context->getDriver()->formatParameterName('offset');
-            $offsetForSumParamName = $context->getDriver()->formatParameterName('offsetForSum');
-            array_push($sqls, ') AS [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__ZEND_ROW_NUMBER] BETWEEN '
-                . $offsetParamName . '+1 AND ' . $limitParamName . '+' . $offsetForSumParamName);
+            $sqls[] =
+                    ') AS [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__ZEND_ROW_NUMBER] BETWEEN '
+                  . $context->getDriver()->formatParameterName('offset')
+                  . '+1 AND '
+                  . $context->getDriver()->formatParameterName('limit')
+                  . '+'
+                  . $context->getDriver()->formatParameterName('offsetForSum');
+
             $parameterContainer->offsetSet('offset', $OFFSET);
             $parameterContainer->offsetSet('limit', $LIMIT);
             $parameterContainer->offsetSetReference('offsetForSum', 'offset');
         } else {
-            array_push($sqls, ') AS [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__ZEND_ROW_NUMBER] BETWEEN '
-                . (int) $OFFSET . '+1 AND '
-                . (int) $LIMIT . '+' . (int) $OFFSET
-            );
+            $sqls[] =
+                    ') AS [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__ZEND_ROW_NUMBER] BETWEEN '
+                  . (int) $OFFSET
+                  . '+1 AND '
+                  . (int) $LIMIT
+                  . '+'
+                  . (int) $OFFSET;
         }
 
-        if (isset($sqls[self::SPECIFICATION_ORDER])) {
-            $orderBy = $sqls[self::SPECIFICATION_ORDER];
-            unset($sqls[self::SPECIFICATION_ORDER]);
+        if (isset($sqls['order'])) {
+            $orderBy = $this->buildSqlString($sqls['order'], $context);
+            unset($sqls['order']);
         } else {
             $orderBy = 'ORDER BY (SELECT 1)';
         }
 
         // add a column for row_number() using the order specification
-        $parameters[self::SPECIFICATION_SELECT][$parameterIndex][] = ['ROW_NUMBER() OVER (' . $orderBy . ')', '[__ZEND_ROW_NUMBER]'];
+        $parameters = $sqls['select']['params'];
+        $parameters[$parameterIndex][] = [
+            'ROW_NUMBER() OVER (' . $orderBy . ')',
+            '[__ZEND_ROW_NUMBER]'
+        ];
 
-        $sqls[self::SPECIFICATION_SELECT] = $this->createSqlFromSpecificationAndParameters(
-            $this->specifications[self::SPECIFICATION_SELECT],
-            $parameters[self::SPECIFICATION_SELECT]
-        );
+        $sqls['select'] = [
+            'spec' => $sqls['select']['spec'],
+            'params' => $parameters,
+        ];
     }
 }

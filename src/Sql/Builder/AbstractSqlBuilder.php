@@ -12,12 +12,13 @@ namespace Zend\Db\Sql\Builder;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Sql\SelectableInterface;
 use Zend\Db\Sql\ExpressionInterface;
-use Zend\Db\Sql\Expression;
-use Zend\Db\Sql\Exception;
+use Zend\Db\Sql\ExpressionParameter;
 use Zend\Db\Sql\SqlObjectInterface;
 
 abstract class AbstractSqlBuilder extends AbstractBuilder
 {
+    protected $implodeGlueKey = 'implode_glue';
+
     protected $specifications = [];
 
     /**
@@ -35,180 +36,177 @@ abstract class AbstractSqlBuilder extends AbstractBuilder
 
     protected function buildSqlString($sqlObject, Context $context)
     {
-        if ($sqlObject instanceof ExpressionInterface) {
-            return $this->buildExpression($sqlObject, $context);
+        if (is_array($sqlObject)) {
+            return $this->createSqlFromSpecificationAndParameters($sqlObject['spec'], $sqlObject['params'], $context);
         }
+
+        if (!$sqlObject instanceof SqlObjectInterface && !$sqlObject instanceof ExpressionInterface) {
+            throw new \Zend\Db\Sql\Exception\InvalidArgumentException(sprintf(
+                'Argument $sqlObject passed to %s must be an instance of %s, instance of %s given',
+                __METHOD__ . '()',
+                'Zend\Db\Sql\SqlObjectInterface or Zend\Db\Sql\ExpressionInterface',
+                is_object($sqlObject) ? get_class($sqlObject) : gettype($sqlObject)
+            ));
+        }
+
+        $specAndParams = $this
+                ->platformBuilder
+                ->getPlatformBuilder($sqlObject, $context->getAdapter())
+                ->build($sqlObject, $context);
+
+        if (isset($specAndParams[$this->implodeGlueKey])) {
+            $implodeGlue = $specAndParams[$this->implodeGlueKey];
+            unset($specAndParams[$this->implodeGlueKey]);
+        } else {
+            $implodeGlue = $sqlObject instanceof SqlObjectInterface ? ' ' : '';
+        }
+
         $sqls       = [];
-        $parameters = [];
-
-        foreach ($this->specifications as $name => $specification) {
-            $parameters[$name] = $this->{'build_' . $name}($sqlObject, $context, $sqls, $parameters);
-
-            if ($specification && is_array($parameters[$name])) {
-                $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $parameters[$name]);
-
+        foreach ($specAndParams as $spec) {
+            if (!$spec) {
                 continue;
             }
-
-            if (is_string($parameters[$name])) {
-                $sqls[$name] = $parameters[$name];
+            if (is_scalar($spec)) {
+                $sqls[] = $spec;
+                continue;
             }
+            if (is_array($spec)) {
+                $sqls[] = $this->createSqlFromSpecificationAndParameters($spec['spec'], $spec['params'], $context);
+                continue;
+            }
+            $sqls[] = $this->buildSpecificationParameter($spec, $context);
         }
-        return rtrim(implode(' ', $sqls), "\n ,");
+
+        return rtrim(implode($implodeGlue, $sqls), "\n ,");
     }
 
-    /**
-     * @param string|array $specifications
-     * @param string|array $parameters
-     *
-     * @return string
-     *
-     * @throws Exception\RuntimeException
-     */
-    protected function createSqlFromSpecificationAndParameters($specifications, $parameters)
+    /*
+     * $spec = array(
+            'format' => ' string format : http://php.net/manual/en/function.sprintf.php',
+            'byArgNumber' => array(
+                'parameter index' => 'spec for parameter',
+                '      ...      ' => '       ...        ',
+                'parameter index' => 'spec for parameter',
+            ),
+            'byCount' => array(
+                -1                   => 'spec if count not found or !is_array($args)',
+                'count($args)' => 'spec',
+                '        ...       ' => ' .. ',
+                'count($args)' => 'spec',
+            ),
+            'implode' => 'is isset - do implode array',
+        );
+    */
+    private function createSqlFromSpecificationAndParameters($specification, $args, Context $context = null)
     {
-        if (is_string($specifications)) {
-            return vsprintf($specifications, $parameters);
-        }
-
-        $parametersCount = count($parameters);
-
-        foreach ($specifications as $specificationString => $paramSpecs) {
-            if ($parametersCount == count($paramSpecs)) {
-                break;
-            }
-
-            unset($specificationString, $paramSpecs);
-        }
-
-        if (!isset($specificationString)) {
-            throw new Exception\RuntimeException(
-                'A number of parameters was found that is not supported by this specification'
+        if (is_string($specification)) {
+            return vsprintf(
+                $specification,
+                $this->buildSpecificationParameter($args, $context)
             );
         }
 
-        $topParameters = [];
-        foreach ($parameters as $position => $paramsForPosition) {
-            if (isset($paramSpecs[$position]['combinedby'])) {
-                $multiParamValues = [];
-                foreach ($paramsForPosition as $multiParamsForPosition) {
-                    $ppCount = count($multiParamsForPosition);
-                    if (!isset($paramSpecs[$position][$ppCount])) {
-                        throw new Exception\RuntimeException(sprintf(
-                            'A number of parameters (%d) was found that is not supported by this specification', $ppCount
-                        ));
+        foreach ($specification as $specName => $spec) {
+            if ($specName == 'forEach') {
+                foreach ($args as $pName => &$param) {
+                    $param = $this->createSqlFromSpecificationAndParameters($spec, $args[$pName], $context);
+                }
+            } elseif ($specName == 'byArgNumber') {
+                $i = 0;
+                foreach ($args as $pName => &$param) {
+                    if (isset($spec[++$i])) {
+                        $param = $this->createSqlFromSpecificationAndParameters($spec[$i], $args[$pName], $context);
                     }
-                    $multiParamValues[] = vsprintf($paramSpecs[$position][$ppCount], $multiParamsForPosition);
                 }
-                $topParameters[] = implode($paramSpecs[$position]['combinedby'], $multiParamValues);
-            } elseif ($paramSpecs[$position] !== null) {
-                $ppCount = count($paramsForPosition);
-                if (!isset($paramSpecs[$position][$ppCount])) {
-                    throw new Exception\RuntimeException(sprintf(
-                        'A number of parameters (%d) was found that is not supported by this specification', $ppCount
-                    ));
+            } elseif ($specName == 'byCount') {
+                $pCount = is_array($args) ? count($args) : -1;
+                if (isset($spec[$pCount])) {
+                    $spec = $spec[$pCount];
+                } elseif (isset($spec[-1])) {
+                    $spec = $spec[-1];
+                } else {
+                    throw new \Exception('A number of parameters (' . $pCount . ') was found that is not supported by this specification');
                 }
-                $topParameters[] = vsprintf($paramSpecs[$position][$ppCount], $paramsForPosition);
-            } else {
-                $topParameters[] = $paramsForPosition;
+                $args = $this->createSqlFromSpecificationAndParameters($spec, $args, $context);
+            } elseif ($specName == 'implode') {
+                if (is_array($spec)) {
+                    $prefix = isset($spec['prefix']) ? $spec['prefix'] : '';
+                    $suffix = isset($spec['suffix']) ? $spec['suffix'] : '';
+                    $glue   = isset($spec['glue'])   ? $spec['glue'] : '';
+                    $args   =
+                            $prefix
+                            . implode($glue, $this->buildSpecificationParameter($args, $context))
+                            . $suffix;
+                } else {
+                    $args = implode($spec, $this->buildSpecificationParameter($args, $context));
+                }
+            } elseif ($specName == 'format') {
+                $args = vsprintf(
+                    $spec,
+                    $this->buildSpecificationParameter($args, $context)
+                );
             }
         }
-        return vsprintf($specificationString, $topParameters);
+        return $args;
     }
 
-    /**
-     * @param string|TableIdentifier|Select $table
-     * @param Context $context
-     * @return string
-     */
-    protected function resolveTable($table, Context $context)
+    protected function nornalizeTable($identifier, Context $context)
     {
-        $schema = null;
-        if ($table instanceof TableIdentifier) {
-            list($table, $schema) = $table->getTableAndSchema();
+        $schema      = null;
+        $name        = null;
+        $alias       = null;
+        $columnAlias = null;
+
+        if ($identifier instanceof TableIdentifier) {
+            $name   = $identifier->getTable();
+            $schema = $identifier->getSchema();
+        } elseif (is_string($identifier)) {
+            $name   = $identifier;
+        } elseif (is_array($identifier)) {
+            if (is_string(key($identifier))) {
+                $alias = key($identifier);
+                $name  = current($identifier);
+            } elseif ($name) {
+                $schema = isset($identifier[0]) ? $identifier[0] : null;
+                $name   = isset($identifier[1]) ? $identifier[1] : null;
+                $alias  = isset($identifier[2]) ? $identifier[2] : null;
+            }
         }
 
-        if ($table instanceof SelectableInterface) {
-            $table = '(' . $this->buildSubSelect($table, $context) . ')';
-        } elseif ($table) {
-            $table = $context->getPlatform()->quoteIdentifier($table);
+        if ($alias) {
+            $alias       = $context->getPlatform()->quoteIdentifier($alias);
+            $columnAlias = $alias;
         }
 
-        if ($schema && $table) {
-            $table = $context->getPlatform()->quoteIdentifier($schema) . $context->getPlatform()->getIdentifierSeparator() . $table;
+        if (is_string($name)) {
+            $name = $context->getPlatform()->quoteIdentifier($name);
+            if ($schema) {
+                $name = $context->getPlatform()->quoteIdentifier($schema)
+                      . $context->getPlatform()->getIdentifierSeparator()
+                      . $name;
+            }
+            if (!$columnAlias) {
+                $columnAlias = $name;
+            }
         }
-        return $table;
+
+        return [
+            'name'        => $name,
+            'alias'       => $alias,
+            'columnAlias' => $columnAlias,
+        ];
     }
 
-    protected function buildSubSelect(SelectableInterface $subselect, Context $context)
+    private function buildSubSelect(SelectableInterface $subselect, Context $context)
     {
         $context->startPrefix('subselect');
 
         $builder = $this->platformBuilder->getPlatformBuilder($subselect, $context->getPlatform());
-        $result = $builder->buildSqlString($subselect, $context);
+        $result = '(' . $builder->buildSqlString($subselect, $context) . ')';
 
         $context->endPrefix();
 
         return $result;
-    }
-
-    private function buildExpression(ExpressionInterface $expression, Context $context)
-    {
-        $sql = '';
-
-        $parts = $this->platformBuilder->getPlatformBuilder($expression, $context)->getExpressionData($expression, $context);
-
-        foreach ($parts as $part) {
-            // #7407: use $expression->getExpression() to get the unescaped
-            // version of the expression
-            if (is_string($part) && $expression instanceof Expression) {
-                $sql .= $expression->getExpression();
-
-                continue;
-            }
-
-            // if it is a string, simply tack it onto the return sql
-            // "specification" string
-            if (is_string($part)) {
-                $sql .= $part;
-
-                continue;
-            }
-
-            if (! is_array($part)) {
-                throw new Exception\RuntimeException(
-                    'Elements returned from getExpressionData() array must be a string or array.'
-                );
-            }
-
-            // build_ values and types (the middle and last position of the
-            // expression data)
-            $parameters = $part[1];
-            foreach ($parameters as $pIndex => &$parameter) {
-                $value = $parameter->getValue();
-                $type  = $parameter->getType();
-                if ($value instanceof SelectableInterface) {
-                    $parameter = '(' . $this->buildSubSelect($value, $context) . ')';
-                } elseif ($value instanceof ExpressionInterface) {
-                    $parameter = $this->buildSqlString($value, $context);
-                } elseif ($type == ExpressionInterface::TYPE_IDENTIFIER) {
-                    $parameter = $context->getPlatform()->quoteIdentifierInFragment($value);
-                } elseif ($type == ExpressionInterface::TYPE_VALUE) {
-                    $parameter = $context->getPlatform()->quoteValue($value);
-                    if ($context->getParameterContainer()) {
-                        $name = $context->getNestedAlias('expr');
-                        $context->getParameterContainer()->offsetSet($name, $value);
-                        $parameter = $context->getDriver()->formatParameterName($name);
-                    }
-                } elseif ($type == ExpressionInterface::TYPE_LITERAL) {
-                    $parameter = $value;
-                }
-            }
-
-            $sql .= vsprintf($part[0], $parameters);
-        }
-
-        return $sql;
     }
 
     /**
@@ -234,7 +232,7 @@ abstract class AbstractSqlBuilder extends AbstractBuilder
             return $this->buildSqlString($column, $context);
         }
         if ($column instanceof SelectableInterface) {
-            return '(' . $this->buildSubSelect($column, $context) . ')';
+            return $this->buildSubSelect($column, $context);
         }
         if ($column === null) {
             return 'NULL';
@@ -242,6 +240,54 @@ abstract class AbstractSqlBuilder extends AbstractBuilder
         return $isIdentifier
                 ? $fromTable . $context->getPlatform()->quoteIdentifierInFragment($column)
                 : $context->getPlatform()->quoteValue($column);
+    }
+
+    private function buildSpecificationParameter($parameter, Context $context = null)
+    {
+        if (is_array($parameter)) {
+            foreach ($parameter as &$ppp) {
+                $ppp = $this->buildSpecificationParameter($ppp, $context);
+            }
+            return $parameter;
+        }
+
+        if ($parameter instanceof ExpressionParameter) {
+            $value      = $parameter->getValue();
+            $type       = $parameter->getType();
+            $paramName  = $parameter->getName();
+        } else {
+            $value      = $parameter;
+            $type       = ExpressionInterface::TYPE_LITERAL;
+        }
+
+        if ($value instanceof TableIdentifier) {
+            $parameter = $this->nornalizeTable($value, $context)['name'];
+        } elseif ($value instanceof SelectableInterface) {
+            $parameter = $this->buildSubSelect($value, $context);
+        } elseif ($value instanceof ExpressionInterface) {
+            $parameter = $this->buildSqlString($value, $context);
+        } elseif ($type == ExpressionInterface::TYPE_IDENTIFIER) {
+            $parameter = $context->getPlatform()->quoteIdentifierInFragment($value);
+        } elseif ($type == ExpressionInterface::TYPE_VALUE) {
+            if ($context->getParameterContainer()) {
+                $name = isset($paramName)
+                        ? $paramName
+                        : $context->getNestedAlias('expr');
+                if (is_array($name)) {
+                    $context->getParameterContainer()->offsetSet($name[0], $value);
+                    $context->getParameterContainer()->offsetSetReference($name[1], $name[0]);
+                } else {
+                    $context->getParameterContainer()->offsetSet($name, $value);
+                }
+                $parameter = $context->getDriver()->formatParameterName($name);
+            } else {
+                $parameter = $context->getPlatform()->quoteValue($value);
+            }
+        } elseif ($type == ExpressionInterface::TYPE_LITERAL) {
+            $parameter = $value;
+        }
+
+        return $parameter;
     }
 
     protected function renderTable($table, $alias = null)
@@ -256,46 +302,32 @@ abstract class AbstractSqlBuilder extends AbstractBuilder
      */
     protected function build_Joins(SqlObjectInterface $sqlObject, Context $context)
     {
-        if (!$sqlObject->joins || $sqlObject->joins->count() == 0) {
+        if (!$sqlObject->joins || !$sqlObject->joins->count()) {
             return;
         }
 
         // build_ joins
         $joinSpecArgArray = [];
         foreach ($sqlObject->joins as $j => $join) {
-            $context->startPrefix('join');
-            $joinName = null;
-            $joinAs = null;
-
-            // table name
-            if (is_array($join['name'])) {
-                $joinName = current($join['name']);
-                $joinAs = $context->getPlatform()->quoteIdentifier(key($join['name']));
-            } else {
-                $joinName = $join['name'];
+            $jTable = $this->nornalizeTable($join['name'], $context);
+            unset($jTable['columnAlias']);
+            if (!$jTable['alias']) {
+                unset($jTable['alias']);
             }
-            if ($joinName instanceof ExpressionInterface) {
-                $joinName = $joinName->getExpression();
-            } elseif ($joinName instanceof TableIdentifier) {
-                $joinName = $joinName->getTableAndSchema();
-                $joinName = ($joinName[1] ? $context->getPlatform()->quoteIdentifier($joinName[1]) . $context->getPlatform()->getIdentifierSeparator() : '') . $context->getPlatform()->quoteIdentifier($joinName[0]);
-            } elseif ($joinName instanceof SelectableInterface) {
-                $joinName = '(' . $this->buildSubSelect($joinName, $context) . ')';
-            } elseif (is_string($joinName) || (is_object($joinName) && is_callable([$joinName, '__toString']))) {
-                $joinName = $context->getPlatform()->quoteIdentifier($joinName);
-            } else {
-                throw new Exception\InvalidArgumentException(sprintf('Join name expected to be Expression|TableIdentifier|Select|string, "%s" given', gettype($joinName)));
+            if (!$jTable['name']) {
+                $jTable = null;
             }
             $joinSpecArgArray[$j] = [
                 strtoupper($join['type']),
-                $this->renderTable($joinName, $joinAs),
+                $jTable,
             ];
             $joinSpecArgArray[$j][] = ($join['on'] instanceof ExpressionInterface)
-                ? $this->buildSqlString($join['on'], $context, 'join' . ($j+1) . 'part')
+                ? $join['on']
                 : $context->getPlatform()->quoteIdentifierInFragment($join['on'], ['=', 'AND', 'OR', '(', ')', 'BETWEEN', '<', '>']); // on
-            $context->endPrefix();
         }
-
-        return [$joinSpecArgArray];
+        return [
+            'spec' => $this->joinsSpecification,
+            'params' => $joinSpecArgArray
+        ];
     }
 }

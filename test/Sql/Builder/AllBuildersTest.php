@@ -60,28 +60,28 @@ class AllBuildersTest extends AbstractTestCase
                             'Zend\Db\Sql\Insert' => 'ZendTest\Db\TestAsset\InsertBuilder', // Decorator for root sqlObject
                             'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\sql92\SelectBuilder', '{=SELECT_Sql92=}']
                         ],
-                        'string' => 'INSERT INTO "foo"  {=SELECT_Sql92=}',
+                        'string' => 'INSERT INTO "foo" ({=SELECT_Sql92=})',
                     ],
                     'MySql'     => [
                         'decorators' => [
                             'Zend\Db\Sql\Insert' => 'ZendTest\Db\TestAsset\InsertBuilder', // Decorator for root sqlObject
                             'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\sql92\SelectBuilder', '{=SELECT_MySql=}']
                         ],
-                        'string' => 'INSERT INTO `foo`  {=SELECT_MySql=}',
+                        'string' => 'INSERT INTO `foo` ({=SELECT_MySql=})',
                     ],
                     'Oracle'    => [
                         'decorators' => [
                             'Zend\Db\Sql\Insert' => 'ZendTest\Db\TestAsset\InsertBuilder', // Decorator for root sqlObject
                             'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\sql92\SelectBuilder', '{=SELECT_Oracle=}']
                         ],
-                        'string' => 'INSERT INTO "foo"  {=SELECT_Oracle=}',
+                        'string' => 'INSERT INTO "foo" ({=SELECT_Oracle=})',
                     ],
                     'SqlServer' => [
                         'decorators' => [
                             'Zend\Db\Sql\Insert' => 'ZendTest\Db\TestAsset\InsertBuilder', // Decorator for root sqlObject
                             'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\sql92\SelectBuilder', '{=SELECT_SqlServer=}']
                         ],
-                        'string' => 'INSERT INTO [foo]  {=SELECT_SqlServer=}',
+                        'string' => 'INSERT INTO [foo] ({=SELECT_SqlServer=})',
                     ],
                 ],
             ],
@@ -181,6 +181,14 @@ class AllBuildersTest extends AbstractTestCase
                             'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Builder\SqlServer\SelectBuilder', '{=SELECT_SqlServer=}']
                         ],
                         'string'     => 'UPDATE [foo] SET  WHERE [x] = {decorate-({=SELECT_SqlServer=})-decorate}',
+                    ],
+                ],
+            ],
+            'DISTINCT in columns' => [
+                'sqlObject' => $this->select('foo')->columns([$this->expression('DISTINCT(bar) as bar')])->limit(5)->offset(10),
+                'expected'  => [
+                    'SqlServer' => [
+                        'string'  => 'SELECT DISTINCT(bar) as bar FROM ( SELECT DISTINCT(bar) as bar, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__ZEND_ROW_NUMBER] FROM [foo] ) AS [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__ZEND_ROW_NUMBER] BETWEEN 10+1 AND 5+10'
                     ],
                 ],
             ],

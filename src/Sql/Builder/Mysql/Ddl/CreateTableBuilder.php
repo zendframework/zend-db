@@ -132,8 +132,10 @@ class CreateTableBuilder extends BaseBuilder
 
             $sqls[$i] = $sql;
         }
-
-        return [$sqls];
+        return [
+            'spec' => $this->columnsSpecification,
+            'params' => $sqls,
+        ];
     }
 
     /**

@@ -19,12 +19,11 @@ class LiteralBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function getExpressionData($expression, Context $context)
+    public function build($expression, Context $context)
     {
         $this->validateSqlObject($expression, 'Zend\Db\Sql\Literal', __METHOD__);
-        return [[
-            str_replace('%', '%%', $expression->getLiteral()),
-            [],
-        ]];
+        return [
+            'spec' => $expression->getLiteral()
+        ];
     }
 }

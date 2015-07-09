@@ -16,20 +16,48 @@ use Zend\Db\Sql\Builder\Context;
 
 class InsertBuilder extends AbstractSqlBuilder
 {
-    const SPECIFICATION_INSERT = 'insert';
-    const SPECIFICATION_SELECT = 'select';
     /**
      * @var array Specification array
      */
-    protected $specifications = [
-        self::SPECIFICATION_INSERT => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
-        self::SPECIFICATION_SELECT => 'INSERT INTO %1$s %2$s %3$s',
+    protected $insertSpecification = [
+        'byArgNumber' => [
+            2 => ['implode' => ', '],
+            3 => ['implode' => ', '],
+        ],
+        'format' => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
+    ];
+    protected $selectSpecification = [
+        'byCount' => [
+            2 => [
+                'format' => 'INSERT INTO %1$s %2$s'
+            ],
+            3 => [
+                'byArgNumber' => [
+                    2 => ['implode' => ', '],
+                ],
+                'format' => 'INSERT INTO %1$s (%2$s) %3$s'
+            ],
+        ],
     ];
 
     /**
      * @param Insert $sqlObject
      * @param Context $context
-     * @return null|string
+     * @return array
+     */
+    public function build($sqlObject, Context $context)
+    {
+        $this->validateSqlObject($sqlObject, 'Zend\Db\Sql\Insert', __METHOD__);
+        return [
+            $this->build_Insert($sqlObject, $context),
+            $this->build_Select($sqlObject, $context),
+        ];
+    }
+
+    /**
+     * @param Insert $sqlObject
+     * @param Context $context
+     * @return null|array
      * @throws Exception\InvalidArgumentException
      */
     protected function build_Insert(Insert $sqlObject, Context $context)
@@ -54,12 +82,14 @@ class InsertBuilder extends AbstractSqlBuilder
             }
         }
 
-        return sprintf(
-            $this->specifications[self::SPECIFICATION_INSERT],
-            $this->resolveTable($sqlObject->table, $context),
-            implode(', ', $columns),
-            implode(', ', $values)
-        );
+        return [
+            'spec' => $this->insertSpecification,
+            'params' => [
+                $this->nornalizeTable($sqlObject->table, $context)['name'],
+                $columns,
+                $values,
+            ],
+        ];
     }
 
     /**
@@ -72,16 +102,23 @@ class InsertBuilder extends AbstractSqlBuilder
         if (!$sqlObject->select) {
             return;
         }
-        $selectSql = $this->buildSubSelect($sqlObject->select, $context);
 
-        $columns = array_map([$context->getPlatform(), 'quoteIdentifier'], $sqlObject->columns);
-        $columns = implode(', ', $columns);
-
-        return sprintf(
-            $this->specifications[self::SPECIFICATION_SELECT],
-            $this->resolveTable($sqlObject->table, $context),
-            $columns ? "($columns)" : "",
-            $selectSql
-        );
+        if ($sqlObject->columns) {
+            return [
+                'spec'   => $this->selectSpecification,
+                'params' => [
+                    $this->nornalizeTable($sqlObject->table, $context)['name'],
+                    array_map([$context->getPlatform(), 'quoteIdentifier'], $sqlObject->columns),
+                    $sqlObject->select
+                ],
+            ];
+        }
+        return [
+            'spec'   => $this->selectSpecification,
+            'params' => [
+                $this->nornalizeTable($sqlObject->table, $context)['name'],
+                $sqlObject->select
+            ],
+        ];
     }
 }

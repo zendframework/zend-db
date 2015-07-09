@@ -90,7 +90,7 @@ class CreateTableBuilderTest extends AbstractTestCase
             [
                 'sqlObject' => $this->createTable('foo')->addColumn(new Column('bar'))->addConstraint(new Constraint\PrimaryKey('bat')),
                 'expected'  => [
-                    'sql92' => "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL , \n    PRIMARY KEY (\"bat\") \n)",
+                    'sql92' => "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL ,\n     PRIMARY KEY (\"bat\") \n)",
                 ],
             ],
             [

@@ -10,86 +10,140 @@
 namespace Zend\Db\Sql\Builder\sql92;
 
 use Zend\Db\Adapter;
-use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\SelectableInterface;
 use Zend\Db\Sql\ExpressionInterface;
-use Zend\Db\Sql\Exception;
 use Zend\Db\Sql\Builder\AbstractSqlBuilder;
 use Zend\Db\Sql\Builder\Context;
 
 class SelectBuilder extends AbstractSqlBuilder
 {
-    const SPECIFICATION_SELECT = 'select';
-    const SPECIFICATION_JOINS  = 'joins';
-    const SPECIFICATION_WHERE  = 'where';
-    const SPECIFICATION_GROUP  = 'group';
-    const SPECIFICATION_HAVING = 'having';
-    const SPECIFICATION_ORDER  = 'order';
-    const SPECIFICATION_LIMIT  = 'limit';
-    const SPECIFICATION_OFFSET = 'offset';
-    const SPECIFICATION_COMBINE = 'combine';
-
-    protected $specifications = [
-        'statementStart' => '%1$s',
-        self::SPECIFICATION_SELECT => [
-            'SELECT %1$s FROM %2$s' => [
-                [1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', '],
-                null
-            ],
-            'SELECT %1$s %2$s FROM %3$s' => [
-                null,
-                [1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', '],
-                null
-            ],
-            'SELECT %1$s' => [
-                [1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', '],
+    protected $statementStartSpecification = '%1$s';
+    protected $selectNoTableSpecification = [
+        'byArgNumber' => [
+            1 => [
+                'forEach' => [
+                    'byCount' => [
+                        1 => '%1$s', 2 => '%1$s AS %2$s'
+                    ],
+                ],
+                'implode' => ', ',
             ],
         ],
-        self::SPECIFICATION_JOINS  => [
-            '%1$s' => [
-                [3 => '%1$s JOIN %2$s ON %3$s', 'combinedby' => ' ']
-            ]
-        ],
-        self::SPECIFICATION_WHERE  => 'WHERE %1$s',
-        self::SPECIFICATION_GROUP  => [
-            'GROUP BY %1$s' => [
-                [1 => '%1$s', 'combinedby' => ', ']
-            ]
-        ],
-        self::SPECIFICATION_HAVING => 'HAVING %1$s',
-        self::SPECIFICATION_ORDER  => [
-            'ORDER BY %1$s' => [
-                [1 => '%1$s', 2 => '%1$s %2$s', 'combinedby' => ', ']
-            ]
-        ],
-        self::SPECIFICATION_LIMIT  => 'LIMIT %1$s',
-        self::SPECIFICATION_OFFSET => 'OFFSET %1$s',
-        'statementEnd' => '%1$s',
-        self::SPECIFICATION_COMBINE => '%1$s ( %2$s )',
+        'format' => 'SELECT %1$s',
     ];
+    protected $selectColumnsTableSpecification = [
+        'byArgNumber' => [
+            1 => [
+                'forEach' => [
+                    'byCount' => [
+                        1 => '%1$s', 2 => '%1$s AS %2$s'
+                    ],
+                ],
+                'implode' => ', ',
+            ],
+            2 => [
+                'byCount' => [
+                    1 => '%1$s', 2 => '%1$s AS %2$s'
+                ],
+            ],
+        ],
+        'format' => 'SELECT %1$s FROM %2$s',
+    ];
+    protected $selectFullSpecification = [
+        'byArgNumber' => [
+            2 => [
+                'forEach' => [
+                    'byCount' => [
+                        1 => '%1$s', 2 => '%1$s AS %2$s'
+                    ],
+                ],
+                'implode' => ', ',
+            ],
+            3 => [
+                'byCount' => [
+                    1 => '%1$s', 2 => '%1$s AS %2$s'
+                ],
+            ],
+        ],
+        'format' => 'SELECT %1$s %2$s FROM %3$s',
+    ];
+    protected $joinsSpecification = [
+        'forEach' => [
+            'byArgNumber' => [
+                2 => [
+                    'byCount' => [
+                        1 => '%1$s', 2 => '%1$s AS %2$s'
+                    ],
+                ],
+            ],
+            'format' => '%1$s JOIN %2$s ON %3$s',
+        ],
+        'implode' => ' ',
+    ];
+    protected $whereSpecification = 'WHERE %1$s';
+    protected $groupSpecification = [
+        'implode' => ', ',
+        'format'  => 'GROUP BY %1$s',
+    ];
+    protected $havingSpecification = 'HAVING %1$s';
+    protected $orderSpecification = [
+        'forEach' => [
+            'byCount' => [
+                1 => '%1$s', 2 => '%1$s %2$s'
+            ],
+        ],
+        'implode' => ', ',
+        'format' => 'ORDER BY %1$s',
+    ];
+    protected $limitSpecification = 'LIMIT %1$s';
+    protected $offsetSpecification = 'OFFSET %1$s';
+    protected $statementEndSpecification = '%1$s';
+    protected $combineSpecification = '%1$s ( %2$s )';
 
     /**
      * @param Select $sqlObject
      * @param Context $context
      * @return array|null
      */
+    public function build($sqlObject, Context $context)
+    {
+        $this->validateSqlObject($sqlObject, 'Zend\Db\Sql\Select', __METHOD__);
+        $sqls = [];
+        $sqls['start']   = $this->build_StatementStart($sqlObject, $context, $sqls);
+        $sqls['select']  = $this->build_Select($sqlObject, $context, $sqls);
+        $sqls['joins']   = $this->build_Joins($sqlObject, $context, $sqls);
+        $sqls['where']   = $this->build_Where($sqlObject, $context, $sqls);
+        $sqls['group']   = $this->build_Group($sqlObject, $context, $sqls);
+        $sqls['having']  = $this->build_Having($sqlObject, $context, $sqls);
+        $sqls['order']   = $this->build_Order($sqlObject, $context, $sqls);
+        $sqls['limit']   = $this->build_Limit($sqlObject, $context, $sqls);
+        $sqls['offset']  = $this->build_Offset($sqlObject, $context, $sqls);
+        $sqls['end']     = $this->build_StatementEnd($sqlObject, $context, $sqls);
+        $sqls['combine'] = $this->build_Combine($sqlObject, $context, $sqls);
+        return $sqls;
+    }
+
+    /**
+     * @param Select $sqlObject
+     * @param Context $context
+     * @return string|null
+     */
     protected function build_StatementStart($sqlObject, Context $context)
     {
         if ($sqlObject->combine !== []) {
-            return ['('];
+            return '(';
         }
     }
 
     /**
      * @param Select $sqlObject
      * @param Context $context
-     * @return array|null
+     * @return string|null
      */
     protected function build_StatementEnd($sqlObject, Context $context)
     {
         if ($sqlObject->combine !== []) {
-            return [')'];
+            return ')';
         }
     }
 
@@ -100,7 +154,18 @@ class SelectBuilder extends AbstractSqlBuilder
      */
     protected function build_Select(Select $sqlObject, Context $context)
     {
-        list($table, $fromTable) = $this->resolveTable($sqlObject->table, $context, $sqlObject);
+        $table = $this->nornalizeTable($sqlObject->table, $context);
+        $fromTable = ($sqlObject->prefixColumnsWithTable && $table['columnAlias'])
+            ? $table['columnAlias'] . $context->getPlatform()->getIdentifierSeparator()
+            : '';
+        unset($table['columnAlias']);
+        if (!$table['alias']) {
+            unset($table['alias']);
+        }
+        if (!$table['name']) {
+            $table = null;
+        }
+
         // build_ table columns
         $columns = [];
         foreach ($sqlObject->columns as $columnIndexOrAs => $column) {
@@ -128,10 +193,8 @@ class SelectBuilder extends AbstractSqlBuilder
 
         // build_ join columns
         foreach ($sqlObject->joins as $join) {
-            $joinName = parent::resolveTable(
-                is_array($join['name']) ? key($join['name']) : $join['name'],
-                $context
-            );
+            $jTable = $this->nornalizeTable($join['name'], $context);
+            $joinName = $jTable['columnAlias'];
 
             foreach ($join['columns'] as $jKey => $jColumn) {
                 $jColumns = [];
@@ -155,18 +218,30 @@ class SelectBuilder extends AbstractSqlBuilder
             }
         }
 
-        if ($quantifier = $sqlObject->quantifier) {
-            $quantifier = ($quantifier instanceof ExpressionInterface)
-                    ? $this->buildSqlString($quantifier, $context)
-                    : $quantifier;
-        }
-
-        if (!isset($table)) {
-            return [$columns];
-        } elseif (isset($quantifier)) {
-            return [$quantifier, $columns, $table];
+        if (!$table) {
+            return [
+                'spec' => $this->selectNoTableSpecification,
+                'params' => [
+                    $columns
+                ],
+            ];
+        } elseif ($sqlObject->quantifier) {
+            return [
+                'spec' => $this->selectFullSpecification,
+                'params' => [
+                    $sqlObject->quantifier,
+                    $columns,
+                    $table,
+                ],
+            ];
         } else {
-            return [$columns, $table];
+            return [
+                'spec' => $this->selectColumnsTableSpecification,
+                'params' => [
+                    $columns,
+                    $table,
+                ],
+            ];
         }
     }
 
@@ -181,7 +256,8 @@ class SelectBuilder extends AbstractSqlBuilder
             return;
         }
         return [
-            $this->buildSqlString($sqlObject->where, $context)
+            'spec' => $this->whereSpecification,
+            'params' => $sqlObject->where,
         ];
     }
 
@@ -198,15 +274,14 @@ class SelectBuilder extends AbstractSqlBuilder
         // build_ table columns
         $groups = [];
         foreach ($sqlObject->group as $column) {
-            $groups[] = $this->resolveColumnValue(
-                [
-                    'column'       => $column,
-                    'isIdentifier' => true,
-                ],
-                $context
-            );
+            $groups[] = is_scalar($column)
+                    ? $context->getPlatform()->quoteIdentifierInFragment($column)
+                    : $column;
         }
-        return [$groups];
+        return [
+            'spec' => $this->groupSpecification,
+            'params' => $groups,
+        ];
     }
 
     /**
@@ -220,7 +295,8 @@ class SelectBuilder extends AbstractSqlBuilder
             return;
         }
         return [
-            $this->buildSqlString($sqlObject->having, $context)
+            'spec' => $this->havingSpecification,
+            'params' => $sqlObject->having,
         ];
     }
 
@@ -238,7 +314,7 @@ class SelectBuilder extends AbstractSqlBuilder
         foreach ($sqlObject->order as $k => $v) {
             if ($v instanceof ExpressionInterface) {
                 $orders[] = [
-                    $this->buildSqlString($v, $context)
+                    $v
                 ];
                 continue;
             }
@@ -256,7 +332,10 @@ class SelectBuilder extends AbstractSqlBuilder
                 $orders[] = [$context->getPlatform()->quoteIdentifierInFragment($k), Select::ORDER_ASCENDING];
             }
         }
-        return [$orders];
+        return [
+            'spec' => $this->orderSpecification,
+            'params' => $orders,
+        ];
     }
 
     /**
@@ -272,9 +351,14 @@ class SelectBuilder extends AbstractSqlBuilder
         }
         if ($context->getParameterContainer()) {
             $context->getParameterContainer()->offsetSet('limit', $limit, Adapter\ParameterContainer::TYPE_INTEGER);
-            return [$context->getDriver()->formatParameterName('limit')];
+            $limit = $context->getDriver()->formatParameterName('limit');
+        } else {
+            $limit = $context->getPlatform()->quoteValue($limit);
         }
-        return [$context->getPlatform()->quoteValue($limit)];
+        return [
+            'spec' => $this->limitSpecification,
+            'params' => $limit,
+        ];
     }
 
     /**
@@ -290,10 +374,14 @@ class SelectBuilder extends AbstractSqlBuilder
         }
         if ($context->getParameterContainer()) {
             $context->getParameterContainer()->offsetSet('offset', $offset, Adapter\ParameterContainer::TYPE_INTEGER);
-            return [$context->getDriver()->formatParameterName('offset')];
+            $offset = $context->getDriver()->formatParameterName('offset');
+        } else {
+            $offset = $context->getPlatform()->quoteValue($offset);
         }
-
-        return [$context->getPlatform()->quoteValue($offset)];
+        return [
+            'spec' => $this->offsetSpecification,
+            'params' => $offset
+        ];
     }
 
     /**
@@ -314,54 +402,11 @@ class SelectBuilder extends AbstractSqlBuilder
         }
 
         return [
-            strtoupper($type),
-            $this->buildSubSelect($COMBINE['select'], $context),
+            'spec' => $this->combineSpecification,
+            'params' => [
+                strtoupper($type),
+                $COMBINE['select'],
+            ],
         ];
-    }
-
-    /**
-     * @param array|string|TableIdentifier|Select $table
-     * @param Context $context
-     * @param mixed $object
-     * @return array
-     */
-    protected function resolveTable($table, Context $context, $object = null)
-    {
-        $alias = null;
-
-        if (is_array($table)) {
-            $alias = key($table);
-            $table = current($table);
-        }
-
-        $table = parent::resolveTable($table, $context);
-
-        if ($alias) {
-            $fromTable = $context->getPlatform()->quoteIdentifier($alias);
-            $table = $this->renderTable($table, $fromTable);
-        } else {
-            $fromTable = $table;
-        }
-
-        if ($object->prefixColumnsWithTable && $fromTable) {
-            $fromTable .= $context->getPlatform()->getIdentifierSeparator();
-        } else {
-            $fromTable = '';
-        }
-
-        return [
-            $table,
-            $fromTable
-        ];
-    }
-
-    /**
-     * @param string $table
-     * @param null|string $alias
-     * @return string
-     */
-    protected function renderTable($table, $alias = null)
-    {
-        return $table . ($alias ? ' AS ' . $alias : '');
     }
 }

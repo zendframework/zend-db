@@ -33,11 +33,11 @@ class ForeignKeyBuilder extends AbstractBuilder
      * @param Context $context
      * @return array
      */
-    public function getExpressionData($constraint, Context $context)
+    public function build($constraint, Context $context)
     {
         $this->validateSqlObject($constraint, 'Zend\Db\Sql\Ddl\Constraint\ForeignKey', __METHOD__);
-        $data         = parent::getExpressionData($constraint, $context);
-        $parameters   = &$data[0][1];
+        $data         = parent::build($constraint, $context);
+        $parameters   = &$data[0]['params'];
         $parameters[] = new ExpressionParameter($constraint->getReferenceTable(), ExpressionInterface::TYPE_IDENTIFIER);
 
         $spec = '';
@@ -49,7 +49,7 @@ class ForeignKeyBuilder extends AbstractBuilder
             $spec = '(' . rtrim($spec, ', ') . ') ';
         }
 
-        $data[0][0] .= $this->referenceSpecification[0] . $spec . $this->referenceSpecification[1];
+        $data[0]['spec'] .= $this->referenceSpecification[0] . $spec . $this->referenceSpecification[1];
         $parameters[] = new ExpressionParameter($constraint->getOnDeleteRule(), ExpressionInterface::TYPE_LITERAL);
         $parameters[] = new ExpressionParameter($constraint->getOnUpdateRule(), ExpressionInterface::TYPE_LITERAL);
 

@@ -20,7 +20,7 @@ class PredicateSetBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function getExpressionData($expression, Context $context)
+    public function build($expression, Context $context)
     {
         $this->validateSqlObject($expression, 'Zend\Db\Sql\Predicate\PredicateSet', __METHOD__);
         $predicates = $expression->getPredicates();
@@ -35,7 +35,7 @@ class PredicateSetBuilder extends AbstractSqlBuilder
 
             $parts = array_merge(
                 $parts,
-                $this->platformBuilder->getPlatformBuilder($predicate, $context)->getExpressionData($predicate, $context)
+                $this->platformBuilder->getPlatformBuilder($predicate, $context)->build($predicate, $context)
             );
 
             if ($predicate instanceof PredicateSet) {

@@ -21,7 +21,7 @@ class InBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function getExpressionData($expression, Context $context)
+    public function build($expression, Context $context)
     {
         $this->validateSqlObject($expression, 'Zend\Db\Sql\Predicate\In', __METHOD__);
         $identifier = $expression->getIdentifier();
@@ -30,10 +30,10 @@ class InBuilder extends AbstractSqlBuilder
 
         if (is_array($identifier)) {
             $identifierSpecFragment = '(' . implode(', ', array_fill(0, count($identifier), '%s')) . ')';
-            $replacements = $expression->getIdentifier();
+            $replacements = $identifier;
         } else {
             $identifierSpecFragment = '%s';
-            $replacements[] = $expression->getIdentifier();
+            $replacements[] = $identifier;
         }
 
         if (is_array($values)) {
@@ -51,8 +51,8 @@ class InBuilder extends AbstractSqlBuilder
         }
 
         return [[
-            $specification,
-            $replacements,
+            'spec' => $specification,
+            'params' => $replacements,
         ]];
     }
 }

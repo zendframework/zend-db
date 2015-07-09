@@ -23,19 +23,22 @@ class SelectBuilder extends BaseBuilder
      */
     protected function build_Limit(Select $sqlObject, Context $context)
     {
-        $limit = $sqlObject->limit;
-        if ($limit === null) {
-            return $sqlObject->offset === null
-                    ? null
-                    : ['18446744073709551615'];
-        }
-
-        if ($context->getParameterContainer()) {
+        $limit = $limitParam = $sqlObject->limit;
+        if ($limit === null && $sqlObject->offset !== null) {
+            $limitParam = '18446744073709551615';
+        } elseif ($limit === null) {
+            return;
+        } elseif ($context->getParameterContainer()) {
             $context->getParameterContainer()->offsetSet('limit', $limit, Adapter\ParameterContainer::TYPE_INTEGER);
-            $limit = $context->getDriver()->formatParameterName('limit');
+            $limitParam = $context->getDriver()->formatParameterName('limit');
         }
 
-        return [$limit];
+        return [
+            'spec' => $this->limitSpecification,
+            'params' => [
+                $limitParam,
+            ],
+        ];
     }
 
     /**
@@ -53,7 +56,11 @@ class SelectBuilder extends BaseBuilder
             $context->getParameterContainer()->offsetSet('offset', $offset, Adapter\ParameterContainer::TYPE_INTEGER);
             $offset = $context->getDriver()->formatParameterName('offset');
         }
-
-        return [$offset];
+        return [
+            'spec' => $this->offsetSpecification,
+            'params' => [
+                $offset,
+            ],
+        ];
     }
 }

@@ -19,12 +19,12 @@ class OperatorBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function getExpressionData($expression, Context $context)
+    public function build($expression, Context $context)
     {
         $this->validateSqlObject($expression, 'Zend\Db\Sql\Predicate\Operator', __METHOD__);
         return [[
-            '%s ' . $expression->getOperator() . ' %s',
-            [
+            'spec' => '%s ' . $expression->getOperator() . ' %s',
+            'params' => [
                 $expression->getLeft(),
                 $expression->getRight(),
             ],

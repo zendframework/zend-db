@@ -15,25 +15,35 @@ use Zend\Db\Sql\Ddl\CreateTable;
 
 class CreateTableBuilder extends AbstractSqlBuilder
 {
-    const SPECIFICATION_TABLE       = 'table';
-    const SPECIFICATION_COLUMNS     = 'columns';
-    const SPECIFICATION_CONSTRAINTS = 'constraints';
-
-    protected $specifications = [
-        self::SPECIFICATION_TABLE => 'CREATE %1$sTABLE %2$s (',
-        self::SPECIFICATION_COLUMNS  => [
-            "\n    %1\$s" => [
-                [1 => '%1$s', 'combinedby' => ",\n    "]
-            ]
+    protected $tableSpecification = 'CREATE %1$sTABLE %2$s (';
+    protected $columnsSpecification = [
+        'implode' => [
+            'prefix' => "\n    ",
+            'glue' => ",\n    ",
         ],
-        'combinedBy' => ",",
-        self::SPECIFICATION_CONSTRAINTS => [
-            "\n    %1\$s" => [
-                [1 => '%1$s', 'combinedby' => ",\n    "]
-            ]
-        ],
-        'statementEnd' => '%1$s',
     ];
+    protected $combinedBySpecification = ",\n    ";
+    protected $constraintsSpecification = [
+        'implode' => ",\n    ",
+    ];
+    protected $statementEndSpecification = "\n)";
+
+    /**
+     * @param CreateTable $sqlObject
+     * @param Context $context
+     * @return array
+     */
+    public function build($sqlObject, Context $context)
+    {
+        $this->validateSqlObject($sqlObject, 'Zend\Db\Sql\Ddl\CreateTable', __METHOD__);
+        return [
+            $this->build_Table($sqlObject, $context),
+            $this->build_Columns($sqlObject, $context),
+            $this->build_Combinedby($sqlObject, $context),
+            $this->build_Constraints($sqlObject, $context),
+            $this->build_StatementEnd($sqlObject, $context),
+        ];
+    }
 
     /**
      * @param CreateTable $sqlObject
@@ -43,8 +53,11 @@ class CreateTableBuilder extends AbstractSqlBuilder
     protected function build_Table(CreateTable $sqlObject, Context $context)
     {
         return [
-            $sqlObject->isTemporary ? 'TEMPORARY ' : '',
-            $context->getPlatform()->quoteIdentifier($sqlObject->table),
+            'spec' => $this->tableSpecification,
+            'params' => [
+                $sqlObject->isTemporary ? 'TEMPORARY ' : '',
+                $context->getPlatform()->quoteIdentifier($sqlObject->table),
+            ],
         ];
     }
 
@@ -55,18 +68,13 @@ class CreateTableBuilder extends AbstractSqlBuilder
      */
     protected function build_Columns(CreateTable $sqlObject, Context $context)
     {
-        $COLUMNS = $sqlObject->columns;
-        if (! $COLUMNS) {
+        if (! $sqlObject->columns) {
             return;
         }
-
-        $sqls = [];
-
-        foreach ($COLUMNS as $column) {
-            $sqls[] = $this->buildSqlString($column, $context);
-        }
-
-        return [$sqls];
+        return [
+            'spec' => $this->columnsSpecification,
+            'params' => $sqlObject->columns,
+        ];
     }
 
     /**
@@ -77,7 +85,10 @@ class CreateTableBuilder extends AbstractSqlBuilder
     protected function build_Combinedby(CreateTable $sqlObject, Context $context)
     {
         if ($sqlObject->constraints && $sqlObject->columns) {
-            return $this->specifications['combinedBy'];
+            return $this->combinedBySpecification;
+        }
+        if ($sqlObject->constraints && !$sqlObject->columns) {
+            return "\n   ";
         }
     }
 
@@ -88,18 +99,14 @@ class CreateTableBuilder extends AbstractSqlBuilder
      */
     protected function build_Constraints(CreateTable $sqlObject, Context $context)
     {
-        $CONSTRAINTS = $sqlObject->constraints;
-        if (!$CONSTRAINTS) {
+        if (!$sqlObject->constraints) {
             return;
         }
 
-        $sqls = [];
-
-        foreach ($CONSTRAINTS as $constraint) {
-            $sqls[] = $this->buildSqlString($constraint, $context);
-        }
-
-        return [$sqls];
+        return [
+            'spec' => $this->constraintsSpecification,
+            'params' => $sqlObject->constraints,
+        ];
     }
 
     /**
@@ -109,6 +116,6 @@ class CreateTableBuilder extends AbstractSqlBuilder
      */
     protected function build_StatementEnd(CreateTable $sqlObject, Context $context)
     {
-        return ["\n)"];
+        return $this->statementEndSpecification;
     }
 }

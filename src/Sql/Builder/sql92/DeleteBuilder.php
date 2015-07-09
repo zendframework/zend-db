@@ -15,13 +15,22 @@ use Zend\Db\Sql\Builder\Context;
 
 class DeleteBuilder extends AbstractSqlBuilder
 {
-    const SPECIFICATION_DELETE = 'delete';
-    const SPECIFICATION_WHERE = 'where';
+    protected $deleteSpecification ='DELETE FROM %1$s';
+    protected $whereSpecification = 'WHERE %1$s';
 
-    protected $specifications = [
-        self::SPECIFICATION_DELETE => 'DELETE FROM %1$s',
-        self::SPECIFICATION_WHERE => 'WHERE %1$s'
-    ];
+    /**
+     * @param Delete $sqlObject
+     * @param Context $context
+     * @return array
+     */
+    public function build($sqlObject, Context $context)
+    {
+        $this->validateSqlObject($sqlObject, 'Zend\Db\Sql\Delete', __METHOD__);
+        return [
+            $this->build_Delete($sqlObject, $context),
+            $this->build_Where($sqlObject, $context),
+        ];
+    }
 
     /**
      * @param Delete $sqlObject
@@ -30,10 +39,12 @@ class DeleteBuilder extends AbstractSqlBuilder
      */
     protected function build_Delete(Delete $sqlObject, Context $context)
     {
-        return sprintf(
-            $this->specifications[self::SPECIFICATION_DELETE],
-            $this->resolveTable($sqlObject->table, $context)
-        );
+        return [
+            'spec' => $this->deleteSpecification,
+            'params' => [
+                $this->nornalizeTable($sqlObject->table, $context)['name'],
+            ],
+        ];
     }
 
     /**
@@ -43,14 +54,12 @@ class DeleteBuilder extends AbstractSqlBuilder
      */
     protected function build_Where(Delete $sqlObject, Context $context)
     {
-        $WHERE = $sqlObject->where;
-        if ($WHERE->count() == 0) {
+        if ($sqlObject->where->count() == 0) {
             return;
         }
-
-        return sprintf(
-            $this->specifications[self::SPECIFICATION_WHERE],
-            $this->buildSqlString($WHERE, $context)
-        );
+        return [
+            'spec' => $this->whereSpecification,
+            'params' => $sqlObject->where
+        ];
     }
 }

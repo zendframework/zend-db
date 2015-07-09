@@ -14,36 +14,27 @@ use Zend\Db\Sql\Builder\Context;
 
 class CombineBuilder extends AbstractSqlBuilder
 {
-    const SPECIFICATION_COMBINE = 'combine';
-
-    protected $specifications = [
-        self::SPECIFICATION_COMBINE => '%1$s (%2$s) ',
-    ];
-
     /**
      * @param \Zend\Db\Sql\Combine $sqlObject
      * @param Context $context
-     * @return string
+     * @return array
      */
-    protected function buildSqlString($sqlObject, Context $context)
+    public function build($sqlObject, Context $context)
     {
-        $COMBINE = $sqlObject->combine;
-        if (!$COMBINE) {
-            return;
-        }
-
-        $sql = '';
-        foreach ($COMBINE as $i => $combine) {
+        $this->validateSqlObject($sqlObject, 'Zend\Db\Sql\Combine', __METHOD__);
+        $res = [];
+        foreach ($sqlObject->combine as $i => $combine) {
             $type = $i == 0
                     ? ''
-                    : strtoupper($combine['type'] . ($combine['modifier'] ? ' ' . $combine['modifier'] : ''));
-            $select = $this->buildSubSelect($combine['select'], $context);
-            $sql .= sprintf(
-                $this->specifications[self::SPECIFICATION_COMBINE],
-                $type,
-                $select
-            );
+                    : strtoupper($combine['type'] . ($combine['modifier'] ? ' ' . $combine['modifier'] : '')) . " ";
+            $res[] = [
+                'spec' => '%1$s%2$s',
+                'params' => [
+                    $type,
+                    $combine['select']
+                ],
+            ];
         }
-        return trim($sql, ' ');
+        return $res;
     }
 }

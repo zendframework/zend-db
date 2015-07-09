@@ -202,8 +202,8 @@ class AbstractTestCase extends \PHPUnit_Framework_TestCase
         if (!is_array($decorator)) {
             return $decorator;
         }
-        $decoratorMock = $this->getMock($decorator[0], ['buildSqlString'], [$builder]);
-        $decoratorMock->expects($this->any())->method('buildSqlString')->will($this->returnValue($decorator[1]));
+        $decoratorMock = $this->getMock($decorator[0], ['build'], [$builder]);
+        $decoratorMock->expects($this->any())->method('build')->will($this->returnValue([$decorator[1]]));
         return $decoratorMock;
     }
 

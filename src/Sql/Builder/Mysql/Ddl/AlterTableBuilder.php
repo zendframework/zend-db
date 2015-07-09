@@ -124,7 +124,12 @@ class AlterTableBuilder extends BaseBuilder
             }
             $sqls[$i] = $sql;
         }
-        return [$sqls];
+        return [
+            'spec' => $this->specifications[self::SPECIFICATION_ADD_COLUMNS],
+            'params' => [
+                $sqls,
+            ],
+        ];
     }
 
     /**
@@ -193,7 +198,12 @@ class AlterTableBuilder extends BaseBuilder
             ];
         }
 
-        return [$sqls];
+        return [
+            'spec' => $this->specifications[self::SPECIFICATION_CHANGE_COLUMNS],
+            'params' => [
+                $sqls,
+            ],
+        ];
     }
 
     /**

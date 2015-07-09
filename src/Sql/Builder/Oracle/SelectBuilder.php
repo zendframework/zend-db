@@ -11,24 +11,33 @@ namespace Zend\Db\Sql\Builder\Oracle;
 
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Builder\sql92\SelectBuilder as BaseBuilder;
+use Zend\Db\Sql\Builder\Builder;
 use Zend\Db\Sql\Builder\Context;
 
 class SelectBuilder extends BaseBuilder
 {
     /**
-     * @see \Zend\Db\Sql\Select::renderTable
+     * {@inheritDoc}
      */
-    protected function renderTable($table, $alias = null)
+    public function __construct(Builder $platformBuilder)
     {
-        return $table . ($alias ? ' ' . $alias : '');
+        parent::__construct($platformBuilder);
+        $asSpec = [
+            'byCount' => [
+                1 => '%1$s', 2 => '%1$s %2$s'
+            ],
+        ];
+        $this->selectColumnsTableSpecification['byArgNumber'][2] = $asSpec;
+        $this->selectFullSpecification['byArgNumber'][3] = $asSpec;
+        $this->joinsSpecification['forEach']['byArgNumber'][2] = $asSpec;
     }
 
-    protected function build_Limit(Select $sqlObject, Context $context)
+    protected function build_Limit(Select $sqlObject, Context $context, &$sqls = null)
     {
         return;
     }
 
-    protected function build_Offset(Select $sqlObject, Context $context, &$sqls = null, &$parameters = null)
+    protected function build_Offset(Select $sqlObject, Context $context, &$sqls = null)
     {
         $LIMIT = $sqlObject->limit;
         $OFFSET = $sqlObject->offset;
@@ -36,7 +45,7 @@ class SelectBuilder extends BaseBuilder
             return;
         }
 
-        $selectParameters = $parameters[self::SPECIFICATION_SELECT];
+        $selectParameters = $sqls['select']['params'];
 
         $starSuffix = $context->getPlatform()->getIdentifierSeparator() . Select::SQL_STAR;
         foreach ($selectParameters[0] as $i => $columnParameters) {
@@ -55,12 +64,15 @@ class SelectBuilder extends BaseBuilder
         }
 
         // first, produce column list without compound names (using the AS portion only)
-        array_unshift($sqls, $this->createSqlFromSpecificationAndParameters(
-            ['SELECT %1$s FROM (SELECT b.%1$s, rownum b_rownum FROM (' => current($this->specifications[self::SPECIFICATION_SELECT])], $selectParameters
-        ));
+        $SSS = $sqls['select'];
+        $SSS['spec']['format'] = 'SELECT %1$s FROM (SELECT b.%1$s, rownum b_rownum FROM (';
 
-        if ($context->getParameterContainer()) {
-            $parameterContainer = $context->getParameterContainer();
+        array_unshift($sqls, [
+            'spec' => $SSS['spec'],
+            'params' => $selectParameters,
+        ]);
+
+        if ($parameterContainer = $context->getParameterContainer()) {
             if ($LIMIT === null) {
                 array_push($sqls, ') b ) WHERE b_rownum > (:offset)');
                 $parameterContainer->offsetSet('offset', $OFFSET, $parameterContainer::TYPE_INTEGER);
@@ -85,10 +97,10 @@ class SelectBuilder extends BaseBuilder
                 );
             }
         }
-
-        $sqls[self::SPECIFICATION_SELECT] = $this->createSqlFromSpecificationAndParameters(
-            $this->specifications[self::SPECIFICATION_SELECT],
-            $parameters[self::SPECIFICATION_SELECT]
-        );
+        $parameters = $sqls['select']['params'];
+        $sqls['select'] = [
+            'spec' => $sqls['select']['spec'],
+            'params' => $parameters,
+        ];
     }
 }

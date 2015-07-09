@@ -13,10 +13,10 @@ use Zend\Db\Sql\Builder\Context;
 
 class IntegerBuilder extends ColumnBuilder
 {
-    public function getExpressionData($column, Context $context)
+    public function build($column, Context $context)
     {
         $this->validateSqlObject($column, 'Zend\Db\Sql\Ddl\Column\Integer', __METHOD__);
-        $data    = parent::getExpressionData($column, $context);
+        $data    = parent::build($column, $context);
         $options = $column->getOptions();
 
         if (isset($options['length'])) {

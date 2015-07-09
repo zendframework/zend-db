@@ -15,11 +15,20 @@ use Zend\Db\Sql\Ddl\DropTable;
 
 class DropTableBuilder extends AbstractSqlBuilder
 {
-    const SPECIFICATION_TABLE = 'table';
+    protected $tableSpecification = 'DROP TABLE %1$s';
 
-    protected $specifications = [
-        self::SPECIFICATION_TABLE => 'DROP TABLE %1$s'
-    ];
+    /**
+     * @param DropTable $sqlObject
+     * @param Context $context
+     * @return array
+     */
+    public function build($sqlObject, Context $context)
+    {
+        $this->validateSqlObject($sqlObject, 'Zend\Db\Sql\Ddl\DropTable', __METHOD__);
+        return [
+            $this->build_Table($sqlObject, $context),
+        ];
+    }
 
     /**
      * @param DropTable $sqlObject
@@ -28,6 +37,11 @@ class DropTableBuilder extends AbstractSqlBuilder
      */
     protected function build_Table(DropTable $sqlObject, Context $context)
     {
-        return [$context->getPlatform()->quoteIdentifier($sqlObject->table)];
+        return [
+            'spec' => $this->tableSpecification,
+            'params' => [
+                $context->getPlatform()->quoteIdentifier($sqlObject->table),
+            ],
+        ];
     }
 }

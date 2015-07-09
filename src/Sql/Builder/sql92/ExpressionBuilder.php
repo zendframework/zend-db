@@ -22,18 +22,12 @@ class ExpressionBuilder extends AbstractSqlBuilder
      * @return array
      * @throws Exception\RuntimeException
      */
-    public function getExpressionData($expression, Context $context)
+    public function build($expression, Context $context)
     {
         $this->validateSqlObject($expression, 'Zend\Db\Sql\Expression', __METHOD__);
         $parameters = (is_scalar($expression->getParameters())) ? [$expression->getParameters()] : $expression->getParameters();
         $parametersCount = count($parameters);
         $expression = str_replace('%', '%%', $expression->getExpression());
-
-        if ($parametersCount == 0) {
-            return [
-                str_ireplace(Expression::PLACEHOLDER, '', $expression)
-            ];
-        }
 
         // assign locally, escaping % signs
         $expression = str_replace(Expression::PLACEHOLDER, '%s', $expression, $count);
@@ -43,8 +37,8 @@ class ExpressionBuilder extends AbstractSqlBuilder
             throw new Exception\RuntimeException('The number of replacements in the expression does not match the number of parameters');
         }
         return [[
-            $expression,
-            $parameters,
+            'spec' => $expression,
+            'params' => $parameters,
         ]];
     }
 }

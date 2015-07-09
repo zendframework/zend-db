@@ -13,13 +13,13 @@ use Zend\Db\Sql\Builder\Context;
 
 class AbstractLengthColumnBuilder extends ColumnBuilder
 {
-    public function getExpressionData($column, Context $context)
+    public function build($column, Context $context)
     {
         $this->validateSqlObject($column, 'Zend\Db\Sql\Ddl\Column\AbstractLengthColumn', __METHOD__);
-        $data = parent::getExpressionData($column, $context);
+        $data = parent::build($column, $context);
 
         if ($this->getLengthExpression($column)) {
-            $data[0][1][1]->setValue($data[0][1][1]->getValue() . '(' . $this->getLengthExpression($column) . ')');
+            $data[0]['params'][1]->setValue($data[0]['params'][1]->getValue() . '(' . $this->getLengthExpression($column) . ')');
         }
 
         return $data;

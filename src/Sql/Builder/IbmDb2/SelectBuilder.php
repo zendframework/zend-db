@@ -11,24 +11,32 @@ namespace Zend\Db\Sql\Builder\IbmDb2;
 
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Builder\sql92\SelectBuilder as BaseBuilder;
+use Zend\Db\Sql\Builder\Builder;
 use Zend\Db\Sql\Builder\Context;
 
 class SelectBuilder extends BaseBuilder
 {
     /**
-     * @see Select::renderTable
+     * {@inheritDoc}
      */
-    protected function renderTable($table, $alias = null)
+    public function __construct(Builder $platformBuilder)
     {
-        return $table . ' ' . $alias;
+        parent::__construct($platformBuilder);
+        $asSpec = [
+            'byCount' => [
+                1 => '%1$s', 2 => '%1$s %2$s'
+            ],
+        ];
+        $this->selectColumnsTableSpecification['byArgNumber'][2] = $asSpec;
+        $this->selectFullSpecification['byArgNumber'][3] = $asSpec;
     }
 
-    protected function build_Limit(Select $sqlObject, Context $context)
+    protected function build_Limit(Select $sqlObject, Context $context, &$sqls = null)
     {
         return;
     }
 
-    protected function build_Offset(Select $sqlObject, Context $context, &$sqls = null, &$parameters = null)
+    protected function build_Offset(Select $sqlObject, Context $context, &$sqls = null)
     {
         $LIMIT = $sqlObject->limit;
         $OFFSET = $sqlObject->offset;
@@ -36,7 +44,7 @@ class SelectBuilder extends BaseBuilder
             return;
         }
 
-        $selectParameters = $parameters[self::SPECIFICATION_SELECT];
+        $selectParameters = $sqls['select']['params'];
 
         $starSuffix = $context->getPlatform()->getIdentifierSeparator() . Select::SQL_STAR;
         foreach ($selectParameters[0] as $i => $columnParameters) {
@@ -55,10 +63,10 @@ class SelectBuilder extends BaseBuilder
         }
 
         // first, produce column list without compound names (using the AS portion only)
-        array_unshift($sqls, $this->createSqlFromSpecificationAndParameters(
-            ['SELECT %1$s FROM (' => current($this->specifications[self::SPECIFICATION_SELECT])],
-            $selectParameters
-        ));
+        $SSS = $sqls['select'];
+        $SSS['spec']['format'] = 'SELECT %1$s FROM (';
+        $SSS['params'] = $selectParameters;
+        array_unshift($sqls, $this->buildSqlString($SSS, $context));
 
         $offset = ((int) $OFFSET > 0) ? (int) $OFFSET + 1 : (int) $OFFSET;
         $limit  = (int) $LIMIT + (int) $OFFSET;
@@ -77,21 +85,16 @@ class SelectBuilder extends BaseBuilder
             $limit
         ));
 
-        if (isset($sqls[self::SPECIFICATION_ORDER])) {
-            $orderBy = $sqls[self::SPECIFICATION_ORDER];
-            unset($sqls[self::SPECIFICATION_ORDER]);
+        if (isset($sqls['order'])) {
+            $orderBy = $sqls['order'];
+            unset($sqls['order']);
         } else {
             $orderBy = '';
         }
 
         // add a column for row_number() using the order specification //dense_rank()
-        $parameters[self::SPECIFICATION_SELECT][0][] = (preg_match('/DISTINCT/i', $sqls[0]))
+        $sqls['select']['params'][0][] = (preg_match('/DISTINCT/i', $sqls[0]))
                 ? ['DENSE_RANK() OVER (' . $orderBy . ')', 'ZEND_DB_ROWNUM']
                 : ['ROW_NUMBER() OVER (' . $orderBy . ')', 'ZEND_DB_ROWNUM'];
-
-        $sqls[self::SPECIFICATION_SELECT] = $this->createSqlFromSpecificationAndParameters(
-            $this->specifications[self::SPECIFICATION_SELECT],
-            $parameters[self::SPECIFICATION_SELECT]
-        );
     }
 }

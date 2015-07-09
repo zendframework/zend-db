@@ -25,7 +25,7 @@ class CheckBuilder extends AbstractBuilder
      * @param Context $context
      * @return array
      */
-    public function getExpressionData($check, Context $context)
+    public function build($check, Context $context)
     {
         $this->validateSqlObject($check, 'Zend\Db\Sql\Ddl\Constraint\Check', __METHOD__);
         $values = [];
@@ -39,8 +39,8 @@ class CheckBuilder extends AbstractBuilder
         $values[] = new ExpressionParameter($check->getExpression(), ExpressionInterface::TYPE_LITERAL);
 
         return [[
-            $spec . $this->specification,
-            $values,
+            'spec' => $spec . $this->specification,
+            'params' => $values,
         ]];
     }
 }

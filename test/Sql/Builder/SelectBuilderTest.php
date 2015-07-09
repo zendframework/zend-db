@@ -162,7 +162,7 @@ class SelectBuilderTest extends AbstractTestCase
                                         ),
                 'expected'  => [
                     'sql92' => [
-                        'string'  => '( SELECT "foo".* FROM "foo" WHERE a = b ) UNION ALL ( SELECT "bar".* FROM "bar" WHERE c = d )',
+                        'string'  => '( SELECT "foo".* FROM "foo" WHERE a = b ) UNION ALL ( (SELECT "bar".* FROM "bar" WHERE c = d) )',
                         'prepare' => true,
                     ],
                 ],
@@ -180,7 +180,7 @@ class SelectBuilderTest extends AbstractTestCase
                                         ->order('id DESC'),
                 'expected'  => [
                     'sql92' => [
-                        'string'  => 'SELECT "sub".* FROM (( SELECT "foo".* FROM "foo" WHERE a = b ) UNION ( SELECT "bar".* FROM "bar" WHERE c = d )) AS "sub" ORDER BY "id" DESC',
+                        'string'  => 'SELECT "sub".* FROM (( SELECT "foo".* FROM "foo" WHERE a = b ) UNION ( (SELECT "bar".* FROM "bar" WHERE c = d) )) AS "sub" ORDER BY "id" DESC',
                         'prepare' => true,
                     ],
                 ],
@@ -357,8 +357,8 @@ class SelectBuilderTest extends AbstractTestCase
                                         . 'INNER JOIN "tableA" ON "id" = \'1\' INNER JOIN "tableB" ON "id" = \'2\' '
                                         . 'INNER JOIN "tableC" ON "id" = \'3\' AND "number" > \'20\'',
                         'prepare' => 'SELECT "foo".*, "tableA".*, "tableB".*, "tableC".* FROM "foo"'
-                                        . ' INNER JOIN "tableA" ON "id" = :join1expr1 INNER JOIN "tableB" ON "id" = :join2expr1 '
-                                        . 'INNER JOIN "tableC" ON "id" = :join3expr1 AND "number" > :join3expr2',
+                                        . ' INNER JOIN "tableA" ON "id" = :expr1 INNER JOIN "tableB" ON "id" = :expr2 '
+                                        . 'INNER JOIN "tableC" ON "id" = :expr3 AND "number" > :expr4',
                         'useNamedParams' => true,
                     ],
                 ],
@@ -669,7 +669,7 @@ class SelectBuilderTest extends AbstractTestCase
                     'IbmDb2' => [
                         'string'     => 'SELECT * FROM ( SELECT "x".*, ROW_NUMBER() OVER () AS ZEND_DB_ROWNUM FROM "foo" "x" WHERE "x"."id" > \'10\' AND "x"."id" < \'31\' ) AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN 11 AND 15',
                         'prepare'    => 'SELECT * FROM ( SELECT "x".*, ROW_NUMBER() OVER () AS ZEND_DB_ROWNUM FROM "foo" "x" WHERE "x"."id" > ? AND "x"."id" < ? ) AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN ? AND ?',
-                        'parameters' => ['expr1' => '10', 'expr2' => '31', 'offset' => 11, 'limit' => 15],
+                        'parameters' => ['offset' => 11, 'limit' => 15, 'expr1' => '10', 'expr2' => '31'],
                     ],
                 ],
             ],

@@ -32,14 +32,16 @@ class AlterTableBuilderTest extends AbstractTestCase
         return $this->prepareDataProvider([
             [
                 'sqlObject' => $this->alterTable('foo')
-                                        ->addColumn(new Column\Varchar('another', 255))
+                                        ->addColumn(new Column\Varchar('another1', 10))
+                                        ->addColumn(new Column\Varchar('another2', 20))
                                         ->changeColumn('name', new Column\Varchar('new_name', 50))
                                         ->dropColumn('foo')
                                         ->addConstraint(new Constraint\ForeignKey('my_fk', 'other_id', 'other_table', 'id', 'CASCADE', 'CASCADE'))
                                         ->dropConstraint('my_index'),
                 'expected'  => [
                     'sql92' => 'ALTER TABLE "foo"
- ADD COLUMN "another" VARCHAR(255) NOT NULL,
+ ADD COLUMN "another1" VARCHAR(10) NOT NULL,
+ ADD COLUMN "another2" VARCHAR(20) NOT NULL,
  CHANGE COLUMN "name" "new_name" VARCHAR(50) NOT NULL,
  DROP COLUMN "foo",
  ADD CONSTRAINT "my_fk" FOREIGN KEY ("other_id") REFERENCES "other_table" ("id") ON DELETE CASCADE ON UPDATE CASCADE,

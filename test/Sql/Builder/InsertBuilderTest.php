@@ -92,23 +92,23 @@ class InsertBuilderTest extends AbstractTestCase
                                         ->select($this->select()->from('bar')->where(['x'=>5])),
                 'expected'  => [
                     'sql92' => [
-                        'string'  => 'INSERT INTO "foo" ("col1", "col2") SELECT "bar".* FROM "bar" WHERE "x" = \'5\'',
-                        'prepare' => 'INSERT INTO "foo" ("col1", "col2") SELECT "bar".* FROM "bar" WHERE "x" = ?',
+                        'string'  => 'INSERT INTO "foo" ("col1", "col2") (SELECT "bar".* FROM "bar" WHERE "x" = \'5\')',
+                        'prepare' => 'INSERT INTO "foo" ("col1", "col2") (SELECT "bar".* FROM "bar" WHERE "x" = ?)',
                         'parameters' => ['subselect1expr1'=>5],
                     ],
                     'MySql'     => [
-                        'string'     => 'INSERT INTO `foo` (`col1`, `col2`) SELECT `bar`.* FROM `bar` WHERE `x` = \'5\'',
-                        'prepare'    => 'INSERT INTO `foo` (`col1`, `col2`) SELECT `bar`.* FROM `bar` WHERE `x` = ?',
+                        'string'     => 'INSERT INTO `foo` (`col1`, `col2`) (SELECT `bar`.* FROM `bar` WHERE `x` = \'5\')',
+                        'prepare'    => 'INSERT INTO `foo` (`col1`, `col2`) (SELECT `bar`.* FROM `bar` WHERE `x` = ?)',
                         'parameters' => ['subselect1expr1' => 5],
                     ],
                     'Oracle'    => [
-                        'string'     => 'INSERT INTO "foo" ("col1", "col2") SELECT "bar".* FROM "bar" WHERE "x" = \'5\'',
-                        'prepare'    => 'INSERT INTO "foo" ("col1", "col2") SELECT "bar".* FROM "bar" WHERE "x" = ?',
+                        'string'     => 'INSERT INTO "foo" ("col1", "col2") (SELECT "bar".* FROM "bar" WHERE "x" = \'5\')',
+                        'prepare'    => 'INSERT INTO "foo" ("col1", "col2") (SELECT "bar".* FROM "bar" WHERE "x" = ?)',
                         'parameters' => ['subselect1expr1' => 5],
                     ],
                     'SqlServer' => [
-                        'string'     => 'INSERT INTO [foo] ([col1], [col2]) SELECT [bar].* FROM [bar] WHERE [x] = \'5\'',
-                        'prepare'    => 'INSERT INTO [foo] ([col1], [col2]) SELECT [bar].* FROM [bar] WHERE [x] = ?',
+                        'string'     => 'INSERT INTO [foo] ([col1], [col2]) (SELECT [bar].* FROM [bar] WHERE [x] = \'5\')',
+                        'prepare'    => 'INSERT INTO [foo] ([col1], [col2]) (SELECT [bar].* FROM [bar] WHERE [x] = ?)',
                         'parameters' => ['subselect1expr1' => 5],
                     ],
                 ],
@@ -118,23 +118,23 @@ class InsertBuilderTest extends AbstractTestCase
                                         ->select($this->select('bar')->where(['x'=>5])),
                 'expected'  => [
                     'sql92'     => [
-                        'string'     => 'INSERT INTO "foo"  SELECT "bar".* FROM "bar" WHERE "x" = \'5\'',
-                        'prepare'    => 'INSERT INTO "foo"  SELECT "bar".* FROM "bar" WHERE "x" = ?',
+                        'string'     => 'INSERT INTO "foo" (SELECT "bar".* FROM "bar" WHERE "x" = \'5\')',
+                        'prepare'    => 'INSERT INTO "foo" (SELECT "bar".* FROM "bar" WHERE "x" = ?)',
                         'parameters' => ['subselect1expr1' => 5],
                     ],
                     'MySql'     => [
-                        'string'     => 'INSERT INTO `foo`  SELECT `bar`.* FROM `bar` WHERE `x` = \'5\'',
-                        'prepare'    => 'INSERT INTO `foo`  SELECT `bar`.* FROM `bar` WHERE `x` = ?',
+                        'string'     => 'INSERT INTO `foo` (SELECT `bar`.* FROM `bar` WHERE `x` = \'5\')',
+                        'prepare'    => 'INSERT INTO `foo` (SELECT `bar`.* FROM `bar` WHERE `x` = ?)',
                         'parameters' => ['subselect1expr1' => 5],
                     ],
                     'Oracle'    => [
-                        'string'     => 'INSERT INTO "foo"  SELECT "bar".* FROM "bar" WHERE "x" = \'5\'',
-                        'prepare'    => 'INSERT INTO "foo"  SELECT "bar".* FROM "bar" WHERE "x" = ?',
+                        'string'     => 'INSERT INTO "foo" (SELECT "bar".* FROM "bar" WHERE "x" = \'5\')',
+                        'prepare'    => 'INSERT INTO "foo" (SELECT "bar".* FROM "bar" WHERE "x" = ?)',
                         'parameters' => ['subselect1expr1' => 5],
                     ],
                     'SqlServer' => [
-                        'string'     => 'INSERT INTO [foo]  SELECT [bar].* FROM [bar] WHERE [x] = \'5\'',
-                        'prepare'    => 'INSERT INTO [foo]  SELECT [bar].* FROM [bar] WHERE [x] = ?',
+                        'string'     => 'INSERT INTO [foo] (SELECT [bar].* FROM [bar] WHERE [x] = \'5\')',
+                        'prepare'    => 'INSERT INTO [foo] (SELECT [bar].* FROM [bar] WHERE [x] = ?)',
                         'parameters' => ['subselect1expr1' => 5],
                     ],
                 ],
@@ -143,10 +143,10 @@ class InsertBuilderTest extends AbstractTestCase
                 'sqlObject' => $this->insert('foo')
                                         ->select($this->combine($this->select('bar'))),
                 'expected'  => [
-                    'sql92'     => 'INSERT INTO "foo"  (SELECT "bar".* FROM "bar")',
-                    'MySql'     => 'INSERT INTO `foo`  (SELECT `bar`.* FROM `bar`)',
-                    'Oracle'    => 'INSERT INTO "foo"  (SELECT "bar".* FROM "bar")',
-                    'SqlServer' => 'INSERT INTO [foo]  (SELECT [bar].* FROM [bar])',
+                    'sql92'     => 'INSERT INTO "foo" ((SELECT "bar".* FROM "bar"))',
+                    'MySql'     => 'INSERT INTO `foo` ((SELECT `bar`.* FROM `bar`))',
+                    'Oracle'    => 'INSERT INTO "foo" ((SELECT "bar".* FROM "bar"))',
+                    'SqlServer' => 'INSERT INTO [foo] ((SELECT [bar].* FROM [bar]))',
                 ],
             ],
         ];
