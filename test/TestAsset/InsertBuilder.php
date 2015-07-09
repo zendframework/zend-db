@@ -9,15 +9,6 @@
 
 namespace ZendTest\Db\TestAsset;
 
-use Zend\Db\Sql;
-
-class InsertBuilder extends Sql\Insert implements Sql\Builder\PlatformDecoratorInterface
+class InsertBuilder extends \Zend\Db\Sql\Builder\sql92\InsertBuilder
 {
-    protected $subject = null;
-
-    public function setSubject($subject)
-    {
-        $this->subject = $subject;
-        return $this;
-    }
 }

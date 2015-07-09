@@ -12,6 +12,7 @@ namespace ZendTest\Db\Sql\Predicate;
 use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Predicate\In;
+use Zend\Db\Sql\Combine;
 
 class InTest extends TestCase
 {
@@ -77,6 +78,15 @@ class InTest extends TestCase
         $expected = [[
             '%s IN %s',
             ['foo', $select],
+            [$in::TYPE_IDENTIFIER, $in::TYPE_VALUE]
+        ]];
+        $this->assertEquals($expected, $in->getExpressionData());
+
+        $combine = new Combine;
+        $in = new In('foo', $combine);
+        $expected = [[
+            '%s IN %s',
+            ['foo', $combine],
             [$in::TYPE_IDENTIFIER, $in::TYPE_VALUE]
         ]];
         $this->assertEquals($expected, $in->getExpressionData());

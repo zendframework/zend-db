@@ -9,15 +9,6 @@
 
 namespace ZendTest\Db\TestAsset;
 
-use Zend\Db\Sql;
-
-class DeleteBuilder extends Sql\Delete implements Sql\Builder\PlatformDecoratorInterface
+class DeleteBuilder extends \Zend\Db\Sql\Builder\sql92\DeleteBuilder
 {
-    protected $subject = null;
-
-    public function setSubject($subject)
-    {
-        $this->subject = $subject;
-        return $this;
-    }
 }

@@ -11,6 +11,7 @@ namespace Zend\Db\Sql\Predicate;
 
 use Zend\Db\Sql\Exception;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\SelectableInterface;
 use Zend\Db\Sql\AbstractExpression;
 
 class In extends AbstractExpression implements PredicateInterface
@@ -64,15 +65,15 @@ class In extends AbstractExpression implements PredicateInterface
     /**
      * Set set of values for IN comparison
      *
-     * @param  array|Select                       $valueSet
+     * @param  array|SelectableInterface                       $valueSet
      * @throws Exception\InvalidArgumentException
      * @return In
      */
     public function setValueSet($valueSet)
     {
-        if (!is_array($valueSet) && !$valueSet instanceof Select) {
+        if (!is_array($valueSet) && !$valueSet instanceof SelectableInterface) {
             throw new Exception\InvalidArgumentException(
-                '$valueSet must be either an array or a Zend\Db\Sql\Select object, ' . gettype($valueSet) . ' given'
+                '$valueSet must be either an array or a Zend\Db\Sql\SelectableInterface object, ' . gettype($valueSet) . ' given'
             );
         }
         $this->valueSet = $valueSet;
@@ -111,7 +112,7 @@ class In extends AbstractExpression implements PredicateInterface
             $types = [self::TYPE_IDENTIFIER];
         }
 
-        if ($values instanceof Select) {
+        if ($values instanceof SelectableInterface) {
             $specification = vsprintf(
                 $this->specification,
                 [$identifierSpecFragment, '%s']

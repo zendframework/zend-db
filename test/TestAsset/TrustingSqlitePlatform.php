@@ -7,14 +7,17 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-namespace Zend\Db\Sql\Builder;
+namespace ZendTest\Db\TestAsset;
 
-interface PlatformDecoratorInterface
+use Zend\Db\Adapter\Platform\Sqlite;
+
+class TrustingSqlitePlatform extends Sqlite
 {
     /**
-     * @param $subject
-     *
-     * @return self
+     * {@inheritDoc}
      */
-    public function setSubject($subject);
+    public function quoteValue($value)
+    {
+        return $this->quoteTrustedValue($value);
+    }
 }

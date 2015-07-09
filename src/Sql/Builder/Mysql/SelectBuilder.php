@@ -9,61 +9,51 @@
 
 namespace Zend\Db\Sql\Builder\Mysql;
 
-use Zend\Db\Adapter\Driver\DriverInterface;
-use Zend\Db\Adapter\ParameterContainer;
-use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Sql\Builder\PlatformDecoratorInterface;
 use Zend\Db\Sql\Select;
+use Zend\Db\Adapter;
+use Zend\Db\Sql\Builder\sql92\SelectBuilder as BaseBuilder;
+use Zend\Db\Sql\Builder\Context;
 
-class SelectBuilder extends Select implements PlatformDecoratorInterface
+class SelectBuilder extends BaseBuilder
 {
     /**
-     * @var Select
+     * @param Select $sqlObject
+     * @param Context $context
+     * @return null|array
      */
-    protected $subject = null;
+    protected function build_Limit(Select $sqlObject, Context $context)
+    {
+        $limit = $sqlObject->limit;
+        if ($limit === null) {
+            return $sqlObject->offset === null
+                    ? null
+                    : ['18446744073709551615'];
+        }
+
+        if ($context->getParameterContainer()) {
+            $context->getParameterContainer()->offsetSet('limit', $limit, Adapter\ParameterContainer::TYPE_INTEGER);
+            $limit = $context->getDriver()->formatParameterName('limit');
+        }
+
+        return [$limit];
+    }
 
     /**
-     * @param Select $select
+     * @param Select $sqlObject
+     * @param Context $context
+     * @return null|array
      */
-    public function setSubject($select)
+    protected function build_Offset(Select $sqlObject, Context $context)
     {
-        $this->subject = $select;
-    }
-
-    protected function localizeVariables()
-    {
-        parent::localizeVariables();
-        if ($this->limit === null && $this->offset !== null) {
-            $this->specifications[self::LIMIT] = 'LIMIT 18446744073709551615';
-        }
-    }
-
-    protected function processLimit(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
-        if ($this->limit === null && $this->offset !== null) {
-            return [''];
-        }
-        if ($this->limit === null) {
+        $offset = $sqlObject->offset;
+        if ($offset === null) {
             return;
         }
-        if ($parameterContainer) {
-            $parameterContainer->offsetSet('limit', $this->limit, ParameterContainer::TYPE_INTEGER);
-            return [$driver->formatParameterName('limit')];
+        if ($context->getParameterContainer()) {
+            $context->getParameterContainer()->offsetSet('offset', $offset, Adapter\ParameterContainer::TYPE_INTEGER);
+            $offset = $context->getDriver()->formatParameterName('offset');
         }
 
-        return [$this->limit];
-    }
-
-    protected function processOffset(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
-        if ($this->offset === null) {
-            return;
-        }
-        if ($parameterContainer) {
-            $parameterContainer->offsetSet('offset', $this->offset, ParameterContainer::TYPE_INTEGER);
-            return [$driver->formatParameterName('offset')];
-        }
-
-        return [$this->offset];
+        return [$offset];
     }
 }

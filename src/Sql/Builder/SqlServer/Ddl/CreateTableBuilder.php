@@ -9,37 +9,23 @@
 
 namespace Zend\Db\Sql\Builder\SqlServer\Ddl;
 
-use Zend\Db\Adapter\Platform\PlatformInterface;
+use Zend\Db\Sql\Builder\sql92\Ddl\CreateTableBuilder as BaseBuilder;
+use Zend\Db\Sql\Builder\Context;
 use Zend\Db\Sql\Ddl\CreateTable;
-use Zend\Db\Sql\Builder\PlatformDecoratorInterface;
 
-class CreateTableBuilder extends CreateTable implements PlatformDecoratorInterface
+class CreateTableBuilder extends BaseBuilder
 {
     /**
-     * @var CreateTable
-     */
-    protected $subject;
-
-    /**
-     * @param CreateTable $subject
-     * @return self
-     */
-    public function setSubject($subject)
-    {
-        $this->subject = $subject;
-        return $this;
-    }
-
-    /**
-     * @param PlatformInterface $adapterPlatform
+     * @param CreateTable $sqlObject
+     * @param Context $context
      * @return array
      */
-    protected function processTable(PlatformInterface $adapterPlatform = null)
+    protected function build_Table(CreateTable $sqlObject, Context $context)
     {
-        $table = ($this->isTemporary ? '#' : '') . ltrim($this->table, '#');
+        $table = ($sqlObject->isTemporary ? '#' : '') . ltrim($sqlObject->table, '#');
         return [
             '',
-            $adapterPlatform->quoteIdentifier($table),
+            $context->getPlatform()->quoteIdentifier($table),
         ];
     }
 }

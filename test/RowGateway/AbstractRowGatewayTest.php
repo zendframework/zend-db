@@ -10,6 +10,8 @@
 namespace ZendTest\Db\RowGateway;
 
 use Zend\Db\RowGateway\RowGateway;
+use Zend\Db\Adapter\ParameterContainer;
+use ZendTest\Db\TestAsset\TrustingSql92Platform;
 
 class AbstractRowGatewayTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,13 +30,14 @@ class AbstractRowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->mockResult = $mockResult;
         $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
         $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
+        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue(new ParameterContainer));
         $mockConnection = $this->getMock('Zend\Db\Adapter\Driver\ConnectionInterface');
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
         $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
 
         // setup mock adapter
-        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, [$mockDriver]);
+        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, [$mockDriver, new TrustingSql92Platform]);
 
         $this->rowGateway = $this->getMockForAbstractClass('Zend\Db\RowGateway\AbstractRowGateway');
 

@@ -216,17 +216,17 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      */
     protected function executeSelect(Select $select)
     {
-        $selectState = $select->getRawState();
-        if ($selectState['table'] != $this->table
-            && (is_array($selectState['table'])
-                && end($selectState['table']) != $this->table)
+        $selectTable = $select->table;
+        if ($selectTable != $this->table
+            && (is_array($selectTable)
+                && end($selectTable) != $this->table)
         ) {
             throw new Exception\RuntimeException(
                 'The table name of the provided Select object must match that of the table'
             );
         }
 
-        if ($selectState['columns'] == [Select::SQL_STAR]
+        if ($select->columns == [Select::SQL_STAR]
             && $this->columns !== []) {
             $select->columns($this->columns);
         }
@@ -285,8 +285,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      */
     protected function executeInsert(Insert $insert)
     {
-        $insertState = $insert->getRawState();
-        if ($insertState['table'] != $this->table) {
+        if ($insert->table != $this->table) {
             throw new Exception\RuntimeException(
                 'The table name of the provided Insert object must match that of the table'
             );
@@ -298,10 +297,10 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         // Most RDBMS solutions do not allow using table aliases in INSERTs
         // See https://github.com/zendframework/zf2/issues/7311
         $unaliasedTable = false;
-        if (is_array($insertState['table'])) {
-            $tableData      = array_values($insertState['table']);
-            $unaliasedTable = array_shift($tableData);
-            $insert->into($unaliasedTable);
+        if (is_array($insert->table)) {
+            $unaliasedTable = $insert->table;
+            $tableData      = array_values($insert->table);
+            $insert->into(array_shift($tableData));
         }
 
         $statement = $this->sql->prepareStatementForSqlObject($insert);
@@ -313,7 +312,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
         // Reset original table information in Insert instance, if necessary
         if ($unaliasedTable) {
-            $insert->into($insertState['table']);
+            $insert->into($unaliasedTable);
         }
 
         return $result->getAffectedRows();
@@ -370,8 +369,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      */
     protected function executeUpdate(Update $update)
     {
-        $updateState = $update->getRawState();
-        if ($updateState['table'] != $this->table) {
+        if ($update->table != $this->table) {
             throw new Exception\RuntimeException(
                 'The table name of the provided Update object must match that of the table'
             );
@@ -381,10 +379,10 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         $this->featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_UPDATE, [$update]);
 
         $unaliasedTable = false;
-        if (is_array($updateState['table'])) {
-            $tableData      = array_values($updateState['table']);
-            $unaliasedTable = array_shift($tableData);
-            $update->table($unaliasedTable);
+        if (is_array($update->table)) {
+            $unaliasedTable = $update->table;
+            $tableData      = array_values($update->table);
+            $update->table(array_shift($tableData));
         }
 
         $statement = $this->sql->prepareStatementForSqlObject($update);
@@ -395,7 +393,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
         // Reset original table information in Update instance, if necessary
         if ($unaliasedTable) {
-            $update->table($updateState['table']);
+            $update->table($unaliasedTable);
         }
 
         return $result->getAffectedRows();
@@ -440,8 +438,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      */
     protected function executeDelete(Delete $delete)
     {
-        $deleteState = $delete->getRawState();
-        if ($deleteState['table'] != $this->table) {
+        if ($delete->table != $this->table) {
             throw new Exception\RuntimeException(
                 'The table name of the provided Delete object must match that of the table'
             );

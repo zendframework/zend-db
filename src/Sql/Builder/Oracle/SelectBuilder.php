@@ -9,27 +9,12 @@
 
 namespace Zend\Db\Sql\Builder\Oracle;
 
-use Zend\Db\Adapter\Driver\DriverInterface;
-use Zend\Db\Adapter\ParameterContainer;
-use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Sql\Builder\PlatformDecoratorInterface;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Builder\sql92\SelectBuilder as BaseBuilder;
+use Zend\Db\Sql\Builder\Context;
 
-class SelectBuilder extends Select implements PlatformDecoratorInterface
+class SelectBuilder extends BaseBuilder
 {
-    /**
-     * @var Select
-     */
-    protected $subject = null;
-
-    /**
-     * @param Select $select
-     */
-    public function setSubject($select)
-    {
-        $this->subject = $select;
-    }
-
     /**
      * @see \Zend\Db\Sql\Select::renderTable
      */
@@ -38,118 +23,72 @@ class SelectBuilder extends Select implements PlatformDecoratorInterface
         return $table . ($alias ? ' ' . $alias : '');
     }
 
-    protected function localizeVariables()
+    protected function build_Limit(Select $sqlObject, Context $context)
     {
-        parent::localizeVariables();
-        unset($this->specifications[self::LIMIT]);
-        unset($this->specifications[self::OFFSET]);
-
-        $this->specifications['LIMITOFFSET'] = null;
+        return;
     }
 
-    /**
-     * @param PlatformInterface $platform
-     * @param DriverInterface $driver
-     * @param ParameterContainer $parameterContainer
-     * @param array $sqls
-     * @param array $parameters
-     * @return null
-     */
-    protected function processLimitOffset(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null,
-        &$sqls = [],
-        &$parameters = []
-    ) {
-        if ($this->limit === null && $this->offset === null) {
+    protected function build_Offset(Select $sqlObject, Context $context, &$sqls = null, &$parameters = null)
+    {
+        $LIMIT = $sqlObject->limit;
+        $OFFSET = $sqlObject->offset;
+        if ($LIMIT === null && $OFFSET === null) {
             return;
         }
 
-        $selectParameters = $parameters[self::SELECT];
-        $starSuffix = $platform->getIdentifierSeparator() . self::SQL_STAR;
+        $selectParameters = $parameters[self::SPECIFICATION_SELECT];
 
+        $starSuffix = $context->getPlatform()->getIdentifierSeparator() . Select::SQL_STAR;
         foreach ($selectParameters[0] as $i => $columnParameters) {
-            if ($columnParameters[0] == self::SQL_STAR
-                || (isset($columnParameters[1]) && $columnParameters[1] == self::SQL_STAR)
-                || strpos($columnParameters[0], $starSuffix)
-            ) {
-                $selectParameters[0] = [[self::SQL_STAR]];
+            if ($columnParameters[0] == Select::SQL_STAR || (isset($columnParameters[1]) && $columnParameters[1] == Select::SQL_STAR) || strpos($columnParameters[0], $starSuffix)) {
+                $selectParameters[0] = [[Select::SQL_STAR]];
                 break;
             }
-
             if (isset($columnParameters[1])) {
                 array_shift($columnParameters);
                 $selectParameters[0][$i] = $columnParameters;
             }
         }
 
-        if ($this->offset === null) {
-            $this->offset = 0;
+        if ($OFFSET === null) {
+            $OFFSET = 0;
         }
 
         // first, produce column list without compound names (using the AS portion only)
-        array_unshift($sqls, $this->createSqlFromSpecificationAndParameters([
-            'SELECT %1$s FROM (SELECT b.%1$s, rownum b_rownum FROM (' => current($this->specifications[self::SELECT]),
-        ], $selectParameters));
+        array_unshift($sqls, $this->createSqlFromSpecificationAndParameters(
+            ['SELECT %1$s FROM (SELECT b.%1$s, rownum b_rownum FROM (' => current($this->specifications[self::SPECIFICATION_SELECT])], $selectParameters
+        ));
 
-        if ($parameterContainer) {
-            $number = $this->processInfo['subselectCount'] ? $this->processInfo['subselectCount'] : '';
-
-            if ($this->limit === null) {
-                array_push(
-                    $sqls,
-                    ') b ) WHERE b_rownum > (:offset' . $number . ')'
-                );
-                $parameterContainer->offsetSet(
-                    'offset' . $number,
-                    $this->offset,
-                    $parameterContainer::TYPE_INTEGER
-                );
+        if ($context->getParameterContainer()) {
+            $parameterContainer = $context->getParameterContainer();
+            if ($LIMIT === null) {
+                array_push($sqls, ') b ) WHERE b_rownum > (:offset)');
+                $parameterContainer->offsetSet('offset', $OFFSET, $parameterContainer::TYPE_INTEGER);
             } else {
                 // create bottom part of query, with offset and limit using row_number
-                array_push(
-                    $sqls,
-                    ') b WHERE rownum <= (:offset'
-                    . $number
-                    . '+:limit'
-                    . $number
-                    . ')) WHERE b_rownum >= (:offset'
-                    . $number
-                    . ' + 1)'
-                );
-                $parameterContainer->offsetSet(
-                    'offset' . $number,
-                    $this->offset,
-                    $parameterContainer::TYPE_INTEGER
-                );
-                $parameterContainer->offsetSet(
-                    'limit' . $number,
-                    $this->limit,
-                    $parameterContainer::TYPE_INTEGER
-                );
+                array_push($sqls, ') b WHERE rownum <= (:offset+:limit)) WHERE b_rownum >= (:offset + 1)');
+                $parameterContainer->offsetSet('offset', $OFFSET, $parameterContainer::TYPE_INTEGER);
+                $parameterContainer->offsetSet('limit', $LIMIT, $parameterContainer::TYPE_INTEGER);
             }
-            $this->processInfo['subselectCount']++;
         } else {
-            if ($this->limit === null) {
-                array_push($sqls, ') b ) WHERE b_rownum > (' . (int) $this->offset . ')');
+            if ($LIMIT === null) {
+                array_push($sqls, ') b ) WHERE b_rownum > ('. (int) $OFFSET. ')'
+                );
             } else {
-                array_push(
-                    $sqls,
-                    ') b WHERE rownum <= ('
-                    . (int) $this->offset
-                    . '+'
-                    . (int) $this->limit
-                    . ')) WHERE b_rownum >= ('
-                    . (int) $this->offset
-                    . ' + 1)'
+                array_push($sqls, ') b WHERE rownum <= ('
+                        . (int) $OFFSET
+                        . '+'
+                        . (int) $LIMIT
+                        . ')) WHERE b_rownum >= ('
+                        . (int) $OFFSET
+                        . ' + 1)'
                 );
             }
         }
 
-        $sqls[self::SELECT] = $this->createSqlFromSpecificationAndParameters(
-            $this->specifications[self::SELECT],
-            $parameters[self::SELECT]
+        $sqls[self::SPECIFICATION_SELECT] = $this->createSqlFromSpecificationAndParameters(
+            $this->specifications[self::SPECIFICATION_SELECT],
+            $parameters[self::SPECIFICATION_SELECT]
         );
     }
 }

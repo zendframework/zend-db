@@ -13,12 +13,9 @@ use Zend\Db\Sql\Ddl\DropTable;
 
 class DropTableTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @covers Zend\Db\Sql\Ddl\DropTable::getSqlString
-     */
-    public function testGetSqlString()
+    public function testObjectConstruction()
     {
-        $dt = new DropTable('foo');
-        $this->assertEquals('DROP TABLE "foo"', $dt->getSqlString());
+        $ct = new DropTable('foo');
+        $this->assertEquals('foo', $ct->table);
     }
 }

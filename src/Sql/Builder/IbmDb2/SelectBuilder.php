@@ -9,48 +9,12 @@
 
 namespace Zend\Db\Sql\Builder\IbmDb2;
 
-use Zend\Db\Adapter\Driver\DriverInterface;
-use Zend\Db\Adapter\ParameterContainer;
-use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Sql\Builder\PlatformDecoratorInterface;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Builder\sql92\SelectBuilder as BaseBuilder;
+use Zend\Db\Sql\Builder\Context;
 
-class SelectBuilder extends Select implements PlatformDecoratorInterface
+class SelectBuilder extends BaseBuilder
 {
-    /**
-     * @var bool
-     */
-    protected $isSelectContainDistinct= false;
-
-    /**
-     * @var Select
-     */
-    protected $subject = null;
-
-    /**
-     * @return bool
-     */
-    public function getIsSelectContainDistinct()
-    {
-        return $this->isSelectContainDistinct;
-    }
-
-    /**
-     * @param boolean $isSelectContainDistinct
-     */
-    public function setIsSelectContainDistinct($isSelectContainDistinct)
-    {
-        $this->isSelectContainDistinct = $isSelectContainDistinct;
-    }
-
-    /**
-     * @param Select $select
-     */
-    public function setSubject($select)
-    {
-        $this->subject = $select;
-    }
-
     /**
      * @see Select::renderTable
      */
@@ -59,38 +23,28 @@ class SelectBuilder extends Select implements PlatformDecoratorInterface
         return $table . ' ' . $alias;
     }
 
-    protected function localizeVariables()
+    protected function build_Limit(Select $sqlObject, Context $context)
     {
-        parent::localizeVariables();
-        // set specifications
-        unset($this->specifications[self::LIMIT]);
-        unset($this->specifications[self::OFFSET]);
-
-        $this->specifications['LIMITOFFSET'] = null;
+        return;
     }
 
-    /**
-     * @param  PlatformInterface  $platform
-     * @param  DriverInterface    $driver
-     * @param  ParameterContainer $parameterContainer
-     * @param  array              $sqls
-     * @param  array              $parameters
-     */
-    protected function processLimitOffset(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null, &$sqls, &$parameters)
+    protected function build_Offset(Select $sqlObject, Context $context, &$sqls = null, &$parameters = null)
     {
-        if ($this->limit === null && $this->offset === null) {
+        $LIMIT = $sqlObject->limit;
+        $OFFSET = $sqlObject->offset;
+        if ($LIMIT === null && $OFFSET === null) {
             return;
         }
 
-        $selectParameters = $parameters[self::SELECT];
+        $selectParameters = $parameters[self::SPECIFICATION_SELECT];
 
-        $starSuffix = $platform->getIdentifierSeparator() . self::SQL_STAR;
+        $starSuffix = $context->getPlatform()->getIdentifierSeparator() . Select::SQL_STAR;
         foreach ($selectParameters[0] as $i => $columnParameters) {
-            if ($columnParameters[0] == self::SQL_STAR
-                || (isset($columnParameters[1]) && $columnParameters[1] == self::SQL_STAR)
+            if ($columnParameters[0] == Select::SQL_STAR
+                || (isset($columnParameters[1]) && $columnParameters[1] == Select::SQL_STAR)
                 || strpos($columnParameters[0], $starSuffix)
             ) {
-                $selectParameters[0] = [[self::SQL_STAR]];
+                $selectParameters[0] = [[Select::SQL_STAR]];
                 break;
             }
 
@@ -102,63 +56,42 @@ class SelectBuilder extends Select implements PlatformDecoratorInterface
 
         // first, produce column list without compound names (using the AS portion only)
         array_unshift($sqls, $this->createSqlFromSpecificationAndParameters(
-            ['SELECT %1$s FROM (' => current($this->specifications[self::SELECT])],
+            ['SELECT %1$s FROM (' => current($this->specifications[self::SPECIFICATION_SELECT])],
             $selectParameters
         ));
 
-        if (preg_match('/DISTINCT/i', $sqls[0])) {
-            $this->setIsSelectContainDistinct(true);
+        $offset = ((int) $OFFSET > 0) ? (int) $OFFSET + 1 : (int) $OFFSET;
+        $limit  = (int) $LIMIT + (int) $OFFSET;
+
+        if ($context->getParameterContainer()) {
+            $context->getParameterContainer()->offsetSet('offset', $offset);
+            $context->getParameterContainer()->offsetSet('limit', $limit);
+
+            $limit  = $context->getDriver()->formatParameterName('limit');
+            $offset = $context->getDriver()->formatParameterName('offset');
         }
 
-        if ($parameterContainer) {
-            // create bottom part of query, with offset and limit using row_number
-            $limitParamName        = $driver->formatParameterName('limit');
-            $offsetParamName       = $driver->formatParameterName('offset');
+        array_push($sqls, sprintf(
+            ") AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN %s AND %s",
+            $offset,
+            $limit
+        ));
 
-            array_push($sqls, sprintf(
-                ") AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN %s AND %s",
-                $offsetParamName,
-                $limitParamName
-            ));
-
-            if ((int) $this->offset > 0) {
-                $parameterContainer->offsetSet('offset', (int) $this->offset + 1);
-            } else {
-                $parameterContainer->offsetSet('offset', (int) $this->offset);
-            }
-
-            $parameterContainer->offsetSet('limit', (int) $this->limit + (int) $this->offset);
-        } else {
-            if ((int) $this->offset > 0) {
-                $offset = (int) $this->offset + 1;
-            } else {
-                $offset = (int) $this->offset;
-            }
-
-            array_push($sqls, sprintf(
-                ") AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN %d AND %d",
-                $offset,
-                (int) $this->limit + (int) $this->offset
-            ));
-        }
-
-        if (isset($sqls[self::ORDER])) {
-            $orderBy = $sqls[self::ORDER];
-            unset($sqls[self::ORDER]);
+        if (isset($sqls[self::SPECIFICATION_ORDER])) {
+            $orderBy = $sqls[self::SPECIFICATION_ORDER];
+            unset($sqls[self::SPECIFICATION_ORDER]);
         } else {
             $orderBy = '';
         }
 
         // add a column for row_number() using the order specification //dense_rank()
-        if ($this->getIsSelectContainDistinct()) {
-            $parameters[self::SELECT][0][] = ['DENSE_RANK() OVER (' . $orderBy . ')', 'ZEND_DB_ROWNUM'];
-        } else {
-            $parameters[self::SELECT][0][] = ['ROW_NUMBER() OVER (' . $orderBy . ')', 'ZEND_DB_ROWNUM'];
-        }
+        $parameters[self::SPECIFICATION_SELECT][0][] = (preg_match('/DISTINCT/i', $sqls[0]))
+                ? ['DENSE_RANK() OVER (' . $orderBy . ')', 'ZEND_DB_ROWNUM']
+                : ['ROW_NUMBER() OVER (' . $orderBy . ')', 'ZEND_DB_ROWNUM'];
 
-        $sqls[self::SELECT] = $this->createSqlFromSpecificationAndParameters(
-            $this->specifications[self::SELECT],
-            $parameters[self::SELECT]
+        $sqls[self::SPECIFICATION_SELECT] = $this->createSqlFromSpecificationAndParameters(
+            $this->specifications[self::SPECIFICATION_SELECT],
+            $parameters[self::SPECIFICATION_SELECT]
         );
     }
 }

@@ -9,32 +9,28 @@
 
 namespace Zend\Db\Sql;
 
-use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Adapter\Driver\DriverInterface;
-use Zend\Db\Adapter\ParameterContainer;
-
 /**
  * Combine SQL statement - allows combining multiple select statements into one
+ *
+ * @property array $columns
+ * @property SelectableInterface[][] $combine
  */
-class Combine extends AbstractPreparableSqlObject
+class Combine extends AbstractSqlObject implements PreparableSqlObjectInterface, SelectableInterface
 {
-    const COLUMNS = 'columns';
-    const COMBINE = 'combine';
     const COMBINE_UNION = 'union';
     const COMBINE_EXCEPT = 'except';
     const COMBINE_INTERSECT = 'intersect';
 
-    /**
-     * @var string[]
-     */
-    protected $specifications = [
-        self::COMBINE => '%1$s (%2$s) ',
-    ];
 
     /**
-     * @var Select[][]
+     * @var SelectableInterface[][]
      */
-    private $combine = [];
+    protected $combine = [];
+
+    protected $__getProperties = [
+        'combine',
+        'columns'
+    ];
 
     /**
      * @param Select|array|null $select
@@ -43,6 +39,7 @@ class Combine extends AbstractPreparableSqlObject
      */
     public function __construct($select = null, $type = self::COMBINE_UNION, $modifier = '')
     {
+        parent::__construct();
         if ($select) {
             $this->combine($select, $type, $modifier);
         }
@@ -51,7 +48,7 @@ class Combine extends AbstractPreparableSqlObject
     /**
      * Create combine clause
      *
-     * @param Select|array $select
+     * @param SelectableInterface|array $select
      * @param string $type
      * @param string $modifier
      *
@@ -61,7 +58,7 @@ class Combine extends AbstractPreparableSqlObject
     {
         if (is_array($select)) {
             foreach ($select as $combine) {
-                if ($combine instanceof Select) {
+                if ($combine instanceof SelectableInterface) {
                     $combine = [$combine];
                 }
 
@@ -74,7 +71,7 @@ class Combine extends AbstractPreparableSqlObject
             return $this;
         }
 
-        if (! $select instanceof Select) {
+        if (! $select instanceof SelectableInterface) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '$select must be a array or instance of Select, "%s" given',
                 is_object($select) ? get_class($select) : gettype($select)
@@ -92,7 +89,7 @@ class Combine extends AbstractPreparableSqlObject
     /**
      * Create union clause
      *
-     * @param Select|array $select
+     * @param SelectableInterface|array $select
      * @param string       $modifier
      *
      * @return self
@@ -105,7 +102,7 @@ class Combine extends AbstractPreparableSqlObject
     /**
      * Create except clause
      *
-     * @param Select|array $select
+     * @param SelectableInterface|array $select
      * @param string       $modifier
      *
      * @return self
@@ -118,43 +115,13 @@ class Combine extends AbstractPreparableSqlObject
     /**
      * Create intersect clause
      *
-     * @param Select|array $select
+     * @param SelectableInterface|array $select
      * @param string $modifier
      * @return self
      */
     public function intersect($select, $modifier = '')
     {
         return $this->combine($select, self::COMBINE_INTERSECT, $modifier);
-    }
-
-    /**
-     * Build sql string
-     *
-     * @param PlatformInterface  $platform
-     * @param DriverInterface    $driver
-     * @param ParameterContainer $parameterContainer
-     *
-     * @return string
-     */
-    protected function buildSqlString(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
-        if (!$this->combine) {
-            return;
-        }
-
-        $sql = '';
-        foreach ($this->combine as $i => $combine) {
-            $type = $i == 0
-                    ? ''
-                    : strtoupper($combine['type'] . ($combine['modifier'] ? ' ' . $combine['modifier'] : ''));
-            $select = $this->processSubSelect($combine['select'], $platform, $driver, $parameterContainer);
-            $sql .= sprintf(
-                $this->specifications[self::COMBINE],
-                $type,
-                $select
-            );
-        }
-        return trim($sql, ' ');
     }
 
     /**
@@ -170,12 +137,12 @@ class Combine extends AbstractPreparableSqlObject
         foreach ($this->combine as $combine) {
             $allColumns = array_merge(
                 $allColumns,
-                $combine['select']->getRawState(self::COLUMNS)
+                $combine['select']->columns
             );
         }
 
         foreach ($this->combine as $combine) {
-            $combineColumns = $combine['select']->getRawState(self::COLUMNS);
+            $combineColumns = $combine['select']->columns;
             $aligned = [];
             foreach ($allColumns as $alias => $column) {
                 $aligned[$alias] = isset($combineColumns[$alias])
@@ -187,21 +154,13 @@ class Combine extends AbstractPreparableSqlObject
         return $this;
     }
 
-    /**
-     * Get raw state
-     *
-     * @param string $key
-     *
-     * @return array
-     */
-    public function getRawState($key = null)
+    public function __get($name)
     {
-        $rawState = [
-            self::COMBINE => $this->combine,
-            self::COLUMNS => $this->combine
-                                ? $this->combine[0]['select']->getRawState(self::COLUMNS)
-                                : [],
-        ];
-        return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
+        if ($name == 'columns') {
+            return $this->combine
+                    ? $this->combine[0]['select']->columns
+                    : [];
+        }
+        return parent::__get($name);
     }
 }

@@ -9,50 +9,26 @@
 
 namespace Zend\Db\Sql;
 
-use Zend\Db\Adapter\ParameterContainer;
-use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Adapter\Driver\DriverInterface;
-
 /**
- *
+ * @property null|string|array|TableIdentifier $table
  * @property Where $where
  */
-class Delete extends AbstractPreparableSqlObject
+class Delete extends AbstractSqlObject implements PreparableSqlObjectInterface
 {
-    /**@#+
-     * @const
-     */
-    const SPECIFICATION_DELETE = 'delete';
-    const SPECIFICATION_WHERE = 'where';
-    /**@#-*/
-
-    /**
-     * {@inheritDoc}
-     */
-    protected $specifications = [
-        self::SPECIFICATION_DELETE => 'DELETE FROM %1$s',
-        self::SPECIFICATION_WHERE => 'WHERE %1$s'
-    ];
-
     /**
      * @var string|TableIdentifier
      */
     protected $table = '';
 
     /**
-     * @var bool
-     */
-    protected $emptyWhereProtection = true;
-
-    /**
-     * @var array
-     */
-    protected $set = [];
-
-    /**
      * @var null|string|Where
      */
     protected $where = null;
+
+    protected $__getProperties = [
+        'table',
+        'where',
+    ];
 
     /**
      * Constructor
@@ -61,6 +37,7 @@ class Delete extends AbstractPreparableSqlObject
      */
     public function __construct($table = null)
     {
+        parent::__construct();
         if ($table) {
             $this->from($table);
         }
@@ -80,22 +57,6 @@ class Delete extends AbstractPreparableSqlObject
     }
 
     /**
-     * @param null $key
-     *
-     * @return mixed
-     */
-    public function getRawState($key = null)
-    {
-        $rawState = [
-            'emptyWhereProtection' => $this->emptyWhereProtection,
-            'table' => $this->table,
-            'set' => $this->set,
-            'where' => $this->where
-        ];
-        return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
-    }
-
-    /**
      * Create where clause
      *
      * @param  Where|\Closure|string|array $predicate
@@ -111,56 +72,5 @@ class Delete extends AbstractPreparableSqlObject
             $this->where->addPredicates($predicate, $combination);
         }
         return $this;
-    }
-
-    /**
-     * @param PlatformInterface       $platform
-     * @param DriverInterface|null    $driver
-     * @param ParameterContainer|null $parameterContainer
-     *
-     * @return string
-     */
-    protected function processDelete(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_DELETE],
-            $this->resolveTable($this->table, $platform, $driver, $parameterContainer)
-        );
-    }
-
-    /**
-     * @param PlatformInterface       $platform
-     * @param DriverInterface|null    $driver
-     * @param ParameterContainer|null $parameterContainer
-     *
-     * @return null|string
-     */
-    protected function processWhere(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
-        if ($this->where->count() == 0) {
-            return;
-        }
-
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_WHERE],
-            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where')
-        );
-    }
-
-    /**
-     * Property overloading
-     *
-     * Overloads "where" only.
-     *
-     * @param  string $name
-     *
-     * @return Where|null
-     */
-    public function __get($name)
-    {
-        switch (strtolower($name)) {
-            case 'where':
-                return $this->where;
-        }
     }
 }

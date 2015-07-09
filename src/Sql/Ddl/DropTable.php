@@ -9,35 +9,28 @@
 
 namespace Zend\Db\Sql\Ddl;
 
-use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\AbstractSqlObject;
 
-class DropTable extends AbstractSqlObject implements SqlObjectInterface
+/**
+ * @property null|string|array|TableIdentifier $table
+ */
+class DropTable extends AbstractSqlObject
 {
-    const TABLE = 'table';
-
-    /**
-     * @var array
-     */
-    protected $specifications = [
-        self::TABLE => 'DROP TABLE %1$s'
-    ];
-
     /**
      * @var string
      */
     protected $table = '';
+
+    protected $__getProperties = [
+        'table',
+    ];
 
     /**
      * @param string $table
      */
     public function __construct($table = '')
     {
+        parent::__construct();
         $this->table = $table;
-    }
-
-    protected function processTable(PlatformInterface $adapterPlatform = null)
-    {
-        return [$adapterPlatform->quoteIdentifier($this->table)];
     }
 }

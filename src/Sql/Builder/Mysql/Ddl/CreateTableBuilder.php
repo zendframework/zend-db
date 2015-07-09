@@ -9,17 +9,12 @@
 
 namespace Zend\Db\Sql\Builder\Mysql\Ddl;
 
-use Zend\Db\Adapter\Platform\PlatformInterface;
+use Zend\Db\Sql\Builder\sql92\Ddl\CreateTableBuilder as BaseBuilder;
+use Zend\Db\Sql\Builder\Context;
 use Zend\Db\Sql\Ddl\CreateTable;
-use Zend\Db\Sql\Builder\PlatformDecoratorInterface;
 
-class CreateTableBuilder extends CreateTable implements PlatformDecoratorInterface
+class CreateTableBuilder extends BaseBuilder
 {
-    /**
-     * @var CreateTable
-     */
-    protected $subject;
-
     /**
      * @var int[]
      */
@@ -34,18 +29,6 @@ class CreateTableBuilder extends CreateTable implements PlatformDecoratorInterfa
         'format'        => 4,
         'storage'       => 5,
     ];
-
-    /**
-     * @param CreateTable $subject
-     *
-     * @return self
-     */
-    public function setSubject($subject)
-    {
-        $this->subject = $subject;
-
-        return $this;
-    }
 
     /**
      * @param string $sql
@@ -84,16 +67,17 @@ class CreateTableBuilder extends CreateTable implements PlatformDecoratorInterfa
     /**
      * {@inheritDoc}
      */
-    protected function processColumns(PlatformInterface $platform = null)
+    protected function build_Columns(CreateTable $sqlObject, Context $context)
     {
-        if (! $this->columns) {
+        $COLUMNS = $sqlObject->columns;
+        if (! $COLUMNS) {
             return;
         }
 
         $sqls = [];
 
-        foreach ($this->columns as $i => $column) {
-            $sql           = $this->processExpression($column, $platform);
+        foreach ($COLUMNS as $i => $column) {
+            $sql           = $this->buildSqlString($column, $context);
             $insertStart   = $this->getSqlInsertOffsets($sql);
             $columnOptions = $column->getOptions();
 
@@ -122,7 +106,7 @@ class CreateTableBuilder extends CreateTable implements PlatformDecoratorInterfa
                         $j = 1;
                         break;
                     case 'comment':
-                        $insert = ' COMMENT ' . $platform->quoteValue($coValue);
+                        $insert = ' COMMENT ' . $context->getPlatform()->quoteValue($coValue);
                         $j = 2;
                         break;
                     case 'columnformat':

@@ -47,8 +47,8 @@ class SequenceFeature extends AbstractFeature
      */
     public function preInsert(Insert $insert)
     {
-        $columns = $insert->getRawState('columns');
-        $values = $insert->getRawState('values');
+        $columns = $insert->columns;
+        $values = $insert->values;
         $key = array_search($this->primaryKeyField, $columns);
         if ($key !== false) {
             $this->sequenceValue = $values[$key];

@@ -10,19 +10,26 @@
 namespace ZendTest\Db\Sql\Builder;
 
 use Zend\Db\Sql;
-use Zend\Db\Adapter;
-use ZendTest\Db\TestAsset;
 
-/**
- * @method \Zend\Db\Sql\Select select(null|string $table)
- * @method \Zend\Db\Sql\Update update(null|string $table)
- * @method \Zend\Db\Sql\Delete delete(null|string $table)
- * @method \Zend\Db\Sql\Insert insert(null|string $table)
- * @method \Zend\Db\Sql\Ddl\CreateTable createTable(null|string $table)
- * @method \Zend\Db\Sql\Ddl\Column\Column createColumn(null|string $name)
- */
-class AllBuildersTest extends \PHPUnit_Framework_TestCase
+class AllBuildersTest extends AbstractTestCase
 {
+    /**
+     * @param type $data
+     * @dataProvider dataProvider
+     */
+    public function test($sqlObject, $platform, $expected)
+    {
+        $this->assertBuilder($sqlObject, $platform, $expected);
+    }
+
+    public function dataProvider()
+    {
+        return $this->prepareDataProvider(
+            $this->dataProvider_CommonProcessMethods(),
+            $this->dataProvider_Builders()
+        );
+    }
+
     protected function dataProvider_CommonProcessMethods()
     {
         return [
@@ -131,22 +138,22 @@ class AllBuildersTest extends \PHPUnit_Framework_TestCase
                     'sql92' => [
                         'string'     => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = \'10\') AS "b" ON "d"="e" WHERE "x" = \'20\'',
                         'prepare'    => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = ?) AS "b" ON "d"="e" WHERE "x" = ?',
-                        'parameters' => ['subselect1where1'=>10, 'where1'=>20],
+                        'parameters' => ['subselect1expr1'=>10, 'expr1'=>20],
                     ],
                     'MySql' => [
                         'string'     => 'SELECT `a`.*, `b`.* FROM `a` INNER JOIN (SELECT `c`.* FROM `c` WHERE `cc` = \'10\') AS `b` ON `d`=`e` WHERE `x` = \'20\'',
                         'prepare'    => 'SELECT `a`.*, `b`.* FROM `a` INNER JOIN (SELECT `c`.* FROM `c` WHERE `cc` = ?) AS `b` ON `d`=`e` WHERE `x` = ?',
-                        'parameters' => ['subselect2where1'=>10, 'where2'=>20],
+                        'parameters' => ['subselect1expr1'=>10, 'expr1'=>20],
                     ],
                     'Oracle' => [
                         'string'     => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = \'10\') "b" ON "d"="e" WHERE "x" = \'20\'',
                         'prepare'    => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = ?) "b" ON "d"="e" WHERE "x" = ?',
-                        'parameters' => ['subselect2where1'=>10, 'where2'=>20],
+                        'parameters' => ['subselect1expr1'=>10, 'expr1'=>20],
                     ],
                     'SqlServer' => [
                         'string'     => 'SELECT [a].*, [b].* FROM [a] INNER JOIN (SELECT [c].* FROM [c] WHERE [cc] = \'10\') AS [b] ON [d]=[e] WHERE [x] = \'20\'',
                         'prepare'    => 'SELECT [a].*, [b].* FROM [a] INNER JOIN (SELECT [c].* FROM [c] WHERE [cc] = ?) AS [b] ON [d]=[e] WHERE [x] = ?',
-                        'parameters' => ['subselect2where1'=>10, 'where2'=>20],
+                        'parameters' => ['subselect1expr1'=>10, 'expr1'=>20],
                     ],
                 ],
             ],
@@ -176,22 +183,22 @@ class AllBuildersTest extends \PHPUnit_Framework_TestCase
                     'sql92' => [
                         'string'     => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = \'CC\') AS "b" WHERE "bb" = \'BB\') AS "a" WHERE "aa" = \'AA\'',
                         'prepare'    => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = ?) AS "b" WHERE "bb" = ?) AS "a" WHERE "aa" = ?',
-                        'parameters' => ['subselect2where1' => 'CC', 'subselect1where1' => 'BB', 'where1' => 'AA'],
+                        'parameters' => ['subselect2expr1' => 'CC', 'subselect1expr1' => 'BB', 'expr1' => 'AA'],
                     ],
                     'MySql' => [
                         'string'     => 'SELECT `a`.* FROM (SELECT `b`.* FROM (SELECT `c`.* FROM `c` WHERE `cc` = \'CC\') AS `b` WHERE `bb` = \'BB\') AS `a` WHERE `aa` = \'AA\'',
                         'prepare'    => 'SELECT `a`.* FROM (SELECT `b`.* FROM (SELECT `c`.* FROM `c` WHERE `cc` = ?) AS `b` WHERE `bb` = ?) AS `a` WHERE `aa` = ?',
-                        'parameters' => ['subselect4where1' => 'CC', 'subselect3where1' => 'BB', 'where2' => 'AA'],
+                        'parameters' => ['subselect2expr1' => 'CC', 'subselect1expr1' => 'BB', 'expr1' => 'AA'],
                     ],
                     'Oracle' => [
                         'string'     => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = \'CC\') "b" WHERE "bb" = \'BB\') "a" WHERE "aa" = \'AA\'',
                         'prepare'    => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = ?) "b" WHERE "bb" = ?) "a" WHERE "aa" = ?',
-                        'parameters' => ['subselect4where1' => 'CC', 'subselect3where1' => 'BB', 'where2' => 'AA'],
+                        'parameters' => ['subselect2expr1' => 'CC', 'subselect1expr1' => 'BB', 'expr1' => 'AA'],
                     ],
                     'SqlServer' => [
                         'string'     => 'SELECT [a].* FROM (SELECT [b].* FROM (SELECT [c].* FROM [c] WHERE [cc] = \'CC\') AS [b] WHERE [bb] = \'BB\') AS [a] WHERE [aa] = \'AA\'',
                         'prepare'    => 'SELECT [a].* FROM (SELECT [b].* FROM (SELECT [c].* FROM [c] WHERE [cc] = ?) AS [b] WHERE [bb] = ?) AS [a] WHERE [aa] = ?',
-                        'parameters' => ['subselect4where1' => 'CC', 'subselect3where1' => 'BB', 'where2' => 'AA'],
+                        'parameters' => ['subselect2expr1' => 'CC', 'subselect1expr1' => 'BB', 'expr1' => 'AA'],
                     ],
                 ],
             ],
@@ -201,22 +208,22 @@ class AllBuildersTest extends \PHPUnit_Framework_TestCase
                     'sql92'     => [
                         'string'     => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
                         'prepare'    => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
-                        'parameters' => ['subselect1where1' => 'y'],
+                        'parameters' => ['subselect1expr1' => 'y'],
                     ],
                     'MySql'     => [
                         'string'     => 'DELETE FROM `foo` WHERE `x` = (SELECT `foo`.* FROM `foo` WHERE `x` = \'y\')',
                         'prepare'    => 'DELETE FROM `foo` WHERE `x` = (SELECT `foo`.* FROM `foo` WHERE `x` = ?)',
-                        'parameters' => ['subselect2where1' => 'y'],
+                        'parameters' => ['subselect1expr1' => 'y'],
                     ],
                     'Oracle'    => [
                         'string'     => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
                         'prepare'    => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
-                        'parameters' => ['subselect3where1' => 'y'],
+                        'parameters' => ['subselect1expr1' => 'y'],
                     ],
                     'SqlServer' => [
                         'string'     => 'DELETE FROM [foo] WHERE [x] = (SELECT [foo].* FROM [foo] WHERE [x] = \'y\')',
                         'prepare'    => 'DELETE FROM [foo] WHERE [x] = (SELECT [foo].* FROM [foo] WHERE [x] = ?)',
-                        'parameters' => ['subselect4where1' => 'y'],
+                        'parameters' => ['subselect1expr1' => 'y'],
                     ],
                 ],
             ],
@@ -235,22 +242,22 @@ class AllBuildersTest extends \PHPUnit_Framework_TestCase
                     'sql92'     => [
                         'string'     => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = \'y\'',
                         'prepare'    => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = ?',
-                        'parameters' => ['subselect1where1' => 'y'],
+                        'parameters' => ['subselect1expr1' => 'y'],
                     ],
                     'MySql'     => [
                         'string'     => 'INSERT INTO `foo`  SELECT `foo`.* FROM `foo` WHERE `x` = \'y\'',
                         'prepare'    => 'INSERT INTO `foo`  SELECT `foo`.* FROM `foo` WHERE `x` = ?',
-                        'parameters' => ['subselect2where1' => 'y'],
+                        'parameters' => ['subselect1expr1' => 'y'],
                     ],
                     'Oracle'    => [
                         'string'     => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = \'y\'',
                         'prepare'    => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = ?',
-                        'parameters' => ['subselect3where1' => 'y'],
+                        'parameters' => ['subselect1expr1' => 'y'],
                     ],
                     'SqlServer' => [
                         'string'     => 'INSERT INTO [foo]  SELECT [foo].* FROM [foo] WHERE [x] = \'y\'',
                         'prepare'    => 'INSERT INTO [foo]  SELECT [foo].* FROM [foo] WHERE [x] = ?',
-                        'parameters' => ['subselect4where1' => 'y'],
+                        'parameters' => ['subselect1expr1' => 'y'],
                     ],
                 ],
             ],
@@ -260,26 +267,26 @@ class AllBuildersTest extends \PHPUnit_Framework_TestCase
                     'sql92'     => [
                         'string'     => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
                         'prepare'    => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
-                        'parameters' => ['subselect1where1' => 'y'],
+                        'parameters' => ['subselect1expr1' => 'y'],
                     ],
                     'MySql'     => [
                         'string'     => 'UPDATE `foo` SET `x` = (SELECT `foo`.* FROM `foo` WHERE `x` = \'y\')',
                         'prepare'    => 'UPDATE `foo` SET `x` = (SELECT `foo`.* FROM `foo` WHERE `x` = ?)',
-                        'parameters' => ['subselect2where1' => 'y'],
+                        'parameters' => ['subselect1expr1' => 'y'],
                     ],
                     'Oracle'    => [
                         'string'     => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
                         'prepare'    => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
-                        'parameters' => ['subselect3where1' => 'y'],
+                        'parameters' => ['subselect1expr1' => 'y'],
                     ],
                     'SqlServer' => [
                         'string'     => 'UPDATE [foo] SET [x] = (SELECT [foo].* FROM [foo] WHERE [x] = \'y\')',
                         'prepare'    => 'UPDATE [foo] SET [x] = (SELECT [foo].* FROM [foo] WHERE [x] = ?)',
-                        'parameters' => ['subselect4where1' => 'y'],
+                        'parameters' => ['subselect1expr1' => 'y'],
                     ],
                 ],
             ],
-            'Update::processJoins()' => [
+            'Update::processJoins()_1' => [
                 'sqlObject' => $this->update('foo')->set(['x' => 'y'])->where(['xx' => 'yy'])->join(
                     'bar',
                     'bar.barId = foo.barId'
@@ -299,6 +306,33 @@ class AllBuildersTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
             ],
+            'Update::processJoins()_2' => [
+                'sqlObject' => $this->update('Document')->set(['x' => 'y'])
+                                    ->join(
+                                        'User', // table name
+                                        'User.UserId = Document.UserId' // expression to join on (will be quoted by platform object before insertion),
+                                        // default JOIN INNER
+                                    )
+                                    ->join(
+                                        'Category',
+                                        'Category.CategoryId = Document.CategoryId',
+                                        Sql\Join::JOIN_LEFT // (optional), one of inner, outer, left, right
+                                    ),
+                'expected'  => [
+                    'sql92'     => [
+                        'string' => 'UPDATE "Document" INNER JOIN "User" ON "User"."UserId" = "Document"."UserId" LEFT JOIN "Category" ON "Category"."CategoryId" = "Document"."CategoryId" SET "x" = \'y\'',
+                    ],
+                    'MySql'     => [
+                        'string' => 'UPDATE `Document` INNER JOIN `User` ON `User`.`UserId` = `Document`.`UserId` LEFT JOIN `Category` ON `Category`.`CategoryId` = `Document`.`CategoryId` SET `x` = \'y\'',
+                    ],
+                    'Oracle'     => [
+                        'string' => 'UPDATE "Document" INNER JOIN "User" ON "User"."UserId" = "Document"."UserId" LEFT JOIN "Category" ON "Category"."CategoryId" = "Document"."CategoryId" SET "x" = \'y\'',
+                    ],
+                    'SqlServer' => [
+                        'string' => 'UPDATE [Document] INNER JOIN [User] ON [User].[UserId] = [Document].[UserId] LEFT JOIN [Category] ON [Category].[CategoryId] = [Document].[CategoryId] SET [x] = \'y\'',
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -310,59 +344,58 @@ class AllBuildersTest extends \PHPUnit_Framework_TestCase
                 'expected'  => [
                     'sql92'     => [
                         'decorators' => [
-                            'Zend\Db\Sql\Select' => new TestAsset\SelectBuilder,
+                            'Zend\Db\Sql\Select' => 'ZendTest\Db\TestAsset\SelectBuilder',
                         ],
                         'string' => 'SELECT "foo".* FROM "foo" WHERE "x" = (SELECT "bar".* FROM "bar")',
                     ],
                     'MySql'     => [
                         'decorators' => [
-                            'Zend\Db\Sql\Select' => new TestAsset\SelectBuilder,
+                            'Zend\Db\Sql\Select' => 'ZendTest\Db\TestAsset\SelectBuilder',
                         ],
                         'string' => 'SELECT `foo`.* FROM `foo` WHERE `x` = (SELECT `bar`.* FROM `bar`)',
                     ],
                     'Oracle'    => [
                         'decorators' => [
-                            'Zend\Db\Sql\Select' => new TestAsset\SelectBuilder,
+                            'Zend\Db\Sql\Select' => 'ZendTest\Db\TestAsset\SelectBuilder',
                         ],
                         'string' => 'SELECT "foo".* FROM "foo" WHERE "x" = (SELECT "bar".* FROM "bar")',
                     ],
                     'SqlServer' => [
                         'decorators' => [
-                            'Zend\Db\Sql\Select' => new TestAsset\SelectBuilder,
+                            'Zend\Db\Sql\Select' => 'ZendTest\Db\TestAsset\SelectBuilder',
                         ],
                         'string' => 'SELECT [foo].* FROM [foo] WHERE [x] = (SELECT [bar].* FROM [bar])',
                     ],
                 ],
             ],
-            /* TODO - should be implemeted
             'RootDecorators::Insert' => [
                 'sqlObject' => $this->insert('foo')->select($this->select()),
                 'expected'  => [
                     'sql92'     => [
                         'decorators' => [
-                            'Zend\Db\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
-                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Platform\Mysql\SelectBuilder', '{=SELECT_Sql92=}']
+                            'Zend\Db\Sql\Insert' => 'ZendTest\Db\TestAsset\InsertBuilder', // Decorator for root sqlObject
+                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\sql92\SelectBuilder', '{=SELECT_Sql92=}']
                         ],
                         'string' => 'INSERT INTO "foo"  {=SELECT_Sql92=}',
                     ],
                     'MySql'     => [
                         'decorators' => [
-                            'Zend\Db\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
-                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Platform\Mysql\SelectBuilder', '{=SELECT_MySql=}']
+                            'Zend\Db\Sql\Insert' => 'ZendTest\Db\TestAsset\InsertBuilder', // Decorator for root sqlObject
+                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\sql92\SelectBuilder', '{=SELECT_MySql=}']
                         ],
                         'string' => 'INSERT INTO `foo`  {=SELECT_MySql=}',
                     ],
                     'Oracle'    => [
                         'decorators' => [
-                            'Zend\Db\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
-                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Platform\Oracle\SelectBuilder', '{=SELECT_Oracle=}']
+                            'Zend\Db\Sql\Insert' => 'ZendTest\Db\TestAsset\InsertBuilder', // Decorator for root sqlObject
+                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\sql92\SelectBuilder', '{=SELECT_Oracle=}']
                         ],
                         'string' => 'INSERT INTO "foo"  {=SELECT_Oracle=}',
                     ],
                     'SqlServer' => [
                         'decorators' => [
-                            'Zend\Db\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
-                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Platform\SqlServer\SelectBuilder', '{=SELECT_SqlServer=}']
+                            'Zend\Db\Sql\Insert' => 'ZendTest\Db\TestAsset\InsertBuilder', // Decorator for root sqlObject
+                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\sql92\SelectBuilder', '{=SELECT_SqlServer=}']
                         ],
                         'string' => 'INSERT INTO [foo]  {=SELECT_SqlServer=}',
                     ],
@@ -373,29 +406,29 @@ class AllBuildersTest extends \PHPUnit_Framework_TestCase
                 'expected'  => [
                     'sql92'     => [
                         'decorators' => [
-                            'Zend\Db\Sql\Delete' => new TestAsset\DeleteDecorator,
-                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Platform\Mysql\SelectBuilder', '{=SELECT_Sql92=}']
+                            'Zend\Db\Sql\Delete' => 'ZendTest\Db\TestAsset\DeleteBuilder',
+                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\sql92\SelectBuilder', '{=SELECT_Sql92=}']
                         ],
                         'string' => 'DELETE FROM "foo" WHERE "x" = ({=SELECT_Sql92=})',
                     ],
                     'MySql'     => [
                         'decorators' => [
-                            'Zend\Db\Sql\Delete' => new TestAsset\DeleteDecorator,
-                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Platform\Mysql\SelectBuilder', '{=SELECT_MySql=}']
+                            'Zend\Db\Sql\Delete' => 'ZendTest\Db\TestAsset\DeleteBuilder',
+                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\sql92\SelectBuilder', '{=SELECT_MySql=}']
                         ],
                         'string' => 'DELETE FROM `foo` WHERE `x` = ({=SELECT_MySql=})',
                     ],
                     'Oracle'    => [
                         'decorators' => [
-                            'Zend\Db\Sql\Delete' => new TestAsset\DeleteDecorator,
-                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Platform\Oracle\SelectBuilder', '{=SELECT_Oracle=}']
+                            'Zend\Db\Sql\Delete' => 'ZendTest\Db\TestAsset\DeleteBuilder',
+                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\sql92\SelectBuilder', '{=SELECT_Oracle=}']
                         ],
                         'string' => 'DELETE FROM "foo" WHERE "x" = ({=SELECT_Oracle=})',
                     ],
                     'SqlServer' => [
                         'decorators' => [
-                            'Zend\Db\Sql\Delete' => new TestAsset\DeleteDecorator,
-                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Platform\SqlServer\SelectBuilder', '{=SELECT_SqlServer=}']
+                            'Zend\Db\Sql\Delete' => 'ZendTest\Db\TestAsset\DeleteBuilder',
+                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\sql92\SelectBuilder', '{=SELECT_SqlServer=}']
                         ],
                         'string' => 'DELETE FROM [foo] WHERE [x] = ({=SELECT_SqlServer=})',
                     ],
@@ -406,161 +439,68 @@ class AllBuildersTest extends \PHPUnit_Framework_TestCase
                 'expected'  => [
                     'sql92'     => [
                         'decorators' => [
-                            'Zend\Db\Sql\Update' => new TestAsset\UpdateDecorator,
-                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Platform\Mysql\SelectBuilder', '{=SELECT_Sql92=}']
+                            'Zend\Db\Sql\Update' => 'ZendTest\Db\TestAsset\UpdateBuilder',
+                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\Mysql\SelectBuilder', '{=SELECT_Sql92=}']
                         ],
                         'string' => 'UPDATE "foo" SET  WHERE "x" = ({=SELECT_Sql92=})',
                     ],
                     'MySql'     => [
                         'decorators' => [
-                            'Zend\Db\Sql\Update' => new TestAsset\UpdateDecorator,
-                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Platform\Mysql\SelectBuilder', '{=SELECT_MySql=}']
+                            'Zend\Db\Sql\Update' => 'ZendTest\Db\TestAsset\UpdateBuilder',
+                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\Mysql\SelectBuilder', '{=SELECT_MySql=}']
                         ],
                         'string' => 'UPDATE `foo` SET  WHERE `x` = ({=SELECT_MySql=})',
                     ],
                     'Oracle'    => [
                         'decorators' => [
-                            'Zend\Db\Sql\Update' => new TestAsset\UpdateDecorator,
-                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Platform\Oracle\SelectBuilder', '{=SELECT_Oracle=}']
+                            'Zend\Db\Sql\Update' => 'ZendTest\Db\TestAsset\UpdateBuilder',
+                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\Oracle\SelectBuilder', '{=SELECT_Oracle=}']
                         ],
                         'string' => 'UPDATE "foo" SET  WHERE "x" = ({=SELECT_Oracle=})',
                     ],
                     'SqlServer' => [
                         'decorators' => [
-                            'Zend\Db\Sql\Update' => new TestAsset\UpdateDecorator,
-                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Platform\SqlServer\SelectBuilder', '{=SELECT_SqlServer=}']
+                            'Zend\Db\Sql\Update' => 'ZendTest\Db\TestAsset\UpdateBuilder',
+                            'Zend\Db\Sql\Select' => ['Zend\Db\Sql\Builder\SqlServer\SelectBuilder', '{=SELECT_SqlServer=}']
                         ],
                         'string' => 'UPDATE [foo] SET  WHERE [x] = ({=SELECT_SqlServer=})',
                     ],
                 ],
             ],
+            /* TODO - should be implemeted
             'DecorableExpression()' => [
                 'sqlObject' => $this->update('foo')->where(['x'=>new Sql\Expression('?', [$this->select('foo')])]),
                 'expected'  => [
                     'sql92'     => [
                         'decorators' => [
                             'Zend\Db\Sql\Expression' => new TestAsset\DecorableExpression,
-                            'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Platform\Mysql\SelectBuilder', '{=SELECT_Sql92=}']
+                            'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Builder\Mysql\SelectBuilder', '{=SELECT_Sql92=}']
                         ],
                         'string'     => 'UPDATE "foo" SET  WHERE "x" = {decorate-({=SELECT_Sql92=})-decorate}',
                     ],
                     'MySql'     => [
                         'decorators' => [
                             'Zend\Db\Sql\Expression' => new TestAsset\DecorableExpression,
-                            'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Platform\Mysql\SelectBuilder', '{=SELECT_MySql=}']
+                            'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Builder\Mysql\SelectBuilder', '{=SELECT_MySql=}']
                         ],
                         'string'     => 'UPDATE `foo` SET  WHERE `x` = {decorate-({=SELECT_MySql=})-decorate}',
                     ],
                     'Oracle'    => [
                         'decorators' => [
                             'Zend\Db\Sql\Expression' => new TestAsset\DecorableExpression,
-                            'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Platform\Oracle\SelectBuilder', '{=SELECT_Oracle=}']
+                            'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Builder\Oracle\SelectBuilder', '{=SELECT_Oracle=}']
                         ],
                         'string'     => 'UPDATE "foo" SET  WHERE "x" = {decorate-({=SELECT_Oracle=})-decorate}',
                     ],
                     'SqlServer' => [
                         'decorators' => [
                             'Zend\Db\Sql\Expression' => new TestAsset\DecorableExpression,
-                            'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Platform\SqlServer\SelectBuilder', '{=SELECT_SqlServer=}']
+                            'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Builder\SqlServer\SelectBuilder', '{=SELECT_SqlServer=}']
                         ],
                         'string'     => 'UPDATE [foo] SET  WHERE [x] = {decorate-({=SELECT_SqlServer=})-decorate}',
                     ],
                 ],
             ],*/
         ];
-    }
-
-    public function dataProvider()
-    {
-        $data = array_merge(
-            $this->dataProvider_CommonProcessMethods(),
-            $this->dataProvider_Builders()
-        );
-
-        $res = [];
-        foreach ($data as $index => $test) {
-            foreach ($test['expected'] as $platform => $expected) {
-                $res[$index . '->' . $platform] = [
-                    'sqlObject' => $test['sqlObject'],
-                    'platform'  => $platform,
-                    'expected'  => $expected,
-                ];
-            }
-        }
-        return $res;
-    }
-
-    /**
-     * @param type $sqlObject
-     * @param type $platform
-     * @param type $expected
-     * @dataProvider dataProvider
-     */
-    public function test($sqlObject, $platform, $expected)
-    {
-        $sql = new Sql\Sql($this->resolveAdapter($platform));
-
-        if (is_array($expected) && isset($expected['decorators'])) {
-            foreach ($expected['decorators'] as $type=>$decorator) {
-                $sql->getSqlPlatform()->setTypeDecorator($type, $this->resolveDecorator($decorator));
-            }
-        }
-
-        $expectedString = is_string($expected) ? $expected : (isset($expected['string']) ? $expected['string'] : null);
-        if ($expectedString) {
-            $actual = $sql->getSqlStringForSqlObject($sqlObject);
-            $this->assertEquals($expectedString, $actual, "getSqlString()");
-        }
-        if (is_array($expected) && isset($expected['prepare'])) {
-            $actual = $sql->prepareStatementForSqlObject($sqlObject);
-            $this->assertEquals($expected['prepare'], $actual->getSql(), "prepareStatement()");
-            if (isset($expected['parameters'])) {
-                $actual = $actual->getParameterContainer()->getNamedArray();
-                $this->assertSame($expected['parameters'], $actual, "parameterContainer()");
-            }
-        }
-    }
-
-    protected function resolveDecorator($decorator)
-    {
-        if (is_array($decorator)) {
-            $decoratorMock = $this->getMock($decorator[0], ['buildSqlString'], [null]);
-            $decoratorMock->expects($this->any())->method('buildSqlString')->will($this->returnValue($decorator[1]));
-            return $decoratorMock;
-        }
-        if ($decorator instanceof Sql\Builder\PlatformDecoratorInterface) {
-            return $decorator;
-        }
-        return;
-    }
-
-    protected function resolveAdapter($platform)
-    {
-        switch ($platform) {
-            case 'sql92'     : $platform  = new TestAsset\TrustingSql92Platform();     break;
-            case 'MySql'     : $platform  = new TestAsset\TrustingMysqlPlatform();     break;
-            case 'Oracle'    : $platform  = new TestAsset\TrustingOraclePlatform();    break;
-            case 'SqlServer' : $platform  = new TestAsset\TrustingSqlServerPlatform(); break;
-            default : $platform = null;
-        }
-
-        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
-        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnCallback(function () {return new Adapter\StatementContainer;}));
-
-        return new Adapter\Adapter($mockDriver, $platform);
-    }
-
-    public function __call($name, $arguments)
-    {
-        $arg0 = isset($arguments[0]) ? $arguments[0] : null;
-        switch ($name) {
-            case 'select'       : return new Sql\Select($arg0);
-            case 'delete'       : return new Sql\Delete($arg0);
-            case 'update'       : return new Sql\Update($arg0);
-            case 'insert'       : return new Sql\Insert($arg0);
-            case 'createTable'  : return new Sql\Ddl\CreateTable($arg0);
-            case 'createColumn' : return new Sql\Ddl\Column\Column($arg0);
-        }
     }
 }

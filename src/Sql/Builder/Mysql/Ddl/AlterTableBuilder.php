@@ -9,20 +9,12 @@
 
 namespace Zend\Db\Sql\Builder\Mysql\Ddl;
 
-use Zend\Db\Adapter\Platform\PlatformInterface;
+use Zend\Db\Sql\Builder\Ddl\AlterTableBuilder as BaseBuilder;
+use Zend\Db\Sql\Builder\Context;
 use Zend\Db\Sql\Ddl\AlterTable;
-use Zend\Db\Sql\Builder\PlatformDecoratorInterface;
 
-class AlterTableBuilder extends AlterTable implements PlatformDecoratorInterface
+class AlterTableBuilder extends BaseBuilder
 {
-    /**
-     * @var AlterTable
-     */
-    protected $subject;
-
-    /**
-     * @var int[]
-     */
     protected $columnOptionSortOrder = [
         'unsigned'      => 0,
         'zerofill'      => 1,
@@ -34,17 +26,6 @@ class AlterTableBuilder extends AlterTable implements PlatformDecoratorInterface
         'format'        => 4,
         'storage'       => 5,
     ];
-
-    /**
-     * @param AlterTable $subject
-     * @return \Zend\Db\Sql\Platform\PlatformDecoratorInterface
-     */
-    public function setSubject($subject)
-    {
-        $this->subject = $subject;
-
-        return $this;
-    }
 
     /**
      * @param string $sql
@@ -84,12 +65,12 @@ class AlterTableBuilder extends AlterTable implements PlatformDecoratorInterface
      * @param PlatformInterface $adapterPlatform
      * @return array
      */
-    protected function processAddColumns(PlatformInterface $adapterPlatform = null)
+    protected function build_AddColumns(AlterTable $sqlObject, Context $context)
     {
         $sqls = [];
 
-        foreach ($this->addColumns as $i => $column) {
-            $sql           = $this->processExpression($column, $adapterPlatform);
+        foreach ($sqlObject->addColumns as $i => $column) {
+            $sql           = $this->buildSqlString($column, $context);
             $insertStart   = $this->getSqlInsertOffsets($sql);
             $columnOptions = $column->getOptions();
 
@@ -118,7 +99,7 @@ class AlterTableBuilder extends AlterTable implements PlatformDecoratorInterface
                         $j = 1;
                         break;
                     case 'comment':
-                        $insert = ' COMMENT ' . $adapterPlatform->quoteValue($coValue);
+                        $insert = ' COMMENT ' . $context->getPlatform()->quoteValue($coValue);
                         $j = 2;
                         break;
                     case 'columnformat':
@@ -150,11 +131,11 @@ class AlterTableBuilder extends AlterTable implements PlatformDecoratorInterface
      * @param PlatformInterface $adapterPlatform
      * @return array
      */
-    protected function processChangeColumns(PlatformInterface $adapterPlatform = null)
+    protected function build_ChangeColumns(AlterTable $sqlObject, Context $context)
     {
         $sqls = [];
-        foreach ($this->changeColumns as $name => $column) {
-            $sql           = $this->processExpression($column, $adapterPlatform);
+        foreach ($sqlObject->changeColumns as $name => $column) {
+            $sql           = $this->buildSqlString($column, $context);
             $insertStart   = $this->getSqlInsertOffsets($sql);
             $columnOptions = $column->getOptions();
 
@@ -183,7 +164,7 @@ class AlterTableBuilder extends AlterTable implements PlatformDecoratorInterface
                         $j = 1;
                         break;
                     case 'comment':
-                        $insert = ' COMMENT ' . $adapterPlatform->quoteValue($coValue);
+                        $insert = ' COMMENT ' . $context->getPlatform()->quoteValue($coValue);
                         $j = 2;
                         break;
                     case 'columnformat':

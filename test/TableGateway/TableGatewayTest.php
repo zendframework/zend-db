@@ -163,8 +163,7 @@ class TableGatewayTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($result));
 
         $statementExpectation = function ($insert) use ($phpunit, $expected, $statement) {
-            $state = $insert->getRawState();
-            $phpunit->assertSame($expected, $state['table']);
+            $phpunit->assertSame($expected, $insert->table);
             return $statement;
         };
 
@@ -194,11 +193,10 @@ class TableGatewayTest extends \PHPUnit_Framework_TestCase
             'foo' => 'FOO',
         ]);
 
-        $state = $insert->getRawState();
-        $this->assertInternalType('array', $state['table']);
+        $this->assertInternalType('array', $insert->table);
         $this->assertEquals(
             $tableValue,
-            $state['table']
+            $insert->table
         );
     }
 
@@ -225,8 +223,7 @@ class TableGatewayTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($result));
 
         $statementExpectation = function ($update) use ($phpunit, $expected, $statement) {
-            $state = $update->getRawState();
-            $phpunit->assertSame($expected, $state['table']);
+            $phpunit->assertSame($expected, $update->table);
             return $statement;
         };
 
@@ -258,11 +255,9 @@ class TableGatewayTest extends \PHPUnit_Framework_TestCase
             'bar' => 'BAR'
         ]);
 
-        $state = $update->getRawState();
-        $this->assertInternalType('array', $state['table']);
         $this->assertEquals(
             $tableValue,
-            $state['table']
+            $update->table
         );
     }
 }

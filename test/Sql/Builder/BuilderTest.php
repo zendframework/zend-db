@@ -9,112 +9,148 @@
 
 namespace ZendTest\Db\Sql\Builder;
 
-use ReflectionMethod;
-use Zend\Db\Adapter\StatementContainer;
-use ZendTest\Db\TestAsset;
 use Zend\Db\Sql\Builder\Builder;
-use Zend\Db\Adapter\Adapter;
+use Zend\Db\Sql;
 
-class BuilderTest extends \PHPUnit_Framework_TestCase
+class BuilderTest extends AbstractTestCase
 {
-    public function testResolveDefaultPlatform()
+    /**
+     * @var Builder
+     */
+    protected $builder;
+
+    public function setUp()
     {
-        $adapter = $this->resolveAdapter('sql92');
-        $platform = new Builder($adapter);
-
-        $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
-
-        $reflectionMethod->setAccessible(true);
-
-        $this->assertEquals($adapter->getPlatform(), $reflectionMethod->invoke($platform, null));
-    }
-
-    public function testResolvePlatformName()
-    {
-        $platform = new Builder($this->resolveAdapter('sql92'));
-
-        $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatformName');
-
-        $reflectionMethod->setAccessible(true);
-
-        $this->assertEquals('mysql', $reflectionMethod->invoke($platform, new TestAsset\TrustingMysqlPlatform()));
-        $this->assertEquals('sqlserver', $reflectionMethod->invoke($platform, new TestAsset\TrustingSqlServerPlatform()));
-        $this->assertEquals('oracle', $reflectionMethod->invoke($platform, new TestAsset\TrustingOraclePlatform()));
-        $this->assertEquals('sql92', $reflectionMethod->invoke($platform, new TestAsset\TrustingSql92Platform()));
+        $this->builder = new Builder();
+        $inheritableBuilders = new \ReflectionProperty($this->builder, 'inheritableBuilders');
+        $inheritableBuilders->setAccessible(true);
+        $inheritableBuilders->setValue($this->builder, [
+            'Zend\Db\Sql\Select'          => [
+                'sql92'     => 'Zend\Db\Sql\Builder\sql92\SelectBuilder',
+                'mysql'     => 'Zend\Db\Sql\Builder\MySql\SelectBuilder',
+            ],
+            'Zend\Db\Sql\Ddl\CreateTable' => [
+                'sqlserver' => 'Zend\Db\Sql\Builder\SqlServer\Ddl\CreateTableBuilder',
+            ],
+        ]);
     }
 
     /**
-     * @group 6890
+     * @expectedException Zend\Db\Sql\Exception\RuntimeException
      */
-    public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatform()
+    public function testGePlatformBuilderForNotExistsObject()
     {
-        $adapter = $this->resolveAdapter('sql92');
-        $reflectionProperty = new \ReflectionProperty($adapter, 'platform');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($adapter, null);
-
-        $platform = new Builder($adapter);
-        $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
-
-        $reflectionMethod->setAccessible(true);
-
-        $this->setExpectedException('Zend\Db\Sql\Exception\RuntimeException', '$this->defaultPlatform was not set');
-
-        $reflectionMethod->invoke($platform, null);
+        $this->builder->getPlatformBuilder(new Sql\Insert());
     }
 
     /**
-     * @group 6890
+     * @expectedException Zend\Db\Sql\Exception\RuntimeException
      */
-    public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatformWithGetDecorators()
+    public function testGePlatformBuilderForNotExistsPlatform()
     {
-        $adapter = $this->resolveAdapter('sql92');
-        $reflectionProperty = new \ReflectionProperty($adapter, 'platform');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($adapter, null);
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Builder\sql92\SelectBuilder',
+            $this->builder->getPlatformBuilder(new Sql\Select(), 'NotExistingPlatform')
+        );
+        $this->builder->getPlatformBuilder(new Sql\Ddl\CreateTable(), 'NotExistingPlatform');
+    }
 
-        $platform = new Builder($adapter);
-        $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
+    public function testGetPlatformBuilder()
+    {
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Builder\sql92\SelectBuilder',
+            $this->builder->getPlatformBuilder(new Sql\Select())
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Builder\sql92\SelectBuilder',
+            $this->builder->getPlatformBuilder(new Sql\Select(), 'sql92')
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Builder\MySql\SelectBuilder',
+            $this->builder->getPlatformBuilder(new Sql\Select(), 'mysql')
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Builder\sql92\SelectBuilder',
+            $this->builder->getPlatformBuilder(new Sql\Select(), 'sqlserver')
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Builder\SqlServer\Ddl\CreateTableBuilder',
+            $this->builder->getPlatformBuilder(new Sql\Ddl\CreateTable(), 'sqlserver')
+        );
+    }
 
-        $reflectionMethod->setAccessible(true);
+    public function testSetPlatformBuilder()
+    {
+        $this->builder->setPlatformBuilder('ibmdb2', 'Zend\Db\Sql\Select', 'Zend\Db\Sql\Builder\IbmDb2\SelectBuilder');
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Builder\sql92\SelectBuilder',
+            $this->builder->getPlatformBuilder(new Sql\Select(), 'sql92')
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Builder\IbmDb2\SelectBuilder',
+            $this->builder->getPlatformBuilder(new Sql\Select(), 'ibmdb2')
+        );
 
-        $this->setExpectedException('Zend\Db\Sql\Exception\RuntimeException', '$this->defaultPlatform was not set');
-
-        $platform->getDecorators();
+        $oracleSelectBuilder = new \Zend\Db\Sql\Builder\Oracle\SelectBuilder($this->builder);
+        $this->builder->setPlatformBuilder('oracle', 'Zend\Db\Sql\Select', $oracleSelectBuilder);
+        $this->assertSame(
+            $oracleSelectBuilder,
+            $this->builder->getPlatformBuilder(new Sql\Select(), 'oracle')
+        );
     }
 
     /**
-     * @param string $platformName
-     *
-     * @return Adapter
+     * @expectedException Zend\Db\Sql\Exception\InvalidArgumentException
      */
-    protected function resolveAdapter($platformName)
+    public function testSetWrongPlatformBuilder()
     {
-        $platform = null;
+        $this->builder->setPlatformBuilder('oracle', 'Zend\Db\Sql\Select', new \stdClass());
+    }
 
-        switch ($platformName) {
-            case 'sql92' :
-                $platform = new TestAsset\TrustingSql92Platform();
-                break;
-            case 'MySql' :
-                $platform = new TestAsset\TrustingMysqlPlatform();
-                break;
-            case 'Oracle' :
-                $platform = new TestAsset\TrustingOraclePlatform();
-                break;
-            case 'SqlServer' :
-                $platform = new TestAsset\TrustingSqlServerPlatform();
-                break;
-        }
+    /**
+     * @covers Zend\Db\Sql\Builder\Builder::setDefaultAdapter
+     * @covers Zend\Db\Sql\Builder\Builder::getDefaultAdapter
+     */
+    public function testDefaultAdapter()
+    {
+        $builder = new Builder();
+        $this->assertNull($builder->getDefaultAdapter());
 
-        /* @var $mockDriver \Zend\Db\Adapter\Driver\DriverInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $adapter = $this->getAdapterForPlatform('sqlserver');
+        $builder = new Builder($adapter);
+        $this->assertSame($adapter, $builder->getDefaultAdapter());
 
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
-        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnCallback(function () {
-            return new StatementContainer();
-        }));
+        $adapter = $this->getAdapterForPlatform('sql92');
+        $this->assertSame($adapter, $builder->setDefaultAdapter($adapter)->getDefaultAdapter());
 
-        return new Adapter($mockDriver, $platform);
+        $adapter = $this->getAdapterForPlatform('mysql');
+        $this->assertSame($adapter, $builder->setDefaultAdapter($adapter)->getDefaultAdapter());
+    }
+
+    /**
+     * @covers Zend\Db\Sql\Builder\Builder::getSqlString
+     */
+    public function testGetSqlString()
+    {
+        $this->assertInternalType(
+            'string',
+            $this->builder->getSqlString(
+                new Sql\Select('foo'),
+                $this->getAdapterForPlatform('sql92')
+            )
+        );
+    }
+
+    /**
+     * @covers Zend\Db\Sql\Builder\Builder::prepareStatement
+     */
+    public function testPrepareStatement()
+    {
+        $statement = $this->builder->prepareStatement(
+            new Sql\Select('foo'),
+            $this->getAdapterForPlatform('sql92')
+        );
+        $this->assertInstanceOf('Zend\Db\Adapter\Driver\StatementInterface', $statement);
+        $this->assertInstanceOf('Zend\Db\Adapter\ParameterContainer', $statement->getParameterContainer());
     }
 }

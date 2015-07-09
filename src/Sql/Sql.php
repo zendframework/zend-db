@@ -11,7 +11,6 @@ namespace Zend\Db\Sql;
 
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Driver\StatementInterface;
-use Zend\Db\Adapter\Platform\PlatformInterface;
 
 class Sql
 {
@@ -21,21 +20,21 @@ class Sql
     /** @var string|array|TableIdentifier */
     protected $table = null;
 
-    /** @var Platform\Platform */
-    protected $sqlPlatform = null;
+    /** @var Builder\Builder */
+    protected $builder = null;
 
     /**
-     * @param AdapterInterface                  $adapter
+     * @param null|AdapterInterface                  $adapter
      * @param null|string|array|TableIdentifier $table
-     * @param null|Platform\AbstractPlatform    $sqlPlatform @deprecated since version 3.0
+     * @param null|Builder\Builder              $platformBuilder
      */
-    public function __construct(AdapterInterface $adapter, $table = null, Builder\AbstractBuilder $sqlPlatform = null)
+    public function __construct(AdapterInterface $adapter = null, $table = null, Builder\Builder $builder = null)
     {
         $this->adapter = $adapter;
         if ($table) {
             $this->setTable($table);
         }
-        $this->sqlPlatform = $sqlPlatform ?: new Builder\Builder($adapter);
+        $this->builder = $builder ?: new Builder\Builder($adapter);
     }
 
     /**
@@ -46,6 +45,9 @@ class Sql
         return $this->adapter;
     }
 
+    /**
+     * @return bool
+     */
     public function hasTable()
     {
         return ($this->table !== null);
@@ -66,9 +68,12 @@ class Sql
         return $this->table;
     }
 
-    public function getSqlPlatform()
+    /**
+     * @return Builder\Builder
+     */
+    public function getBuilder()
     {
-        return $this->sqlPlatform;
+        return $this->builder;
     }
 
     public function select($table = null)
@@ -117,38 +122,21 @@ class Sql
 
     /**
      * @param PreparableSqlObjectInterface $sqlObject
-     * @param StatementInterface     $statement
-     * @param AdapterInterface       $adapter
+     * @param null|AdapterInterface       $adapter
      *
      * @return StatementInterface
      */
-    public function prepareStatementForSqlObject(PreparableSqlObjectInterface $sqlObject, StatementInterface $statement = null, AdapterInterface $adapter = null)
+    public function prepareStatementForSqlObject(PreparableSqlObjectInterface $sqlObject, AdapterInterface $adapter = null)
     {
-        $adapter   = $adapter ?: $this->adapter;
-        $statement = $statement ?: $adapter->getDriver()->createStatement();
-
-        return $this->sqlPlatform->setSubject($sqlObject)->prepareStatement($adapter, $statement);
+        return $this->builder->prepareStatement(
+            $sqlObject,
+            $adapter ?: $this->adapter
+        );
     }
 
     /**
-     * Get sql string using platform or sql object
-     *
      * @param SqlObjectInterface     $sqlObject
-     * @param PlatformInterface|null $platform
-     *
-     * @return string
-     *
-     * @deprecated Deprecated in 2.4. Use buildSqlString() instead
-     */
-    public function getSqlStringForSqlObject(SqlObjectInterface $sqlObject, PlatformInterface $platform = null)
-    {
-        $platform = ($platform) ?: $this->adapter->getPlatform();
-        return $this->sqlPlatform->setSubject($sqlObject)->getSqlString($platform);
-    }
-
-    /**
-     * @param SqlObjectInterface $sqlObject
-     * @param AdapterInterface   $adapter
+     * @param null|AdapterInterface $adapter
      *
      * @return string
      *
@@ -156,9 +144,9 @@ class Sql
      */
     public function buildSqlString(SqlObjectInterface $sqlObject, AdapterInterface $adapter = null)
     {
-        return $this
-            ->sqlPlatform
-            ->setSubject($sqlObject)
-            ->getSqlString($adapter ? $adapter->getPlatform() : $this->adapter->getPlatform());
+        return $this->builder->getSqlString(
+            $sqlObject,
+            $adapter ?: $this->adapter
+        );
     }
 }

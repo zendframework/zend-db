@@ -9,16 +9,6 @@
 
 namespace Zend\Db\Sql;
 
-use Zend\Db\Adapter\Platform\PlatformInterface;
-
 interface SqlObjectInterface
 {
-    /**
-     * Get SQL string for statement
-     *
-     * @param null|PlatformInterface $adapterPlatform
-     *
-     * @return string
-     */
-    public function getSqlString(PlatformInterface $adapterPlatform = null);
 }

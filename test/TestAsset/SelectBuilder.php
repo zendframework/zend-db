@@ -9,15 +9,6 @@
 
 namespace ZendTest\Db\TestAsset;
 
-use Zend\Db\Sql;
-
-class SelectBuilder extends Sql\Select implements Sql\Builder\PlatformDecoratorInterface
+class SelectBuilder extends \Zend\Db\Sql\Builder\sql92\SelectBuilder
 {
-    protected $subject = null;
-
-    public function setSubject($subject)
-    {
-        $this->subject = $subject;
-        return $this;
-    }
 }

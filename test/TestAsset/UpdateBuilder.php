@@ -9,15 +9,6 @@
 
 namespace ZendTest\Db\TestAsset;
 
-use Zend\Db\Sql;
-
-class UpdateBuilder extends Sql\Update implements Sql\Builder\PlatformDecoratorInterface
+class UpdateBuilder extends \Zend\Db\Sql\Builder\sql92\UpdateBuilder
 {
-    protected $subject = null;
-
-    public function setSubject($subject)
-    {
-        $this->subject = $subject;
-        return $this;
-    }
 }
