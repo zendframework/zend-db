@@ -9,50 +9,43 @@
 
 namespace ZendTest\Db\Sql\Builder;
 
-use Zend\Db\Sql\Builder\sql92\LiteralBuilder;
-use Zend\Db\Sql\Predicate\Literal;
-use Zend\Db\Sql\Literal as BaseLiteral;
-use Zend\Db\Sql\Builder\Context;
-
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\LiteralBuilder
+ */
 class LiteralBuilderTest extends AbstractTestCase
 {
-    protected $builder;
-
-    public function setUp()
+    /**
+     * @param type $data
+     * @dataProvider dataProvider
+     */
+    public function test($sqlObject, $platform, $expected)
     {
-        $this->builder = new LiteralBuilder(new \Zend\Db\Sql\Builder\Builder());
-        $this->context = new Context($this->getAdapterForPlatform('sql92'));
+        $this->assertBuilder($sqlObject, $platform, $expected);
     }
 
-    public function testGetExpressionData()
+    public function dataProvider()
     {
-        $literal = new Literal('bar');
-        $this->assertEquals(
-            [[
-                'bar',
-                [],
-            ]],
-            $this->builder->getExpressionData($literal, $this->context)
-        );
-    }
-
-    public function testGetExpressionDataWillEscapePercent()
-    {
-        $literal = new BaseLiteral('X LIKE "foo%"');
-        $this->assertEquals([[
-                'X LIKE "foo%%"',
-                [],
-            ]],
-            $this->builder->getExpressionData($literal, $this->context)
-        );
-
-        $literal = new BaseLiteral('bar');
-        $this->assertEquals(
-            [[
-                'bar',
-                [],
-            ]],
-            $this->builder->getExpressionData($literal, $this->context)
-        );
+        return $this->prepareDataProvider([
+            [
+                'sqlObject' => $this->predicate_Literal('bar'),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => 'bar',
+                        'prepare' => 'bar',
+                        'parameters' => [],
+                    ],
+                ],
+            ],
+            [
+                'sqlObject' => $this->predicate_Literal('X LIKE "foo%"'),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => 'X LIKE "foo%"',
+                        'prepare' => 'X LIKE "foo%"',
+                        'parameters' => [],
+                    ],
+                ],
+            ],
+        ]);
     }
 }

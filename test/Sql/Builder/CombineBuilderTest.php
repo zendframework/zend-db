@@ -11,6 +11,9 @@ namespace ZendTest\Db\Sql\Builder;
 
 use Zend\Db\Sql\Combine;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\CombineBuilder
+ */
 class CombineBuilderTest extends AbstractTestCase
 {
     /**

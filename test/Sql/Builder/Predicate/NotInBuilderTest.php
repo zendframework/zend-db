@@ -9,93 +9,61 @@
 
 namespace ZendTest\Db\Sql\Builder\Predicate;
 
-use Zend\Db\Sql\Builder\sql92\Predicate\NotInBuilder;
-use Zend\Db\Sql\Predicate\NotIn;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\ExpressionParameter;
-use Zend\Db\Sql\Builder\Context;
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Predicate\NotInBuilder
+ */
 class NotInBuilderTest extends AbstractTestCase
 {
-    protected $expression;
-    protected $builder;
-
-    public function setUp()
+    /**
+     * @param type $data
+     * @dataProvider dataProvider
+     */
+    public function test($sqlObject, $platform, $expected)
     {
-        $this->builder = new NotInBuilder(new \Zend\Db\Sql\Builder\Builder());
-        $this->context = new Context($this->getAdapterForPlatform('sql92'));
+        $this->assertBuilder($sqlObject, $platform, $expected);
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes()
+    public function dataProvider()
     {
-        $in = new NotIn();
-        $in->setIdentifier('foo.bar')
-            ->setValueSet([1, 2, 3]);
-
-        $this->assertEquals(
-            [[
-                '%s NOT IN (%s, %s, %s)',
-                [
-                    new ExpressionParameter('foo.bar', NotIn::TYPE_IDENTIFIER),
-                    new ExpressionParameter(1,         NotIn::TYPE_VALUE),
-                    new ExpressionParameter(2,         NotIn::TYPE_VALUE),
-                    new ExpressionParameter(3,         NotIn::TYPE_VALUE),
+        return $this->prepareDataProvider([
+            [
+                'sqlObject' => $this->predicate_NotIn('bar')
+                                        ->setIdentifier('foo.bar')
+                                        ->setValueSet([1, 2, 3]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"foo"."bar" NOT IN (\'1\', \'2\', \'3\')',
+                        'prepare' => '"foo"."bar" NOT IN (?, ?, ?)',
+                        'parameters' => [
+                            'expr1' => 1,
+                            'expr2' => 2,
+                            'expr3' => 3,
+                        ],
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($in, $this->context)
-        );
-    }
-
-    public function testGetExpressionDataWithSubselect()
-    {
-        $select = new Select;
-        $in = new NotIn('foo', $select);
-
-        $this->assertEquals(
-            [[
-                '%s NOT IN %s',
-                [
-                    new ExpressionParameter('foo',   $in::TYPE_IDENTIFIER),
-                    new ExpressionParameter($select, $in::TYPE_VALUE),
+            ],
+            [
+                'sqlObject' => $this->predicate_NotIn('foo', $this->select('bar')),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"foo" NOT IN (SELECT "bar".* FROM "bar")',
+                        'prepare' => '"foo" NOT IN (SELECT "bar".* FROM "bar")',
+                        'parameters' => [],
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($in, $this->context)
-        );
-    }
-
-    public function testGetExpressionDataWithSubselectAndIdentifier()
-    {
-        $select = new Select;
-        $in = new NotIn('foo', $select);
-
-        $this->assertEquals(
-            [[
-                '%s NOT IN %s',
-                [
-                    new ExpressionParameter('foo',   $in::TYPE_IDENTIFIER),
-                    new ExpressionParameter($select, $in::TYPE_VALUE),
+            ],
+            [
+                'sqlObject' => $this->predicate_NotIn(['foo', 'bar'], $this->select('bar')),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '("foo", "bar") NOT IN (SELECT "bar".* FROM "bar")',
+                        'prepare' => '("foo", "bar") NOT IN (SELECT "bar".* FROM "bar")',
+                        'parameters' => [],
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($in, $this->context)
-        );
-    }
-
-    public function testGetExpressionDataWithSubselectAndArrayIdentifier()
-    {
-        $select = new Select;
-        $in = new NotIn(['foo', 'bar'], $select);
-
-        $this->assertEquals(
-            [[
-                '(%s, %s) NOT IN %s',
-                [
-                    new ExpressionParameter('foo',   $in::TYPE_IDENTIFIER),
-                    new ExpressionParameter('bar',   $in::TYPE_IDENTIFIER),
-                    new ExpressionParameter($select, $in::TYPE_VALUE),
-                ],
-            ]],
-            $this->builder->getExpressionData($in, $this->context)
-        );
+            ],
+        ]);
     }
 }

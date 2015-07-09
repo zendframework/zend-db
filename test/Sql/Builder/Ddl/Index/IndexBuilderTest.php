@@ -9,76 +9,43 @@
 
 namespace ZendTest\Db\Sql\Builder\Ddl\Index;
 
-use Zend\Db\Sql\Builder\Builder;
-use Zend\Db\Sql\Builder\sql92\Ddl\Index\IndexBuilder;
-use Zend\Db\Sql\Ddl\Index\Index;
-use Zend\Db\Sql\ExpressionParameter;
-use Zend\Db\Sql\Builder\Context;
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Ddl\Index\IndexBuilder
+ */
 class IndexBuilderTest extends AbstractTestCase
 {
-    protected $builder;
-
-    public function setUp()
+    /**
+     * @param type $data
+     * @dataProvider dataProvider
+     */
+    public function test($sqlObject, $platform, $expected)
     {
-        $this->builder = new IndexBuilder(new Builder);
-        $this->context = new Context($this->getAdapterForPlatform('sql92'));
+        $this->assertBuilder($sqlObject, $platform, $expected);
     }
 
-    /**
-     * @covers Zend\Db\Sql\Ddl\Index\Index::getExpressionData
-     */
-    public function testGetExpressionData()
+    public function dataProvider()
     {
-        $uk = new Index('foo', 'my_uk');
-        $this->assertEquals(
-            [[
-                'INDEX %s(%s)',
-                [
-                    new ExpressionParameter('my_uk', $uk::TYPE_IDENTIFIER),
-                    new ExpressionParameter('foo',   $uk::TYPE_IDENTIFIER),
+        return $this->prepareDataProvider([
+            [
+                'sqlObject' => $this->index_Index('foo', 'my_uk'),
+                'expected'  => [
+                    'sql92' => 'INDEX "my_uk"("foo")',
                 ],
-            ]],
-            $this->builder->getExpressionData($uk, $this->context)
-        );
-    }
-
-    /**
-     * @covers Zend\Db\Sql\Ddl\Index\Index::getExpressionData
-     */
-    public function testGetExpressionDataWithLength()
-    {
-        $key = new Index(['foo', 'bar'], 'my_uk', [10, 5]);
-        $this->assertEquals(
-            [[
-                'INDEX %s(%s(10), %s(5))',
-                [
-                    new ExpressionParameter('my_uk', $key::TYPE_IDENTIFIER),
-                    new ExpressionParameter('foo',   $key::TYPE_IDENTIFIER),
-                    new ExpressionParameter('bar',   $key::TYPE_IDENTIFIER),
+            ],
+            [
+                'sqlObject' => $this->index_Index(['foo', 'bar'], 'my_uk', [10, 5]),
+                'expected'  => [
+                    'sql92' => 'INDEX "my_uk"("foo"(10), "bar"(5))',
                 ],
-            ]],
-            $this->builder->getExpressionData($key, $this->context)
-        );
-    }
-
-    /**
-     * @covers Zend\Db\Sql\Ddl\Index\Index::getExpressionData
-     */
-    public function testGetExpressionDataWithLengthUnmatched()
-    {
-        $key = new Index(['foo', 'bar'], 'my_uk', [10]);
-        $this->assertEquals(
-            [[
-                'INDEX %s(%s(10), %s)',
-                [
-                    new ExpressionParameter('my_uk', $key::TYPE_IDENTIFIER),
-                    new ExpressionParameter('foo',   $key::TYPE_IDENTIFIER),
-                    new ExpressionParameter('bar',   $key::TYPE_IDENTIFIER),
+            ],
+            [
+                'sqlObject' => $this->index_Index(['foo', 'bar'], 'my_uk', [10]),
+                'expected'  => [
+                    'sql92' => 'INDEX "my_uk"("foo"(10), "bar")',
                 ],
-            ]],
-            $this->builder->getExpressionData($key, $this->context)
-        );
+            ],
+        ]);
     }
 }

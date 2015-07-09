@@ -9,37 +9,31 @@
 
 namespace ZendTest\Db\Sql\Builder\Ddl\Constraint;
 
-use Zend\Db\Sql\Builder\Builder;
-use Zend\Db\Sql\Builder\sql92\Ddl\Constraint\CheckBuilder;
-use Zend\Db\Sql\Ddl\Constraint\Check;
-use Zend\Db\Sql\ExpressionParameter;
-use Zend\Db\Sql\Builder\Context;
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Ddl\Constraint\CheckBuilder
+ */
 class CheckBuilderTest extends AbstractTestCase
 {
-    protected $context;
-
-    protected $builder;
-
-    public function setUp()
+    /**
+     * @param type $data
+     * @dataProvider dataProvider
+     */
+    public function test($sqlObject, $platform, $expected)
     {
-        $this->builder = new CheckBuilder(new Builder);
-        $this->context = new Context($this->getAdapterForPlatform('sql92'));
+        $this->assertBuilder($sqlObject, $platform, $expected);
     }
 
-    public function testGetExpressionData()
+    public function dataProvider()
     {
-        $check = new Check('id>0', 'foo');
-        $this->assertEquals(
-            [[
-                'CONSTRAINT %s CHECK (%s)',
-                [
-                    new ExpressionParameter('foo',  $check::TYPE_IDENTIFIER),
-                    new ExpressionParameter('id>0', $check::TYPE_LITERAL),
+        return $this->prepareDataProvider([
+            [
+                'sqlObject' => $this->constraint_Check('id>0', 'foo'),
+                'expected'  => [
+                    'sql92' => 'CONSTRAINT "foo" CHECK (id>0)',
                 ],
-            ]],
-            $this->builder->getExpressionData($check, $this->context)
-        );
+            ],
+        ]);
     }
 }

@@ -9,99 +9,173 @@
 
 namespace ZendTest\Db\Sql\Builder;
 
-use Zend\Db\Sql\Builder\sql92\ExpressionBuilder;
-use Zend\Db\Sql\Predicate\Expression;
-use Zend\Db\Sql\Expression as BaseExpression;
-use Zend\Db\Sql\ExpressionParameter;
-use Zend\Db\Sql\Builder\Context;
+use Zend\Db\Sql\ExpressionInterface;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\ExpressionBuilder
+ */
 class ExpressionBuilderTest extends AbstractTestCase
 {
-    protected $expression;
-    protected $builder;
-
-    public function setUp()
-    {
-        $this->builder = new ExpressionBuilder(new \Zend\Db\Sql\Builder\Builder());
-        $this->context = new Context($this->getAdapterForPlatform('sql92'));
-    }
-
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfLiteralAndParametersAndArrayOfTypes()
-    {
-        $expression = new Expression();
-        $expression->setExpression('foo.bar = ? AND id != ?')
-                        ->setParameters(['foo', 'bar']);
-
-        $this->assertEquals(
-            [[
-                'foo.bar = %s AND id != %s',
-                [
-                    new ExpressionParameter('foo', Expression::TYPE_VALUE),
-                    new ExpressionParameter('bar', Expression::TYPE_VALUE),
-                ],
-            ]],
-            $this->builder->getExpressionData($expression, $this->context)
-        );
-    }
-
     /**
-     * @covers Zend\Db\Sql\Expression::getExpressionData
+     * @param type $data
+     * @dataProvider dataProvider
      */
-    public function testGetExpressionData()
+    public function test($sqlObject, $platform, $expected)
     {
-        $expression = new BaseExpression(
-            'X SAME AS ? AND Y = ? BUT LITERALLY ?',
-            [
-                ['foo',        Expression::TYPE_IDENTIFIER],
-                [5,            Expression::TYPE_VALUE],
-                ['FUNC(FF%X)', Expression::TYPE_LITERAL],
-            ]
-        );
-        $this->assertEquals(
-            [[
-                'X SAME AS %s AND Y = %s BUT LITERALLY %s',
-                [
-                    new ExpressionParameter('foo',        Expression::TYPE_IDENTIFIER),
-                    new ExpressionParameter(5,            Expression::TYPE_VALUE),
-                    new ExpressionParameter('FUNC(FF%X)', Expression::TYPE_LITERAL),
-                ],
-            ]],
-            $this->builder->getExpressionData($expression, $this->context)
-        );
-
-        $expression = new BaseExpression(
-            'X SAME AS ? AND Y = ? BUT LITERALLY ?',
-            [
-                ['foo'        => Expression::TYPE_IDENTIFIER],
-                [5            => Expression::TYPE_VALUE],
-                ['FUNC(FF%X)' => Expression::TYPE_LITERAL],
-            ]
-        );
-        $this->assertEquals(
-            [[
-                'X SAME AS %s AND Y = %s BUT LITERALLY %s',
-                [
-                    new ExpressionParameter('foo',        Expression::TYPE_IDENTIFIER),
-                    new ExpressionParameter(5,            Expression::TYPE_VALUE),
-                    new ExpressionParameter('FUNC(FF%X)', Expression::TYPE_LITERAL),
-                ],
-            ]],
-            $this->builder->getExpressionData($expression, $this->context)
-        );
+        $this->assertBuilder($sqlObject, $platform, $expected);
     }
 
-    public function testGetExpressionDataWillEscapePercent()
+    public function dataProvider()
     {
-        $expression = new BaseExpression('X LIKE "foo%"');
-        $this->assertEquals(
-            ['X LIKE "foo%%"'],
-            $this->builder->getExpressionData($expression, $this->context)
-        );
-    }
-
-    public function testNumberOfReplacemensConsidersWhenSameVariableIsUsedManyTimes()
-    {
-        $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
-        $this->builder->getExpressionData($expression, $this->context);
+        return $this->prepareDataProvider([
+            [
+                'sqlObject' => $this->predicate_Expression()->setExpression('foo.bar = ? AND id != ?')->setParameters(['foo', 'bar']),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => 'foo.bar = \'foo\' AND id != \'bar\'',
+                        'prepare' => 'foo.bar = ? AND id != ?',
+                        'parameters' => [
+                            'expr1' => 'foo',
+                            'expr2' => 'bar',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'sqlObject' => $this->expression(
+                                        'X SAME AS ? AND Y = ? BUT LITERALLY ?',
+                                        [
+                                            ['foo',        ExpressionInterface::TYPE_IDENTIFIER],
+                                            [5,            ExpressionInterface::TYPE_VALUE],
+                                            ['FUNC(FF%X)', ExpressionInterface::TYPE_LITERAL],
+                                        ]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => 'X SAME AS "foo" AND Y = \'5\' BUT LITERALLY FUNC(FF%X)',
+                        'prepare' => 'X SAME AS "foo" AND Y = ? BUT LITERALLY FUNC(FF%X)',
+                        'parameters' => [
+                            'expr1' => 5,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'sqlObject' => $this->expression('X LIKE "foo%"'),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => 'X LIKE "foo%"',
+                        'prepare' => 'X LIKE "foo%"',
+                        'parameters' => [],
+                    ],
+                ],
+            ],
+            [
+                'sqlObject' => $this->expression('? LIKE "foo%"', [['X', 'literal']]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => 'X LIKE "foo%"',
+                        'prepare' => 'X LIKE "foo%"',
+                        'parameters' => [],
+                    ],
+                ],
+            ],
+            [
+                'sqlObject' => $this->expression(
+                                        '? > ? AND y < ?',
+                                        [
+                                            ['x', ExpressionInterface::TYPE_IDENTIFIER],
+                                            5,
+                                            10
+                                        ]
+                                    ),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"x" > \'5\' AND y < \'10\'',
+                        'prepare' => '"x" > ? AND y < ?',
+                        'parameters' => [
+                            'expr1' => 5,
+                            'expr2' => 10,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'sqlObject' => $this->expression(
+                                        '? > ? AND y < ?',
+                                        [
+                                            ['x', ExpressionInterface::TYPE_IDENTIFIER],
+                                            5,
+                                            10
+                                        ]
+                                    ),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"x" > \'5\' AND y < \'10\'',
+                        'prepare' => '"x" > :expr1 AND y < :expr2',
+                        'parameters' => [
+                            'expr1' => 5,
+                            'expr2' => 10,
+                        ],
+                        'useNamedParams' => true,
+                    ],
+                ],
+            ],
+            [
+                'sqlObject' => $this->predicate_PredicateSet([$this->predicate_PredicateSet([$this->predicate_Expression('x = ?', 5)])]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => "(x = '5')",
+                        'prepare' => "(x = ?)",
+                        'parameters' => [
+                            'expr1' => 5,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'sqlObject' => $this->predicate_PredicateSet([
+                    $this->predicate_PredicateSet([
+                        $this->predicate_In(
+                            'x',
+                            $this->select('x')->where($this->predicate_Like('bar', 'Foo%'))
+                        )
+                    ])
+                ]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '("x" IN (SELECT "x".* FROM "x" WHERE "bar" LIKE \'Foo%\'))',
+                    ],
+                ],
+            ],
+            [
+                'sqlObject' => $this->predicate_Operator(
+                    'release_date',
+                    '=',
+                    $this->expression('FROM_UNIXTIME(?)', 100000000)
+                ),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"release_date" = FROM_UNIXTIME(\'100000000\')',
+                    ],
+                ],
+            ],
+            [
+                'sqlObject' => $this->expression('FROM_UNIXTIME(date, "%Y-%m")'),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => 'FROM_UNIXTIME(date, "%Y-%m")',
+                    ],
+                ],
+            ],
+            [
+                'sqlObject' => $this->expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => 'uf.user_id = :user_id OR uf.friend_id = :user_id',
+                        'prepare' => 'uf.user_id = :user_id OR uf.friend_id = :user_id',
+                    ],
+                ],
+            ],
+        ]);
     }
 }

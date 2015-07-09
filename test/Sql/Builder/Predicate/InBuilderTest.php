@@ -9,127 +9,90 @@
 
 namespace ZendTest\Db\Sql\Builder\Predicate;
 
-use Zend\Db\Sql\Builder\sql92\Predicate\InBuilder;
-use Zend\Db\Sql\Predicate\In;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Combine;
-use Zend\Db\Sql\ExpressionParameter;
-use Zend\Db\Sql\Builder\Context;
+use Zend\Db\Sql\ExpressionInterface;
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Predicate\InBuilder
+ */
 class InBuilderTest extends AbstractTestCase
 {
-    protected $builder;
-
-    public function setUp()
+    /**
+     * @param type $data
+     * @dataProvider dataProvider
+     */
+    public function test($sqlObject, $platform, $expected)
     {
-        $this->builder = new InBuilder(new \Zend\Db\Sql\Builder\Builder());
-        $this->context = new Context($this->getAdapterForPlatform('sql92'));
+        $this->assertBuilder($sqlObject, $platform, $expected);
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes()
+    public function dataProvider()
     {
-        $in = new In();
-        $in->setIdentifier('foo.bar')
-            ->setValueSet([1, 2, 3]);
-
-        $this->assertEquals(
-            [[
-                '%s IN (%s, %s, %s)',
-                [
-                    new ExpressionParameter('foo.bar', In::TYPE_IDENTIFIER),
-                    new ExpressionParameter(1,         In::TYPE_VALUE),
-                    new ExpressionParameter(2,         In::TYPE_VALUE),
-                    new ExpressionParameter(3,         In::TYPE_VALUE),
+        return $this->prepareDataProvider([
+            [
+                'sqlObject' => $this->predicate_In()
+                                        ->setIdentifier('foo.bar')
+                                        ->setValueSet([1, 2, 3]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"foo"."bar" IN (\'1\', \'2\', \'3\')',
+                        'prepare' => '"foo"."bar" IN (?, ?, ?)',
+                        'parameters' => [
+                            'expr1' => 1,
+                            'expr2' => 2,
+                            'expr3' => 3,
+                        ],
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($in, $this->context)
-        );
-
-        $in->setIdentifier('foo.bar')
-            ->setValueSet([
-                [1=>In::TYPE_LITERAL],
-                [2=>In::TYPE_VALUE],
-                [3=>In::TYPE_LITERAL],
-            ]);
-
-        $this->assertEquals(
-            [[
-                '%s IN (%s, %s, %s)',
-                [
-                    new ExpressionParameter('foo.bar', In::TYPE_IDENTIFIER),
-                    new ExpressionParameter(1,         In::TYPE_LITERAL),
-                    new ExpressionParameter(2,         In::TYPE_VALUE),
-                    new ExpressionParameter(3,         In::TYPE_LITERAL),
+            ],
+            [
+                'sqlObject' => $this->predicate_In()
+                                        ->setIdentifier('foo.bar')
+                                        ->setValueSet([
+                                            [1=>ExpressionInterface::TYPE_LITERAL],
+                                            [2=>ExpressionInterface::TYPE_VALUE],
+                                            [3=>ExpressionInterface::TYPE_LITERAL],
+                                        ]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"foo"."bar" IN (1, \'2\', 3)',
+                        'prepare' => '"foo"."bar" IN (1, ?, 3)',
+                        'parameters' => [
+                            'expr1' => 2,
+                        ],
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($in, $this->context)
-        );
-    }
-
-    public function testGetExpressionDataWithSubselect()
-    {
-        $select = new Select;
-        $in = new In('foo', $select);
-
-        $this->assertEquals(
-            [[
-                '%s IN %s',
-                [
-                    new ExpressionParameter('foo',   $in::TYPE_IDENTIFIER),
-                    new ExpressionParameter($select, $in::TYPE_VALUE),
+            ],
+            [
+                'sqlObject' => $this->predicate_In('foo', $this->select('bar')),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"foo" IN (SELECT "bar".* FROM "bar")',
+                        'prepare' => '"foo" IN (SELECT "bar".* FROM "bar")',
+                        'parameters' => [],
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($in, $this->context)
-        );
-
-        $combine = new Combine;
-        $in = new In('foo', $combine);
-
-        $this->assertEquals(
-            [[
-                '%s IN %s',
-                [
-                    new ExpressionParameter('foo',    $in::TYPE_IDENTIFIER),
-                    new ExpressionParameter($combine, $in::TYPE_VALUE),
+            ],
+            [
+                'sqlObject' => $this->predicate_In('foo', $this->combine([$this->select('bar'), $this->select('baz')])),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"foo" IN ((SELECT "bar".* FROM "bar") UNION (SELECT "baz".* FROM "baz"))',
+                        'prepare' => '"foo" IN ((SELECT "bar".* FROM "bar") UNION (SELECT "baz".* FROM "baz"))',
+                        'parameters' => [],
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($in, $this->context)
-         );
-    }
-
-    public function testGetExpressionDataWithSubselectAndIdentifier()
-    {
-        $select = new Select;
-        $in = new In('foo', $select);
-
-        $this->assertEquals(
-            [[
-                '%s IN %s',
-                [
-                    new ExpressionParameter('foo',   $in::TYPE_IDENTIFIER),
-                    new ExpressionParameter($select, $in::TYPE_VALUE),
+            ],
+            [
+                'sqlObject' => $this->predicate_In(['foo', 'bar'], $this->select('bar')),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '("foo", "bar") IN (SELECT "bar".* FROM "bar")',
+                        'prepare' => '("foo", "bar") IN (SELECT "bar".* FROM "bar")',
+                        'parameters' => [],
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($in, $this->context)
-        );
-    }
-
-    public function testGetExpressionDataWithSubselectAndArrayIdentifier()
-    {
-        $select = new Select;
-        $in = new In(['foo', 'bar'], $select);
-
-        $this->assertEquals(
-            [[
-                '(%s, %s) IN %s',
-                [
-                    new ExpressionParameter('foo',   $in::TYPE_IDENTIFIER),
-                    new ExpressionParameter('bar',   $in::TYPE_IDENTIFIER),
-                    new ExpressionParameter($select, $in::TYPE_VALUE),
-                ],
-            ]],
-            $this->builder->getExpressionData($in, $this->context)
-        );
+            ],
+        ]);
     }
 }

@@ -9,46 +9,46 @@
 
 namespace ZendTest\Db\Sql\Builder\Predicate;
 
-use Zend\Db\Sql\Builder\sql92\Predicate\LikeBuilder;
-use Zend\Db\Sql\Predicate\Like;
-use Zend\Db\Sql\ExpressionParameter;
-use Zend\Db\Sql\Builder\Context;
+use Zend\Db\Sql\ExpressionInterface;
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Predicate\LikeBuilder
+ */
 class LikeBuilderTest extends AbstractTestCase
 {
-    protected $builder;
-
-    public function setUp()
+    /**
+     * @param type $data
+     * @dataProvider dataProvider
+     */
+    public function test($sqlObject, $platform, $expected)
     {
-        $this->builder = new LikeBuilder(new \Zend\Db\Sql\Builder\Builder());
-        $this->context = new Context($this->getAdapterForPlatform('sql92'));
+        $this->assertBuilder($sqlObject, $platform, $expected);
     }
 
-    public function testGetExpressionData()
+    public function dataProvider()
     {
-        $like = new Like('bar', 'Foo%');
-        $this->assertEquals(
-            [[
-                '%1$s LIKE %2$s',
-                [
-                    new ExpressionParameter('bar',  $like::TYPE_IDENTIFIER),
-                    new ExpressionParameter('Foo%', $like::TYPE_VALUE),
+        return $this->prepareDataProvider([
+            [
+                'sqlObject' => $this->predicate_Like('bar', 'Foo%'),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"bar" LIKE \'Foo%\'',
+                        'prepare' => '"bar" LIKE ?',
+                        'parameters' => ['expr1' => 'Foo%'],
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($like, $this->context)
-        );
-
-        $like = new Like(['Foo%'=>$like::TYPE_VALUE], ['bar'=>$like::TYPE_IDENTIFIER]);
-        $this->assertEquals(
-            [[
-                '%1$s LIKE %2$s',
-                [
-                    new ExpressionParameter('Foo%', $like::TYPE_VALUE),
-                    new ExpressionParameter('bar',  $like::TYPE_IDENTIFIER),
+            ],
+            [
+                'sqlObject' => $this->predicate_Like(['Foo%'=>ExpressionInterface::TYPE_VALUE], ['bar'=>ExpressionInterface::TYPE_IDENTIFIER]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '\'Foo%\' LIKE "bar"',
+                        'prepare' => '? LIKE "bar"',
+                        'parameters' => ['expr1' => 'Foo%'],
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($like, $this->context)
-        );
+            ],
+        ]);
     }
 }

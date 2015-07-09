@@ -9,35 +9,37 @@
 
 namespace ZendTest\Db\Sql\Builder\Ddl\Constraint;
 
-use Zend\Db\Sql\Builder\Builder;
-use Zend\Db\Sql\Builder\sql92\Ddl\Constraint\UniqueKeyBuilder;
-use Zend\Db\Sql\Ddl\Constraint\UniqueKey;
-use Zend\Db\Sql\ExpressionParameter;
-use Zend\Db\Sql\Builder\Context;
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Ddl\Constraint\UniqueKeyBuilder
+ */
 class UniqueKeyBuilderTest extends AbstractTestCase
 {
-    protected $builder;
-
-    public function setUp()
+    /**
+     * @param type $data
+     * @dataProvider dataProvider
+     */
+    public function test($sqlObject, $platform, $expected)
     {
-        $this->builder = new UniqueKeyBuilder(new Builder);
-        $this->context = new Context($this->getAdapterForPlatform('sql92'));
+        $this->assertBuilder($sqlObject, $platform, $expected);
     }
 
-    public function testGetExpressionData()
+    public function dataProvider()
     {
-        $uk = new UniqueKey('foo', 'my_uk');
-        $this->assertEquals(
-            [[
-                'CONSTRAINT %s UNIQUE (%s)',
-                [
-                    new ExpressionParameter('my_uk', $uk::TYPE_IDENTIFIER),
-                    new ExpressionParameter('foo',   $uk::TYPE_IDENTIFIER),
+        return $this->prepareDataProvider([
+            [
+                'sqlObject' => $this->constraint_UniqueKey('foo', 'my_uk'),
+                'expected'  => [
+                    'sql92' => 'CONSTRAINT "my_uk" UNIQUE ("foo")',
                 ],
-            ]],
-            $this->builder->getExpressionData($uk, $this->context)
-        );
+            ],
+            [
+                'sqlObject' => $this->constraint_UniqueKey('foo'),
+                'expected'  => [
+                    'sql92' => 'UNIQUE ("foo")',
+                ],
+            ],
+        ]);
     }
 }

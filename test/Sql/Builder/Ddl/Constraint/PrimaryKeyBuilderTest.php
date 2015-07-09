@@ -9,34 +9,37 @@
 
 namespace ZendTest\Db\Sql\Builder\Ddl\Constraint;
 
-use Zend\Db\Sql\Builder\Builder;
-use Zend\Db\Sql\Builder\sql92\Ddl\Constraint\PrimaryKeyBuilder;
-use Zend\Db\Sql\Ddl\Constraint\PrimaryKey;
-use Zend\Db\Sql\ExpressionParameter;
-use Zend\Db\Sql\Builder\Context;
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Ddl\Constraint\PrimaryKeyBuilder
+ */
 class PrimaryKeyBuilderTest extends AbstractTestCase
 {
-    protected $builder;
-
-    public function setUp()
+    /**
+     * @param type $data
+     * @dataProvider dataProvider
+     */
+    public function test($sqlObject, $platform, $expected)
     {
-        $this->builder = new PrimaryKeyBuilder(new Builder);
-        $this->context = new Context($this->getAdapterForPlatform('sql92'));
+        $this->assertBuilder($sqlObject, $platform, $expected);
     }
 
-    public function testGetExpressionData()
+    public function dataProvider()
     {
-        $pk = new PrimaryKey('foo');
-        $this->assertEquals(
-            [[
-                'PRIMARY KEY (%s)',
-                [
-                    new ExpressionParameter('foo', $pk::TYPE_IDENTIFIER),
+        return $this->prepareDataProvider([
+            [
+                'sqlObject' => $this->constraint_PrimaryKey('foo'),
+                'expected'  => [
+                    'sql92' => 'PRIMARY KEY ("foo")',
                 ],
-            ]],
-            $this->builder->getExpressionData($pk, $this->context)
-        );
+            ],
+            [
+                'sqlObject' => $this->constraint_PrimaryKey('foo', 'bar'),
+                'expected'  => [
+                    'sql92' => 'CONSTRAINT "bar" PRIMARY KEY ("foo")',
+                ],
+            ],
+        ]);
     }
 }

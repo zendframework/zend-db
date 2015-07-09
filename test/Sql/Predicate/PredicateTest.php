@@ -18,7 +18,8 @@ use Zend\Db\Sql\ExpressionParameter;
 class PredicateTest extends TestCase
 {
     /**
-     * moved from SelectTest
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
+     * @covers Zend\Db\Sql\Predicate\Predicate::getPredicates
      */
     public function testWhereArgument1IsAssociativeArrayContainingReplacementCharacter()
     {
@@ -39,13 +40,15 @@ class PredicateTest extends TestCase
     }
 
     /**
-     * moved from SelectTest
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
+     * @covers Zend\Db\Sql\Predicate\Predicate::getPredicates
      */
     public function testWhereArgument1IsAssociativeArrayNotContainingReplacementCharacter()
     {
         $where = new Predicate;
-        $where->addPredicates(['name' => 'Ralph', 'age' => 33]);
-        $predicates = $where->getPredicates();
+        $predicates = $where
+                ->addPredicates(['name' => 'Ralph', 'age' => 33])
+                ->getPredicates();
         $this->assertEquals(2, count($predicates));
 
         $this->assertInstanceOf('Zend\Db\Sql\Predicate\Operator', $predicates[0][1]);
@@ -66,7 +69,7 @@ class PredicateTest extends TestCase
     }
 
     /**
-     * moved from SelectTest
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
      */
     public function testWhereArgument1IsAssociativeArrayIsPredicate()
     {
@@ -79,7 +82,8 @@ class PredicateTest extends TestCase
     }
 
     /**
-     * moved from SelectTest
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
+     * @covers Zend\Db\Sql\Predicate\Predicate::getPredicates
      */
     public function testWhereArgument1IsIndexedArray()
     {
@@ -95,7 +99,8 @@ class PredicateTest extends TestCase
     }
 
     /**
-     * moved from SelectTest
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
+     * @covers Zend\Db\Sql\Predicate\Predicate::getPredicates
      */
     public function testWhereArgument1IsIndexedArrayArgument2IsOr()
     {
@@ -111,7 +116,7 @@ class PredicateTest extends TestCase
     }
 
     /**
-     * moved from SelectTest
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
      */
     public function testWhereArgument1IsClosure()
     {
@@ -123,7 +128,8 @@ class PredicateTest extends TestCase
     }
 
     /**
-     * moved from SelectTest
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
+     * @covers Zend\Db\Sql\Predicate\Predicate::getPredicates
      */
     public function testWhereArgument1IsString()
     {
@@ -143,5 +149,133 @@ class PredicateTest extends TestCase
                 ->getPredicates();
 
         $this->assertInstanceOf('Zend\Db\Sql\Predicate\Literal', $predicates[0][1]);
+    }
+
+    public function testMethodsIsMutable()
+    {
+        $predicate = new Predicate;
+
+        $this->assertSame($predicate, $predicate->equalTo('foo.bar', 'bar'));
+        $this->assertSame($predicate, $predicate->notEqualTo('foo.bar', 'bar'));
+        $this->assertSame($predicate, $predicate->lessThan('foo.bar', 'bar'));
+        $this->assertSame($predicate, $predicate->greaterThan('foo.bar', 'bar'));
+        $this->assertSame($predicate, $predicate->lessThanOrEqualTo('foo.bar', 'bar'));
+        $this->assertSame($predicate, $predicate->greaterThanOrEqualTo('foo.bar', 'bar'));
+        $this->assertSame($predicate, $predicate->like('foo.bar', 'bar%'));
+        $this->assertSame($predicate, $predicate->notLike('foo.bar', 'bar%'));
+        $this->assertSame($predicate, $predicate->literal('foo.bar = ?', 'bar'));
+        $this->assertSame($predicate, $predicate->isNull('foo.bar'));
+        $this->assertSame($predicate, $predicate->isNotNull('foo.bar'));
+        $this->assertSame($predicate, $predicate->in('foo.bar', ['foo', 'bar']));
+        $this->assertSame($predicate, $predicate->notIn('foo.bar', ['foo', 'bar']));
+        $this->assertSame($predicate, $predicate->between('foo.bar', 1, 10));
+        $this->assertSame($predicate, $predicate->expression('foo = ?', 'bar'));
+        $this->assertSame(
+            $predicate,
+            $predicate
+                ->isNull('foo.bar')
+                ->or
+                ->isNotNull('bar.baz')
+                ->and
+                ->equalTo('baz.bat', 'foo')
+        );
+        $this->assertSame(
+            $predicate,
+            $predicate
+                ->isNull('foo.bar')
+                ->nest()
+                ->isNotNull('bar.baz')
+                ->and
+                ->equalTo('baz.bat', 'foo')
+                ->unnest()
+        );
+    }
+
+    /**
+     * @covers Zend\Db\Sql\Predicate\Predicate::between
+     * @covers Zend\Db\Sql\Predicate\Predicate::equalTo
+     * @covers Zend\Db\Sql\Predicate\Predicate::expression
+     * @covers Zend\Db\Sql\Predicate\Predicate::greaterThan
+     * @covers Zend\Db\Sql\Predicate\Predicate::greaterThanOrEqualTo
+     * @covers Zend\Db\Sql\Predicate\Predicate::in
+     * @covers Zend\Db\Sql\Predicate\Predicate::isNotNull
+     * @covers Zend\Db\Sql\Predicate\Predicate::isNull
+     * @covers Zend\Db\Sql\Predicate\Predicate::lessThan
+     * @covers Zend\Db\Sql\Predicate\Predicate::lessThanOrEqualTo
+     * @covers Zend\Db\Sql\Predicate\Predicate::like
+     * @covers Zend\Db\Sql\Predicate\Predicate::literal
+     * @covers Zend\Db\Sql\Predicate\Predicate::notBetween
+     * @covers Zend\Db\Sql\Predicate\Predicate::notEqualTo
+     * @covers Zend\Db\Sql\Predicate\Predicate::notIn
+     * @covers Zend\Db\Sql\Predicate\Predicate::notLike
+     */
+    public function testPredicatesIsCorrectInstances()
+    {
+        $predicate = new Predicate;
+
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Between',
+            $predicate->between('p1', 'p2', 'p3')->getPredicates()[0][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Operator',
+            $predicate->equalTo('p1', 'p2')->getPredicates()[1][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Expression',
+            $predicate->expression('', [])->getPredicates()[2][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Operator',
+            $predicate->greaterThan('p1', 'p2')->getPredicates()[3][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Operator',
+            $predicate->greaterThanOrEqualTo('p1', 'p2')->getPredicates()[4][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\In',
+            $predicate->in('p1')->getPredicates()[5][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\IsNotNull',
+            $predicate->isNotNull('p1')->getPredicates()[6][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\IsNull',
+            $predicate->isNull('p1')->getPredicates()[7][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Operator',
+            $predicate->lessThan('p1', 'p2')->getPredicates()[8][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Operator',
+            $predicate->lessThanOrEqualTo('p1', 'p2')->getPredicates()[9][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Like',
+            $predicate->like('p1', 'p2')->getPredicates()[10][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Literal',
+            $predicate->literal('p1')->getPredicates()[11][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\NotBetween',
+            $predicate->notBetween('p1', 'p2', 'p3')->getPredicates()[12][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Operator',
+            $predicate->notEqualTo('p1', 'p2')->getPredicates()[13][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\NotIn',
+            $predicate->notIn('p1')->getPredicates()[14][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\NotLike',
+            $predicate->notLike('p1', 'p2')->getPredicates()[15][1]
+        );
     }
 }

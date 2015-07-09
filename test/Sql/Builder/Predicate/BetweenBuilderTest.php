@@ -9,60 +9,45 @@
 
 namespace ZendTest\Db\Sql\Builder\Predicate;
 
-use Zend\Db\Sql\Builder\sql92\Predicate\BetweenBuilder;
 use Zend\Db\Sql\ExpressionInterface;
-use Zend\Db\Sql\Predicate\Between;
-use Zend\Db\Sql\ExpressionParameter;
-use Zend\Db\Sql\Builder\Context;
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Predicate\BetweenBuilder
+ */
 class BetweenBuilderTest extends AbstractTestCase
 {
-    protected $expression;
-    protected $builder;
-
-    public function setUp()
+    /**
+     * @param type $data
+     * @dataProvider dataProvider
+     */
+    public function test($sqlObject, $platform, $expected)
     {
-        $this->expression = new Between;
-        $this->builder = new BetweenBuilder(new \Zend\Db\Sql\Builder\Builder());
-        $this->context = new Context($this->getAdapterForPlatform('sql92'));
+        $this->assertBuilder($sqlObject, $platform, $expected);
     }
 
-    /**
-     * @covers Zend\Db\Sql\Predicate\Between::getExpressionData
-     */
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes()
+    public function dataProvider()
     {
-        $this->expression->setIdentifier('foo.bar')
-                      ->setMinValue(10)
-                      ->setMaxValue(19);
-
-        $this->assertEquals(
-            [[
-                '%1$s BETWEEN %2$s AND %3$s',
-                [
-                    new ExpressionParameter('foo.bar', ExpressionInterface::TYPE_IDENTIFIER),
-                    new ExpressionParameter(10,        ExpressionInterface::TYPE_VALUE),
-                    new ExpressionParameter(19,        ExpressionInterface::TYPE_VALUE),
+        return $this->prepareDataProvider([
+            [
+                'sqlObject' => $this->predicate_Between('foo.bar', 5, 10),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"foo"."bar" BETWEEN \'5\' AND \'10\'',
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($this->expression, $this->context)
-        );
-
-        $this->expression->setIdentifier([10=>Between::TYPE_VALUE])
-                      ->setMinValue(['foo.bar'=>Between::TYPE_IDENTIFIER])
-                      ->setMaxValue(['foo.baz'=>Between::TYPE_IDENTIFIER]);
-
-        $this->assertEquals(
-            [[
-                '%1$s BETWEEN %2$s AND %3$s',
-                [
-                    new ExpressionParameter(10,        Between::TYPE_VALUE),
-                    new ExpressionParameter('foo.bar', Between::TYPE_IDENTIFIER),
-                    new ExpressionParameter('foo.baz', Between::TYPE_IDENTIFIER),
+            ],
+            [
+                'sqlObject' => $this->predicate_Between()
+                                        ->setIdentifier([10=>ExpressionInterface::TYPE_VALUE])
+                                        ->setMinValue(['foo.bar'=>ExpressionInterface::TYPE_IDENTIFIER])
+                                        ->setMaxValue(['foo.baz'=>ExpressionInterface::TYPE_IDENTIFIER]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '\'10\' BETWEEN "foo"."bar" AND "foo"."baz"',
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($this->expression, $this->context)
-        );
+            ],
+        ]);
     }
 }

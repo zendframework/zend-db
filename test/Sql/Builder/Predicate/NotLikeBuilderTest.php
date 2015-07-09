@@ -9,35 +9,35 @@
 
 namespace ZendTest\Db\Sql\Builder\Predicate;
 
-use Zend\Db\Sql\Builder\sql92\Predicate\NotLikeBuilder;
-use Zend\Db\Sql\Predicate\NotLike;
-use Zend\Db\Sql\ExpressionParameter;
-use Zend\Db\Sql\Builder\Context;
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Predicate\NotLikeBuilder
+ */
 class NotLikeBuilderTest extends AbstractTestCase
 {
-    protected $expression;
-    protected $builder;
-
-    public function setUp()
+    /**
+     * @param type $data
+     * @dataProvider dataProvider
+     */
+    public function test($sqlObject, $platform, $expected)
     {
-        $this->builder = new NotLikeBuilder(new \Zend\Db\Sql\Builder\Builder());
-        $this->context = new Context($this->getAdapterForPlatform('sql92'));
+        $this->assertBuilder($sqlObject, $platform, $expected);
     }
 
-    public function testGetExpressionData()
+    public function dataProvider()
     {
-        $notLike = new NotLike('bar', 'Foo%');
-        $this->assertEquals(
-            [[
-                '%1$s NOT LIKE %2$s',
-                [
-                    new ExpressionParameter('bar',  $notLike::TYPE_IDENTIFIER),
-                    new ExpressionParameter('Foo%', $notLike::TYPE_VALUE),
+        return $this->prepareDataProvider([
+            [
+                'sqlObject' => $this->predicate_NotLike('bar', 'Foo%'),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"bar" NOT LIKE \'Foo%\'',
+                        'prepare' => '"bar" NOT LIKE ?',
+                        'parameters' => ['expr1' => 'Foo%'],
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($notLike, $this->context)
-        );
+            ],
+        ]);
     }
 }

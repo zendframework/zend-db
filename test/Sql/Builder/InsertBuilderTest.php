@@ -13,6 +13,9 @@ use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\TableIdentifier;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\InsertBuilder
+ */
 class InsertBuilderTest extends AbstractTestCase
 {
     /**
@@ -26,101 +29,51 @@ class InsertBuilderTest extends AbstractTestCase
 
     public function dataProvider()
     {
-        return $this->prepareDataProvider([
-            [ // testPrepareStatement()
-                'sqlObject' => $this->insert()
-                                        ->into('foo')
+        return $this->prepareDataProvider(
+            $this->dataProvider_Into(),
+            $this->dataProvider_ColumnsAndValues()
+        );
+    }
+
+    public function dataProvider_Into()
+    {
+        return [
+            'into_TableIdentifier' =>  [
+                'sqlObject' => $this->insert()->into(new TableIdentifier('foo', 'schema'))->values(['c1' => 'v1']),
+                'expected'  => [
+                    'sql92' => 'INSERT INTO "schema"."foo" ("c1") VALUES (\'v1\')',
+                ],
+            ],
+            'into_string' =>  [
+                'sqlObject' => $this->insert()->into('foo')->values(['c1' => 'v1']),
+                'expected'  => [
+                    'sql92' => 'INSERT INTO "foo" ("c1") VALUES (\'v1\')',
+                ],
+            ],
+        ];
+    }
+
+    public function dataProvider_ColumnsAndValues()
+    {
+        return [
+            'columns_in_values' => [
+                'sqlObject' => $this->insert('foo')
                                         ->values([
                                             'bar' => 'baz',
                                             'boo' => new Expression('NOW()'),
+                                            'bam' => null,
+                                            'bat' => $this->select('bad')
                                         ]),
                 'expected'  => [
                     'sql92' => [
-                        'string'  => '',
-                        'prepare' => 'INSERT INTO "foo" ("bar", "boo") VALUES (?, NOW())',
+                        'string'  => 'INSERT INTO "foo" ("bar", "boo", "bam", "bat") VALUES (\'baz\', NOW(), NULL, (SELECT "bad".* FROM "bad"))',
+                        'prepare' => 'INSERT INTO "foo" ("bar", "boo", "bam", "bat") VALUES (?, NOW(), NULL, (SELECT "bad".* FROM "bad"))',
+                        'parameters' => ['bar' => 'baz',],
                     ],
                 ],
             ],
-            [ // testPrepareStatement() // with TableIdentifier
-                'sqlObject' => $this->insert()
-                                        ->into(new TableIdentifier('foo', 'sch'))
-                                        ->values([
-                                            'bar' => 'baz',
-                                            'boo' => new Expression('NOW()'),
-                                        ]),
-                'expected'  => [
-                    'sql92' => [
-                        'string'  => '',
-                        'prepare' => 'INSERT INTO "sch"."foo" ("bar", "boo") VALUES (?, NOW())'
-                    ],
-                ],
-            ],
-            [ // testPrepareStatementWithSelect()
-                'sqlObject' => $this->insert()
-                                        ->into('foo')
-                                        ->columns(['col1'])
-                                        ->select($this->select('bar')->where(['x'=>5])),
-                'expected'  => [
-                    'sql92' => [
-                        'string'  => '',
-                        'prepare' => 'INSERT INTO "foo" ("col1") SELECT "bar".* FROM "bar" WHERE "x" = ?',
-                        'parameters' => ['subselect1expr1'=>5],
-                    ],
-                ],
-            ],
-            [ // testGetSqlString()
-                'sqlObject' => $this->insert()->into('foo')
-                                        ->values([
-                                            'bar' => 'baz',
-                                            'boo' => new Expression('NOW()'),
-                                            'bam' => null
-                                        ]),
-                'expected'  => [
-                    'sql92' => [
-                        'string'  => 'INSERT INTO "foo" ("bar", "boo", "bam") VALUES (\'baz\', NOW(), NULL)',
-                    ],
-                ],
-            ],
-            [ // testGetSqlString() // with TableIdentifier
-                'sqlObject' => $this->insert()
-                                        ->into(new TableIdentifier('foo', 'sch'))
-                                        ->values([
-                                            'bar' => 'baz',
-                                            'boo' => new Expression('NOW()'),
-                                            'bam' => null
-                                        ]),
-                'expected'  => [
-                    'sql92' => [
-                        'string'  => 'INSERT INTO "sch"."foo" ("bar", "boo", "bam") VALUES (\'baz\', NOW(), NULL)',
-                    ],
-                ],
-            ],
-            [ // testGetSqlString() // with Select
-                'sqlObject' => $this->insert()
-                                        ->into('foo')
-                                        ->select($this->select()->from('bar')),
-                'expected'  => [
-                    'sql92' => [
-                        'string'  => 'INSERT INTO "foo"  SELECT "bar".* FROM "bar"',
-                        'prepare' => true,
-                    ],
-                ],
-            ],
-            [ // testGetSqlString() // with Select and columns
-                'sqlObject' => $this->insert()
-                                        ->into('foo')
-                                        ->columns(['col1', 'col2'])
-                                        ->select($this->select()->from('bar')),
-                'expected'  => [
-                    'sql92' => [
-                        'string'  => 'INSERT INTO "foo" ("col1", "col2") SELECT "bar".* FROM "bar"',
-                        'prepare' => true,
-                    ],
-                ],
-            ],
-            [ // testValuesMerge()
-                'sqlObject' => $this->insert()
-                                        ->into('foo')
+            'values with merge' => [
+                'sqlObject' => $this->insert('foo')
                                         ->values([
                                             'bar' => 'baz',
                                             'boo' => new Expression('NOW()'),
@@ -133,6 +86,69 @@ class InsertBuilderTest extends AbstractTestCase
                     ],
                 ],
             ],
-        ]);
+            'select_with_columns' => [
+                'sqlObject' => $this->insert('foo')
+                                        ->columns(['col1', 'col2'])
+                                        ->select($this->select()->from('bar')->where(['x'=>5])),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => 'INSERT INTO "foo" ("col1", "col2") SELECT "bar".* FROM "bar" WHERE "x" = \'5\'',
+                        'prepare' => 'INSERT INTO "foo" ("col1", "col2") SELECT "bar".* FROM "bar" WHERE "x" = ?',
+                        'parameters' => ['subselect1expr1'=>5],
+                    ],
+                    'MySql'     => [
+                        'string'     => 'INSERT INTO `foo` (`col1`, `col2`) SELECT `bar`.* FROM `bar` WHERE `x` = \'5\'',
+                        'prepare'    => 'INSERT INTO `foo` (`col1`, `col2`) SELECT `bar`.* FROM `bar` WHERE `x` = ?',
+                        'parameters' => ['subselect1expr1' => 5],
+                    ],
+                    'Oracle'    => [
+                        'string'     => 'INSERT INTO "foo" ("col1", "col2") SELECT "bar".* FROM "bar" WHERE "x" = \'5\'',
+                        'prepare'    => 'INSERT INTO "foo" ("col1", "col2") SELECT "bar".* FROM "bar" WHERE "x" = ?',
+                        'parameters' => ['subselect1expr1' => 5],
+                    ],
+                    'SqlServer' => [
+                        'string'     => 'INSERT INTO [foo] ([col1], [col2]) SELECT [bar].* FROM [bar] WHERE [x] = \'5\'',
+                        'prepare'    => 'INSERT INTO [foo] ([col1], [col2]) SELECT [bar].* FROM [bar] WHERE [x] = ?',
+                        'parameters' => ['subselect1expr1' => 5],
+                    ],
+                ],
+            ],
+            'select_without_columns' => [
+                'sqlObject' => $this->insert('foo')
+                                        ->select($this->select('bar')->where(['x'=>5])),
+                'expected'  => [
+                    'sql92'     => [
+                        'string'     => 'INSERT INTO "foo"  SELECT "bar".* FROM "bar" WHERE "x" = \'5\'',
+                        'prepare'    => 'INSERT INTO "foo"  SELECT "bar".* FROM "bar" WHERE "x" = ?',
+                        'parameters' => ['subselect1expr1' => 5],
+                    ],
+                    'MySql'     => [
+                        'string'     => 'INSERT INTO `foo`  SELECT `bar`.* FROM `bar` WHERE `x` = \'5\'',
+                        'prepare'    => 'INSERT INTO `foo`  SELECT `bar`.* FROM `bar` WHERE `x` = ?',
+                        'parameters' => ['subselect1expr1' => 5],
+                    ],
+                    'Oracle'    => [
+                        'string'     => 'INSERT INTO "foo"  SELECT "bar".* FROM "bar" WHERE "x" = \'5\'',
+                        'prepare'    => 'INSERT INTO "foo"  SELECT "bar".* FROM "bar" WHERE "x" = ?',
+                        'parameters' => ['subselect1expr1' => 5],
+                    ],
+                    'SqlServer' => [
+                        'string'     => 'INSERT INTO [foo]  SELECT [bar].* FROM [bar] WHERE [x] = \'5\'',
+                        'prepare'    => 'INSERT INTO [foo]  SELECT [bar].* FROM [bar] WHERE [x] = ?',
+                        'parameters' => ['subselect1expr1' => 5],
+                    ],
+                ],
+            ],
+            'select_with_combine_in_select' => [
+                'sqlObject' => $this->insert('foo')
+                                        ->select($this->combine($this->select('bar'))),
+                'expected'  => [
+                    'sql92'     => 'INSERT INTO "foo"  (SELECT "bar".* FROM "bar")',
+                    'MySql'     => 'INSERT INTO `foo`  (SELECT `bar`.* FROM `bar`)',
+                    'Oracle'    => 'INSERT INTO "foo"  (SELECT "bar".* FROM "bar")',
+                    'SqlServer' => 'INSERT INTO [foo]  (SELECT [bar].* FROM [bar])',
+                ],
+            ],
+        ];
     }
 }

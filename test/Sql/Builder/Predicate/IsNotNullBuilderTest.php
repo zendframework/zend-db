@@ -9,36 +9,35 @@
 
 namespace ZendTest\Db\Sql\Builder\Predicate;
 
-use Zend\Db\Sql\Builder\sql92\Predicate\IsNotNullBuilder;
-use Zend\Db\Sql\Predicate\IsNotNull;
-use Zend\Db\Sql\ExpressionParameter;
-use Zend\Db\Sql\Builder\Context;
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Predicate\IsNotNullBuilder
+ */
 class IsNotNullBuilderTest extends AbstractTestCase
 {
-    protected $expression;
-    protected $builder;
-
-    public function setUp()
+    /**
+     * @param type $data
+     * @dataProvider dataProvider
+     */
+    public function test($sqlObject, $platform, $expected)
     {
-        $this->expression = new IsNotNull;
-        $this->builder = new IsNotNullBuilder(new \Zend\Db\Sql\Builder\Builder());
-        $this->context = new Context($this->getAdapterForPlatform('sql92'));
+        $this->assertBuilder($sqlObject, $platform, $expected);
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndArrayOfTypes()
+    public function dataProvider()
     {
-        $this->expression->setIdentifier('foo.bar');
-
-        $this->assertEquals(
-            [[
-                '%1$s IS NOT NULL',
-                [
-                    new ExpressionParameter('foo.bar', IsNotNull::TYPE_IDENTIFIER),
+        return $this->prepareDataProvider([
+            [
+                'sqlObject' => $this->predicate_IsNotNull('foo.bar'),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '"foo"."bar" IS NOT NULL',
+                        'prepare' => '"foo"."bar" IS NOT NULL',
+                        'parameters' => [],
+                    ],
                 ],
-            ]],
-            $this->builder->getExpressionData($this->expression, $this->context)
-        );
+            ],
+        ]);
     }
 }

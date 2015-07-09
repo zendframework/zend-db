@@ -13,6 +13,10 @@ use Zend\Db\Sql\Ddl\Column\Column;
 use Zend\Db\Sql\Ddl\Constraint;
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Ddl\CreateTableBuilder
+ * @covers Zend\Db\Sql\Builder\SqlServer\Ddl\CreateTableBuilder
+ */
 class CreateTableBuilderTest extends AbstractTestCase
 {
     /**
@@ -27,46 +31,26 @@ class CreateTableBuilderTest extends AbstractTestCase
     public function dataProvider()
     {
         return $this->prepareDataProvider(
-            $this->dataProvider_SQL92(),
-            $this->dataProvider_Mysql(),
-            $this->dataProvider_SqlServer()
+            $this->dataProvider_ColumnsAndConstraint(),
+            $this->dataProvider_Table()
         );
     }
 
-    public function dataProvider_SqlServer()
+    public function dataProvider_ColumnsAndConstraint()
     {
         return [
-            [
-                'sqlObject' => $this->createTable('foo'),
+            'with options' => [
+                'sqlObject' => $this->createTable('foo')
+                                    ->addColumn($this->createColumn('col1')->setOption('identity', true)->setOption('comment', 'Comment1'))
+                                    ->addColumn($this->createColumn('col2')->setOption('identity', true)->setOption('comment', 'Comment2')),
                 'expected'  => [
-                    'SqlServer' => "CREATE TABLE [foo] ( \n)",
+                    'sql92'     => "CREATE TABLE \"foo\" ( \n    \"col1\" INTEGER NOT NULL,\n    \"col2\" INTEGER NOT NULL \n)",
+                    'MySql'     => "CREATE TABLE `foo` ( \n    `col1` INTEGER NOT NULL AUTO_INCREMENT COMMENT 'Comment1',\n    `col2` INTEGER NOT NULL AUTO_INCREMENT COMMENT 'Comment2' \n)",
+                    'Oracle'    => "CREATE TABLE \"foo\" ( \n    \"col1\" INTEGER NOT NULL,\n    \"col2\" INTEGER NOT NULL \n)",
+                    'SqlServer' => "CREATE TABLE [foo] ( \n    [col1] INTEGER NOT NULL,\n    [col2] INTEGER NOT NULL \n)",
                 ],
             ],
-            [
-                'sqlObject' => $this->createTable('foo', true),
-                'expected'  => [
-                    'SqlServer' => "CREATE TABLE [#foo] ( \n)",
-                ],
-            ],
-            [
-                'sqlObject' => $this->createTable('foo')->addColumn(new Column('bar')),
-                'expected'  => [
-                    'SqlServer' => "CREATE TABLE [foo] ( \n    [bar] INTEGER NOT NULL \n)",
-                ],
-            ],
-            [
-                'sqlObject' => $this->createTable('foo', true)->addColumn(new Column('bar')),
-                'expected'  => [
-                    'SqlServer' => "CREATE TABLE [#foo] ( \n    [bar] INTEGER NOT NULL \n)",
-                ],
-            ],
-        ];
-    }
-
-    public function dataProvider_Mysql()
-    {
-        return [
-            [
+            'with options 2' => [
                 'sqlObject' => function () {
                     $col = new Column('bar');
                     $col->setOption('zerofill', true);
@@ -83,34 +67,18 @@ class CreateTableBuilderTest extends AbstractTestCase
                     'mysql' => "CREATE TABLE `foo` ( \n    `bar` INTEGER UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'baz' COLUMN_FORMAT FIXED STORAGE MEMORY \n)",
                 ],
             ],
-        ];
-    }
-
-    public function dataProvider_SQL92()
-    {
-        return [
-            [
-                'sqlObject' => $this->createTable('foo'),
-                'expected'  => [
-                    'sql92' => "CREATE TABLE \"foo\" ( \n)",
-                ],
-            ],
-            [
-                'sqlObject' => $this->createTable('foo', true),
-                'expected'  => [
-                    'sql92' => "CREATE TEMPORARY TABLE \"foo\" ( \n)",
-                ],
-            ],
             [
                 'sqlObject' => $this->createTable('foo')->addColumn(new Column('bar')),
                 'expected'  => [
-                    'sql92' => "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)",
+                    'sql92'     => "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)",
+                    'SqlServer' => "CREATE TABLE [foo] ( \n    [bar] INTEGER NOT NULL \n)",
                 ],
             ],
             [
                 'sqlObject' => $this->createTable('foo', true)->addColumn(new Column('bar')),
                 'expected'  => [
-                    'sql92' => "CREATE TEMPORARY TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)",
+                    'sql92'     => "CREATE TEMPORARY TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)",
+                    'SqlServer' => "CREATE TABLE [#foo] ( \n    [bar] INTEGER NOT NULL \n)",
                 ],
             ],
             [
@@ -129,6 +97,35 @@ class CreateTableBuilderTest extends AbstractTestCase
                 'sqlObject' => $this->createTable('foo')->addConstraint(new Constraint\PrimaryKey('bar'))->addConstraint(new Constraint\PrimaryKey('bat')),
                 'expected'  => [
                     'sql92' => "CREATE TABLE \"foo\" ( \n    PRIMARY KEY (\"bar\"),\n    PRIMARY KEY (\"bat\") \n)",
+                ],
+            ],
+        ];
+    }
+
+    public function dataProvider_Table()
+    {
+        return [
+            'not temporary' => [
+                'sqlObject' => $this->createTable('foo'),
+                'expected'  => [
+                    'sql92' => "CREATE TABLE \"foo\" ( \n)",
+                    'SqlServer' => "CREATE TABLE [foo] ( \n)",
+                ],
+            ],
+            'temporary' => [
+                'sqlObject' => $this->createTable('foo')->setTemporary(true),
+                'expected'  => [
+                    'sql92'     => "CREATE TEMPORARY TABLE \"foo\" ( \n)",
+                    'MySql'     => "CREATE TEMPORARY TABLE `foo` ( \n)",
+                    'Oracle'    => "CREATE TEMPORARY TABLE \"foo\" ( \n)",
+                    'SqlServer' => "CREATE TABLE [#foo] ( \n)",
+                ],
+            ],
+            'temporary via constructor' => [
+                'sqlObject' => $this->createTable('foo', true),
+                'expected'  => [
+                    'sql92' => "CREATE TEMPORARY TABLE \"foo\" ( \n)",
+                    'SqlServer' => "CREATE TABLE [#foo] ( \n)",
                 ],
             ],
         ];

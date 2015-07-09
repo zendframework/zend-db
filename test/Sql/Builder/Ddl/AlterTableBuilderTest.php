@@ -13,6 +13,9 @@ use Zend\Db\Sql\Ddl\Column;
 use Zend\Db\Sql\Ddl\Constraint;
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Ddl\AlterTableBuilder
+ */
 class AlterTableBuilderTest extends AbstractTestCase
 {
     /**

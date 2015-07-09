@@ -11,6 +11,9 @@ namespace ZendTest\Db\Sql\Builder\Ddl;
 
 use ZendTest\Db\Sql\Builder\AbstractTestCase;
 
+/**
+ * @covers Zend\Db\Sql\Builder\sql92\Ddl\DropTableBuilder
+ */
 class DropTableBuilderTest extends AbstractTestCase
 {
     /**
