@@ -107,20 +107,4 @@ class ForeignKeyTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals('CASCADE', $fk->getOnUpdateRule());
     }
-
-    /**
-     * @covers Zend\Db\Sql\Ddl\Constraint\ForeignKey::getExpressionData
-     */
-    public function testGetExpressionData()
-    {
-        $fk = new ForeignKey('foo', 'bar', 'baz', 'bam', 'CASCADE', 'SET NULL');
-        $this->assertEquals(
-            [[
-                'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) ON DELETE %s ON UPDATE %s',
-                ['foo', 'bar', 'baz', 'bam', 'CASCADE', 'SET NULL'],
-                [$fk::TYPE_IDENTIFIER, $fk::TYPE_IDENTIFIER, $fk::TYPE_IDENTIFIER, $fk::TYPE_IDENTIFIER, $fk::TYPE_LITERAL, $fk::TYPE_LITERAL]
-            ]],
-            $fk->getExpressionData()
-        );
-    }
 }

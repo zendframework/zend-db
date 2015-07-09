@@ -159,35 +159,6 @@ class PredicateSet implements PredicateInterface, Countable
     }
 
     /**
-     * Get predicate parts for where statement
-     *
-     * @return array
-     */
-    public function getExpressionData()
-    {
-        $parts = [];
-        for ($i = 0, $count = count($this->predicates); $i < $count; $i++) {
-            /** @var $predicate PredicateInterface */
-            $predicate = $this->predicates[$i][1];
-
-            if ($predicate instanceof PredicateSet) {
-                $parts[] = '(';
-            }
-
-            $parts = array_merge($parts, $predicate->getExpressionData());
-
-            if ($predicate instanceof PredicateSet) {
-                $parts[] = ')';
-            }
-
-            if (isset($this->predicates[$i+1])) {
-                $parts[] = sprintf(' %s ', $this->predicates[$i+1][0]);
-            }
-        }
-        return $parts;
-    }
-
-    /**
      * Get count of attached predicates
      *
      * @return int

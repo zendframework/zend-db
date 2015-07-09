@@ -156,7 +156,7 @@ abstract class AbstractSqlBuilder extends AbstractBuilder
     {
         $sql = '';
 
-        $parts = $expression->getExpressionData();
+        $parts = $this->platformBuilder->getPlatformBuilder($expression, $context)->getExpressionData($expression, $context);
 
         foreach ($parts as $part) {
             // #7407: use $expression->getExpression() to get the unescaped
@@ -183,41 +183,29 @@ abstract class AbstractSqlBuilder extends AbstractBuilder
 
             // build_ values and types (the middle and last position of the
             // expression data)
-            $values = $part[1];
-            $types = isset($part[2]) ? $part[2] : [];
-            foreach ($values as $vIndex => $value) {
-                if (!isset($types[$vIndex])) {
-                    continue;
-                }
-                $type = $types[$vIndex];
+            $parameters = $part[1];
+            foreach ($parameters as $pIndex => &$parameter) {
+                $value = $parameter->getValue();
+                $type  = $parameter->getType();
                 if ($value instanceof SelectableInterface) {
-                    // build_ sub-select
-                    $values[$vIndex] = '(' . $this->buildSubSelect($value, $context) . ')';
+                    $parameter = '(' . $this->buildSubSelect($value, $context) . ')';
                 } elseif ($value instanceof ExpressionInterface) {
-                    // recursive call to satisfy nested expressions
-                    $values[$vIndex] = $this->buildSqlString($value, $context);
+                    $parameter = $this->buildSqlString($value, $context);
                 } elseif ($type == ExpressionInterface::TYPE_IDENTIFIER) {
-                    $values[$vIndex] = $context->getPlatform()->quoteIdentifierInFragment($value);
+                    $parameter = $context->getPlatform()->quoteIdentifierInFragment($value);
                 } elseif ($type == ExpressionInterface::TYPE_VALUE) {
-                    // if prepareType is set, it means that this particular value must be
-                    // passed back to the statement in a way it can be used as a placeholder value
+                    $parameter = $context->getPlatform()->quoteValue($value);
                     if ($context->getParameterContainer()) {
                         $name = $context->getNestedAlias('expr');
                         $context->getParameterContainer()->offsetSet($name, $value);
-                        $values[$vIndex] = $context->getDriver()->formatParameterName($name);
-                        continue;
+                        $parameter = $context->getDriver()->formatParameterName($name);
                     }
-
-                    // if not a preparable statement, simply quote the value and move on
-                    $values[$vIndex] = $context->getPlatform()->quoteValue($value);
                 } elseif ($type == ExpressionInterface::TYPE_LITERAL) {
-                    $values[$vIndex] = $value;
+                    $parameter = $value;
                 }
             }
 
-            // after looping the values, interpolate them into the sql string
-            // (they might be placeholder names, or values)
-            $sql .= vsprintf($part[0], $values);
+            $sql .= vsprintf($part[0], $parameters);
         }
 
         return $sql;

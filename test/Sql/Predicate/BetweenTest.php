@@ -46,30 +46,20 @@ class BetweenTest extends TestCase
     public function testConstructorCanPassIdentifierMinimumAndMaximumValues()
     {
         $between = new Between('foo.bar', 1, 300);
-        $this->assertEquals('foo.bar', $between->getIdentifier());
-        $this->assertSame(1, $between->getMinValue());
-        $this->assertSame(300, $between->getMaxValue());
+        $this->assertEquals('foo.bar', $between->getIdentifier()->getValue());
+        $this->assertSame(1, $between->getMinValue()->getValue());
+        $this->assertSame(300, $between->getMaxValue()->getValue());
 
         $between = new Between('foo.bar', 0, 1);
-        $this->assertEquals('foo.bar', $between->getIdentifier());
-        $this->assertSame(0, $between->getMinValue());
-        $this->assertSame(1, $between->getMaxValue());
+        $this->assertEquals('foo.bar', $between->getIdentifier()->getValue());
+        $this->assertSame(0, $between->getMinValue()->getValue());
+        $this->assertSame(1, $between->getMaxValue()->getValue());
 
         $between = new Between('foo.bar', -1, 0);
-        $this->assertEquals('foo.bar', $between->getIdentifier());
-        $this->assertSame(-1, $between->getMinValue());
-        $this->assertSame(0, $between->getMaxValue());
+        $this->assertEquals('foo.bar', $between->getIdentifier()->getValue());
+        $this->assertSame(-1, $between->getMinValue()->getValue());
+        $this->assertSame(0, $between->getMaxValue()->getValue());
     }
-
-    /**
-     * @covers Zend\Db\Sql\Predicate\Between::getSpecification
-     */
-    public function testSpecificationHasSaneDefaultValue()
-    {
-        $this->assertEquals('%1$s BETWEEN %2$s AND %3$s', $this->between->getSpecification());
-    }
-
-
 
     /**
      * @covers Zend\Db\Sql\Predicate\Between::setIdentifier
@@ -78,7 +68,7 @@ class BetweenTest extends TestCase
     public function testIdentifierIsMutable()
     {
         $this->between->setIdentifier('foo.bar');
-        $this->assertEquals('foo.bar', $this->between->getIdentifier());
+        $this->assertEquals('foo.bar', $this->between->getIdentifier()->getValue());
     }
 
     /**
@@ -88,7 +78,7 @@ class BetweenTest extends TestCase
     public function testMinValueIsMutable()
     {
         $this->between->setMinValue(10);
-        $this->assertEquals(10, $this->between->getMinValue());
+        $this->assertEquals(10, $this->between->getMinValue()->getValue());
     }
 
     /**
@@ -98,42 +88,6 @@ class BetweenTest extends TestCase
     public function testMaxValueIsMutable()
     {
         $this->between->setMaxValue(10);
-        $this->assertEquals(10, $this->between->getMaxValue());
-    }
-
-    /**
-     * @covers Zend\Db\Sql\Predicate\Between::setSpecification
-     * @covers Zend\Db\Sql\Predicate\Between::getSpecification
-     */
-    public function testSpecificationIsMutable()
-    {
-        $this->between->setSpecification('%1$s IS INBETWEEN %2$s AND %3$s');
-        $this->assertEquals('%1$s IS INBETWEEN %2$s AND %3$s', $this->between->getSpecification());
-    }
-
-    /**
-     * @covers Zend\Db\Sql\Predicate\Between::getExpressionData
-     */
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes()
-    {
-        $this->between->setIdentifier('foo.bar')
-                      ->setMinValue(10)
-                      ->setMaxValue(19);
-        $expected = [[
-            $this->between->getSpecification(),
-            ['foo.bar', 10, 19],
-            [Between::TYPE_IDENTIFIER, Between::TYPE_VALUE, Between::TYPE_VALUE],
-        ]];
-        $this->assertEquals($expected, $this->between->getExpressionData());
-
-        $this->between->setIdentifier([10=>Between::TYPE_VALUE])
-                      ->setMinValue(['foo.bar'=>Between::TYPE_IDENTIFIER])
-                      ->setMaxValue(['foo.baz'=>Between::TYPE_IDENTIFIER]);
-        $expected = [[
-            $this->between->getSpecification(),
-            [10, 'foo.bar', 'foo.baz'],
-            [Between::TYPE_VALUE, Between::TYPE_IDENTIFIER, Between::TYPE_IDENTIFIER],
-        ]];
-        $this->assertEquals($expected, $this->between->getExpressionData());
+        $this->assertEquals(10, $this->between->getMaxValue()->getValue());
     }
 }

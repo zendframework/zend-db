@@ -9,15 +9,10 @@
 
 namespace Zend\Db\Sql\Predicate;
 
-use Zend\Db\Sql\AbstractExpression;
+use Zend\Db\Sql\ExpressionParameter;
 
-class Like extends AbstractExpression implements PredicateInterface
+class Like implements PredicateInterface
 {
-    /**
-     * @var string
-     */
-    protected $specification = '%1$s LIKE %2$s';
-
     /**
      * @var string
      */
@@ -46,9 +41,9 @@ class Like extends AbstractExpression implements PredicateInterface
      * @param  string $identifier
      * @return self
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier($identifier, $type = self::TYPE_IDENTIFIER)
     {
-        $this->identifier = $identifier;
+        $this->identifier = new ExpressionParameter($identifier, $type);
         return $this;
     }
 
@@ -64,9 +59,9 @@ class Like extends AbstractExpression implements PredicateInterface
      * @param  string $like
      * @return self
      */
-    public function setLike($like)
+    public function setLike($like, $type = self::TYPE_VALUE)
     {
-        $this->like = $like;
+        $this->like = new ExpressionParameter($like, $type);
         return $this;
     }
 
@@ -76,39 +71,5 @@ class Like extends AbstractExpression implements PredicateInterface
     public function getLike()
     {
         return $this->like;
-    }
-
-    /**
-     * @param  string $specification
-     * @return self
-     */
-    public function setSpecification($specification)
-    {
-        $this->specification = $specification;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSpecification()
-    {
-        return $this->specification;
-    }
-
-    /**
-     * @return array
-     */
-    public function getExpressionData()
-    {
-        list($values[], $types[]) = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
-        list($values[], $types[]) = $this->normalizeArgument($this->like, self::TYPE_VALUE);
-        return [
-            [
-                $this->specification,
-                $values,
-                $types,
-            ]
-        ];
     }
 }

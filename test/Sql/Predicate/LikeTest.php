@@ -23,45 +23,23 @@ class LikeTest extends \PHPUnit_Framework_TestCase
     public function testConstructWithArgs()
     {
         $like = new Like('bar', 'Foo%');
-        $this->assertEquals('bar', $like->getIdentifier());
-        $this->assertEquals('Foo%', $like->getLike());
+        $this->assertEquals('bar', $like->getIdentifier()->getValue());
+        $this->assertEquals('Foo%', $like->getLike()->getValue());
     }
 
     public function testAccessorsMutators()
     {
         $like = new Like();
         $like->setIdentifier('bar');
-        $this->assertEquals('bar', $like->getIdentifier());
+        $this->assertEquals('bar', $like->getIdentifier()->getValue());
         $like->setLike('foo%');
-        $this->assertEquals('foo%', $like->getLike());
-        $like->setSpecification('target = target');
-        $this->assertEquals('target = target', $like->getSpecification());
-    }
-
-    public function testGetExpressionData()
-    {
-        $like = new Like('bar', 'Foo%');
-        $this->assertEquals(
-            [
-                ['%1$s LIKE %2$s', ['bar', 'Foo%'], [$like::TYPE_IDENTIFIER, $like::TYPE_VALUE]]
-            ],
-            $like->getExpressionData()
-        );
-
-        $like = new Like(['Foo%'=>$like::TYPE_VALUE], ['bar'=>$like::TYPE_IDENTIFIER]);
-        $this->assertEquals(
-            [
-                ['%1$s LIKE %2$s', ['Foo%', 'bar'], [$like::TYPE_VALUE, $like::TYPE_IDENTIFIER]]
-            ],
-            $like->getExpressionData()
-        );
+        $this->assertEquals('foo%', $like->getLike()->getValue());
     }
 
     public function testInstanceOfPerSetters()
     {
         $like = new Like();
         $this->assertInstanceOf('Zend\Db\Sql\Predicate\Like', $like->setIdentifier('bar'));
-        $this->assertInstanceOf('Zend\Db\Sql\Predicate\Like', $like->setSpecification('%1$s LIKE %2$s'));
         $this->assertInstanceOf('Zend\Db\Sql\Predicate\Like', $like->setLike('foo%'));
     }
 }

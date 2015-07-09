@@ -356,8 +356,11 @@ class SelectBuilderTest extends AbstractTestCase
                                         [
                                             new Expression(
                                                 '(COUNT(?) + ?) AS ?',
-                                                ['some_column', 5, 'bar'],
-                                                [Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_IDENTIFIER]
+                                                [
+                                                    ['some_column', Expression::TYPE_IDENTIFIER],
+                                                    [5,             Expression::TYPE_VALUE],
+                                                    ['bar',         Expression::TYPE_IDENTIFIER],
+                                                ]
                                             )
                                         ]
                                     ),
@@ -451,7 +454,7 @@ class SelectBuilderTest extends AbstractTestCase
                 ],
             ],
             [ // group
-                'sqlObject' => $this->select()->from('foo')->group(new Expression('DAY(?)', ['col1'], [Expression::TYPE_IDENTIFIER])),
+                'sqlObject' => $this->select()->from('foo')->group(new Expression('DAY(?)', [['col1', Expression::TYPE_IDENTIFIER]])),
                 'expected'  => [
                     'sql92' => [
                         'string'  => 'SELECT "foo".* FROM "foo" GROUP BY DAY("col1")',
@@ -603,7 +606,7 @@ class SelectBuilderTest extends AbstractTestCase
                 'sqlObject' => $this->select()
                                     ->from('table')
                                     ->order([
-                                        new Expression('isnull(?) DESC', ['name'], [Expression::TYPE_IDENTIFIER]),
+                                        new Expression('isnull(?) DESC', [['name', Expression::TYPE_IDENTIFIER]]),
                                         'name'
                                     ]),
                 'expected'  => [

@@ -11,8 +11,4 @@ namespace Zend\Db\Sql\Ddl\Constraint;
 
 class UniqueKey extends AbstractConstraint
 {
-    /**
-     * @var string
-     */
-    protected $specification = 'UNIQUE';
 }

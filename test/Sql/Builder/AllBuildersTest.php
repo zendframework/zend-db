@@ -467,40 +467,39 @@ class AllBuildersTest extends AbstractTestCase
                     ],
                 ],
             ],
-            /* TODO - should be implemeted
             'DecorableExpression()' => [
-                'sqlObject' => $this->update('foo')->where(['x'=>new Sql\Expression('?', [$this->select('foo')])]),
+                'sqlObject' => $this->update('foo')->where(['x'=>$this->expression('?', [$this->select('foo')])]),
                 'expected'  => [
                     'sql92'     => [
                         'decorators' => [
-                            'Zend\Db\Sql\Expression' => new TestAsset\DecorableExpression,
+                            'Zend\Db\Sql\Expression' => 'ZendTest\Db\TestAsset\ExpressionBuilder',
                             'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Builder\Mysql\SelectBuilder', '{=SELECT_Sql92=}']
                         ],
                         'string'     => 'UPDATE "foo" SET  WHERE "x" = {decorate-({=SELECT_Sql92=})-decorate}',
                     ],
                     'MySql'     => [
                         'decorators' => [
-                            'Zend\Db\Sql\Expression' => new TestAsset\DecorableExpression,
+                            'Zend\Db\Sql\Expression' => 'ZendTest\Db\TestAsset\ExpressionBuilder',
                             'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Builder\Mysql\SelectBuilder', '{=SELECT_MySql=}']
                         ],
                         'string'     => 'UPDATE `foo` SET  WHERE `x` = {decorate-({=SELECT_MySql=})-decorate}',
                     ],
                     'Oracle'    => [
                         'decorators' => [
-                            'Zend\Db\Sql\Expression' => new TestAsset\DecorableExpression,
+                            'Zend\Db\Sql\Expression' => 'ZendTest\Db\TestAsset\ExpressionBuilder',
                             'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Builder\Oracle\SelectBuilder', '{=SELECT_Oracle=}']
                         ],
                         'string'     => 'UPDATE "foo" SET  WHERE "x" = {decorate-({=SELECT_Oracle=})-decorate}',
                     ],
                     'SqlServer' => [
                         'decorators' => [
-                            'Zend\Db\Sql\Expression' => new TestAsset\DecorableExpression,
+                            'Zend\Db\Sql\Expression' => 'ZendTest\Db\TestAsset\ExpressionBuilder',
                             'Zend\Db\Sql\Select'     => ['Zend\Db\Sql\Builder\SqlServer\SelectBuilder', '{=SELECT_SqlServer=}']
                         ],
                         'string'     => 'UPDATE [foo] SET  WHERE [x] = {decorate-({=SELECT_SqlServer=})-decorate}',
                     ],
                 ],
-            ],*/
+            ],
         ];
     }
 }

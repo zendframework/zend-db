@@ -12,16 +12,12 @@ namespace Zend\Db\Sql\Predicate;
 use Zend\Db\Sql\Exception;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\SelectableInterface;
-use Zend\Db\Sql\AbstractExpression;
+use Zend\Db\Sql\ExpressionParameter;
 
-class In extends AbstractExpression implements PredicateInterface
+class In implements PredicateInterface
 {
     protected $identifier;
     protected $valueSet;
-
-    protected $specification = '%s IN %s';
-
-    protected $valueSpecSpecification = '%%s IN (%s)';
 
     /**
      * Constructor
@@ -45,9 +41,16 @@ class In extends AbstractExpression implements PredicateInterface
      * @param  string|array $identifier
      * @return In
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier($identifier, $type = self::TYPE_IDENTIFIER)
     {
-        $this->identifier = $identifier;
+        if (is_array($identifier)) {
+            $this->identifier = [];
+            foreach ($identifier as $ident) {
+                $this->identifier[] = new ExpressionParameter($ident, $type);
+            }
+        } else {
+            $this->identifier = new ExpressionParameter($identifier, $type);
+        }
 
         return $this;
     }
@@ -71,13 +74,18 @@ class In extends AbstractExpression implements PredicateInterface
      */
     public function setValueSet($valueSet)
     {
-        if (!is_array($valueSet) && !$valueSet instanceof SelectableInterface) {
+        if ($valueSet instanceof SelectableInterface) {
+            $this->valueSet = new ExpressionParameter($valueSet);
+        } elseif (is_array($valueSet)) {
+            $this->valueSet = [];
+            foreach ($valueSet as $value) {
+                $this->valueSet[] = new ExpressionParameter($value, self::TYPE_VALUE);
+            }
+        } else {
             throw new Exception\InvalidArgumentException(
                 '$valueSet must be either an array or a Zend\Db\Sql\SelectableInterface object, ' . gettype($valueSet) . ' given'
             );
         }
-        $this->valueSet = $valueSet;
-
         return $this;
     }
 
@@ -89,50 +97,5 @@ class In extends AbstractExpression implements PredicateInterface
     public function getValueSet()
     {
         return $this->valueSet;
-    }
-
-    /**
-     * Return array of parts for where statement
-     *
-     * @return array
-     */
-    public function getExpressionData()
-    {
-        $identifier = $this->getIdentifier();
-        $values = $this->getValueSet();
-        $replacements = [];
-
-        if (is_array($identifier)) {
-            $identifierSpecFragment = '(' . implode(', ', array_fill(0, count($identifier), '%s')) . ')';
-            $types = array_fill(0, count($identifier), self::TYPE_IDENTIFIER);
-            $replacements = $identifier;
-        } else {
-            $identifierSpecFragment = '%s';
-            $replacements[] = $identifier;
-            $types = [self::TYPE_IDENTIFIER];
-        }
-
-        if ($values instanceof SelectableInterface) {
-            $specification = vsprintf(
-                $this->specification,
-                [$identifierSpecFragment, '%s']
-            );
-            $replacements[] = $values;
-            $types[] = self::TYPE_VALUE;
-        } else {
-            foreach ($values as $argument) {
-                list($replacements[], $types[]) = $this->normalizeArgument($argument, self::TYPE_VALUE);
-            }
-            $specification = vsprintf(
-                $this->specification,
-                [$identifierSpecFragment, '(' . implode(', ', array_fill(0, count($values), '%s')) . ')']
-            );
-        }
-
-        return [[
-            $specification,
-            $replacements,
-            $types,
-        ]];
     }
 }

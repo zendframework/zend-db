@@ -47,26 +47,4 @@ abstract class AbstractLengthColumn extends Column
     {
         return $this->length;
     }
-
-    /**
-     * @return string
-     */
-    protected function getLengthExpression()
-    {
-        return (string) $this->length;
-    }
-
-    /**
-     * @return array
-     */
-    public function getExpressionData()
-    {
-        $data = parent::getExpressionData();
-
-        if ($this->getLengthExpression()) {
-            $data[0][1][1] .= '(' . $this->getLengthExpression() . ')';
-        }
-
-        return $data;
-    }
 }

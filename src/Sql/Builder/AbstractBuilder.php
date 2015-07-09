@@ -12,4 +12,25 @@ namespace Zend\Db\Sql\Builder;
 abstract class AbstractBuilder
 {
     abstract protected function buildSqlString($sqlObject, Context $context);
+
+    /**
+     *
+     * @param mixed $argument
+     * @param string $class
+     * @param string $method
+     * @return null
+     * @throws \Zend\Db\Sql\Exception\InvalidArgumentException
+     */
+    protected function validateSqlObject($argument, $class, $method)
+    {
+        if ($argument instanceof $class) {
+            return;
+        }
+        throw new \Zend\Db\Sql\Exception\InvalidArgumentException(sprintf(
+            'Argument 1 passed to %s must be an instance of %s, instance of %s given',
+            $method . '()',
+            $class,
+            is_object($argument) ? get_class($argument) : gettype($argument)
+        ));
+    }
 }

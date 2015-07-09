@@ -14,18 +14,6 @@ use Zend\Db\Sql\Ddl\Column\Boolean;
 class BooleanTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers Zend\Db\Sql\Ddl\Column\Boolean::getExpressionData
-     */
-    public function testGetExpressionData()
-    {
-        $column = new Boolean('foo');
-        $this->assertEquals(
-            [['%s %s NOT NULL', ['foo', 'BOOLEAN'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
-    }
-
-    /**
      * @covers Zend\Db\Sql\Ddl\Column\Boolean
      *
      * @group 6257

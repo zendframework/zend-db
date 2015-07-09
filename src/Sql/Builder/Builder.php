@@ -57,6 +57,79 @@ class Builder extends AbstractBuilder
         'Zend\Db\Sql\Ddl\DropTable'   => [
             'sql92'     => 'Zend\Db\Sql\Builder\sql92\Ddl\DropTableBuilder',
         ],
+
+        'Zend\Db\Sql\Predicate\NotBetween'      => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Predicate\NotBetweenBuilder',
+        ],
+        'Zend\Db\Sql\Predicate\Between'      => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Predicate\BetweenBuilder',
+        ],
+        'Zend\Db\Sql\Predicate\NotIn'        => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Predicate\NotInBuilder',
+        ],
+        'Zend\Db\Sql\Predicate\In'           => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Predicate\InBuilder',
+        ],
+        'Zend\Db\Sql\Predicate\IsNotNull'    => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Predicate\IsNotNullBuilder',
+        ],
+        'Zend\Db\Sql\Predicate\IsNull'       => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Predicate\IsNullBuilder',
+        ],
+        'Zend\Db\Sql\Predicate\NotLike'      => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Predicate\NotLikeBuilder',
+        ],
+        'Zend\Db\Sql\Predicate\Like'         => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Predicate\LikeBuilder',
+        ],
+        'Zend\Db\Sql\Predicate\Operator'     => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Predicate\OperatorBuilder',
+        ],
+        'Zend\Db\Sql\Predicate\PredicateSet' => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Predicate\PredicateSetBuilder',
+        ],
+        'Zend\Db\Sql\Predicate\Predicate'    => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Predicate\PredicateBuilder',
+        ],
+        'Zend\Db\Sql\Ddl\Column\AbstractPrecisionColumn' => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Column\AbstractPrecisionColumnBuilder',
+        ],
+        'Zend\Db\Sql\Ddl\Column\AbstractLengthColumn'    => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Column\AbstractLengthColumnBuilder',
+        ],
+        'Zend\Db\Sql\Ddl\Column\AbstractTimestampColumn' => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Column\AbstractTimestampColumnBuilder',
+        ],
+        'Zend\Db\Sql\Ddl\Column\Integer' => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Column\IntegerBuilder',
+        ],
+        'Zend\Db\Sql\Ddl\Column\Column'  => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Column\ColumnBuilder',
+        ],
+        'Zend\Db\Sql\Ddl\Index\Index' => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Index\IndexBuilder',
+        ],
+        'Zend\Db\Sql\Ddl\Constraint\UniqueKey'          => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Constraint\UniqueKeyBuilder',
+        ],
+        'Zend\Db\Sql\Ddl\Constraint\PrimaryKey'         => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Constraint\PrimaryKeyBuilder',
+        ],
+        'Zend\Db\Sql\Ddl\Constraint\ForeignKey'         => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Constraint\ForeignKeyBuilder',
+        ],
+        'Zend\Db\Sql\Ddl\Constraint\Check'              => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Constraint\CheckBuilder',
+        ],
+        'Zend\Db\Sql\Ddl\Constraint\AbstractConstraint' => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Constraint\AbstractBuilder',
+        ],
+        'Zend\Db\Sql\Literal'      => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\LiteralBuilder',
+        ],
+        'Zend\Db\Sql\Expression'             => [
+            'sql92' => 'Zend\Db\Sql\Builder\sql92\ExpressionBuilder',
+        ],
     ];
 
     /**

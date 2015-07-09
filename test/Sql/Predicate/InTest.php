@@ -10,9 +10,8 @@
 namespace ZendTest\Db\Sql\Predicate;
 
 use PHPUnit_Framework_TestCase as TestCase;
-use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Predicate\In;
-use Zend\Db\Sql\Combine;
+use Zend\Db\Sql\ExpressionParameter;
 
 class InTest extends TestCase
 {
@@ -26,93 +25,33 @@ class InTest extends TestCase
     public function testCanPassIdentifierAndValueSetToConstructor()
     {
         $in = new In('foo.bar', [1, 2]);
-        $this->assertEquals('foo.bar', $in->getIdentifier());
-        $this->assertEquals([1, 2], $in->getValueSet());
+        $this->assertEquals('foo.bar', $in->getIdentifier()->getValue());
+        $this->assertEquals(
+            [
+                new ExpressionParameter(1),
+                new ExpressionParameter(2),
+            ],
+            $in->getValueSet()
+        );
     }
 
     public function testIdentifierIsMutable()
     {
         $in = new In();
         $in->setIdentifier('foo.bar');
-        $this->assertEquals('foo.bar', $in->getIdentifier());
+        $this->assertEquals('foo.bar', $in->getIdentifier()->getValue());
     }
 
     public function testValueSetIsMutable()
     {
         $in = new In();
         $in->setValueSet([1, 2]);
-        $this->assertEquals([1, 2], $in->getValueSet());
-    }
-
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes()
-    {
-        $in = new In();
-        $in->setIdentifier('foo.bar')
-            ->setValueSet([1, 2, 3]);
-        $expected = [[
-            '%s IN (%s, %s, %s)',
-            ['foo.bar', 1, 2, 3],
-            [In::TYPE_IDENTIFIER, In::TYPE_VALUE, In::TYPE_VALUE, In::TYPE_VALUE],
-        ]];
-        $this->assertEquals($expected, $in->getExpressionData());
-
-        $in->setIdentifier('foo.bar')
-            ->setValueSet([
-                [1=>In::TYPE_LITERAL],
-                [2=>In::TYPE_VALUE],
-                [3=>In::TYPE_LITERAL],
-            ]);
-        $expected = [[
-            '%s IN (%s, %s, %s)',
-            ['foo.bar', 1, 2, 3],
-            [In::TYPE_IDENTIFIER, In::TYPE_LITERAL, In::TYPE_VALUE, In::TYPE_LITERAL],
-        ]];
-        $qqq = $in->getExpressionData();
-        $this->assertEquals($expected, $in->getExpressionData());
-    }
-
-    public function testGetExpressionDataWithSubselect()
-    {
-        $select = new Select;
-        $in = new In('foo', $select);
-        $expected = [[
-            '%s IN %s',
-            ['foo', $select],
-            [$in::TYPE_IDENTIFIER, $in::TYPE_VALUE]
-        ]];
-        $this->assertEquals($expected, $in->getExpressionData());
-
-        $combine = new Combine;
-        $in = new In('foo', $combine);
-        $expected = [[
-            '%s IN %s',
-            ['foo', $combine],
-            [$in::TYPE_IDENTIFIER, $in::TYPE_VALUE]
-        ]];
-        $this->assertEquals($expected, $in->getExpressionData());
-    }
-
-    public function testGetExpressionDataWithSubselectAndIdentifier()
-    {
-        $select = new Select;
-        $in = new In('foo', $select);
-        $expected = [[
-            '%s IN %s',
-            ['foo', $select],
-            [$in::TYPE_IDENTIFIER, $in::TYPE_VALUE]
-        ]];
-        $this->assertEquals($expected, $in->getExpressionData());
-    }
-
-    public function testGetExpressionDataWithSubselectAndArrayIdentifier()
-    {
-        $select = new Select;
-        $in = new In(['foo', 'bar'], $select);
-        $expected = [[
-            '(%s, %s) IN %s',
-            ['foo', 'bar', $select],
-            [$in::TYPE_IDENTIFIER, $in::TYPE_IDENTIFIER, $in::TYPE_VALUE]
-        ]];
-        $this->assertEquals($expected, $in->getExpressionData());
+        $this->assertEquals(
+            [
+                new ExpressionParameter(1),
+                new ExpressionParameter(2),
+            ],
+            $in->getValueSet()
+        );
     }
 }

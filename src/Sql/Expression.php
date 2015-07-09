@@ -9,13 +9,10 @@
 
 namespace Zend\Db\Sql;
 
-class Expression extends AbstractExpression
-{
-    /**
-     * @const
-     */
-    const PLACEHOLDER = '?';
+use Zend\Stdlib\ArrayUtils;
 
+class Expression implements ExpressionInterface
+{
     /**
      * @var string
      */
@@ -27,43 +24,21 @@ class Expression extends AbstractExpression
     protected $parameters = [];
 
     /**
-     * @var array
-     */
-    protected $types = [];
-
-    /**
      * @param string $expression
-     * @param string|array $parameters
-     * @param array $types @deprecated will be dropped in version 3.0.0
+     * @param string|array $valueParameter
      */
-    public function __construct($expression = '', $parameters = null, array $types = [])
+    public function __construct($expression = '', $valueParameter = null /*[, $valueParameter, ... ]*/)
     {
         if ($expression !== '') {
             $this->setExpression($expression);
         }
 
-        if ($types) { // should be deprecated and removed version 3.0.0
-            if (is_array($parameters)) {
-                foreach ($parameters as $i=>$parameter) {
-                    $parameters[$i] = [
-                        $parameter => isset($types[$i]) ? $types[$i] : self::TYPE_VALUE,
-                    ];
-                }
-            } elseif (is_scalar($parameters)) {
-                $parameters = [
-                    $parameters => $types[0],
-                ];
-            }
-        }
-
-        if ($parameters) {
-            $this->setParameters($parameters);
-        }
+        $this->setParameters(is_array($valueParameter) ? $valueParameter : array_slice(func_get_args(), 1));
     }
 
     /**
-     * @param $expression
-     * @return Expression
+     * @param string $expression
+     * @return self
      * @throws Exception\InvalidArgumentException
      */
     public function setExpression($expression)
@@ -93,7 +68,18 @@ class Expression extends AbstractExpression
         if (!is_scalar($parameters) && !is_array($parameters)) {
             throw new Exception\InvalidArgumentException('Expression parameters must be a scalar or array.');
         }
-        $this->parameters = $parameters;
+        $this->parameters = [];
+
+        $parameters = (array)$parameters;
+        if (ArrayUtils::hasStringKeys($parameters)) {
+            foreach ($parameters as $value => $type) {
+                $this->parameters[] = new ExpressionParameter($value, $type);
+            }
+        } else {
+            foreach ($parameters as $parameter) {
+                $this->parameters[] = new ExpressionParameter($parameter, self::TYPE_VALUE);
+            }
+        }
         return $this;
     }
 
@@ -103,60 +89,5 @@ class Expression extends AbstractExpression
     public function getParameters()
     {
         return $this->parameters;
-    }
-
-    /**
-     * @deprecated
-     * @param array $types
-     * @return Expression
-     */
-    public function setTypes(array $types)
-    {
-        $this->types = $types;
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     * @return array
-     */
-    public function getTypes()
-    {
-        return $this->types;
-    }
-
-    /**
-     * @return array
-     * @throws Exception\RuntimeException
-     */
-    public function getExpressionData()
-    {
-        $parameters = (is_scalar($this->parameters)) ? [$this->parameters] : $this->parameters;
-        $parametersCount = count($parameters);
-        $expression = str_replace('%', '%%', $this->expression);
-
-        if ($parametersCount == 0) {
-            return [
-                str_ireplace(self::PLACEHOLDER, '', $expression)
-            ];
-        }
-
-        // assign locally, escaping % signs
-        $expression = str_replace(self::PLACEHOLDER, '%s', $expression, $count);
-
-        // test number of replacements without considering same variable begin used many times first, which is
-        // faster, if the test fails then resort to regex wich are slow and used rarely
-        if ($count !== $parametersCount && $parametersCount === preg_match_all('/\:[a-zA-Z0-9_]*/', $expression)) {
-            throw new Exception\RuntimeException('The number of replacements in the expression does not match the number of parameters');
-        }
-
-        foreach ($parameters as $parameter) {
-            list($values[], $types[]) = $this->normalizeArgument($parameter, self::TYPE_VALUE);
-        }
-        return [[
-            $expression,
-            $values,
-            $types
-        ]];
     }
 }
