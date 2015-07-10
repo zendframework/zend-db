@@ -29,4 +29,27 @@ class HydratingResultSetIntegrationTest extends \PHPUnit_Framework_TestCase
         $obj2 = $hydratingRs->current();
         $this->assertSame($obj1, $obj2);
     }
+
+    /**
+     * @covers Zend\Db\ResultSet\HydratingResultSet::current
+     */
+    public function testCurrentUsesPrototypeFactory()
+    {
+        $dataSource = new \ArrayIterator([
+            ['id' => 1, 'name' => 'one'],
+            ['id' => 2, 'name' => 'two'],
+        ]);
+
+        $factory = $this->getMock('\Zend\Db\ResultSet\HydratingResultSet\PrototypeFactoryInterface');
+        $factory->expects($this->once())
+            ->method('createPrototype')
+            ->with($dataSource[0])
+            ->will($this->returnValue(new \ArrayObject));
+
+        $hydratingRs = new HydratingResultSet;
+        $hydratingRs->setObjectPrototype($factory);
+        $hydratingRs->initialize($dataSource);
+
+        $this->assertInstanceOf('\ArrayObject', $hydratingRs->current());
+    }
 }
