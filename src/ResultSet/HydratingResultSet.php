@@ -10,6 +10,7 @@
 namespace Zend\Db\ResultSet;
 
 use ArrayObject;
+use Zend\Db\ResultSet\HydratingResultSet\PrototypeFactoryInterface;
 use Zend\Stdlib\Hydrator\ArraySerializable;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
@@ -99,8 +100,16 @@ class HydratingResultSet extends AbstractResultSet
         } elseif (is_array($this->buffer) && isset($this->buffer[$this->position])) {
             return $this->buffer[$this->position];
         }
+
         $data = $this->dataSource->current();
-        $object = is_array($data) ? $this->hydrator->hydrate($data, clone $this->objectPrototype) : false;
+
+        if ($this->objectPrototype instanceof PrototypeFactoryInterface) {
+            $prototype = $this->objectPrototype->createPrototype($data);
+        } else {
+            $prototype = clone $this->objectPrototype;
+        }
+
+        $object = is_array($data) ? $this->hydrator->hydrate($data, $prototype) : false;
 
         if (is_array($this->buffer)) {
             $this->buffer[$this->position] = $object;
