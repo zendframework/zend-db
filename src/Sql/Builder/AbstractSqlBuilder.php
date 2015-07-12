@@ -251,10 +251,12 @@ abstract class AbstractSqlBuilder extends AbstractBuilder
             return $parameter;
         }
 
+        $isQuoted = false;
         if ($parameter instanceof ExpressionParameter) {
             $value      = $parameter->getValue();
             $type       = $parameter->getType();
             $paramName  = $parameter->getName();
+            $isQuoted   = $parameter->getOption('isQuoted');
         } else {
             $value      = $parameter;
             $type       = ExpressionInterface::TYPE_LITERAL;
@@ -281,7 +283,9 @@ abstract class AbstractSqlBuilder extends AbstractBuilder
                 }
                 $parameter = $context->getDriver()->formatParameterName($name);
             } else {
-                $parameter = $context->getPlatform()->quoteValue($value);
+                $parameter = $isQuoted
+                        ? $value
+                        : $context->getPlatform()->quoteValue($value);
             }
         } elseif ($type == ExpressionInterface::TYPE_LITERAL) {
             $parameter = $value;

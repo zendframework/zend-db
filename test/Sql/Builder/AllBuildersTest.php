@@ -185,10 +185,10 @@ class AllBuildersTest extends AbstractTestCase
                 ],
             ],
             'DISTINCT in columns' => [
-                'sqlObject' => $this->select('foo')->columns([$this->expression('DISTINCT(bar) as bar')])->limit(5)->offset(10),
+                'sqlObject' => $this->select('foo')->columns(['bar' => $this->expression('DISTINCT(bar)')])->limit(5)->offset(10),
                 'expected'  => [
                     'SqlServer' => [
-                        'string'  => 'SELECT DISTINCT(bar) as bar FROM ( SELECT DISTINCT(bar) as bar, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__ZEND_ROW_NUMBER] FROM [foo] ) AS [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__ZEND_ROW_NUMBER] BETWEEN 10+1 AND 5+10'
+                        'string'  => "SELECT * FROM (SELECT *, ROW_NUMBER() OVER () AS [LIMIT_OFFSET_ROWNUM] FROM (SELECT DISTINCT(bar) AS [bar] FROM [foo]) AS [LIMIT_OFFSET_WRAP_1]) AS [LIMIT_OFFSET_WRAP_2] WHERE [LIMIT_OFFSET_ROWNUM] > '10' AND [LIMIT_OFFSET_ROWNUM] <= '5' + '10'",
                     ],
                 ],
             ],

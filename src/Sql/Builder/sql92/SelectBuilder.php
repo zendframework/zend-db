@@ -14,6 +14,7 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\ExpressionInterface;
 use Zend\Db\Sql\Builder\AbstractSqlBuilder;
 use Zend\Db\Sql\Builder\Context;
+use Zend\Db\Sql\ExpressionParameter;
 
 class SelectBuilder extends AbstractSqlBuilder
 {
@@ -345,16 +346,15 @@ class SelectBuilder extends AbstractSqlBuilder
      */
     protected function build_Limit(Select $sqlObject, Context $context)
     {
-        $limit = $sqlObject->limit;
-        if ($limit === null) {
+        if ($sqlObject->limit === null) {
             return;
         }
-        if ($context->getParameterContainer()) {
-            $context->getParameterContainer()->offsetSet('limit', $limit, Adapter\ParameterContainer::TYPE_INTEGER);
-            $limit = $context->getDriver()->formatParameterName('limit');
-        } else {
-            $limit = $context->getPlatform()->quoteValue($limit);
-        }
+
+        $limit = new ExpressionParameter($sqlObject->limit);
+        $limit->setType(ExpressionInterface::TYPE_VALUE);
+        $limit->setName('limit');
+        $limit->setOption('errata', Adapter\ParameterContainer::TYPE_INTEGER);
+
         return [
             'spec' => $this->limitSpecification,
             'params' => $limit,
@@ -368,16 +368,13 @@ class SelectBuilder extends AbstractSqlBuilder
      */
     protected function build_Offset(Select $sqlObject, Context $context)
     {
-        $offset = $sqlObject->offset;
-        if ($offset === null) {
+        if ($sqlObject->offset === null) {
             return;
         }
-        if ($context->getParameterContainer()) {
-            $context->getParameterContainer()->offsetSet('offset', $offset, Adapter\ParameterContainer::TYPE_INTEGER);
-            $offset = $context->getDriver()->formatParameterName('offset');
-        } else {
-            $offset = $context->getPlatform()->quoteValue($offset);
-        }
+
+        $offset = new ExpressionParameter($sqlObject->offset, ExpressionInterface::TYPE_VALUE, 'offset');
+        $offset->setOption('errata', Adapter\ParameterContainer::TYPE_INTEGER);
+
         return [
             'spec' => $this->offsetSpecification,
             'params' => $offset

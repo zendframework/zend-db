@@ -13,6 +13,8 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Adapter;
 use Zend\Db\Sql\Builder\sql92\SelectBuilder as BaseBuilder;
 use Zend\Db\Sql\Builder\Context;
+use Zend\Db\Sql\ExpressionParameter;
+use Zend\Db\Sql\ExpressionInterface;
 
 class SelectBuilder extends BaseBuilder
 {
@@ -28,9 +30,15 @@ class SelectBuilder extends BaseBuilder
             $limitParam = '18446744073709551615';
         } elseif ($limit === null) {
             return;
-        } elseif ($context->getParameterContainer()) {
-            $context->getParameterContainer()->offsetSet('limit', $limit, Adapter\ParameterContainer::TYPE_INTEGER);
-            $limitParam = $context->getDriver()->formatParameterName('limit');
+        } else {
+            $limitParam = new ExpressionParameter($limit);
+            $limitParam
+                    ->setType(ExpressionInterface::TYPE_VALUE)
+                    ->setName('limit')
+                    ->setOptions([
+                        'errata'   => Adapter\ParameterContainer::TYPE_INTEGER,
+                        'isQuoted' => true,
+                    ]);
         }
 
         return [
@@ -52,10 +60,11 @@ class SelectBuilder extends BaseBuilder
         if ($offset === null) {
             return;
         }
-        if ($context->getParameterContainer()) {
-            $context->getParameterContainer()->offsetSet('offset', $offset, Adapter\ParameterContainer::TYPE_INTEGER);
-            $offset = $context->getDriver()->formatParameterName('offset');
-        }
+        $offset = new ExpressionParameter($offset, ExpressionInterface::TYPE_VALUE, 'offset');
+        $offset->setOptions([
+            'errata'   => Adapter\ParameterContainer::TYPE_INTEGER,
+            'isQuoted' => true,
+        ]);
         return [
             'spec' => $this->offsetSpecification,
             'params' => [
