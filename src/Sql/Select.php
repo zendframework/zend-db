@@ -177,13 +177,11 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
      *     value can be string or Expression objects
      *
      * @param  array $columns
-     * @param  bool  $prefixColumnsWithTable
      * @return self
      */
-    public function columns(array $columns, $prefixColumnsWithTable = true)
+    public function columns(array $columns)
     {
         $this->columns = $columns;
-        $this->prefixColumnsWithTable = (bool) $prefixColumnsWithTable;
         return $this;
     }
 
@@ -337,6 +335,15 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
         return $this;
     }
 
+    /**
+     * @param bool $flag
+     * @return self
+     */
+    public function setPrefixColumnsWithTable($flag)
+    {
+        $this->prefixColumnsWithTable = (bool)$flag;
+        return $this;
+    }
 
     public function __unset($name)
     {

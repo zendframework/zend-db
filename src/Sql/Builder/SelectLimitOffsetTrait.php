@@ -35,12 +35,13 @@ trait SelectLimitOffsetTrait
                         ->columns([
                             Select::SQL_STAR,
                             'LIMIT_OFFSET_ROWNUM' => new Expression('ROW_NUMBER() OVER ()'),
-                        ], false)
+                        ])
+                        ->setPrefixColumnsWithTable(false)
                         ->from([
                             'LIMIT_OFFSET_WRAP_1' => $sqlObject
                         ])
         ]);
-        $newSelect->columns([Select::SQL_STAR], false);
+        $newSelect->columns([Select::SQL_STAR])->setPrefixColumnsWithTable(false);
 
         if ($sqlObject->offset !== null) {
             $offset = new ExpressionParameter((int) $sqlObject->offset, Expression::TYPE_VALUE, 'offset');

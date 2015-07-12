@@ -185,7 +185,8 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         $select
             ->from('foo', 'bar')
             ->quantifier(Select::QUANTIFIER_DISTINCT)
-            ->columns(['foo', 'bar'], false)
+            ->columns(['foo', 'bar'])
+            ->setPrefixColumnsWithTable(false)
             ->join('foo', 'x = y', Select::SQL_STAR, Select::JOIN_INNER)
             ->where('x = y')
             ->limit(5)

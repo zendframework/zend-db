@@ -110,7 +110,7 @@ class SelectBuilderTest extends AbstractTestCase
                 ],
             ],
             [
-                'sqlObject' => $this->select()->from(['x' => 'foo'])->columns(['bar' => 'foo.bar'], false),
+                'sqlObject' => $this->select()->from(['x' => 'foo'])->columns(['bar' => 'foo.bar'])->setPrefixColumnsWithTable(false),
                 'expected'  => [
                     'sql92' => [
                         'string'  => 'SELECT "foo"."bar" AS "bar" FROM "foo" AS "x"',
@@ -119,7 +119,7 @@ class SelectBuilderTest extends AbstractTestCase
                 ],
             ],
             [ // @author robertbasic // @link https://github.com/zendframework/zf2/pull/2714
-                'sqlObject' => $this->select()->from('foo')->columns(['bar'], false),
+                'sqlObject' => $this->select()->from('foo')->columns(['bar'])->setPrefixColumnsWithTable(false),
                 'expected'  => [
                     'sql92' => [
                         'string'  => 'SELECT "bar" AS "bar" FROM "foo"',
