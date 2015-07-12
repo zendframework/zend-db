@@ -12,6 +12,7 @@ namespace Zend\Db\Sql\Builder\sql92;
 use Zend\Db\Adapter;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\ExpressionInterface;
+use Zend\Db\Sql\SelectableInterface;
 use Zend\Db\Sql\Builder\AbstractSqlBuilder;
 use Zend\Db\Sql\Builder\Context;
 use Zend\Db\Sql\ExpressionParameter;
@@ -170,52 +171,18 @@ class SelectBuilder extends AbstractSqlBuilder
         // build_ table columns
         $columns = [];
         foreach ($sqlObject->columns as $columnIndexOrAs => $column) {
-            if ($column === Select::SQL_STAR) {
-                $columns[] = [$fromTable . Select::SQL_STAR];
-                continue;
-            }
-
-            $columnName = $this->resolveColumnValue(
-                [
-                    'column'       => $column,
-                    'fromTable'    => $fromTable,
-                    'isIdentifier' => true,
-                ],
-                $context
-            );
-            // build_ As portion
-            if (is_string($columnIndexOrAs)) {
-                $columnAs = $context->getPlatform()->quoteIdentifier($columnIndexOrAs);
-            } elseif (stripos($columnName, ' as ') === false) {
-                $columnAs = (is_string($column)) ? $context->getPlatform()->quoteIdentifier($column) : $context->getNestedAlias('column');
-            }
-            $columns[] = (isset($columnAs)) ? [$columnName, $columnAs] : [$columnName];
+            $columns[] = $this->resolveSelectColumn($fromTable, $columnIndexOrAs, $column, $context);
         }
 
         // build_ join columns
         foreach ($sqlObject->joins as $join) {
             $jTable = $this->nornalizeTable($join['name'], $context);
-            $joinName = $jTable['columnAlias'];
+            $joinName = $jTable['columnAlias']
+                ? $jTable['columnAlias'] . $context->getPlatform()->getIdentifierSeparator()
+                : '';
 
-            foreach ($join['columns'] as $jKey => $jColumn) {
-                $jColumns = [];
-                $jFromTable = is_scalar($jColumn)
-                            ? $joinName . $context->getPlatform()->getIdentifierSeparator()
-                            : '';
-                $jColumns[] = $this->resolveColumnValue(
-                    [
-                        'column'       => $jColumn,
-                        'fromTable'    => $jFromTable,
-                        'isIdentifier' => true,
-                    ],
-                    $context
-                );
-                if (is_string($jKey)) {
-                    $jColumns[] = $context->getPlatform()->quoteIdentifier($jKey);
-                } elseif ($jColumn !== Select::SQL_STAR) {
-                    $jColumns[] = $context->getPlatform()->quoteIdentifier($jColumn);
-                }
-                $columns[] = $jColumns;
+            foreach ($join['columns'] as $columnIndexOrAs => $column) {
+                $columns[] = $this->resolveSelectColumn($joinName, $columnIndexOrAs, $column, $context);
             }
         }
 
@@ -405,5 +372,42 @@ class SelectBuilder extends AbstractSqlBuilder
                 $COMBINE['select'],
             ],
         ];
+    }
+
+    /**
+     * @param array $fromTable
+     * @param int|string $indexOrAlias
+     * @param null|string|ExpressionInterface|SelectableInterface $column
+     * @param Context $context
+     * @return array
+     */
+    protected function resolveSelectColumn($fromTable, $indexOrAlias, $column, Context $context)
+    {
+        if ($column === Select::SQL_STAR) {
+            return [$fromTable . Select::SQL_STAR];
+        }
+
+        if (is_string($indexOrAlias)) {
+            $indexOrAlias = $context->getPlatform()->quoteIdentifier($indexOrAlias);
+        } elseif (is_string($column)) {
+            $indexOrAlias = $context->getPlatform()->quoteIdentifier($column);
+        } else {
+            $indexOrAlias = $context->getNestedAlias('column');
+        }
+
+        if ($column === null) {
+            $column = 'NULL';
+        } elseif (!$column instanceof ExpressionInterface && !$column instanceof SelectableInterface) {
+            $column = $fromTable . $context->getPlatform()->quoteIdentifierInFragment($column);
+        }
+
+        if ($indexOrAlias) {
+            return [
+                $column,
+                $indexOrAlias,
+            ];
+        }
+
+        return [$column];
     }
 }

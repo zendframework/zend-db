@@ -88,26 +88,16 @@ class SelectBuilderTest extends AbstractTestCase
                     ],
                 ],
             ],
-            [ // columns where value is Expression
-                'sqlObject' => $this->select()->from('foo')->columns([new Expression('COUNT(some_column) AS bar')]),
-                'expected'  => [
-                    'sql92' => [
-                        'string'     => 'SELECT COUNT(some_column) AS bar FROM "foo"',
-                        'prepare' => true,
-                    ],
-                ],
-            ],
             [
                 'sqlObject' => $this->select()
                                     ->from('foo')
                                     ->columns(
                                         [
-                                            new Expression(
-                                                '(COUNT(?) + ?) AS ?',
+                                            'bar' => new Expression(
+                                                '(COUNT(?) + ?)',
                                                 [
                                                     ['some_column', Expression::TYPE_IDENTIFIER],
                                                     [5,             Expression::TYPE_VALUE],
-                                                    ['bar',         Expression::TYPE_IDENTIFIER],
                                                 ]
                                             )
                                         ]

@@ -55,8 +55,8 @@ class UpdateBuilderTest extends AbstractTestCase
                 'expected'  => [
                     'sql92' => [
                         'string'     => 'UPDATE "foo" SET "bar" = \'baz\', "boo" = NOW(), "bam" = NULL, "false" = \'\', "true" = \'1\'',
-                        'prepare'    => 'UPDATE "foo" SET "bar" = ?, "boo" = NOW(), "bam" = NULL, "false" = ?, "true" = ?',
-                        'parameters' => ['bar' => 'baz', 'false' => false, 'true' => true],
+                        'prepare'    => 'UPDATE "foo" SET "bar" = ?, "boo" = NOW(), "bam" = ?, "false" = ?, "true" = ?',
+                        'parameters' => ['bar' => 'baz', 'bam' => null, 'false' => false, 'true' => true],
                     ],
                 ],
             ],

@@ -67,8 +67,8 @@ class InsertBuilderTest extends AbstractTestCase
                 'expected'  => [
                     'sql92' => [
                         'string'  => 'INSERT INTO "foo" ("bar", "boo", "bam", "bat") VALUES (\'baz\', NOW(), NULL, (SELECT "bad".* FROM "bad"))',
-                        'prepare' => 'INSERT INTO "foo" ("bar", "boo", "bam", "bat") VALUES (?, NOW(), NULL, (SELECT "bad".* FROM "bad"))',
-                        'parameters' => ['bar' => 'baz',],
+                        'prepare' => 'INSERT INTO "foo" ("bar", "boo", "bam", "bat") VALUES (?, NOW(), ?, (SELECT "bad".* FROM "bad"))',
+                        'parameters' => ['bar' => 'baz', 'bam' => null],
                     ],
                 ],
             ],

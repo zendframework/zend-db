@@ -207,35 +207,27 @@ abstract class AbstractSqlBuilder extends AbstractBuilder
 
     /**
      * @param string|array $column
+     * @param mixed $value
      * @param Context $context
-     * @return string
+     * @return array
      */
-    protected function resolveColumnValue($column, Context $context)
+    protected function resolveColumnValue($column, $value, Context $context)
     {
-        $isIdentifier = false;
-        $fromTable = '';
-        if (is_array($column)) {
-            if (isset($column['isIdentifier'])) {
-                $isIdentifier = (bool) $column['isIdentifier'];
+        if (is_scalar($value) || $value === null) {
+            if ($context->getParameterContainer() && $column !== null) {
+                $context->getParameterContainer()->offsetSet($column, $value);
+                $value = $context->getDriver()->formatParameterName($column);
+            } elseif ($value === null) {
+                $value = 'NULL';
+            } else {
+                $value = $context->getPlatform()->quoteValue($value);
             }
-            if (isset($column['fromTable']) && $column['fromTable'] !== null) {
-                $fromTable = $column['fromTable'];
-            }
-            $column = $column['column'];
         }
 
-        if ($column instanceof ExpressionInterface) {
-            return $this->buildSqlString($column, $context);
-        }
-        if ($column instanceof SelectableInterface) {
-            return $this->buildSubSelect($column, $context);
-        }
-        if ($column === null) {
-            return 'NULL';
-        }
-        return $isIdentifier
-                ? $fromTable . $context->getPlatform()->quoteIdentifierInFragment($column)
-                : $context->getPlatform()->quoteValue($column);
+        return [
+            $context->getPlatform()->quoteIdentifier($column),
+            $value
+        ];
     }
 
     private function buildSpecificationParameter($parameter, Context $context = null)

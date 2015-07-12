@@ -83,16 +83,7 @@ class UpdateBuilder extends AbstractSqlBuilder
     {
         $setSql = [];
         foreach ($sqlObject->set as $column => $value) {
-            if (is_scalar($value) && $context->getParameterContainer()) {
-                $context->getParameterContainer()->offsetSet($column, $value);
-                $value = $context->getDriver()->formatParameterName($column);
-            } else {
-                $value = $this->resolveColumnValue($value, $context);
-            }
-            $setSql[] = [
-                $context->getPlatform()->quoteIdentifier($column),
-                $value
-            ];
+            $setSql[] = $this->resolveColumnValue($column, $value, $context);
         }
         return [
             'spec' => $this->setSpecification,

@@ -73,13 +73,7 @@ class InsertBuilder extends AbstractSqlBuilder
         $columns = [];
         $values  = [];
         foreach (array_combine($sqlObject->columns, $sqlObject->values) as $column=>$value) {
-            $columns[] = $context->getPlatform()->quoteIdentifier($column);
-            if (is_scalar($value) && $context->getParameterContainer()) {
-                $values[] = $context->getDriver()->formatParameterName($column);
-                $context->getParameterContainer()->offsetSet($column, $value);
-            } else {
-                $values[] = $this->resolveColumnValue($value, $context);
-            }
+            list($columns[], $values[]) = $this->resolveColumnValue($column, $value, $context);
         }
 
         return [
