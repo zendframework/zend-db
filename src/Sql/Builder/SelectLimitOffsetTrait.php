@@ -21,7 +21,7 @@ trait SelectLimitOffsetTrait
      * @param Context $context
      * @return null|string|array
      */
-    public function build($sqlObject, Context $context)
+    protected function build($sqlObject, Context $context)
     {
         $this->validateSqlObject($sqlObject, 'Zend\Db\Sql\Select', __METHOD__);
         if ($sqlObject->limit === null && $sqlObject->offset === null) {

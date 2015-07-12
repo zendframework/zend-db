@@ -19,7 +19,7 @@ class LiteralBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function build($expression, Context $context)
+    protected function build($expression, Context $context)
     {
         $this->validateSqlObject($expression, 'Zend\Db\Sql\Literal', __METHOD__);
         return [

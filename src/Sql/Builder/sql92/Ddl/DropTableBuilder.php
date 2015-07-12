@@ -22,7 +22,7 @@ class DropTableBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function build($sqlObject, Context $context)
+    protected function build($sqlObject, Context $context)
     {
         $this->validateSqlObject($sqlObject, 'Zend\Db\Sql\Ddl\DropTable', __METHOD__);
         return [

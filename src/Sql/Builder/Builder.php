@@ -12,6 +12,12 @@ namespace Zend\Db\Sql\Builder;
 use Zend\Db\Adapter;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Exception;
+use Zend\Db\Sql\SqlObjectInterface;
+use Zend\Db\Sql\SelectableInterface;
+use Zend\Db\Sql\ExpressionParameter;
+use Zend\Db\Sql\ExpressionInterface;
+use Zend\Db\Sql\TableIdentifier;
+use Zend\Db\Sql\TableSource;
 
 class Builder extends AbstractBuilder
 {
@@ -225,10 +231,10 @@ class Builder extends AbstractBuilder
      * @param null|Adapter\AdapterInterface $adapter
      * @return string
      */
-    public function getSqlString($object, Adapter\AdapterInterface $adapter = null)
+    public function buildSqlString($object, Adapter\AdapterInterface $adapter = null)
     {
         $adapter = $adapter ?: $this->defaultAdapter;
-        return $this->buildSqlString($object, new Context($adapter));
+        return $this->build($object, new Context($adapter));
     }
 
     /**
@@ -236,7 +242,7 @@ class Builder extends AbstractBuilder
      * @param null|Adapter\AdapterInterface $adapter
      * @return \Zend\Db\Adapter\Driver\StatementInterface
      */
-    public function prepareStatement($object, Adapter\AdapterInterface $adapter = null)
+    public function prepareSqlStatement($object, Adapter\AdapterInterface $adapter = null)
     {
         $adapter = $adapter ?: $this->defaultAdapter;
         $statement = $adapter->getDriver()->createStatement();
@@ -244,21 +250,10 @@ class Builder extends AbstractBuilder
             $statement->setParameterContainer(new Adapter\ParameterContainer);
         }
         $statement->setSql(
-            $this->buildSqlString($object, new Context($adapter, $statement->getParameterContainer()))
+            $this->build($object, new Context($adapter, $statement->getParameterContainer()))
         );
 
         return $statement;
-    }
-
-    /**
-     * @param SqlObjectInterface $sqlObject
-     * @param Context $context
-     * @return string
-     */
-    protected function buildSqlString($sqlObject, Context $context)
-    {
-        $builder   = $this->getPlatformBuilder($sqlObject, $context);
-        return $builder->buildSqlString($sqlObject, $context);
     }
 
     /**
@@ -275,5 +270,189 @@ class Builder extends AbstractBuilder
             $platform = $platform->getPlatform()->getName();
         }
         return str_replace(' ', '', strtolower($platform));
+    }
+
+    /**
+     * @param SqlObjectInterface|ExpressionInterface $sqlObject
+     * @param Context $context
+     * @return string
+     * @throws \Zend\Db\Sql\Exception\InvalidArgumentException
+     */
+    protected function build($sqlObject, Context $context)
+    {
+        if (is_array($sqlObject)) {
+            return $this->createSqlFromSpecificationAndParameters($sqlObject['spec'], $sqlObject['params'], $context);
+        }
+
+        if (!$sqlObject instanceof SqlObjectInterface && !$sqlObject instanceof ExpressionInterface) {
+            throw new \Zend\Db\Sql\Exception\InvalidArgumentException(sprintf(
+                'Argument $sqlObject passed to %s must be an instance of %s, instance of %s given',
+                __METHOD__ . '()',
+                'Zend\Db\Sql\SqlObjectInterface or Zend\Db\Sql\ExpressionInterface',
+                is_object($sqlObject) ? get_class($sqlObject) : gettype($sqlObject)
+            ));
+        }
+
+        $specAndParams = $this
+                ->getPlatformBuilder($sqlObject, $context->getAdapter())
+                ->build($sqlObject, $context);
+
+        if (isset($specAndParams[$this->implodeGlueKey])) {
+            $implodeGlue = $specAndParams[$this->implodeGlueKey];
+            unset($specAndParams[$this->implodeGlueKey]);
+        } else {
+            $implodeGlue = $sqlObject instanceof SqlObjectInterface ? ' ' : '';
+        }
+
+        $sqls       = [];
+        foreach ($specAndParams as $spec) {
+            if (!$spec) {
+                continue;
+            }
+            if (is_scalar($spec)) {
+                $sqls[] = $spec;
+                continue;
+            }
+            if (is_array($spec)) {
+                $sqls[] = $this->createSqlFromSpecificationAndParameters($spec['spec'], $spec['params'], $context);
+                continue;
+            }
+            $sqls[] = $this->buildSpecificationParameter($spec, $context);
+        }
+
+        return rtrim(implode($implodeGlue, $sqls), "\n ,");
+    }
+
+    /*
+     * $spec = array(
+            'format' => ' string format : http://php.net/manual/en/function.sprintf.php',
+            'byArgNumber' => array(
+                'parameter index' => 'spec for parameter',
+                '      ...      ' => '       ...        ',
+                'parameter index' => 'spec for parameter',
+            ),
+            'byCount' => array(
+                -1                   => 'spec if count not found or !is_array($args)',
+                'count($args)' => 'spec',
+                '        ...       ' => ' .. ',
+                'count($args)' => 'spec',
+            ),
+            'implode' => 'is isset - do implode array',
+        );
+    */
+    private function createSqlFromSpecificationAndParameters($specification, $args, Context $context = null)
+    {
+        if (is_string($specification)) {
+            return vsprintf(
+                $specification,
+                $this->buildSpecificationParameter($args, $context)
+            );
+        }
+
+        foreach ($specification as $specName => $spec) {
+            if ($specName == 'forEach') {
+                foreach ($args as $pName => &$param) {
+                    $param = $this->createSqlFromSpecificationAndParameters($spec, $args[$pName], $context);
+                }
+            } elseif ($specName == 'byArgNumber') {
+                $i = 0;
+                foreach ($args as $pName => &$param) {
+                    if (isset($spec[++$i])) {
+                        $param = $this->createSqlFromSpecificationAndParameters($spec[$i], $args[$pName], $context);
+                    }
+                }
+            } elseif ($specName == 'byCount') {
+                $pCount = is_array($args) ? count($args) : -1;
+                if (isset($spec[$pCount])) {
+                    $spec = $spec[$pCount];
+                } elseif (isset($spec[-1])) {
+                    $spec = $spec[-1];
+                } else {
+                    throw new \Exception('A number of parameters (' . $pCount . ') was found that is not supported by this specification');
+                }
+                $args = $this->createSqlFromSpecificationAndParameters($spec, $args, $context);
+            } elseif ($specName == 'implode') {
+                if (is_array($spec)) {
+                    $prefix = isset($spec['prefix']) ? $spec['prefix'] : '';
+                    $suffix = isset($spec['suffix']) ? $spec['suffix'] : '';
+                    $glue   = isset($spec['glue'])   ? $spec['glue'] : '';
+                    $args   =
+                            $prefix
+                            . implode($glue, $this->buildSpecificationParameter($args, $context))
+                            . $suffix;
+                } else {
+                    $args = implode($spec, $this->buildSpecificationParameter($args, $context));
+                }
+            } elseif ($specName == 'format') {
+                $args = vsprintf(
+                    $spec,
+                    $this->buildSpecificationParameter($args, $context)
+                );
+            }
+        }
+        return $args;
+    }
+
+    private function buildSpecificationParameter($parameter, Context $context = null)
+    {
+        if (is_array($parameter)) {
+            foreach ($parameter as &$ppp) {
+                $ppp = $this->buildSpecificationParameter($ppp, $context);
+            }
+            return $parameter;
+        }
+
+        $isQuoted = false;
+        if ($parameter instanceof ExpressionParameter) {
+            $value      = $parameter->getValue();
+            $type       = $parameter->getType();
+            $paramName  = $parameter->getName();
+            $isQuoted   = $parameter->getOption('isQuoted');
+        } else {
+            $value      = $parameter;
+            $type       = ExpressionInterface::TYPE_LITERAL;
+        }
+
+        if ($value instanceof TableIdentifier || $value instanceof TableSource) {
+            $parameter = $this->nornalizeTable($value, $context)['name'];
+        } elseif ($value instanceof SelectableInterface) {
+            $parameter = $this->buildSubSelect($value, $context);
+        } elseif ($value instanceof ExpressionInterface) {
+            $parameter = $this->build($value, $context);
+        } elseif ($type == ExpressionInterface::TYPE_IDENTIFIER) {
+            $parameter = $context->getPlatform()->quoteIdentifierInFragment($value);
+        } elseif ($type == ExpressionInterface::TYPE_VALUE) {
+            if ($context->getParameterContainer()) {
+                $name = isset($paramName)
+                        ? $paramName
+                        : $context->getNestedAlias('expr');
+                if (is_array($name)) {
+                    $context->getParameterContainer()->offsetSet($name[0], $value);
+                    $context->getParameterContainer()->offsetSetReference($name[1], $name[0]);
+                } else {
+                    $context->getParameterContainer()->offsetSet($name, $value);
+                }
+                $parameter = $context->getDriver()->formatParameterName($name);
+            } else {
+                $parameter = $isQuoted
+                        ? $value
+                        : $context->getPlatform()->quoteValue($value);
+            }
+        } elseif ($type == ExpressionInterface::TYPE_LITERAL) {
+            $parameter = $value;
+        }
+
+        return $parameter;
+    }
+
+    private function buildSubSelect(SelectableInterface $subselect, Context $context)
+    {
+        $context->startPrefix('subselect');
+
+        $result = '(' . $this->build($subselect, $context) . ')';
+
+        $context->endPrefix();
+
+        return $result;
     }
 }

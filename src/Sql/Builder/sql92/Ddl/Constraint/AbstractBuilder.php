@@ -36,7 +36,7 @@ class AbstractBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function build($constraint, Context $context)
+    protected function build($constraint, Context $context)
     {
         $this->validateSqlObject($constraint, 'Zend\Db\Sql\Ddl\Constraint\ConstraintInterface', __METHOD__);
         $parameters = [];

@@ -45,7 +45,7 @@ class InsertBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function build($sqlObject, Context $context)
+    protected function build($sqlObject, Context $context)
     {
         $this->validateSqlObject($sqlObject, 'Zend\Db\Sql\Insert', __METHOD__);
         return [

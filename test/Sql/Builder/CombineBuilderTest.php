@@ -28,7 +28,7 @@ class CombineBuilderTest extends AbstractTestCase
     public function dataProvider()
     {
         return $this->prepareDataProvider([
-            [ // testGetSqlStringEmpty()
+            [ // testBuildSqlStringEmpty()
                 'sqlObject' => $this->combine(),
                 'expected'  => [
                     'sql92' => [
@@ -37,7 +37,7 @@ class CombineBuilderTest extends AbstractTestCase
                     ],
                 ],
             ],
-            [ // testGetSqlString()
+            [ // testBuildSqlString()
                 'sqlObject' => $this->combine()
                                     ->union($this->select('t1'))
                                     ->intersect($this->select('t2'))
@@ -49,7 +49,7 @@ class CombineBuilderTest extends AbstractTestCase
                     ],
                 ],
             ],
-            [ // testGetSqlStringWithModifier()
+            [ // testBuildSqlStringWithModifier()
                 'sqlObject' => $this->combine()
                                     ->union($this->select('t1'))
                                     ->union($this->select('t2'), 'ALL'),

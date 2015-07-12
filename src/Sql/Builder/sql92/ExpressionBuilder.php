@@ -22,7 +22,7 @@ class ExpressionBuilder extends AbstractSqlBuilder
      * @return array
      * @throws Exception\RuntimeException
      */
-    public function build($expression, Context $context)
+    protected function build($expression, Context $context)
     {
         $this->validateSqlObject($expression, 'Zend\Db\Sql\Expression', __METHOD__);
         $parameters = (is_scalar($expression->getParameters())) ? [$expression->getParameters()] : $expression->getParameters();

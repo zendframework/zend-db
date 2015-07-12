@@ -9,9 +9,58 @@
 
 namespace Zend\Db\Sql\Builder;
 
+use Zend\Db\Sql\TableSource;
+use Zend\Db\Sql\TableIdentifier;
+
 abstract class AbstractBuilder
 {
-    abstract protected function buildSqlString($sqlObject, Context $context);
+    protected $implodeGlueKey = 'implode_glue';
+
+    abstract protected function build($sqlObject, Context $context);
+
+    /**
+     * @param TableIdentifier|string|array $identifier
+     * @param Context $context
+     * @return array
+     */
+    protected function nornalizeTable($identifier, Context $context)
+    {
+        $schema      = null;
+        $name        = null;
+        $alias       = null;
+        $columnAlias = null;
+
+        if ($identifier instanceof TableSource) {
+            $alias  = $identifier->getAlias();
+            $identifier = $identifier->getSource();
+        }
+        if ($identifier instanceof TableIdentifier) {
+            $name   = $identifier->getTable();
+            $schema = $identifier->getSchema();
+        } else {
+            $name   = $identifier;
+        }
+
+        if ($alias) {
+            $alias       = $context->getPlatform()->quoteIdentifier($alias);
+            $columnAlias = $alias;
+        }
+
+        if (is_string($name)) {
+            $name = $schema
+                        ? $context->getPlatform()->quoteIdentifierInFragment($schema . '.' . $name)
+                        : $context->getPlatform()->quoteIdentifier($name);
+            if (!$columnAlias) {
+                $columnAlias = $name;
+            }
+        }
+
+        return [
+            'name'        => $name,
+            'alias'       => $alias,
+            'columnAlias' => $columnAlias,
+        ];
+    }
 
     /**
      *

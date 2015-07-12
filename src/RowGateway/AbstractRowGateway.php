@@ -142,7 +142,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
                 }
             }
 
-            $statement = $this->sql->prepareStatementForSqlObject($this->sql->update()->set($data)->where($where));
+            $statement = $this->sql->prepareSqlStatement($this->sql->update()->set($data)->where($where));
             $result = $statement->execute();
             $rowsAffected = $result->getAffectedRows();
             unset($statement, $result); // cleanup
@@ -160,7 +160,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
             $insert = $this->sql->insert();
             $insert->values($this->data);
 
-            $statement = $this->sql->prepareStatementForSqlObject($insert);
+            $statement = $this->sql->prepareSqlStatement($insert);
 
             $result = $statement->execute();
             if (($primaryKeyValue = $result->getGeneratedValue()) && count($this->primaryKeyColumn) == 1) {
@@ -180,7 +180,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         }
 
         // refresh data
-        $statement = $this->sql->prepareStatementForSqlObject($this->sql->select()->where($where));
+        $statement = $this->sql->prepareSqlStatement($this->sql->select()->where($where));
         $result = $statement->execute();
         $rowData = $result->current();
         unset($statement, $result); // cleanup
@@ -209,7 +209,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
         // @todo determine if we need to do a select to ensure 1 row will be affected
 
-        $statement = $this->sql->prepareStatementForSqlObject($this->sql->delete()->where($where));
+        $statement = $this->sql->prepareSqlStatement($this->sql->delete()->where($where));
         $result = $statement->execute();
 
         $affectedRows = $result->getAffectedRows();

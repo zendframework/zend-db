@@ -92,7 +92,7 @@ class DeleteBuilderTest extends AbstractTestCase
     public function dataProvider_Where()
     {
         return [
-            [ // testPrepareStatement(), testGetSqlString()
+            [ // testPrepareSqlStatement(), testBuildSqlString()
                 'sqlObject' => $this->delete()->from('foo')->where('x = y'),
                 'expected'  => [
                     'sql92' => [

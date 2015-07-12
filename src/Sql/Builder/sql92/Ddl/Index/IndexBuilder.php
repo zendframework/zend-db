@@ -26,7 +26,7 @@ class IndexBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    public function build($index, Context $context)
+    protected function build($index, Context $context)
     {
         $this->validateSqlObject($index, 'Zend\Db\Sql\Ddl\Index\AbstractIndex', __METHOD__);
         $properties = [

@@ -122,8 +122,8 @@ class AbstractTestCase extends \PHPUnit_Framework_TestCase
 
         $expectedString = is_string($expected) ? $expected : (isset($expected['string']) ? $expected['string'] : null);
         if ($expectedString) {
-            $actual = $builder->getSqlString($sqlObject, $adapter);
-            $this->assertEquals($expectedString, $actual, "getSqlString()");
+            $actual = $builder->buildSqlString($sqlObject, $adapter);
+            $this->assertEquals($expectedString, $actual, "buildSqlString()");
         }
         if (is_array($expected) && isset($expected['prepare'])) {
             if ($expected['prepare'] === true) {
@@ -131,8 +131,8 @@ class AbstractTestCase extends \PHPUnit_Framework_TestCase
             }
             $this->useNamedParameters = isset($expected['useNamedParams']) && $expected['useNamedParams'];
 
-            $actual = $builder->prepareStatement($sqlObject, $adapter);
-            $this->assertEquals($expected['prepare'], $actual->getSql(), "prepareStatement()");
+            $actual = $builder->prepareSqlStatement($sqlObject, $adapter);
+            $this->assertEquals($expected['prepare'], $actual->getSql(), "prepareSqlStatement()");
             if (isset($expected['parameters'])) {
                 $this->assertSame(
                     $expected['parameters'],

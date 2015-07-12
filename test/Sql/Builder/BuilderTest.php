@@ -128,13 +128,13 @@ class BuilderTest extends AbstractTestCase
     }
 
     /**
-     * @covers Zend\Db\Sql\Builder\Builder::getSqlString
+     * @covers Zend\Db\Sql\Builder\Builder::buildSqlString
      */
-    public function testGetSqlString()
+    public function testBuildSqlString()
     {
         $this->assertInternalType(
             'string',
-            $this->builder->getSqlString(
+            $this->builder->buildSqlString(
                 new Sql\Select('foo'),
                 $this->getAdapterForPlatform('sql92')
             )
@@ -142,11 +142,11 @@ class BuilderTest extends AbstractTestCase
     }
 
     /**
-     * @covers Zend\Db\Sql\Builder\Builder::prepareStatement
+     * @covers Zend\Db\Sql\Builder\Builder::prepareSqlStatement
      */
-    public function testPrepareStatement()
+    public function testPrepareSqlStatement()
     {
-        $statement = $this->builder->prepareStatement(
+        $statement = $this->builder->prepareSqlStatement(
             new Sql\Select('foo'),
             $this->getAdapterForPlatform('sql92')
         );

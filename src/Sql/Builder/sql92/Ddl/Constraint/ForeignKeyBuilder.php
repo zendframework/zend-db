@@ -33,7 +33,7 @@ class ForeignKeyBuilder extends AbstractBuilder
      * @param Context $context
      * @return array
      */
-    public function build($constraint, Context $context)
+    protected function build($constraint, Context $context)
     {
         $this->validateSqlObject($constraint, 'Zend\Db\Sql\Ddl\Constraint\ForeignKey', __METHOD__);
         $data         = parent::build($constraint, $context);

@@ -153,9 +153,9 @@ class Sql
      *
      * @return StatementInterface
      */
-    public function prepareStatementForSqlObject(PreparableSqlObjectInterface $sqlObject, AdapterInterface $adapter = null)
+    public function prepareSqlStatement(PreparableSqlObjectInterface $sqlObject, AdapterInterface $adapter = null)
     {
-        return $this->builder->prepareStatement(
+        return $this->builder->prepareSqlStatement(
             $sqlObject,
             $adapter ?: $this->adapter
         );
@@ -171,7 +171,7 @@ class Sql
      */
     public function buildSqlString(SqlObjectInterface $sqlObject, AdapterInterface $adapter = null)
     {
-        return $this->builder->getSqlString(
+        return $this->builder->buildSqlString(
             $sqlObject,
             $adapter ?: $this->adapter
         );
