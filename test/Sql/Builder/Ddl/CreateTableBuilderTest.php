@@ -57,7 +57,7 @@ class CreateTableBuilderTest extends AbstractTestCase
                     $col->setOption('unsigned', true);
                     $col->setOption('identity', true);
                     $col->setOption('column-format', 'FIXED');
-                    $col->setOption('storage', 'memory');
+                    $col->setOption('storage', 'MEMORY');
                     $col->setOption('comment', 'baz');
                     $col->addConstraint(new Constraint\PrimaryKey());
 

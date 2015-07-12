@@ -47,11 +47,9 @@ class Builder extends AbstractBuilder
 
         'Zend\Db\Sql\Ddl\AlterTable'  => [
             'sql92'     => 'Zend\Db\Sql\Builder\sql92\Ddl\AlterTableBuilder',
-            'mysql'     => 'Zend\Db\Sql\Builder\MySql\Ddl\AlterTableBuilder',
         ],
         'Zend\Db\Sql\Ddl\CreateTable' => [
             'sql92'     => 'Zend\Db\Sql\Builder\sql92\Ddl\CreateTableBuilder',
-            'mysql'     => 'Zend\Db\Sql\Builder\MySql\Ddl\CreateTableBuilder',
             'sqlserver' => 'Zend\Db\Sql\Builder\SqlServer\Ddl\CreateTableBuilder',
         ],
         'Zend\Db\Sql\Ddl\DropTable'   => [
@@ -91,20 +89,9 @@ class Builder extends AbstractBuilder
         'Zend\Db\Sql\Predicate\Predicate'    => [
             'sql92' => 'Zend\Db\Sql\Builder\sql92\Predicate\PredicateBuilder',
         ],
-        'Zend\Db\Sql\Ddl\Column\AbstractPrecisionColumn' => [
-            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Column\AbstractPrecisionColumnBuilder',
-        ],
-        'Zend\Db\Sql\Ddl\Column\AbstractLengthColumn'    => [
-            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Column\AbstractLengthColumnBuilder',
-        ],
-        'Zend\Db\Sql\Ddl\Column\AbstractTimestampColumn' => [
-            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Column\AbstractTimestampColumnBuilder',
-        ],
-        'Zend\Db\Sql\Ddl\Column\Integer' => [
-            'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Column\IntegerBuilder',
-        ],
         'Zend\Db\Sql\Ddl\Column\Column'  => [
             'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Column\ColumnBuilder',
+            'mysql' => 'Zend\Db\Sql\Builder\Mysql\Ddl\Column\ColumnBuilder',
         ],
         'Zend\Db\Sql\Ddl\Index\Index' => [
             'sql92' => 'Zend\Db\Sql\Builder\sql92\Ddl\Index\IndexBuilder',
