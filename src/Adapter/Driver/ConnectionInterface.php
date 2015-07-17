@@ -73,7 +73,7 @@ interface ConnectionInterface
      * @return boolean
      */
     public function inTransaction();
-    
+
     /**
      * Execute
      *
