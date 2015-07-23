@@ -6,73 +6,66 @@
  * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
-
 namespace Zend\Db\Adapter\Driver\Oci8;
 
 use Iterator;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\Adapter\Exception;
-
 class Result implements Iterator, ResultInterface
 {
     /**
      * @var resource
      */
     protected $resource = null;
-
     /**
-     * @var bool
+     * @var null|int
      */
-    protected $isBuffered = null;
-
+    protected $rowCount = null;
     /**
      * Cursor position
      * @var int
      */
     protected $position = 0;
-
     /**
      * Number of known rows
      * @var int
      */
     protected $numberOfRows = -1;
-
     /**
      * Is the current() operation already complete for this pointer position?
      * @var bool
      */
     protected $currentComplete = false;
-
     /**
      * @var bool
      */
     protected $currentData = false;
-
     /**
      *
      * @var array
      */
     protected $statementBindValues = ['keys' => null, 'values' => []];
-
     /**
      * @var mixed
      */
     protected $generatedValue = null;
-
     /**
      * Initialize
      * @param resource $resource
+     * @param null|int $generatedValue
+     * @param null|int $rowCount
      * @return Result
      */
-    public function initialize($resource /*, $generatedValue, $isBuffered = null*/)
+    public function initialize($resource, $generatedValue = null, $rowCount = null)
     {
         if (!is_resource($resource) && get_resource_type($resource) !== 'oci8 statement') {
             throw new Exception\InvalidArgumentException('Invalid resource provided.');
         }
         $this->resource = $resource;
+        $this->generatedValue = $generatedValue;
+        $this->rowCount = $rowCount;
         return $this;
     }
-
     /**
      * Force buffering at driver level
      *
@@ -84,7 +77,6 @@ class Result implements Iterator, ResultInterface
     {
         return;
     }
-
     /**
      * Is the result buffered?
      *
@@ -94,7 +86,6 @@ class Result implements Iterator, ResultInterface
     {
         return false;
     }
-
     /**
      * Return the resource
      * @return mixed
@@ -103,7 +94,6 @@ class Result implements Iterator, ResultInterface
     {
         return $this->resource;
     }
-
     /**
      * Is query result?
      *
@@ -113,7 +103,6 @@ class Result implements Iterator, ResultInterface
     {
         return (oci_num_fields($this->resource) > 0);
     }
-
     /**
      * Get affected rows
      * @return int
@@ -122,7 +111,6 @@ class Result implements Iterator, ResultInterface
     {
         return oci_num_rows($this->resource);
     }
-
     /**
      * Current
      * @return mixed
@@ -134,10 +122,8 @@ class Result implements Iterator, ResultInterface
                 return false;
             }
         }
-
         return $this->currentData;
     }
-
     /**
      * Load from oci8 result
      *
@@ -147,14 +133,12 @@ class Result implements Iterator, ResultInterface
     {
         $this->currentComplete = true;
         $this->currentData = oci_fetch_assoc($this->resource);
-
         if ($this->currentData !== false) {
             $this->position++;
             return true;
         }
         return false;
     }
-
     /**
      * Next
      */
@@ -162,7 +146,6 @@ class Result implements Iterator, ResultInterface
     {
         return $this->loadData();
     }
-
     /**
      * Key
      * @return mixed
@@ -171,7 +154,6 @@ class Result implements Iterator, ResultInterface
     {
         return $this->position;
     }
-
     /**
      * Rewind
      */
@@ -181,7 +163,6 @@ class Result implements Iterator, ResultInterface
             throw new Exception\RuntimeException('Oci8 results cannot be rewound for multiple iterations');
         }
     }
-
     /**
      * Valid
      * @return bool
@@ -191,20 +172,23 @@ class Result implements Iterator, ResultInterface
         if ($this->currentComplete) {
             return ($this->currentData !== false);
         }
-
         return $this->loadData();
     }
-
     /**
      * Count
-     * @return int
+     * @return null|int
      */
     public function count()
     {
-        // @todo OCI8 row count in Driver Result
+        if (is_int($this->rowCount)) {
+            return $this->rowCount;
+        }
+        if ($this->rowCount instanceof \Closure) {
+            $this->rowCount = (int) call_user_func($this->rowCount);
+            return $this->rowCount;
+        }
         return;
     }
-
     /**
      * @return int
      */
@@ -212,9 +196,8 @@ class Result implements Iterator, ResultInterface
     {
         return oci_num_fields($this->resource);
     }
-
     /**
-     * @return mixed|null
+     * @return null
      */
     public function getGeneratedValue()
     {
