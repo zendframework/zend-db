@@ -11,7 +11,7 @@ namespace Zend\Db\Sql;
 
 /**
  *
- * @property null|string|array|TableIdentifier $table
+ * @property TableSource $table
  * @property string|Expression $quantifier DISTINCT|ALL
  * @property array $columns
  * @property $joins
@@ -49,15 +49,10 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
     /**
      * @var bool
      */
-    protected $tableReadOnly = false;
-
-    /**
-     * @var bool
-     */
     protected $prefixColumnsWithTable = true;
 
     /**
-     * @var string|array|TableIdentifier
+     * @var TableSource
      */
     protected $table = null;
 
@@ -128,16 +123,12 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
     /**
      * Constructor
      *
-     * @param  null|string|array|TableIdentifier $table
+     * @param  null|string|array|TableIdentifier|TableSource $table
      */
     public function __construct($table = null)
     {
         parent::__construct();
-        if ($table) {
-            $this->from($table);
-            $this->tableReadOnly = true;
-        }
-
+        $this->from($table);
         $this->where = new Where;
         $this->joins = new Join;
         $this->having = new Having;
@@ -146,25 +137,12 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
     /**
      * Create from clause
      *
-     * @param  string|array|TableIdentifier $table
-     * @throws Exception\InvalidArgumentException
-     * @return Select
+     * @param  string|array|TableIdentifier|TableSource $table
+     * @return self
      */
     public function from($table)
     {
-        if ($this->tableReadOnly) {
-            throw new Exception\InvalidArgumentException('Since this object was created with a table and/or schema in the constructor, it is read only.');
-        }
-
-        if (!is_string($table) && !is_array($table) && !$table instanceof TableIdentifier) {
-            throw new Exception\InvalidArgumentException('$table must be a string, array, or an instance of TableIdentifier');
-        }
-
-        if (is_array($table) && (!is_string(key($table)) || count($table) !== 1)) {
-            throw new Exception\InvalidArgumentException('from() expects $table as an array is a single element associative array');
-        }
-
-        $this->table = $table;
+        $this->table = TableSource::factory($table);
         return $this;
     }
 
@@ -212,12 +190,11 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
     /**
      * Create join clause
      *
-     * @param string|array $name
+     * @param string|array|TableIdentifier|TableSource $name
      * @param string $on
      * @param string|array $columns
      * @param  string $type one of the JOIN_* constants
      * @return self
-     * @throws Exception\InvalidArgumentException
      */
     public function join($name, $on, $columns = self::SQL_STAR, $type = self::JOIN_INNER)
     {
@@ -365,12 +342,7 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
     {
         switch ($name) {
             case 'table':
-                if ($this->tableReadOnly) {
-                    throw new Exception\InvalidArgumentException(
-                        'Since this object was created with a table and/or schema in the constructor, it is read only.'
-                    );
-                }
-                $this->table = null;
+                $this->table = TableSource::factory(null);
                 break;
             case 'quantifier':
                 $this->quantifier = null;
@@ -414,16 +386,6 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
     }
 
     /**
-     * Returns whether the table is read only or not.
-     *
-     * @return bool
-     */
-    public function isTableReadOnly()
-    {
-        return $this->tableReadOnly;
-    }
-
-    /**
      * __clone
      *
      * Resets the where object each time the Select is cloned.
@@ -432,6 +394,9 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
      */
     public function __clone()
     {
+        if ($this->table) {
+            $this->table  = clone $this->table;
+        }
         $this->where  = clone $this->where;
         $this->joins  = clone $this->joins;
         $this->having = clone $this->having;

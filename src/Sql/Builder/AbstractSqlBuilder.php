@@ -10,6 +10,7 @@
 namespace Zend\Db\Sql\Builder;
 
 use Zend\Db\Sql\TableIdentifier;
+use Zend\Db\Sql\TableSource;
 use Zend\Db\Sql\SelectableInterface;
 use Zend\Db\Sql\ExpressionInterface;
 use Zend\Db\Sql\ExpressionParameter;
@@ -157,20 +158,15 @@ abstract class AbstractSqlBuilder extends AbstractBuilder
         $alias       = null;
         $columnAlias = null;
 
+        if ($identifier instanceof TableSource) {
+            $alias  = $identifier->getAlias();
+            $identifier = $identifier->getSource();
+        }
         if ($identifier instanceof TableIdentifier) {
             $name   = $identifier->getTable();
             $schema = $identifier->getSchema();
-        } elseif (is_string($identifier)) {
+        } else {
             $name   = $identifier;
-        } elseif (is_array($identifier)) {
-            if (is_string(key($identifier))) {
-                $alias = key($identifier);
-                $name  = current($identifier);
-            } elseif ($name) {
-                $schema = isset($identifier[0]) ? $identifier[0] : null;
-                $name   = isset($identifier[1]) ? $identifier[1] : null;
-                $alias  = isset($identifier[2]) ? $identifier[2] : null;
-            }
         }
 
         if ($alias) {
@@ -262,7 +258,7 @@ abstract class AbstractSqlBuilder extends AbstractBuilder
             $type       = ExpressionInterface::TYPE_LITERAL;
         }
 
-        if ($value instanceof TableIdentifier) {
+        if ($value instanceof TableIdentifier || $value instanceof TableSource) {
             $parameter = $this->nornalizeTable($value, $context)['name'];
         } elseif ($value instanceof SelectableInterface) {
             $parameter = $this->buildSubSelect($value, $context);

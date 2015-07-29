@@ -12,7 +12,7 @@ namespace Zend\Db\Sql;
 use Zend\Stdlib\PriorityList;
 
 /**
- * @property null|string|array|TableIdentifier $table
+ * @property TableSource $table
  * @property PriorityList $set
  * @property Where $where
  */
@@ -22,7 +22,7 @@ class Update extends AbstractSqlObject implements PreparableSqlObjectInterface
     const VALUES_SET   = 'set';
 
     /**
-     * @var string|TableIdentifier
+     * @var TableSource
      */
     protected $table = '';
 
@@ -51,14 +51,12 @@ class Update extends AbstractSqlObject implements PreparableSqlObjectInterface
     /**
      * Constructor
      *
-     * @param  null|string|TableIdentifier $table
+     * @param  null|string|array|TableIdentifier|TableSource $table
      */
     public function __construct($table = null)
     {
         parent::__construct();
-        if ($table) {
-            $this->table($table);
-        }
+        $this->table($table);
         $this->where = new Where();
         $this->joins = new Join();
         $this->set = new PriorityList();
@@ -68,12 +66,12 @@ class Update extends AbstractSqlObject implements PreparableSqlObjectInterface
     /**
      * Specify table for statement
      *
-     * @param  string|TableIdentifier $table
+     * @param  string|array|TableIdentifier|TableSource $table
      * @return self
      */
     public function table($table)
     {
-        $this->table = $table;
+        $this->table = TableSource::factory($table);
         return $this;
     }
 
@@ -87,7 +85,7 @@ class Update extends AbstractSqlObject implements PreparableSqlObjectInterface
      */
     public function set(array $values, $flag = self::VALUES_SET)
     {
-        if ($values === null) {
+        if ($values == null) {
             throw new Exception\InvalidArgumentException('set() expects an array of values');
         }
 
@@ -148,6 +146,8 @@ class Update extends AbstractSqlObject implements PreparableSqlObjectInterface
      */
     public function __clone()
     {
+        $this->table = clone $this->table;
+        $this->joins = clone $this->joins;
         $this->where = clone $this->where;
         $this->set = clone $this->set;
     }

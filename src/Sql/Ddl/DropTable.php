@@ -10,16 +10,17 @@
 namespace Zend\Db\Sql\Ddl;
 
 use Zend\Db\Sql\AbstractSqlObject;
+use Zend\Db\Sql\TableIdentifier;
 
 /**
- * @property null|string|array|TableIdentifier $table
+ * @property TableIdentifier $table
  */
 class DropTable extends AbstractSqlObject
 {
     /**
-     * @var string
+     * @var TableIdentifier
      */
-    protected $table = '';
+    protected $table;
 
     protected $__getProperties = [
         'table',
@@ -28,9 +29,9 @@ class DropTable extends AbstractSqlObject
     /**
      * @param string $table
      */
-    public function __construct($table = '')
+    public function __construct($table = null)
     {
         parent::__construct();
-        $this->table = $table;
+        $this->table = TableIdentifier::factory($table);
     }
 }

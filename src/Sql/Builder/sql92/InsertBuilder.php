@@ -85,7 +85,7 @@ class InsertBuilder extends AbstractSqlBuilder
         return [
             'spec' => $this->insertSpecification,
             'params' => [
-                $this->nornalizeTable($sqlObject->table, $context)['name'],
+                $sqlObject->table,
                 $columns,
                 $values,
             ],
@@ -107,7 +107,7 @@ class InsertBuilder extends AbstractSqlBuilder
             return [
                 'spec'   => $this->selectSpecification,
                 'params' => [
-                    $this->nornalizeTable($sqlObject->table, $context)['name'],
+                    $sqlObject->table,
                     array_map([$context->getPlatform(), 'quoteIdentifier'], $sqlObject->columns),
                     $sqlObject->select
                 ],
@@ -116,7 +116,7 @@ class InsertBuilder extends AbstractSqlBuilder
         return [
             'spec'   => $this->selectSpecification,
             'params' => [
-                $this->nornalizeTable($sqlObject->table, $context)['name'],
+                $sqlObject->table,
                 $sqlObject->select
             ],
         ];

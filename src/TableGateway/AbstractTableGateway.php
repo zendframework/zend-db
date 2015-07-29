@@ -17,7 +17,7 @@ use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Join;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
-use Zend\Db\Sql\TableIdentifier;
+use Zend\Db\Sql\TableSource;
 use Zend\Db\Sql\Update;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\Feature\EventFeatureEventsInterface;
@@ -41,7 +41,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     protected $adapter = null;
 
     /**
-     * @var string|array|TableIdentifier
+     * @var TableSource
      */
     protected $table = null;
 
@@ -102,7 +102,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             throw new Exception\RuntimeException('This table does not have an Adapter setup');
         }
 
-        if (!is_string($this->table) && !$this->table instanceof TableIdentifier && !is_array($this->table)) {
+        if (!$this->table instanceof TableSource) {
             throw new Exception\RuntimeException('This table object does not have a valid table set.');
         }
 
@@ -122,7 +122,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * Get table name
      *
-     * @return string
+     * @return TableSource
      */
     public function getTable()
     {
@@ -216,11 +216,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      */
     protected function executeSelect(Select $select)
     {
-        $selectTable = $select->table;
-        if ($selectTable != $this->table
-            && (is_array($selectTable)
-                && end($selectTable) != $this->table)
-        ) {
+        if ($select->table->getSource() != $this->table->getSource()) {
             throw new Exception\RuntimeException(
                 'The table name of the provided Select object must match that of the table'
             );
@@ -285,7 +281,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      */
     protected function executeInsert(Insert $insert)
     {
-        if ($insert->table != $this->table) {
+        if ($insert->table->getSource() != $this->table->getSource()) {
             throw new Exception\RuntimeException(
                 'The table name of the provided Insert object must match that of the table'
             );
@@ -369,7 +365,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      */
     protected function executeUpdate(Update $update)
     {
-        if ($update->table != $this->table) {
+        if ($update->table->getSource() != $this->table->getSource()) {
             throw new Exception\RuntimeException(
                 'The table name of the provided Update object must match that of the table'
             );
@@ -438,7 +434,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      */
     protected function executeDelete(Delete $delete)
     {
-        if ($delete->table != $this->table) {
+        if ($delete->table->getSource() != $this->table->getSource()) {
             throw new Exception\RuntimeException(
                 'The table name of the provided Delete object must match that of the table'
             );
@@ -528,15 +524,8 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     {
         $this->resultSetPrototype = (isset($this->resultSetPrototype)) ? clone $this->resultSetPrototype : null;
         $this->sql = clone $this->sql;
-        if (is_object($this->table)) {
+        if ($this->table) {
             $this->table = clone $this->table;
-        } elseif (is_array($this->table)
-            && count($this->table) == 1
-            && is_object(reset($this->table))
-        ) {
-            foreach ($this->table as $alias => &$tableObject) {
-                $tableObject = clone $tableObject;
-            }
         }
     }
 }

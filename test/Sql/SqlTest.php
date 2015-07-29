@@ -12,6 +12,7 @@ namespace ZendTest\Db\Sql;
 use Zend\Db\Sql\Sql;
 use ZendTest\Db\TestAsset;
 use Zend\Db\Adapter\Adapter;
+use Zend\Db\Sql\TableIdentifier;
 
 class SqlTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,9 +52,26 @@ class SqlTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($sql->hasTable());
 
         $sql->setTable('foo');
-        $this->assertSame('foo', $sql->getTable());
+        $this->assertSame('foo', $sql->getTable()->getTable());
 
         $this->setExpectedException('Zend\Db\Sql\Exception\InvalidArgumentException', 'Table must be a string, array or instance of TableIdentifier.');
+        $sql->setTable(null);
+    }
+
+    /**
+     * @covers Zend\Db\Sql\Sql::setTable
+     */
+    public function testSetTable()
+    {
+        $sql = new Sql($this->mockAdapter);
+
+        $this->assertEquals('test', $sql->setTable('test')->getTable()->getTable());
+        $this->assertEquals('test', $sql->setTable(new TableIdentifier('test'))->getTable()->getTable());
+
+        $this->setExpectedException(
+            'Zend\Db\Sql\Exception\InvalidArgumentException',
+            'Table must be a string, array or instance of TableIdentifier.'
+        );
         $sql->setTable(null);
     }
 
@@ -64,7 +82,7 @@ class SqlTest extends \PHPUnit_Framework_TestCase
     {
         $select = $this->sql->select();
         $this->assertInstanceOf('Zend\Db\Sql\Select', $select);
-        $this->assertSame('foo', $select->table);
+        $this->assertSame('foo', $select->table->getSource()->getTable());
 
         $this->setExpectedException('Zend\Db\Sql\Exception\InvalidArgumentException',
             'This Sql object is intended to work with only the table "foo" provided at construction time.');
@@ -78,7 +96,7 @@ class SqlTest extends \PHPUnit_Framework_TestCase
     {
         $insert = $this->sql->insert();
         $this->assertInstanceOf('Zend\Db\Sql\Insert', $insert);
-        $this->assertSame('foo', $insert->table);
+        $this->assertSame('foo', $insert->table->getSource()->getTable());
 
         $this->setExpectedException('Zend\Db\Sql\Exception\InvalidArgumentException',
             'This Sql object is intended to work with only the table "foo" provided at construction time.');
@@ -92,7 +110,7 @@ class SqlTest extends \PHPUnit_Framework_TestCase
     {
         $update = $this->sql->update();
         $this->assertInstanceOf('Zend\Db\Sql\Update', $update);
-        $this->assertSame('foo', $update->table);
+        $this->assertSame('foo', $update->table->getSource()->getTable());
 
         $this->setExpectedException('Zend\Db\Sql\Exception\InvalidArgumentException',
             'This Sql object is intended to work with only the table "foo" provided at construction time.');
@@ -107,7 +125,7 @@ class SqlTest extends \PHPUnit_Framework_TestCase
         $delete = $this->sql->delete();
 
         $this->assertInstanceOf('Zend\Db\Sql\Delete', $delete);
-        $this->assertSame('foo', $delete->table);
+        $this->assertSame('foo', $delete->table->getSource()->getTable());
 
         $this->setExpectedException('Zend\Db\Sql\Exception\InvalidArgumentException',
             'This Sql object is intended to work with only the table "foo" provided at construction time.');

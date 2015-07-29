@@ -40,7 +40,7 @@ class DropTableBuilder extends AbstractSqlBuilder
         return [
             'spec' => $this->tableSpecification,
             'params' => [
-                $context->getPlatform()->quoteIdentifier($sqlObject->table),
+                $sqlObject->table,
             ],
         ];
     }

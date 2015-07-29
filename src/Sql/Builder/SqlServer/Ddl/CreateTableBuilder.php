@@ -22,7 +22,7 @@ class CreateTableBuilder extends BaseBuilder
      */
     protected function build_Table(CreateTable $sqlObject, Context $context)
     {
-        $table = ($sqlObject->isTemporary ? '#' : '') . ltrim($sqlObject->table, '#');
+        $table = ($sqlObject->isTemporary ? '#' : '') . ltrim($sqlObject->table->getTable(), '#');
         return [
             'spec' => $this->tableSpecification,
             'params' => [

@@ -11,7 +11,7 @@ namespace ZendTest\Db\Sql;
 
 use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\TableIdentifier;
+use Zend\Db\Sql\TableSource;
 
 class InsertTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,9 +35,9 @@ class InsertTest extends \PHPUnit_Framework_TestCase
     public function testInto()
     {
         $this->insert->into('table', 'schema');
-        $this->assertEquals('table', $this->insert->table);
+        $this->assertEquals('table', $this->insert->table->getSource()->getTable());
 
-        $tableIdentifier = new TableIdentifier('table', 'schema');
+        $tableIdentifier = TableSource::factory(['table', 'schema']);
         $this->insert->into($tableIdentifier);
         $this->assertEquals($tableIdentifier, $this->insert->table);
     }

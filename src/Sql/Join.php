@@ -120,23 +120,15 @@ class Join implements Iterator, Countable
      */
     public function join($name, $on, $columns = [Select::SQL_STAR], $type = Join::JOIN_INNER)
     {
-        if (is_array($name) && (! is_string(key($name)) || count($name) !== 1)) {
-            throw new Exception\InvalidArgumentException(
-                sprintf("join() expects '%s' as a single element associative array", array_shift($name))
-            );
-        }
-
-        if (! is_array($columns)) {
+        if (!is_array($columns)) {
             $columns = [$columns];
         }
-
         $this->joins[] = [
-            'name'    => $name,
+            'name'    => TableSource::factory($name),
             'on'      => $on,
             'columns' => $columns,
             'type'    => $type ? $type : Join::JOIN_INNER
         ];
-
         return $this;
     }
 

@@ -44,11 +44,11 @@ class UpdateTest extends \PHPUnit_Framework_TestCase
     public function testTable()
     {
         $this->update->table('foo', 'bar');
-        $this->assertEquals('foo', $this->readAttribute($this->update, 'table'));
+        $this->assertEquals('foo', $this->update->table->getSource()->getTable());
 
         $tableIdentifier = new TableIdentifier('foo', 'bar');
         $this->update->table($tableIdentifier);
-        $this->assertEquals($tableIdentifier, $this->readAttribute($this->update, 'table'));
+        $this->assertEquals($tableIdentifier, $this->update->table->getSource());
     }
 
     /**
@@ -57,7 +57,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase
     public function testConstruct()
     {
         $update = new Update('foo');
-        $this->assertEquals('foo', $this->readAttribute($update, 'table'));
+        $this->assertEquals('foo', $update->table->getSource()->getTable());
     }
 
     /**
@@ -99,7 +99,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase
             ->set(['bar' => 'baz'])
             ->where('x = y');
 
-        $this->assertEquals('foo', $this->update->table);
+        $this->assertEquals('foo', $this->update->table->getSource()->getTable());
         $this->assertEquals(['bar' => 'baz'], $this->update->set->toArray());
         $this->assertInstanceOf('Zend\Db\Sql\Where', $this->update->where);
     }
@@ -110,7 +110,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetUpdate()
     {
-        $getWhere = $this->update->__get('where');
+        $getWhere = $this->update->where;
         $this->assertInstanceOf('Zend\Db\Sql\Where', $getWhere);
     }
 

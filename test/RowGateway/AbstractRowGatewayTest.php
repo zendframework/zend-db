@@ -12,6 +12,7 @@ namespace ZendTest\Db\RowGateway;
 use Zend\Db\RowGateway\RowGateway;
 use Zend\Db\Adapter\ParameterContainer;
 use ZendTest\Db\TestAsset\TrustingSql92Platform;
+use Zend\Db\Sql\TableIdentifier;
 
 class AbstractRowGatewayTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,10 +42,11 @@ class AbstractRowGatewayTest extends \PHPUnit_Framework_TestCase
 
         $this->rowGateway = $this->getMockForAbstractClass('Zend\Db\RowGateway\AbstractRowGateway');
 
+        $table = new TableIdentifier('foo');
         $rgPropertyValues = [
             'primaryKeyColumn' => 'id',
-            'table' => 'foo',
-            'sql' => new \Zend\Db\Sql\Sql($this->mockAdapter)
+            'table' => $table,
+            'sql' => new \Zend\Db\Sql\Sql($this->mockAdapter, $table)
         ];
         $this->setRowGatewayState($rgPropertyValues);
     }
@@ -164,7 +166,7 @@ class AbstractRowGatewayTest extends \PHPUnit_Framework_TestCase
 
         $rgPropertyValues = [
             'primaryKeyColumn' => ['one', 'two'],
-            'table' => 'foo',
+            'table' => new TableIdentifier('foo'),
             'sql' => $mockSql
         ];
         $this->setRowGatewayState($rgPropertyValues);
@@ -212,7 +214,7 @@ class AbstractRowGatewayTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(['id' => 7]))
             ->will($this->returnValue($selectMock));
 
-        $sqlMock = $this->getMock('Zend\Db\Sql\Sql', ['select'], [$this->mockAdapter]);
+        $sqlMock = $this->getMock('Zend\Db\Sql\Sql', ['select'], [$this->mockAdapter, new TableIdentifier('foo')]);
         $sqlMock->expects($this->any())
             ->method('select')
             ->will($this->returnValue($selectMock));

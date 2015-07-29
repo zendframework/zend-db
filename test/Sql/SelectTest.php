@@ -13,6 +13,8 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\Sql\Having;
 use Zend\Db\Sql\Predicate;
+use Zend\Db\Sql\TableIdentifier;
+use Zend\Db\Sql\TableSource;
 
 class SelectTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,7 +24,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
     public function testConstruct()
     {
         $select = new Select('foo');
-        $this->assertEquals('foo', $select->table);
+        $this->assertEquals('foo', $select->table->getSource()->getTable());
     }
 
     public function testMethodsReturnSelf()
@@ -49,11 +51,11 @@ class SelectTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf('Zend\Db\Sql\Where', $select->where);
         $this->assertEquals(['foo', 'bar'], $select->columns);
-        $this->assertEquals('foo', $select->table);
+        $this->assertEquals('foo', $select->table->getSource()->getTable());
         $this->assertEquals(['col1', 'col2'], $select->group);
         $this->assertEquals(
             [[
-                'name' => 'foo',
+                'name' => new TableSource(new TableIdentifier('foo')),
                 'on' => 'x = y',
                 'columns' => [Select::SQL_STAR],
                 'type' => Select::JOIN_INNER
@@ -79,18 +81,6 @@ class SelectTest extends \PHPUnit_Framework_TestCase
             $expr,
             $select->quantifier
         );
-    }
-
-    /**
-    /**
-     * @testdox unit test: Test join() exception with bad join
-     * @covers Zend\Db\Sql\Select::join
-     */
-    public function testBadJoin()
-    {
-        $select = new Select;
-        $this->setExpectedException('Zend\Db\Sql\Exception\InvalidArgumentException', "expects 'foo' as");
-        $select->join(['foo'], 'x = y', Select::SQL_STAR, Select::JOIN_INNER);
     }
 
     /**

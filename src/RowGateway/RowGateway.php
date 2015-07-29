@@ -11,6 +11,7 @@ namespace Zend\Db\RowGateway;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Sql;
+use Zend\Db\Sql\TableIdentifier;
 
 class RowGateway extends AbstractRowGateway
 {
@@ -28,7 +29,7 @@ class RowGateway extends AbstractRowGateway
         $this->primaryKeyColumn = empty($primaryKeyColumn) ? null : (array) $primaryKeyColumn;
 
         // set table
-        $this->table = $table;
+        $this->table = new TableIdentifier($table);
 
         // set Sql object
         if ($adapterOrSql instanceof Sql) {
@@ -39,7 +40,7 @@ class RowGateway extends AbstractRowGateway
             throw new Exception\InvalidArgumentException('A valid Sql object was not provided.');
         }
 
-        if ($this->sql->getTable() !== $this->table) {
+        if ($this->sql->getTable() != $this->table) {
             throw new Exception\InvalidArgumentException('The Sql object provided does not have a table that matches this row object');
         }
 

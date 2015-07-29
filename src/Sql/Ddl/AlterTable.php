@@ -10,6 +10,7 @@
 namespace Zend\Db\Sql\Ddl;
 
 use Zend\Db\Sql\AbstractSqlObject;
+use Zend\Db\Sql\TableIdentifier;
 
 /**
  * @property null|string|array|TableIdentifier $table
@@ -48,9 +49,9 @@ class AlterTable extends AbstractSqlObject
 
 
     /**
-     * @var string
+     * @var TableIdentifier
      */
-    protected $table = '';
+    protected $table;
 
     protected $__getProperties = [
         'table',
@@ -62,21 +63,21 @@ class AlterTable extends AbstractSqlObject
     ];
 
     /**
-     * @param string $table
+     * @param string|array|TableIdentifier $table
      */
-    public function __construct($table = '')
+    public function __construct($table = null)
     {
         parent::__construct();
-        ($table) ? $this->setTable($table) : null;
+        $this->setTable($table);
     }
 
     /**
-     * @param  string $name
+     * @param  string|array|TableIdentifier $name
      * @return self
      */
     public function setTable($name)
     {
-        $this->table = $name;
+        $this->table = TableIdentifier::factory($name);
 
         return $this;
     }

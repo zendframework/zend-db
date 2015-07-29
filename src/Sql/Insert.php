@@ -10,7 +10,7 @@
 namespace Zend\Db\Sql;
 
 /**
- * @property null|string|array|TableIdentifier $table
+ * @property TableSource $table
  * @property array $columns
  * @property null|Select $select
  */
@@ -20,7 +20,7 @@ class Insert extends AbstractSqlObject implements PreparableSqlObjectInterface
     const VALUES_SET   = 'set';
 
     /**
-     * @var string|TableIdentifier
+     * @var TableSource
      */
     protected $table            = null;
     protected $columns          = [];
@@ -39,25 +39,23 @@ class Insert extends AbstractSqlObject implements PreparableSqlObjectInterface
     /**
      * Constructor
      *
-     * @param  null|string|TableIdentifier $table
+     * @param  null|string|array|TableIdentifier|TableSource $table
      */
     public function __construct($table = null)
     {
         parent::__construct();
-        if ($table) {
-            $this->into($table);
-        }
+        $this->into($table);
     }
 
     /**
      * Create INTO clause
      *
-     * @param  string|TableIdentifier $table
-     * @return Insert
+     * @param  string|array|TableIdentifier|TableSource $table
+     * @return self
      */
     public function into($table)
     {
-        $this->table = $table;
+        $this->table = TableSource::factory($table);
         return $this;
     }
 
@@ -65,7 +63,7 @@ class Insert extends AbstractSqlObject implements PreparableSqlObjectInterface
      * Specify columns
      *
      * @param  array $columns
-     * @return Insert
+     * @return self
      */
     public function columns(array $columns)
     {
@@ -79,7 +77,7 @@ class Insert extends AbstractSqlObject implements PreparableSqlObjectInterface
      * @param  array|SelectableInterface $values
      * @param  string $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
      * @throws Exception\InvalidArgumentException
-     * @return Insert
+     * @return self
      */
     public function values($values, $flag = self::VALUES_SET)
     {
@@ -150,5 +148,10 @@ class Insert extends AbstractSqlObject implements PreparableSqlObjectInterface
             return array_values($this->columns);
         }
         return parent::__get($name);
+    }
+
+    public function __clone()
+    {
+        $this->table = clone $this->table;
     }
 }

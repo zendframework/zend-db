@@ -24,8 +24,8 @@ class UpdateBuilder extends AbstractSqlBuilder
     ];*/
     protected $joinsSpecification = [
         'forEach' => [
-            'byArgNumber' => [
-                2 => [
+        'byArgNumber' => [
+            2 => [
                     'byCount' => [
                         1 => '%1$s', 2 => '%1$s AS %2$s'
                     ],
@@ -68,10 +68,10 @@ class UpdateBuilder extends AbstractSqlBuilder
      */
     protected function build_Update(Update $sqlObject, Context $context)
     {
-        return sprintf(
-            $this->updateSpecification,
-            $this->nornalizeTable($sqlObject->table, $context)['name']
-        );
+        return [
+            'spec' => $this->updateSpecification,
+            'params' => $sqlObject->table,
+        ];
     }
 
     /**

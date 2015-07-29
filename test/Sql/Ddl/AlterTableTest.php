@@ -10,6 +10,7 @@
 namespace ZendTest\Db\Sql\Ddl;
 
 use Zend\Db\Sql\Ddl\AlterTable;
+use Zend\Db\Sql\TableIdentifier;
 
 class AlterTableTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,9 +20,11 @@ class AlterTableTest extends \PHPUnit_Framework_TestCase
     public function testSetTable()
     {
         $at = new AlterTable();
-        $this->assertEquals('', $at->table);
-        $this->assertSame($at, $at->setTable('test'));
-        $this->assertEquals('test', $at->table);
+        $this->assertEquals(null, $at->table);
+
+        $this->assertSame(null, $at->setTable(null)->table);
+        $this->assertEquals('test', $at->setTable('test')->table->getTable());
+        $this->assertEquals('test', $at->setTable(new TableIdentifier('test'))->table->getTable());
     }
 
     /**

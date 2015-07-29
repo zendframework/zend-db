@@ -10,9 +10,10 @@
 namespace Zend\Db\Sql\Ddl;
 
 use Zend\Db\Sql\AbstractSqlObject;
+use Zend\Db\Sql\TableIdentifier;
 
 /**
- * @property null|string|array|TableIdentifier $table
+ * @property TableIdentifier $table
  * @property array $columns
  * @property array $constraints
  * @property bool $isTemporary
@@ -42,18 +43,18 @@ class CreateTable extends AbstractSqlObject
     ];
 
     /**
-     * @var string
+     * @var TableIdentifier
      */
-    protected $table = '';
+    protected $table;
 
     /**
      * @param string $table
      * @param bool   $isTemporary
      */
-    public function __construct($table = '', $isTemporary = false)
+    public function __construct($table = null, $isTemporary = false)
     {
         parent::__construct();
-        $this->table = $table;
+        $this->setTable($table);
         $this->setTemporary($isTemporary);
     }
 
@@ -81,7 +82,7 @@ class CreateTable extends AbstractSqlObject
      */
     public function setTable($name)
     {
-        $this->table = $name;
+        $this->table = TableIdentifier::factory($name);
         return $this;
     }
 

@@ -17,7 +17,7 @@ class Sql
     /** @var AdapterInterface */
     protected $adapter = null;
 
-    /** @var string|array|TableIdentifier */
+    /** @var TableIdentifier */
     protected $table = null;
 
     /** @var Builder\Builder */
@@ -53,16 +53,23 @@ class Sql
         return ($this->table !== null);
     }
 
+    /**
+     * @param null|string|array|TableIdentifier $table
+     * @return self
+     * @throws Exception\InvalidArgumentException
+     */
     public function setTable($table)
     {
-        if (is_string($table) || is_array($table) || $table instanceof TableIdentifier) {
-            $this->table = $table;
-        } else {
+        if (!$table) {
             throw new Exception\InvalidArgumentException('Table must be a string, array or instance of TableIdentifier.');
         }
+        $this->table = TableIdentifier::factory($table);
         return $this;
     }
 
+    /**
+     * @return TableIdentifier
+     */
     public function getTable()
     {
         return $this->table;
@@ -76,45 +83,65 @@ class Sql
         return $this->builder;
     }
 
+    /**
+     * @param null|string|array|TableIdentifier $table
+     * @return Select
+     * @throws Exception\InvalidArgumentException
+     */
     public function select($table = null)
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table
+                $this->table->getTable()
             ));
         }
         return new Select(($table) ?: $this->table);
     }
 
+    /**
+     * @param null|string|array|TableIdentifier $table
+     * @return Insert
+     * @throws Exception\InvalidArgumentException
+     */
     public function insert($table = null)
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table
+                $this->table->getTable()
             ));
         }
         return new Insert(($table) ?: $this->table);
     }
 
+    /**
+     * @param null|string|array|TableIdentifier $table
+     * @return Update
+     * @throws Exception\InvalidArgumentException
+     */
     public function update($table = null)
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table
+                $this->table->getTable()
             ));
         }
         return new Update(($table) ?: $this->table);
     }
 
+    /**
+     * @param null|string|array|TableIdentifier $table
+     * @return Delete
+     * @throws Exception\InvalidArgumentException
+     */
     public function delete($table = null)
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table
+                $this->table->getTable()
             ));
         }
         return new Delete(($table) ?: $this->table);

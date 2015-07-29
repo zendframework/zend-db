@@ -10,6 +10,7 @@
 namespace ZendTest\Db\Sql\Ddl;
 
 use Zend\Db\Sql\Ddl\CreateTable;
+use Zend\Db\Sql\TableIdentifier;
 
 class CreateTableTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +21,7 @@ class CreateTableTest extends \PHPUnit_Framework_TestCase
     public function testObjectConstruction()
     {
         $ct = new CreateTable('foo', true);
-        $this->assertEquals('foo', $ct->table);
+        $this->assertEquals('foo', $ct->table->getTable());
         $this->assertTrue($ct->isTemporary());
     }
 
@@ -35,6 +36,9 @@ class CreateTableTest extends \PHPUnit_Framework_TestCase
         $ct->setTemporary(true);
         $this->assertTrue($ct->isTemporary());
         $ct->setTemporary('yes');
+        $this->assertTrue($ct->isTemporary());
+
+        $ct = new CreateTable('foo', true);
         $this->assertTrue($ct->isTemporary());
     }
 
@@ -55,17 +59,11 @@ class CreateTableTest extends \PHPUnit_Framework_TestCase
     public function testSetTable()
     {
         $ct = new CreateTable();
-        $this->assertEquals('', $ct->table);
-        $ct->setTable('test');
-        return $ct;
-    }
+        $this->assertEquals(null, $ct->table);
 
-    /**
-     * @depends testSetTable
-     */
-    public function testRawStateViaTable(CreateTable $ct)
-    {
-        $this->assertEquals('test', $ct->table);
+        $this->assertSame(null, $ct->setTable(null)->table);
+        $this->assertEquals('test', $ct->setTable('test')->table->getTable());
+        $this->assertEquals('test', $ct->setTable(new TableIdentifier('test'))->table->getTable());
     }
 
     /**

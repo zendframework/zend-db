@@ -915,6 +915,20 @@ class SelectBuilderTest extends AbstractTestCase
                     ],
                 ],
             ],
+            'string table with alias and schema' => [
+                'sqlObject' => $this->select()->from(['x' => ['bar', 'foo']]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'     => 'SELECT "x".* FROM "bar"."foo" AS "x"',
+                        'prepare' => true,
+                    ],
+                    'Oracle' => [
+                        'string'     => 'SELECT "x".* FROM "bar"."foo" "x"',
+                        'prepare'    => true,
+                        'parameters' => [],
+                    ],
+                ],
+            ],
             'table as TableIdentifier' => [ // table as TableIdentifier
                 'sqlObject' => $this->select()->from(new TableIdentifier('foo', 'bar')),
                 'expected'  => [

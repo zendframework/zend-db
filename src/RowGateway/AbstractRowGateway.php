@@ -22,7 +22,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     protected $isInitialized = false;
 
     /**
-     * @var string|TableIdentifier
+     * @var TableIdentifier
      */
     protected $table = null;
 
@@ -67,7 +67,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         $this->featureSet->setRowGateway($this);
         $this->featureSet->apply('preInitialize', []);
 
-        if (!is_string($this->table) && !$this->table instanceof TableIdentifier) {
+        if (!$this->table instanceof TableIdentifier) {
             throw new Exception\RuntimeException('This row object does not have a valid table set.');
         }
 

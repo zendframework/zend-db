@@ -10,13 +10,13 @@
 namespace Zend\Db\Sql;
 
 /**
- * @property null|string|array|TableIdentifier $table
+ * @property TableSource $table
  * @property Where $where
  */
 class Delete extends AbstractSqlObject implements PreparableSqlObjectInterface
 {
     /**
-     * @var string|TableIdentifier
+     * @var TableSource
      */
     protected $table = '';
 
@@ -33,26 +33,24 @@ class Delete extends AbstractSqlObject implements PreparableSqlObjectInterface
     /**
      * Constructor
      *
-     * @param  null|string|TableIdentifier $table
+     * @param  null|string|array|TableIdentifier|TableSource $table
      */
     public function __construct($table = null)
     {
         parent::__construct();
-        if ($table) {
-            $this->from($table);
-        }
+        $this->from($table);
         $this->where = new Where();
     }
 
     /**
      * Create from statement
      *
-     * @param  string|TableIdentifier $table
+     * @param  string|array|TableIdentifier|TableSource $table
      * @return Delete
      */
     public function from($table)
     {
-        $this->table = $table;
+        $this->table = TableSource::factory($table);
         return $this;
     }
 
@@ -72,5 +70,10 @@ class Delete extends AbstractSqlObject implements PreparableSqlObjectInterface
             $this->where->addPredicates($predicate, $combination);
         }
         return $this;
+    }
+
+    public function __clone()
+    {
+        $this->table = clone $this->table;
     }
 }

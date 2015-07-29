@@ -56,7 +56,7 @@ class CreateTableBuilder extends AbstractSqlBuilder
             'spec' => $this->tableSpecification,
             'params' => [
                 $sqlObject->isTemporary ? 'TEMPORARY ' : '',
-                $context->getPlatform()->quoteIdentifier($sqlObject->table),
+                $sqlObject->table,
             ],
         ];
     }

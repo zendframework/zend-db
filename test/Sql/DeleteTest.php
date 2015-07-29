@@ -34,11 +34,11 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
     public function testFrom()
     {
         $this->delete->from('foo', 'bar');
-        $this->assertEquals('foo', $this->readAttribute($this->delete, 'table'));
+        $this->assertEquals('foo', $this->delete->table->getSource()->getTable());
 
         $tableIdentifier = new TableIdentifier('foo', 'bar');
         $this->delete->from($tableIdentifier);
-        $this->assertEquals($tableIdentifier, $this->readAttribute($this->delete, 'table'));
+        $this->assertEquals($tableIdentifier, $this->delete->table->getSource());
     }
 
     public function test__Get()

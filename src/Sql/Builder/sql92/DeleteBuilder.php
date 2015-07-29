@@ -41,9 +41,7 @@ class DeleteBuilder extends AbstractSqlBuilder
     {
         return [
             'spec' => $this->deleteSpecification,
-            'params' => [
-                $this->nornalizeTable($sqlObject->table, $context)['name'],
-            ],
+            'params' => $sqlObject->table,
         ];
     }
 
