@@ -297,6 +297,10 @@ class Builder extends AbstractBuilder
                 ->getPlatformBuilder($sqlObject, $context->getAdapter())
                 ->build($sqlObject, $context);
 
+        if ($specAndParams === false) {
+            return;
+        }
+
         if (isset($specAndParams[$this->implodeGlueKey])) {
             $implodeGlue = $specAndParams[$this->implodeGlueKey];
             unset($specAndParams[$this->implodeGlueKey]);
@@ -343,9 +347,13 @@ class Builder extends AbstractBuilder
     private function createSqlFromSpecificationAndParameters($specification, $args, Context $context = null)
     {
         if (is_string($specification)) {
+            $args = $this->buildSpecificationParameter($args, $context);
+            if ($args === null) {
+                return;
+            }
             return vsprintf(
                 $specification,
-                $this->buildSpecificationParameter($args, $context)
+                $args
             );
         }
 

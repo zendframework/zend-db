@@ -29,6 +29,16 @@ class PredicateSetBuilderTest extends AbstractTestCase
     {
         return $this->prepareDataProvider([
             [
+                'sqlObject' => $this->predicate_PredicateSet(),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => '',
+                        'prepare' => '',
+                        'parameters' => [],
+                    ],
+                ],
+            ],
+            [
                 'sqlObject' => $this->predicate_PredicateSet()
                                         ->addPredicate($this->predicate_IsNull('foo'))
                                         ->addPredicate($this->predicate_IsNull('bar')),

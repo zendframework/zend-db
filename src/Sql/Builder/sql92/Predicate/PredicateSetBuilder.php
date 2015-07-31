@@ -30,6 +30,9 @@ class PredicateSetBuilder extends AbstractSqlBuilder
             $predicate = $predicates[$i][1];
 
             if ($predicate instanceof PredicateSet) {
+                if ($predicate->count() == 0) {
+                    continue;
+                }
                 $parts[] = '(';
             }
 
@@ -46,6 +49,8 @@ class PredicateSetBuilder extends AbstractSqlBuilder
                 $parts[] = sprintf(' %s ', $predicates[$i+1][0]);
             }
         }
-        return $parts;
+        return !$parts
+            ? false
+            : $parts;
     }
 }

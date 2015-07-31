@@ -1059,6 +1059,18 @@ class SelectBuilderTest extends AbstractTestCase
                     ],
                 ],
             ],
+            [ // empty parameters
+                'sqlObject' => $this
+                                    ->select()
+                                    ->from('foo')
+                                    ->where($this->predicate_PredicateSet()),
+                'expected'  => [
+                    'sql92' => [
+                        'string'     => 'SELECT "foo".* FROM "foo"',
+                        'prepare' => true,
+                    ],
+                ],
+            ],
         ];
     }
 }
