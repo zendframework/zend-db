@@ -329,7 +329,7 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
         if ($this->combine !== []) {
             throw new Exception\InvalidArgumentException('This Select object is already combined and cannot be combined with multiple Selects objects');
         }
-        $this->combine = [
+        $this->combine[] = [
             'select' => $select,
             'type' => $type,
             'modifier' => $modifier

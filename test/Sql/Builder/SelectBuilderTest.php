@@ -152,7 +152,7 @@ class SelectBuilderTest extends AbstractTestCase
                                         ),
                 'expected'  => [
                     'sql92' => [
-                        'string'  => '( SELECT "foo".* FROM "foo" WHERE a = b ) UNION ALL ( (SELECT "bar".* FROM "bar" WHERE c = d) )',
+                        'string'  => '(SELECT "foo".* FROM "foo" WHERE a = b) UNION ALL (SELECT "bar".* FROM "bar" WHERE c = d)',
                         'prepare' => true,
                     ],
                 ],
@@ -170,7 +170,7 @@ class SelectBuilderTest extends AbstractTestCase
                                         ->order('id DESC'),
                 'expected'  => [
                     'sql92' => [
-                        'string'  => 'SELECT "sub".* FROM (( SELECT "foo".* FROM "foo" WHERE a = b ) UNION ( (SELECT "bar".* FROM "bar" WHERE c = d) )) AS "sub" ORDER BY "id" DESC',
+                        'string'  => 'SELECT "sub".* FROM ((SELECT "foo".* FROM "foo" WHERE a = b) UNION (SELECT "bar".* FROM "bar" WHERE c = d)) AS "sub" ORDER BY "id" DESC',
                         'prepare' => true,
                     ],
                 ],

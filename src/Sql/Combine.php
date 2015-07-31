@@ -59,14 +59,20 @@ class Combine extends AbstractSqlObject implements PreparableSqlObjectInterface,
         if (is_array($select)) {
             foreach ($select as $combine) {
                 if ($combine instanceof SelectableInterface) {
-                    $combine = [$combine];
+                    $this->combine($combine, $type, $modifier);
+                } elseif (is_string(key($combine))) {
+                    $this->combine(
+                        $combine['select'],
+                        isset($combine['type']) ? $combine['type'] : $type,
+                        isset($combine['modifier']) ? $combine['modifier'] : $modifier
+                    );
+                } else {
+                    $this->combine(
+                        $combine[0],
+                        isset($combine[1]) ? $combine[1] : $type,
+                        isset($combine[2]) ? $combine[2] : $modifier
+                    );
                 }
-
-                $this->combine(
-                    $combine[0],
-                    isset($combine[1]) ? $combine[1] : $type,
-                    isset($combine[2]) ? $combine[2] : $modifier
-                );
             }
             return $this;
         }

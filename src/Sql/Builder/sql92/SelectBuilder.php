@@ -11,6 +11,7 @@ namespace Zend\Db\Sql\Builder\sql92;
 
 use Zend\Db\Adapter;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Combine;
 use Zend\Db\Sql\ExpressionInterface;
 use Zend\Db\Sql\SelectableInterface;
 use Zend\Db\Sql\Builder\AbstractSqlBuilder;
@@ -19,7 +20,6 @@ use Zend\Db\Sql\ExpressionParameter;
 
 class SelectBuilder extends AbstractSqlBuilder
 {
-    protected $statementStartSpecification = '%1$s';
     protected $selectNoTableSpecification = [
         'byArgNumber' => [
             1 => [
@@ -99,8 +99,6 @@ class SelectBuilder extends AbstractSqlBuilder
     ];
     protected $limitSpecification = 'LIMIT %1$s';
     protected $offsetSpecification = 'OFFSET %1$s';
-    protected $statementEndSpecification = '%1$s';
-    protected $combineSpecification = '%1$s ( %2$s )';
 
     /**
      * @param Select $sqlObject
@@ -110,8 +108,12 @@ class SelectBuilder extends AbstractSqlBuilder
     public function build($sqlObject, Context $context)
     {
         $this->validateSqlObject($sqlObject, 'Zend\Db\Sql\Select', __METHOD__);
+
+        if ($sqlObject->combine) {
+            return $this->build_Combine($sqlObject, $context);
+        }
+
         $sqls = [];
-        $sqls['start']   = $this->build_StatementStart($sqlObject, $context, $sqls);
         $sqls['select']  = $this->build_Select($sqlObject, $context, $sqls);
         $sqls['joins']   = $this->build_Joins($sqlObject, $context, $sqls);
         $sqls['where']   = $this->build_Where($sqlObject, $context, $sqls);
@@ -120,33 +122,7 @@ class SelectBuilder extends AbstractSqlBuilder
         $sqls['order']   = $this->build_Order($sqlObject, $context, $sqls);
         $sqls['limit']   = $this->build_Limit($sqlObject, $context, $sqls);
         $sqls['offset']  = $this->build_Offset($sqlObject, $context, $sqls);
-        $sqls['end']     = $this->build_StatementEnd($sqlObject, $context, $sqls);
-        $sqls['combine'] = $this->build_Combine($sqlObject, $context, $sqls);
         return $sqls;
-    }
-
-    /**
-     * @param Select $sqlObject
-     * @param Context $context
-     * @return string|null
-     */
-    protected function build_StatementStart($sqlObject, Context $context)
-    {
-        if ($sqlObject->combine !== []) {
-            return '(';
-        }
-    }
-
-    /**
-     * @param Select $sqlObject
-     * @param Context $context
-     * @return string|null
-     */
-    protected function build_StatementEnd($sqlObject, Context $context)
-    {
-        if ($sqlObject->combine !== []) {
-            return ')';
-        }
     }
 
     /**
@@ -355,23 +331,13 @@ class SelectBuilder extends AbstractSqlBuilder
      */
     protected function build_Combine(Select $sqlObject, Context $context)
     {
-        $COMBINE = $sqlObject->combine;
-        if ($COMBINE == []) {
-            return;
-        }
+        $select = clone $sqlObject;
 
-        $type = $COMBINE['type'];
-        if ($COMBINE['modifier']) {
-            $type .= ' ' . $COMBINE['modifier'];
-        }
+        $combine = new Combine($select);
+        $combine->combine($select->combine);
+        unset($select->combine);
 
-        return [
-            'spec' => $this->combineSpecification,
-            'params' => [
-                strtoupper($type),
-                $COMBINE['select'],
-            ],
-        ];
+        return $this->platformBuilder->getPlatformBuilder($combine)->build($combine, $context);
     }
 
     /**
