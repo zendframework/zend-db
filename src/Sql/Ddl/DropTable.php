@@ -14,6 +14,7 @@ use Zend\Db\Sql\TableIdentifier;
 
 /**
  * @property TableIdentifier $table
+ * @property bool $ifExists
  */
 class DropTable extends AbstractSqlObject
 {
@@ -22,8 +23,11 @@ class DropTable extends AbstractSqlObject
      */
     protected $table;
 
+    protected $ifExists = false;
+
     protected $__getProperties = [
         'table',
+        'ifExists',
     ];
 
     /**
@@ -33,5 +37,11 @@ class DropTable extends AbstractSqlObject
     {
         parent::__construct();
         $this->table = TableIdentifier::factory($table);
+    }
+
+    public function ifExists($ifExists = false)
+    {
+        $this->ifExists = (bool)$ifExists;
+        return $this;
     }
 }

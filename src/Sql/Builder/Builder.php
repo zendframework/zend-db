@@ -60,6 +60,7 @@ class Builder extends AbstractBuilder
         ],
         'Zend\Db\Sql\Ddl\DropTable'   => [
             'sql92'     => 'Zend\Db\Sql\Builder\sql92\Ddl\DropTableBuilder',
+            'sqlserver' => 'Zend\Db\Sql\Builder\SqlServer\Ddl\DropTableBuilder',
         ],
 
         'Zend\Db\Sql\Predicate\NotBetween'      => [

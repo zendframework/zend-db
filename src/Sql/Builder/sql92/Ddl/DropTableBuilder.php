@@ -15,7 +15,9 @@ use Zend\Db\Sql\Ddl\DropTable;
 
 class DropTableBuilder extends AbstractSqlBuilder
 {
-    protected $tableSpecification = 'DROP TABLE %1$s';
+    protected $tableSpecification = 'DROP TABLE %1$s%2$s';
+
+    protected $ifExistsSpecification = 'IF EXISTS ';
 
     /**
      * @param DropTable $sqlObject
@@ -40,6 +42,7 @@ class DropTableBuilder extends AbstractSqlBuilder
         return [
             'spec' => $this->tableSpecification,
             'params' => [
+                $sqlObject->ifExists ? $this->ifExistsSpecification : '',
                 $sqlObject->table,
             ],
         ];

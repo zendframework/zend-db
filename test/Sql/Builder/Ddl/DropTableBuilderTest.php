@@ -34,6 +34,13 @@ class DropTableBuilderTest extends AbstractTestCase
                     'sql92' => 'DROP TABLE "foo"',
                 ],
             ],
+            [
+                'sqlObject' => $this->dropTable('foo')->ifExists(true),
+                'expected'  => [
+                    'sql92'     => 'DROP TABLE IF EXISTS "foo"',
+                    'sqlserver' => 'IF OBJECT_ID(\'foo\', \'U\') IS NOT NULL DROP TABLE [foo];',
+                ],
+            ],
         ]);
     }
 }
