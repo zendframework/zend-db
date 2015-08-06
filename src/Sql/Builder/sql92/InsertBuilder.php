@@ -9,35 +9,29 @@
 
 namespace Zend\Db\Sql\Builder\sql92;
 
-use Zend\Db\Sql\Exception;
 use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Builder\AbstractSqlBuilder;
 use Zend\Db\Sql\Builder\Context;
+use Zend\Db\Sql\SelectableInterface;
 
 class InsertBuilder extends AbstractSqlBuilder
 {
-    /**
-     * @var array Specification array
-     */
-    protected $insertSpecification = [
-        'byArgNumber' => [
-            2 => ['implode' => ', '],
-            3 => ['implode' => ', '],
-        ],
-        'format' => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
+    protected $specificationTable = 'INSERT INTO %1$s';
+    protected $specificationColumns = [
+        'implode' => ', ',
+        'format' => '(%s)',
     ];
-    protected $selectSpecification = [
-        'byCount' => [
-            2 => [
-                'format' => 'INSERT INTO %1$s %2$s'
-            ],
-            3 => [
-                'byArgNumber' => [
-                    2 => ['implode' => ', '],
-                ],
-                'format' => 'INSERT INTO %1$s (%2$s) %3$s'
-            ],
+    protected $specificationValues = [
+        'implode' => ', ',
+        'format' => 'VALUES (%s)',
+    ];
+    protected $specificationValuesMultiple = [
+        'forEach' => [
+            'implode' => ', ',
+            'format' => '(%s)',
         ],
+        'implode' => ', ',
+        'format' => 'VALUES %s',
     ];
 
     /**
@@ -49,70 +43,64 @@ class InsertBuilder extends AbstractSqlBuilder
     {
         $this->validateSqlObject($sqlObject, 'Zend\Db\Sql\Insert', __METHOD__);
         return [
-            $this->build_Insert($sqlObject, $context),
-            $this->build_Select($sqlObject, $context),
+            $this->build_Table($sqlObject, $context),
+            $this->build_Columns($sqlObject, $context),
+            $this->build_Values($sqlObject, $context),
         ];
     }
 
-    /**
-     * @param Insert $sqlObject
-     * @param Context $context
-     * @return null|array
-     * @throws Exception\InvalidArgumentException
-     */
-    protected function build_Insert(Insert $sqlObject, Context $context)
+    protected function build_Table(Insert $sqlObject, Context $context)
     {
-        if ($sqlObject->select) {
-            return;
-        }
-
-        if (!$sqlObject->columns) {
-            throw new Exception\InvalidArgumentException('values or select should be present');
-        }
-
-        $columns = [];
-        $values  = [];
-        foreach (array_combine($sqlObject->columns, $sqlObject->values) as $column=>$value) {
-            list($columns[], $values[]) = $this->resolveColumnValue($column, $value, $context);
-        }
-
         return [
-            'spec' => $this->insertSpecification,
-            'params' => [
-                $sqlObject->table,
-                $columns,
-                $values,
-            ],
+            'spec' => $this->specificationTable,
+            'params' => $sqlObject->table,
         ];
     }
 
-    /**
-     * @param Insert $sqlObject
-     * @param Context $context
-     * @return null|array
-     */
-    protected function build_Select(Insert $sqlObject, Context $context)
+    protected function build_Columns(Insert $sqlObject, Context $context)
     {
-        if (!$sqlObject->select) {
+        if (!$sqlObject->columns) {
             return;
         }
+        return [
+            'spec' => $this->specificationColumns,
+            'params' => array_map([$context->getPlatform(), 'quoteIdentifier'], $sqlObject->columns),
+        ];
+    }
 
-        if ($sqlObject->columns) {
+    protected function build_Values(Insert $sqlObject, Context $context)
+    {
+        $values  = $sqlObject->values;
+
+        if ($values instanceof SelectableInterface) {
+            return $values;
+        }
+
+        if (!is_array(reset($values))) {
+            $pValues  = [];
+            if ($sqlObject->columns) {
+                foreach (array_combine($sqlObject->columns, $values) as $column=>$value) {
+                    list(, $pValues[]) = $this->resolveColumnValue($column, $value, $context);
+                }
+            } else {
+                foreach ($values as $value) {
+                    list(, $pValues[]) = $this->resolveColumnValue(null, $value, $context);
+                }
+            }
             return [
-                'spec'   => $this->selectSpecification,
-                'params' => [
-                    $sqlObject->table,
-                    array_map([$context->getPlatform(), 'quoteIdentifier'], $sqlObject->columns),
-                    $sqlObject->select
-                ],
+                'spec' => $this->specificationValues,
+                'params' => $pValues,
             ];
         }
+
+        foreach ($values as &$valueRow) {
+            foreach ($valueRow as &$value) {
+                list(, $value) = $this->resolveColumnValue(null, $value, $context);
+            }
+        }
         return [
-            'spec'   => $this->selectSpecification,
-            'params' => [
-                $sqlObject->table,
-                $sqlObject->select
-            ],
+            'spec' => $this->specificationValuesMultiple,
+            'params' => $values,
         ];
     }
 }

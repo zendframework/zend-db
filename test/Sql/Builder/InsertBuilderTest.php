@@ -50,6 +50,12 @@ class InsertBuilderTest extends AbstractTestCase
                     'sql92' => 'INSERT INTO "foo" ("c1") VALUES (\'v1\')',
                 ],
             ],
+            'into_array' =>  [
+                'sqlObject' => $this->insert()->into(['schema', 'foo'])->values(['c1' => 'v1']),
+                'expected'  => [
+                    'sql92' => 'INSERT INTO "schema"."foo" ("c1") VALUES (\'v1\')',
+                ],
+            ],
         ];
     }
 
@@ -83,6 +89,29 @@ class InsertBuilderTest extends AbstractTestCase
                 'expected'  => [
                     'sql92' => [
                         'string'  => 'INSERT INTO "foo" ("bar", "boo", "bam", "qux") VALUES (\'baz\', NOW(), NULL, \'100\')',
+                    ],
+                ],
+            ],
+            'row_with_columns' => [
+                'sqlObject' => $this->insert('foo')
+                                        ->columns(['c1'])
+                                        ->values(['v1']),
+                'expected'  => [
+                    'sql92' => [
+                        'string'     => 'INSERT INTO "foo" ("c1") VALUES (\'v1\')',
+                        'prepare'    => 'INSERT INTO "foo" ("c1") VALUES (?)',
+                        'parameters' => ['c1' => 'v1'],
+                    ],
+                ],
+            ],
+            'row_without_columns' => [
+                'sqlObject' => $this->insert('foo')
+                                        ->values(['v1']),
+                'expected'  => [
+                    'sql92' => [
+                        'string'     => 'INSERT INTO "foo" VALUES (\'v1\')',
+                        'prepare'    => 'INSERT INTO "foo" VALUES (\'v1\')',
+                        'parameters' => [],
                     ],
                 ],
             ],
@@ -147,6 +176,67 @@ class InsertBuilderTest extends AbstractTestCase
                     'MySql'     => 'INSERT INTO `foo` ((SELECT `bar`.* FROM `bar`))',
                     'Oracle'    => 'INSERT INTO "foo" ((SELECT "bar".* FROM "bar"))',
                     'SqlServer' => 'INSERT INTO [foo] ((SELECT [bar].* FROM [bar]))',
+                ],
+            ],
+            'multiple_row_with_columns' => [
+                'sqlObject' => $this->insert()
+                                        ->into('foo')
+                                        ->columns(['c1', 'c2'])
+                                        ->values([
+                                            ['1_v1', '1_v2'],
+                                            ['2_v1', '2_v2'],
+                                        ]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'     => 'INSERT INTO "foo" ("c1", "c2") VALUES (\'1_v1\', \'1_v2\'), (\'2_v1\', \'2_v2\')',
+                        'prepare'    => 'INSERT INTO "foo" ("c1", "c2") VALUES (\'1_v1\', \'1_v2\'), (\'2_v1\', \'2_v2\')',
+                        'parameters' => [],
+                    ],
+                ],
+            ],
+            'multiple_row_without_columns' => [
+                'sqlObject' => $this->insert()
+                                        ->into('foo')
+                                        ->values([
+                                            ['1_v1', '1_v2'],
+                                            ['2_v1', '2_v2'],
+                                        ]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'     => 'INSERT INTO "foo" VALUES (\'1_v1\', \'1_v2\'), (\'2_v1\', \'2_v2\')',
+                        'prepare'    => 'INSERT INTO "foo" VALUES (\'1_v1\', \'1_v2\'), (\'2_v1\', \'2_v2\')',
+                        'parameters' => [],
+                    ],
+                ],
+            ],
+            'multiple_row_with_different_values_types' => [
+                'sqlObject' => $this->insert()->into('foo')
+                                        ->values([
+                                            [
+                                                'v1',
+                                                'v2',
+                                                'v3',
+                                                'v4',
+                                            ],
+                                            [
+                                                'bar',
+                                                null,
+                                                new Expression('NOW()'),
+                                                $this->select('baz'),
+                                            ],
+                                            [
+                                                'v5',
+                                                'v6',
+                                                'v7',
+                                                'v8',
+                                            ],
+                                        ]),
+                'expected'  => [
+                    'sql92' => [
+                        'string'  => 'INSERT INTO "foo" VALUES (\'v1\', \'v2\', \'v3\', \'v4\'), (\'bar\', NULL, NOW(), (SELECT "baz".* FROM "baz")), (\'v5\', \'v6\', \'v7\', \'v8\')',
+                        'string'  => 'INSERT INTO "foo" VALUES (\'v1\', \'v2\', \'v3\', \'v4\'), (\'bar\', NULL, NOW(), (SELECT "baz".* FROM "baz")), (\'v5\', \'v6\', \'v7\', \'v8\')',
+                        'parameters' => [],
+                    ],
                 ],
             ],
         ];
