@@ -11,7 +11,6 @@ namespace ZendTest\Db\Sql;
 
 use Zend\Db\Sql\Sql;
 use ZendTest\Db\TestAsset;
-use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\TableIdentifier;
 
 class SqlTest extends \PHPUnit_Framework_TestCase
@@ -27,14 +26,9 @@ class SqlTest extends \PHPUnit_Framework_TestCase
     public function setup()
     {
         // mock the adapter, driver, and parts
-        $mockResult = $this->getMock('Zend\Db\Adapter\Driver\ResultInterface');
         $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
-        $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
-        $mockConnection = $this->getMock('Zend\Db\Adapter\Driver\ConnectionInterface');
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
-        $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
 
         // setup mock adapter
         $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, [$mockDriver, new TestAsset\TrustingSql92Platform()]);
@@ -130,6 +124,17 @@ class SqlTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('Zend\Db\Sql\Exception\InvalidArgumentException',
             'This Sql object is intended to work with only the table "foo" provided at construction time.');
         $this->sql->delete('bar');
+    }
+
+    /**
+     * @covers Zend\Db\Sql\Sql::getDdl
+     */
+    public function testGetDdl()
+    {
+        $ddl = $this->sql->getDdl();
+        $this->assertSame($this->sql->getTable(), $ddl->getTable());
+        $this->assertSame($this->sql->getAdapter(), $ddl->getAdapter());
+        $this->assertSame($this->sql->getBuilder(), $ddl->getBuilder());
     }
 
     /**

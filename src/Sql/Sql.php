@@ -12,76 +12,12 @@ namespace Zend\Db\Sql;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Driver\StatementInterface;
 
-class Sql
+class Sql extends AbstractSql
 {
-    /** @var AdapterInterface */
-    protected $adapter = null;
-
-    /** @var TableIdentifier */
-    protected $table = null;
-
-    /** @var Builder\Builder */
-    protected $builder = null;
-
     /**
-     * @param null|AdapterInterface                  $adapter
-     * @param null|string|array|TableIdentifier $table
-     * @param null|Builder\Builder              $platformBuilder
+     * @var Ddl\Sql
      */
-    public function __construct(AdapterInterface $adapter = null, $table = null, Builder\Builder $builder = null)
-    {
-        $this->adapter = $adapter;
-        if ($table) {
-            $this->setTable($table);
-        }
-        $this->builder = $builder ?: new Builder\Builder($adapter);
-    }
-
-    /**
-     * @return null|\Zend\Db\Adapter\AdapterInterface
-     */
-    public function getAdapter()
-    {
-        return $this->adapter;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasTable()
-    {
-        return ($this->table !== null);
-    }
-
-    /**
-     * @param null|string|array|TableIdentifier $table
-     * @return self
-     * @throws Exception\InvalidArgumentException
-     */
-    public function setTable($table)
-    {
-        if (!$table) {
-            throw new Exception\InvalidArgumentException('Table must be a string, array or instance of TableIdentifier.');
-        }
-        $this->table = TableIdentifier::factory($table);
-        return $this;
-    }
-
-    /**
-     * @return TableIdentifier
-     */
-    public function getTable()
-    {
-        return $this->table;
-    }
-
-    /**
-     * @return Builder\Builder
-     */
-    public function getBuilder()
-    {
-        return $this->builder;
-    }
+    protected $ddl;
 
     /**
      * @param null|string|array|TableIdentifier $table
@@ -90,12 +26,7 @@ class Sql
      */
     public function select($table = null)
     {
-        if ($this->table !== null && $table !== null) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table->getTable()
-            ));
-        }
+        $this->validateTable($table);
         return new Select(($table) ?: $this->table);
     }
 
@@ -106,12 +37,7 @@ class Sql
      */
     public function insert($table = null)
     {
-        if ($this->table !== null && $table !== null) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table->getTable()
-            ));
-        }
+        $this->validateTable($table);
         return new Insert(($table) ?: $this->table);
     }
 
@@ -122,12 +48,7 @@ class Sql
      */
     public function update($table = null)
     {
-        if ($this->table !== null && $table !== null) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table->getTable()
-            ));
-        }
+        $this->validateTable($table);
         return new Update(($table) ?: $this->table);
     }
 
@@ -138,13 +59,19 @@ class Sql
      */
     public function delete($table = null)
     {
-        if ($this->table !== null && $table !== null) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table->getTable()
-            ));
-        }
+        $this->validateTable($table);
         return new Delete(($table) ?: $this->table);
+    }
+
+    /**
+     * @return Ddl\Sql
+     */
+    public function getDdl()
+    {
+        if (!$this->ddl) {
+            $this->ddl = new Ddl\Sql($this->adapter, $this->table, $this->builder);
+        }
+        return $this->ddl;
     }
 
     /**
@@ -156,22 +83,6 @@ class Sql
     public function prepareSqlStatement(PreparableSqlObjectInterface $sqlObject, AdapterInterface $adapter = null)
     {
         return $this->builder->prepareSqlStatement(
-            $sqlObject,
-            $adapter ?: $this->adapter
-        );
-    }
-
-    /**
-     * @param SqlObjectInterface     $sqlObject
-     * @param null|AdapterInterface $adapter
-     *
-     * @return string
-     *
-     * @throws Exception\InvalidArgumentException
-     */
-    public function buildSqlString(SqlObjectInterface $sqlObject, AdapterInterface $adapter = null)
-    {
-        return $this->builder->buildSqlString(
             $sqlObject,
             $adapter ?: $this->adapter
         );
