@@ -18,14 +18,18 @@ class BooleanTest extends \PHPUnit_Framework_TestCase
      *
      * @group 6257
      */
-    public function testIsAlwaysNotNullable()
+    public function testSetNullable()
     {
         $column = new Boolean('foo', true);
+        $this->assertTrue($column->isNullable());
 
+        $column = new Boolean('foo', false);
         $this->assertFalse($column->isNullable());
 
         $column->setNullable(true);
+        $this->assertTrue($column->isNullable());
 
+        $column->setNullable(false);
         $this->assertFalse($column->isNullable());
     }
 }
