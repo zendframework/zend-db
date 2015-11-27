@@ -21,7 +21,7 @@ class NotBetweenBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    protected function build($expression, Context $context)
+    public function build($expression, Context $context)
     {
         $this->validateSqlObject($expression, 'Zend\Db\Sql\Predicate\NotBetween', __METHOD__);
         return [[

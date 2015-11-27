@@ -25,7 +25,7 @@ class CheckBuilder extends AbstractBuilder
      * @param Context $context
      * @return array
      */
-    protected function build($check, Context $context)
+    public function build($check, Context $context)
     {
         $this->validateSqlObject($check, 'Zend\Db\Sql\Ddl\Constraint\Check', __METHOD__);
         $values = [];

@@ -16,8 +16,6 @@ abstract class AbstractBuilder
 {
     protected $implodeGlueKey = 'implode_glue';
 
-    abstract protected function build($sqlObject, Context $context);
-
     /**
      * @param TableIdentifier|string|array $identifier
      * @param Context $context

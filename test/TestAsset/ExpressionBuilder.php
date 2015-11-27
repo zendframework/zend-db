@@ -13,7 +13,7 @@ use Zend\Db\Sql\Builder\Context;
 
 class ExpressionBuilder extends \Zend\Db\Sql\Builder\sql92\ExpressionBuilder
 {
-    protected function build($expression, Context $context)
+    public function build($expression, Context $context)
     {
         $expressionString = $expression->getExpression();
         $expression->setExpression('{decorate-' . $expressionString . '-decorate}');

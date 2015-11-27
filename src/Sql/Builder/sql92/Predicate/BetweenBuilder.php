@@ -21,7 +21,7 @@ class BetweenBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    protected function build($expression, Context $context)
+    public function build($expression, Context $context)
     {
         $this->validateSqlObject($expression, 'Zend\Db\Sql\Predicate\Between', __METHOD__);
         return [[

@@ -53,7 +53,7 @@ class ColumnBuilder extends AbstractSqlBuilder
      * @param Context $context
      * @return array
      */
-    protected function build($column, Context $context)
+    public function build($column, Context $context)
     {
         $this->validateSqlObject($column, 'Zend\Db\Sql\Ddl\Column\Column', __METHOD__);
         $data = $this->buildColumnSpec($context, $this->specifications, $column);
