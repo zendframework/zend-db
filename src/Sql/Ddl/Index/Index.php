@@ -22,7 +22,7 @@ class Index extends AbstractIndex
     protected $lengths;
 
     /**
-     * @param  string $column
+     * @param  string|array|null $columns
      * @param  null|string $name
      * @param array $lengths
      */
