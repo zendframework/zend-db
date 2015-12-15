@@ -26,9 +26,9 @@ class Index extends AbstractIndex
      * @param  null|string $name
      * @param array $lengths
      */
-    public function __construct($column, $name = null, array $lengths = [])
+    public function __construct($columns, $name = null, array $lengths = [])
     {
-        $this->setColumns($column);
+        $this->setColumns($columns);
 
         $this->name    = null === $name ? null : (string) $name;
         $this->lengths = $lengths;
