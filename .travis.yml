@@ -67,7 +67,8 @@ before_install:
   - if [[ $HYDRATOR_VERSION == '' ]]; then composer require --dev --no-update "zendframework/zend-eventmanager:^2.1" ; fi
   - if [[ $SERVICE_MANAGER_VERSION != '' ]]; then composer require --dev --no-update "zendframework/zend-servicemanager:$SERVICE_MANAGER_VERSION" ; fi
   - if [[ $SERVICE_MANAGER_VERSION == '' ]]; then composer require --dev --no-update "zendframework/zend-servicemanager:^3.0.3" ; fi
-  - $(echo "composer.json to install:" && cat composer.json)
+  - echo "composer.json to install:"
+  - cat composer.json
 
 install:
   - travis_retry composer install --no-interaction --ignore-platform-reqs
