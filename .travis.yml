@@ -62,7 +62,7 @@ before_install:
   - if [[ $EXECUTE_TEST_COVERALLS == 'true' ]]; then composer require --dev --no-update satooshi/php-coveralls ; fi
   - if [[ $EVENT_MANAGER_VERSION != '' ]]; then composer require --dev --no-update "zendframework/zend-eventmanager:$EVENT_MANAGER_VERSION" ; fi
   - if [[ $EVENT_MANAGER_VERSION == '' ]]; then composer require --dev --no-update "zendframework/zend-eventmanager:^3.0" ; fi
-  - if [[ $HYDRATOR_VERSION != '' ]]; then composer require --no-update "zendframework/zend-stdlib:^3.0" ; fi
+  - if [[ $HYDRATOR_VERSION != '' ]]; then composer require --no-update "zendframework/zend-stdlib:^2.7" ; fi
   - if [[ $HYDRATOR_VERSION != '' ]]; then composer require --dev --no-update "zendframework/zend-eventmanager:$HYDRATOR_VERSION" ; fi
   - if [[ $HYDRATOR_VERSION == '' ]]; then composer require --dev --no-update "zendframework/zend-eventmanager:^2.1" ; fi
   - if [[ $SERVICE_MANAGER_VERSION != '' ]]; then composer require --dev --no-update "zendframework/zend-servicemanager:$SERVICE_MANAGER_VERSION" ; fi
