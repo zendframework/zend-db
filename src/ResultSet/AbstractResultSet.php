@@ -194,7 +194,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
             return $this->buffer[$this->position];
         }
         $data = $this->dataSource->current();
-        if (is_array($this->buffer)) {
+        if (is_array($this->buffer) && is_array($data)) {
             $this->buffer[$this->position] = $data;
         }
         return is_array($data) ? $data : null;
