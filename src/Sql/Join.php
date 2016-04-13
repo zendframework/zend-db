@@ -126,14 +126,16 @@ class Join implements Iterator, Countable
             );
         }
 
-        if (! is_array($columns)) {
+        if ($columns === [Select::SQL_STAR] || $columns == Select::SQL_STAR) {
+            $columns = [Select::SQL_STAR];
+        } elseif (!is_array($columns)) {
             $columns = [$columns];
         }
 
         $this->joins[] = [
             'name'    => $name,
             'on'      => $on,
-            'columns' => $columns ? $columns : [Select::SQL_STAR],
+            'columns' => $columns,
             'type'    => $type ? $type : Join::JOIN_INNER
         ];
 
