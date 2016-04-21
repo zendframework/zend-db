@@ -22,7 +22,7 @@ use Iterator;
  * - type: the type of JOIN being performed; see the `JOIN_*` constants;
  *   defaults to `JOIN_INNER`
  */
-class Join implements Iterator, Countable
+class Joins implements Iterator, Countable
 {
     const JOIN_INNER       = 'inner';
     const JOIN_OUTER       = 'outer';
@@ -118,7 +118,7 @@ class Join implements Iterator, Countable
      * @return self Implements a fluent interface.
      * @throws Exception\InvalidArgumentException for invalid $name values.
      */
-    public function join($name, $on, $columns = [Select::SQL_STAR], $type = Join::JOIN_INNER)
+    public function join($name, $on, $columns = [Select::SQL_STAR], $type = Joins::JOIN_INNER)
     {
         if (!is_array($columns)) {
             $columns = [$columns];
@@ -127,7 +127,7 @@ class Join implements Iterator, Countable
             'name'    => TableSource::factory($name),
             'on'      => $on,
             'columns' => $columns,
-            'type'    => $type ? $type : Join::JOIN_INNER
+            'type'    => $type ? $type : Joins::JOIN_INNER
         ];
         return $this;
     }

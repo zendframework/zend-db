@@ -28,12 +28,6 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
 {
     const QUANTIFIER_DISTINCT = 'DISTINCT';
     const QUANTIFIER_ALL = 'ALL';
-    const JOIN_INNER = Join::JOIN_INNER;
-    const JOIN_OUTER = Join::JOIN_OUTER;
-    const JOIN_LEFT = Join::JOIN_LEFT;
-    const JOIN_RIGHT = Join::JOIN_RIGHT;
-    const JOIN_RIGHT_OUTER = Join::JOIN_RIGHT_OUTER;
-    const JOIN_LEFT_OUTER  = Join::JOIN_LEFT_OUTER;
     const SQL_STAR = '*';
     const ORDER_ASCENDING = 'ASC';
     const ORDER_DESCENDING = 'DESC';
@@ -67,7 +61,7 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
     protected $columns = [self::SQL_STAR];
 
     /**
-     * @var null|Join
+     * @var null|Joins
      */
     protected $joins = null;
 
@@ -130,7 +124,7 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
         parent::__construct();
         $this->from($table);
         $this->where = new Where;
-        $this->joins = new Join;
+        $this->joins = new Joins;
         $this->having = new Having;
     }
 
@@ -194,7 +188,7 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
      * @param  string $type one of the JOIN_* constants
      * @return self
      */
-    public function join($name, $on, $columns = self::SQL_STAR, $type = self::JOIN_INNER)
+    public function join($name, $on, $columns = self::SQL_STAR, $type = Joins::JOIN_INNER)
     {
         $this->joins->join($name, $on, $columns, $type);
 
@@ -358,7 +352,7 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
                 $this->columns = [self::SQL_STAR];
                 break;
             case 'joins':
-                $this->joins = new Join;
+                $this->joins = new Joins;
                 break;
             case 'where':
                 $this->where = new Where;

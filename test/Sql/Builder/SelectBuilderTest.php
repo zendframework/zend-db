@@ -13,6 +13,7 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate;
 use Zend\Db\Sql\TableIdentifier;
+use Zend\Db\Sql\Joins;
 
 /**
  * @covers Zend\Db\Sql\Builder\IbmDb2\SelectBuilder
@@ -279,7 +280,7 @@ class SelectBuilderTest extends AbstractTestCase
                 ],
             ],
             [ // join with alternate type
-                'sqlObject' => $this->select()->from('foo')->join('zac', 'm = n', ['bar', 'baz'], Select::JOIN_OUTER),
+                'sqlObject' => $this->select()->from('foo')->join('zac', 'm = n', ['bar', 'baz'], Joins::JOIN_OUTER),
                 'expected'  => [
                     'sql92' => [
                         'string'     => 'SELECT "foo".*, "zac"."bar" AS "bar", "zac"."baz" AS "baz" FROM "foo" OUTER JOIN "zac" ON "m" = "n"',

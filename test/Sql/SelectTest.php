@@ -15,6 +15,7 @@ use Zend\Db\Sql\Having;
 use Zend\Db\Sql\Predicate;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Sql\TableSource;
+use Zend\Db\Sql\Joins;
 
 class SelectTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,7 +34,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($select, $select->from('foo', 'bar'));
         $this->assertSame($select, $select->quantifier($select::QUANTIFIER_DISTINCT));
         $this->assertSame($select, $select->columns(['foo', 'bar']));
-        $this->assertSame($select, $select->join('foo', 'x = y', Select::SQL_STAR, Select::JOIN_INNER));
+        $this->assertSame($select, $select->join('foo', 'x = y', Select::SQL_STAR, Joins::JOIN_INNER));
         $this->assertSame($select, $select->where('x = y'));
         $this->assertSame($select, $select->limit(5));
         $this->assertSame($select, $select->offset(10));
@@ -58,7 +59,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
                 'name' => new TableSource(new TableIdentifier('foo')),
                 'on' => 'x = y',
                 'columns' => [Select::SQL_STAR],
-                'type' => Select::JOIN_INNER
+                'type' => Joins::JOIN_INNER
             ]],
             $select->joins->getJoins()
         );
@@ -187,7 +188,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
             ->quantifier(Select::QUANTIFIER_DISTINCT)
             ->columns(['foo', 'bar'])
             ->setPrefixColumnsWithTable(false)
-            ->join('foo', 'x = y', Select::SQL_STAR, Select::JOIN_INNER)
+            ->join('foo', 'x = y', Select::SQL_STAR, Joins::JOIN_INNER)
             ->where('x = y')
             ->limit(5)
             ->offset(10)

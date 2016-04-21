@@ -44,7 +44,7 @@ class Update extends AbstractSqlObject implements PreparableSqlObjectInterface
     ];
 
     /**
-     * @var null|Join
+     * @var null|Joins
      */
     protected $joins = null;
 
@@ -58,7 +58,7 @@ class Update extends AbstractSqlObject implements PreparableSqlObjectInterface
         parent::__construct();
         $this->table($table);
         $this->where = new Where();
-        $this->joins = new Join();
+        $this->joins = new Joins();
         $this->set = new PriorityList();
         $this->set->isLIFO(false);
     }
@@ -129,7 +129,7 @@ class Update extends AbstractSqlObject implements PreparableSqlObjectInterface
      * @throws Exception\InvalidArgumentException
      * @return Update
      */
-    public function join($name, $on, $type = Join::JOIN_INNER)
+    public function join($name, $on, $type = Joins::JOIN_INNER)
     {
         $this->joins->join($name, $on, [], $type);
 

@@ -9,7 +9,7 @@
 
 namespace ZendTest\Db\Sql;
 
-use Zend\Db\Sql\Join;
+use Zend\Db\Sql\Joins;
 use Zend\Db\Sql\Update;
 use Zend\Db\Sql\Where;
 use Zend\Db\Sql\TableIdentifier;
@@ -128,9 +128,9 @@ class UpdateTest extends \PHPUnit_Framework_TestCase
      * @testdox unit test: Test join() returns Update object (is chainable)
      * @covers Zend\Db\Sql\Update::join
      */
-    public function testJoinChainable()
+    public function testJoinsChainable()
     {
-        $return = $this->update->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_LEFT);
+        $return = $this->update->join('baz', 'foo.fooId = baz.fooId', Joins::JOIN_LEFT);
         $this->assertSame($this->update, $return);
     }
 }

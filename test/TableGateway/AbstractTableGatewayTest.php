@@ -236,7 +236,7 @@ class AbstractTableGatewayTest extends \PHPUnit_Framework_TestCase
             [
                 'name' => 'baz',
                 'on'   => 'foo.fooId = baz.fooId',
-                'type' => Sql\Join::JOIN_LEFT
+                'type' => Sql\Joins::JOIN_LEFT
             ]
         ];
         $affectedRows = $this->table->update(['foo.field' => 'bar'], 'id = 2', $joins);

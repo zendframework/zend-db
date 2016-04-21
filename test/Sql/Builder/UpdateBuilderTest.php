@@ -11,7 +11,7 @@ namespace ZendTest\Db\Sql\Builder;
 
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\TableIdentifier;
-use Zend\Db\Sql\Join;
+use Zend\Db\Sql\Joins;
 
 /**
  * @covers Zend\Db\Sql\Builder\sql92\UpdateBuilder
@@ -202,7 +202,7 @@ class UpdateBuilderTest extends AbstractTestCase
                                     ->join(
                                         'Category',
                                         'Category.CategoryId = Document.CategoryId',
-                                        Join::JOIN_LEFT // (optional), one of inner, outer, left, right
+                                        Joins::JOIN_LEFT // (optional), one of inner, outer, left, right
                                     ),
                 'expected'  => [
                     'sql92'     => [
