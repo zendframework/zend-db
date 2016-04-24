@@ -259,4 +259,25 @@ class AbstractResultSetTest extends \PHPUnit_Framework_TestCase
         $data = $resultSet->current();
         $this->assertEquals(3, $data['id']);
     }
+
+    /**
+     * @covers Zend\Db\ResultSet\AbstractResultSet::jsonSerialize
+     */
+    public function testJsonSerialize()
+    {
+        $resultSet = $this->getMockForAbstractClass('Zend\Db\ResultSet\AbstractResultSet');
+        $resultSet->initialize(new \ArrayIterator([
+            ['id' => 1, 'name' => 'one'],
+            ['id' => 2, 'name' => 'two'],
+            ['id' => 3, 'name' => 'three'],
+        ]));
+        $this->assertEquals(
+            [
+                ['id' => 1, 'name' => 'one'],
+                ['id' => 2, 'name' => 'two'],
+                ['id' => 3, 'name' => 'three'],
+            ],
+            $resultSet->jsonSerialize()
+        );
+    }
 }
