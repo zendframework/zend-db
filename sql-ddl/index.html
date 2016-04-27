@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
+    <title>DDL Abstraction - zend-db</title>
+
+    <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/font-hack/2.018/css/hack.min.css">
+    <link href="//fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic&subset=latin-ext,latin" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+    <link href="../css/base.css" rel="stylesheet">
+    <link href="../css/zf.css" rel="stylesheet">
+    <link href="../css/prism-zf.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+    <script>
+    WebFont.load({
+        google: {
+            families: ['Open Sans', 'PT Sans']
+        }
+    });
+    </script>
+
+    
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <span class="navbar-brand">
+              <a class="logo-link" href="http://framework.zend.com" data-toggle="tooltip" data-placement="bottom" title="Zend Framework"><img src="../img/zf-logo-mark.png" height="28" alt="Zend Framework" /></a>
+              <a href="..">zend-db</a>
+            </span>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reference <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../adapter/">Adapters</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../result-set/">Result Sets</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../sql/">SQL Abstraction</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">DDL Abstraction</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../table-gateway/">Table Gateways</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../row-gateway/">Row Gateways</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../metadata/">RDBMS Metadata</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" class="component-toggle" data-toggle="tooltip" data-placement="bottom" title="Show component list">
+                        <i class="fa fa-book"></i> Components
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li>
+                        <a href="https://github.com/zendframework/zend-db">
+                            
+                                <i class="fa fa-github"></i>
+                            
+                            GitHub
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <!-- content:begin -->
+    <div class="container">
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#ddl-abstraction">DDL Abstraction</a></li>
+        
+            <li><a href="#creating-tables">Creating Tables</a></li>
+        
+            <li><a href="#altering-tables">Altering Tables</a></li>
+        
+            <li><a href="#dropping-tables">Dropping Tables</a></li>
+        
+            <li><a href="#executing-ddl-statements">Executing DDL Statements</a></li>
+        
+            <li><a href="#currently-supported-data-types">Currently Supported Data Types</a></li>
+        
+            <li><a href="#currently-supported-constraint-types">Currently Supported Constraint Types</a></li>
+        
+    
+    </ul>
+
+    
+    <ul class="pager hidden-print">
+      <li class="previous">
+        <a rel="prev" href="../sql/"><i class="fa fa-arrow-left"></i> Previous</a>
+      </li>
+      <li class="next">
+        <a rel="next" href="../table-gateway/">Next <i class="fa fa-arrow-right"></i></a>
+      </li>
+    </ul>
+    
+</div></div>
+        <div class="col-md-9" role="main">
+
+<ol class="breadcrumb" role="navigation" aria-label="breadcrumbs navigation">
+  <li><a href="..">Docs</a> &raquo;</li>
+  
+    
+      
+        <li>Reference &raquo;</li>
+      
+    
+  
+  <li class="active">DDL Abstraction</li>
+</ol>
+
+<h1 id="ddl-abstraction">DDL Abstraction</h1>
+<p><code>Zend\Db\Sql\Ddl</code> is a sub-component of <code>Zend\Db\Sql</code> allowing creation of DDL
+(Data Definition Language) SQL statements. When combined with a platform
+specific <code>Zend\Db\Sql\Sql</code> object, DDL objects are capable of producing
+platform-specific <code>CREATE TABLE</code> statements, with specialized data types,
+constraints, and indexes for a database/schema.</p>
+<p>The following platforms have platform specializations for DDL:</p>
+<ul>
+<li>MySQL</li>
+<li>All databases compatible with ANSI SQL92</li>
+</ul>
+<h2 id="creating-tables">Creating Tables</h2>
+<p>Like <code>Zend\Db\Sql</code> objects, each statement type is represented by a class. For
+example, <code>CREATE TABLE</code> is modeled by the <code>CreateTable</code> class; this is likewise
+the same for <code>ALTER TABLE</code> (as <code>AlterTable</code>), and <code>DROP TABLE</code> (as
+<code>DropTable</code>). You can create instances using a number of approaches:</p>
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Ddl;
+
+$table = new Ddl\CreateTable();
+
+// With a table name:
+$table = new Ddl\CreateTable('bar');
+
+// Optionally, as a temporary table:
+$table = new Ddl\CreateTable('bar', true);</code></pre>
+
+
+<p>You can also set the table after instantiation:</p>
+<pre class="codehilite"><code class="language-php">$table-&gt;setTable('bar');</code></pre>
+
+
+<p>Currently, columns are added by creating a column object (described in the
+<a href="#currently-supported-data-types">data type table below</a>):</p>
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Ddl\Column;
+
+$table-&gt;addColumn(new Column\Integer('id'));
+$table-&gt;addColumn(new Column\Varchar('name', 255));</code></pre>
+
+
+<p>Beyond adding columns to a table, you may also add constraints:</p>
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Ddl\Constraint;
+
+$table-&gt;addConstraint(new Constraint\PrimaryKey('id'));
+$table-&gt;addConstraint(
+    new Constraint\UniqueKey(['name', 'foo'], 'my_unique_key')
+);</code></pre>
+
+
+<h2 id="altering-tables">Altering Tables</h2>
+<p>Similar to <code>CreateTable</code>, you may also use <code>AlterTable</code> instances:</p>
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Ddl;
+
+$table = new Ddl\AlterTable();
+
+// With a table name:
+$table = new Ddl\AlterTable('bar');
+
+// Optionally, as a temporary table:
+$table = new Ddl\AlterTable('bar', true);</code></pre>
+
+
+<p>The primary difference between a <code>CreateTable</code> and <code>AlterTable</code> is that the
+<code>AlterTable</code> takes into account that the table and its assets already exist.
+Therefore, while you still have <code>addColumn()</code> and <code>addConstraint()</code>, you will
+also have the ability to <em>alter</em> existing columns:</p>
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Ddl\Column;
+
+$table-&gt;changeColumn('name', Column\Varchar('new_name', 50));</code></pre>
+
+
+<p>You may also <em>drop</em> existing columns or constraints:</p>
+<pre class="codehilite"><code class="language-php">$table-&gt;dropColumn('foo');
+$table-&gt;dropConstraint('my_index');</code></pre>
+
+
+<h2 id="dropping-tables">Dropping Tables</h2>
+<p>To drop a table, create a <code>DropTable</code> instance:</p>
+<pre class="codehilite"><code class="language-php">$drop = new Ddl\DropTable('bar');</code></pre>
+
+
+<h2 id="executing-ddl-statements">Executing DDL Statements</h2>
+<p>After a DDL statement object has been created and configured, at some point you
+will need to execute the statement. This requires an <code>Adapter</code> instance and a
+properly seeded <code>Sql</code> instance.</p>
+<p>The workflow looks something like this, with <code>$ddl</code> being a <code>CreateTable</code>,
+<code>AlterTable</code>, or <code>DropTable</code> instance:</p>
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Sql;
+
+// Existence of $adapter is assumed.
+$sql = new Sql($adapter);
+
+$adapter-&gt;query(
+    $sql-&gt;getSqlStringForSqlObject($ddl),
+    $adapter::QUERY_MODE_EXECUTE
+);</code></pre>
+
+
+<p>By passing the <code>$ddl</code> object through the <code>$sql</code> instance's
+<code>getSqlStringForSqlObject()</code> method, we ensure that any platform specific
+specializations/modifications are utilized to create a platform specific SQL
+statement.</p>
+<p>Next, using the constant <code>Zend\Db\Adapter\Adapter::QUERY_MODE_EXECUTE</code> ensures
+that the SQL statement is not prepared, as most DDL statements on most
+platforms cannot be prepared, only executed.</p>
+<h2 id="currently-supported-data-types">Currently Supported Data Types</h2>
+<p>These types exist in the <code>Zend\Db\Sql\Ddl\Column</code> namespace. Data types must
+implement <code>Zend\Db\Sql\Ddl\Column\ColumnInterface</code>.</p>
+<p>In alphabetical order:</p>
+<div class="table-responsive"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Arguments For Construction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BigInteger</td>
+<td><code>$name</code>, <code>$nullable = false</code>, <code>$default = null</code>, <code>array $options = array()</code></td>
+</tr>
+<tr>
+<td>Blob</td>
+<td><code>$name</code>, <code>$length</code>, <code>nullable = false</code>, <code>$default = null</code>, <code>array $options = array()</code></td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td><code>$name</code></td>
+</tr>
+<tr>
+<td>Char</td>
+<td><code>$name</code>, <code>length</code></td>
+</tr>
+<tr>
+<td>Column (generic)</td>
+<td><code>$name = null</code></td>
+</tr>
+<tr>
+<td>Date</td>
+<td><code>$name</code></td>
+</tr>
+<tr>
+<td>Decimal</td>
+<td><code>$name</code>, <code>$precision</code>, <code>$scale = null</code></td>
+</tr>
+<tr>
+<td>Float</td>
+<td><code>$name</code>, <code>$digits</code>, <code>$decimal</code> (Note: this class is deprecated as of 2.4.0; use Floating instead)</td>
+</tr>
+<tr>
+<td>Floating</td>
+<td><code>$name</code>, <code>$digits</code>, <code>$decimal</code></td>
+</tr>
+<tr>
+<td>Integer</td>
+<td><code>$name</code>, <code>$nullable = false</code>, <code>default = null</code>, <code>array $options = array()</code></td>
+</tr>
+<tr>
+<td>Time</td>
+<td><code>$name</code></td>
+</tr>
+<tr>
+<td>Varchar</td>
+<td><code>$name</code>, <code>$length</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Each of the above types can be utilized in any place that accepts a <code>Column\ColumnInterface</code>
+instance. Currently, this is primarily in <code>CreateTable::addColumn()</code> and <code>AlterTable</code>'s
+<code>addColumn()</code> and <code>changeColumn()</code> methods.</p>
+<h2 id="currently-supported-constraint-types">Currently Supported Constraint Types</h2>
+<p>These types exist in the <code>Zend\Db\Sql\Ddl\Constraint</code> namespace. Data types
+must implement <code>Zend\Db\Sql\Ddl\Constraint\ConstraintInterface</code>.</p>
+<p>In alphabetical order:</p>
+<div class="table-responsive"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Arguments For Construction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Check</td>
+<td><code>$expression</code>, <code>$name</code></td>
+</tr>
+<tr>
+<td>ForeignKey</td>
+<td><code>$name</code>, <code>$column</code>, <code>$referenceTable</code>, <code>$referenceColumn</code>, <code>$onDeleteRule = null</code>, <code>$onUpdateRule = null</code></td>
+</tr>
+<tr>
+<td>PrimaryKey</td>
+<td><code>$columns</code></td>
+</tr>
+<tr>
+<td>UniqueKey</td>
+<td><code>$column</code>, <code>$name = null</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Each of the above types can be utilized in any place that accepts a
+<code>Column\ConstraintInterface</code> instance. Currently, this is primarily in
+<code>CreateTable::addConstraint()</code> and <code>AlterTable::addConstraint()</code>.</p>
+
+<hr />
+
+
+<nav>
+  <ul class="pager hidden-print">
+    <li class="previous">
+      <a rel="prev" href="../sql/"><i class="fa fa-arrow-left"></i> Previous</a>
+    </li>
+    <li class="next">
+      <a rel="next" href="../table-gateway/">Next <i class="fa fa-arrow-right"></i></a>
+    </li>
+  </ul>
+</nav>
+</div>
+        
+    </div>
+    <!-- content:end -->
+
+    <footer class="col-md-12 text-center">
+        <hr>
+        <p>
+        <small>Copyright (c) 2016 <a href="http://www.zend.com/">Zend Technologies USA Inc.</a><br></small>
+        </p>
+        <p><small><a href="http://framework.zend.com">Learn more about Zend Framework</a></small></p>
+    </footer>
+
+    <script src="../js/jquery-1.10.2.min.js"></script>
+    <script src="../js/bootstrap-3.0.3.min.js"></script>
+    <script src="../js/prism-zf.js"></script>
+
+    <script>var base_url = '..';</script>
+    <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+    <script src="../js/base.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        From here you can search these documents. Enter your search terms below.
+                    </p>
+                    <form role="form">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                        </div>
+                    </form>
+                    <div id="mkdocs-search-results"></div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="zf-components">
+  <div class="zf-components-grid">
+    <div class="zf-logo">
+      <a href="http://framework.zend.com" data-toggle="tooltip" data-placement="bottom" title="Go to the ZF homepage"><img src="http://framework.zend.com/images/logos/zf-logo-mark.png" alt="Zend Framework" width="250" /></a>
+    </div>
+
+    <div class="component-list"></div>
+
+    <p class="zf-components-rollup"><a href="#">Hide list</a></p>
+  </div>
+</div>
+
+    <script>
+  // Prepare the component list dropdown for display
+  $(function () {
+    var components = $(".zf-components"),
+        componentList = components.find(".component-list"),
+        sidebar = $(".bs-sidebar.affix"),
+        sidebarInitialPos = sidebar.css("position"),
+        hidden,
+        componentToggle = $(".component-toggle"),
+        navbar = $(".navbar-fixed-top"),
+        rollUpLink = $(".zf-components-rollup a");
+
+    // Initial setup on document load
+    components.insertBefore(navbar);
+    $(".zf-logo a").tooltip();
+    componentToggle.tooltip();
+    rollUpLink.attr({ href: "#", alt: "Hide component list" });
+
+    // Cast initial sidebar position value
+    if (undefined === sidebarInitialPos) {
+      sidebarInitialPos = "fixed";
+    }
+
+    // Setup onclick events to toggle list
+    componentToggle.click(toggleComponentList);
+    rollUpLink.click(toggleComponentList);
+
+    // Toggle the component list display
+    function toggleComponentList(event) {
+      event.preventDefault();
+
+      if (hidden === undefined) {
+        // Not loaded yet; load and display.
+        loadComponentList();
+        return;
+      }
+
+      if (hidden) {
+        // Hidden; display.
+        showComponentList();
+        return;
+      }
+
+      // Currently visible; hide
+      hideComponentList();
+    }
+
+    // Show the component list
+    function showComponentList() {
+      navbar.css({position: "relative"});
+      sidebar.css({position: "relative"});
+      components
+        .css({"margin-top": "-" + components.outerHeight() + "px"})
+        .show()
+        .animate({"margin-top": 0}, {
+          complete: function () {
+            componentToggle
+              .data("placement", "top")
+              .attr("data-original-title", "Hide component list");
+            hidden = false;
+          },
+          queue: false
+        });
+    }
+
+    // Hide the component list
+    function hideComponentList() {
+      components.animate({"margin-top": "-" + components.outerHeight() + "px"}, {
+        complete: function () {
+          navbar.css({position: "fixed"});
+          sidebar.css({position: sidebarInitialPos});
+          componentToggle
+            .data("placement", "bottom")
+            .attr("data-original-title", "Show component list");
+          components.hide();
+          hidden = true;
+        },
+        queue: false
+      });
+      sidebar.animate({ top: sidebarInitialTop + "px" }, { queue: false});
+    }
+
+    // Inject a component into the componet list DOM.
+    function injectComponent(index, component) {
+      componentList.append('<div class="component"><h4><a href="' + component.url + '">' + component.name + '</a></h4><p>' + component.description + '</p></div>');
+    }
+
+    // Parse the component list, build the DOM, and display it.
+    function parseComponentList(components) {
+      $.each(components, injectComponent);
+      showComponentList();
+    }
+
+    // Fetch the component list and display it.
+    function loadComponentList () {
+      $.ajax({
+        url: "//zendframework.github.io/zf-mkdoc-theme/scripts/zf-component-list.json",
+        dataType: "text json",
+        success: parseComponentList,
+        error: function (e) {
+          console.log("Error occurred with XHR call", e);
+        }
+      });
+    }
+  });
+</script>
+    </body>
+
+</html>

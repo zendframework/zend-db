@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
+    <title>RDBMS Metadata - zend-db</title>
+
+    <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/font-hack/2.018/css/hack.min.css">
+    <link href="//fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic&subset=latin-ext,latin" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+    <link href="../css/base.css" rel="stylesheet">
+    <link href="../css/zf.css" rel="stylesheet">
+    <link href="../css/prism-zf.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+    <script>
+    WebFont.load({
+        google: {
+            families: ['Open Sans', 'PT Sans']
+        }
+    });
+    </script>
+
+    
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <span class="navbar-brand">
+              <a class="logo-link" href="http://framework.zend.com" data-toggle="tooltip" data-placement="bottom" title="Zend Framework"><img src="../img/zf-logo-mark.png" height="28" alt="Zend Framework" /></a>
+              <a href="..">zend-db</a>
+            </span>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reference <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../adapter/">Adapters</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../result-set/">Result Sets</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../sql/">SQL Abstraction</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../sql-ddl/">DDL Abstraction</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../table-gateway/">Table Gateways</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../row-gateway/">Row Gateways</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">RDBMS Metadata</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" class="component-toggle" data-toggle="tooltip" data-placement="bottom" title="Show component list">
+                        <i class="fa fa-book"></i> Components
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li>
+                        <a href="https://github.com/zendframework/zend-db">
+                            
+                                <i class="fa fa-github"></i>
+                            
+                            GitHub
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <!-- content:begin -->
+    <div class="container">
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#rdbms-metadata">RDBMS Metadata</a></li>
+        
+            <li><a href="#basic-usage">Basic Usage</a></li>
+        
+            <li><a href="#metadata-value-objects">Metadata value objects</a></li>
+        
+    
+    </ul>
+
+    
+    <ul class="pager hidden-print">
+      <li class="previous">
+        <a rel="prev" href="../row-gateway/"><i class="fa fa-arrow-left"></i> Previous</a>
+      </li>
+      <li class="next disabled ">
+        <a rel="next" >Next <i class="fa fa-arrow-right"></i></a>
+      </li>
+    </ul>
+    
+</div></div>
+        <div class="col-md-9" role="main">
+
+<ol class="breadcrumb" role="navigation" aria-label="breadcrumbs navigation">
+  <li><a href="..">Docs</a> &raquo;</li>
+  
+    
+      
+        <li>Reference &raquo;</li>
+      
+    
+  
+  <li class="active">RDBMS Metadata</li>
+</ol>
+
+<h1 id="rdbms-metadata">RDBMS Metadata</h1>
+<p><code>Zend\Db\Metadata</code> is as sub-component of zend-db that makes it possible to get
+metadata information about tables, columns, constraints, triggers, and other
+information from a database in a standardized way. The primary interface for
+<code>Metadata</code> is:</p>
+<pre class="codehilite"><code class="language-php">namespace Zend\Db\Metadata;
+
+interface MetadataInterface
+{
+    public function getSchemas();
+
+    public function getTableNames(string $schema = null, bool $includeViews = false) : string[];
+    public function getTables(string $schema = null, bool $includeViews = false) : Object\TableObject[];
+    public function getTable(string $tableName, string $schema = null) : Object\TableObject;
+
+    public function getViewNames(string $schema = null) : string[];
+    public function getViews(string $schema = null) : Object\ViewObject[];
+    public function getView(string $viewName, string $schema = null) : Object\ViewObject;
+
+    public function getColumnNames(string string $table, $schema = null) : string[];
+    public function getColumns(string $table, string $schema = null) : Object\ColumnObject[];
+    public function getColumn(string $columnName, string $table, string $schema = null) Object\ColumnObject;
+
+    public function getConstraints(string $table, $string schema = null) : Object\ConstraintObject[];
+    public function getConstraint(string $constraintName, string $table, string $schema = null) : Object\ConstraintObject;
+    public function getConstraintKeys(string $constraint, string $table, string $schema = null) : Object\ConstraintKeyObject[];
+
+    public function getTriggerNames(string $schema = null) : string[];
+    public function getTriggers(string $schema = null) : Object\TriggerObject[];
+    public function getTrigger(string $triggerName, string $schema = null) : Object\TriggerObject;
+}</code></pre>
+
+
+<h2 id="basic-usage">Basic Usage</h2>
+<p>Usage of <code>Zend\Db\Metadata</code> involves:</p>
+<ul>
+<li>Constructing a <code>Zend\Db\Metadata\Metadata</code> instance with an <code>Adapter</code>.</li>
+<li>Choosing a strategy for retrieving metadata, based on the database platform
+  used. In most cases, information will come from querying the
+  <code>INFORMATION_SCHEMA</code> tables for the currently accessible schema.</li>
+</ul>
+<p>The <code>Metadata::get*Names()</code> methods will return arrays of strings, while the
+other methods will return value objects specific to the type queried.</p>
+<pre class="codehilite"><code class="language-php">$metadata = new Zend\Db\Metadata\Metadata($adapter);
+
+// get the table names
+$tableNames = $metadata-&gt;getTableNames();
+
+foreach ($tableNames as $tableName) {
+    echo 'In Table ' . $tableName . PHP_EOL;
+
+    $table = $metadata-&gt;getTable($tableName);
+
+    echo '    With columns: ' . PHP_EOL;
+    foreach ($table-&gt;getColumns() as $column) {
+        echo '        ' . $column-&gt;getName()
+            . ' -&gt; ' . $column-&gt;getDataType()
+            . PHP_EOL;
+    }
+
+    echo PHP_EOL;
+    echo '    With constraints: ' . PHP_EOL;
+
+    foreach ($metadata-&gt;getConstraints($tableName) as $constraint) {
+        echo '        ' . $constraint-&gt;getName()
+            . ' -&gt; ' . $constraint-&gt;getType()
+            . PHP_EOL;
+
+        if (! $constraint-&gt;hasColumns()) {
+            continue;
+        }
+
+        echo '            column: ' . implode(', ', $constraint-&gt;getColumns());
+        if ($constraint-&gt;isForeignKey()) {
+            $fkCols = [];
+            foreach ($constraint-&gt;getReferencedColumns() as $refColumn) {
+                $fkCols[] = $constraint-&gt;getReferencedTableName() . '.' . $refColumn;
+            }
+            echo ' =&gt; ' . implode(', ', $fkCols);
+        }
+
+        echo PHP_EOL;
+    }
+
+    echo '----' . PHP_EOL;
+}</code></pre>
+
+
+<h2 id="metadata-value-objects">Metadata value objects</h2>
+<p>Metadata returns value objects that provide an interface to help developers
+better explore the metadata. Below is the API for the various value objects:</p>
+<h3 id="tableobject">TableObject</h3>
+<pre class="codehilite"><code class="language-php">class Zend\Db\Metadata\Object\TableObject
+{
+    public function __construct($name);
+    public function setColumns(array $columns);
+    public function getColumns();
+    public function setConstraints($constraints);
+    public function getConstraints();
+    public function setName($name);
+    public function getName();
+}</code></pre>
+
+
+<h3 id="columnobject">ColumnObject</h3>
+<pre class="codehilite"><code class="language-php">class Zend\Db\Metadata\Object\ColumnObject
+{
+    public function __construct($name, $tableName, $schemaName = null);
+    public function setName($name);
+    public function getName();
+    public function getTableName();
+    public function setTableName($tableName);
+    public function setSchemaName($schemaName);
+    public function getSchemaName();
+    public function getOrdinalPosition();
+    public function setOrdinalPosition($ordinalPosition);
+    public function getColumnDefault();
+    public function setColumnDefault($columnDefault);
+    public function getIsNullable();
+    public function setIsNullable($isNullable);
+    public function isNullable();
+    public function getDataType();
+    public function setDataType($dataType);
+    public function getCharacterMaximumLength();
+    public function setCharacterMaximumLength($characterMaximumLength);
+    public function getCharacterOctetLength();
+    public function setCharacterOctetLength($characterOctetLength);
+    public function getNumericPrecision();
+    public function setNumericPrecision($numericPrecision);
+    public function getNumericScale();
+    public function setNumericScale($numericScale);
+    public function getNumericUnsigned();
+    public function setNumericUnsigned($numericUnsigned);
+    public function isNumericUnsigned();
+    public function getErratas();
+    public function setErratas(array $erratas);
+    public function getErrata($errataName);
+    public function setErrata($errataName, $errataValue);
+}</code></pre>
+
+
+<h3 id="constraintobject">ConstraintObject</h3>
+<pre class="codehilite"><code class="language-php">class Zend\Db\Metadata\Object\ConstraintObject
+{
+    public function __construct($name, $tableName, $schemaName = null);
+    public function setName($name);
+    public function getName();
+    public function setSchemaName($schemaName);
+    public function getSchemaName();
+    public function getTableName();
+    public function setTableName($tableName);
+    public function setType($type);
+    public function getType();
+    public function hasColumns();
+    public function getColumns();
+    public function setColumns(array $columns);
+    public function getReferencedTableSchema();
+    public function setReferencedTableSchema($referencedTableSchema);
+    public function getReferencedTableName();
+    public function setReferencedTableName($referencedTableName);
+    public function getReferencedColumns();
+    public function setReferencedColumns(array $referencedColumns);
+    public function getMatchOption();
+    public function setMatchOption($matchOption);
+    public function getUpdateRule();
+    public function setUpdateRule($updateRule);
+    public function getDeleteRule();
+    public function setDeleteRule($deleteRule);
+    public function getCheckClause();
+    public function setCheckClause($checkClause);
+    public function isPrimaryKey();
+    public function isUnique();
+    public function isForeignKey();
+    public function isCheck();
+
+}</code></pre>
+
+
+<h3 id="triggerobject">TriggerObject</h3>
+<pre class="codehilite"><code class="language-php">class Zend\Db\Metadata\Object\TriggerObject
+{
+    public function getName();
+    public function setName($name);
+    public function getEventManipulation();
+    public function setEventManipulation($eventManipulation);
+    public function getEventObjectCatalog();
+    public function setEventObjectCatalog($eventObjectCatalog);
+    public function getEventObjectSchema();
+    public function setEventObjectSchema($eventObjectSchema);
+    public function getEventObjectTable();
+    public function setEventObjectTable($eventObjectTable);
+    public function getActionOrder();
+    public function setActionOrder($actionOrder);
+    public function getActionCondition();
+    public function setActionCondition($actionCondition);
+    public function getActionStatement();
+    public function setActionStatement($actionStatement);
+    public function getActionOrientation();
+    public function setActionOrientation($actionOrientation);
+    public function getActionTiming();
+    public function setActionTiming($actionTiming);
+    public function getActionReferenceOldTable();
+    public function setActionReferenceOldTable($actionReferenceOldTable);
+    public function getActionReferenceNewTable();
+    public function setActionReferenceNewTable($actionReferenceNewTable);
+    public function getActionReferenceOldRow();
+    public function setActionReferenceOldRow($actionReferenceOldRow);
+    public function getActionReferenceNewRow();
+    public function setActionReferenceNewRow($actionReferenceNewRow);
+    public function getCreated();
+    public function setCreated($created);
+}</code></pre>
+
+<hr />
+
+
+<nav>
+  <ul class="pager hidden-print">
+    <li class="previous">
+      <a rel="prev" href="../row-gateway/"><i class="fa fa-arrow-left"></i> Previous</a>
+    </li>
+    <li class="next disabled ">
+      <a rel="next" >Next <i class="fa fa-arrow-right"></i></a>
+    </li>
+  </ul>
+</nav>
+</div>
+        
+    </div>
+    <!-- content:end -->
+
+    <footer class="col-md-12 text-center">
+        <hr>
+        <p>
+        <small>Copyright (c) 2016 <a href="http://www.zend.com/">Zend Technologies USA Inc.</a><br></small>
+        </p>
+        <p><small><a href="http://framework.zend.com">Learn more about Zend Framework</a></small></p>
+    </footer>
+
+    <script src="../js/jquery-1.10.2.min.js"></script>
+    <script src="../js/bootstrap-3.0.3.min.js"></script>
+    <script src="../js/prism-zf.js"></script>
+
+    <script>var base_url = '..';</script>
+    <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+    <script src="../js/base.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        From here you can search these documents. Enter your search terms below.
+                    </p>
+                    <form role="form">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                        </div>
+                    </form>
+                    <div id="mkdocs-search-results"></div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="zf-components">
+  <div class="zf-components-grid">
+    <div class="zf-logo">
+      <a href="http://framework.zend.com" data-toggle="tooltip" data-placement="bottom" title="Go to the ZF homepage"><img src="http://framework.zend.com/images/logos/zf-logo-mark.png" alt="Zend Framework" width="250" /></a>
+    </div>
+
+    <div class="component-list"></div>
+
+    <p class="zf-components-rollup"><a href="#">Hide list</a></p>
+  </div>
+</div>
+
+    <script>
+  // Prepare the component list dropdown for display
+  $(function () {
+    var components = $(".zf-components"),
+        componentList = components.find(".component-list"),
+        sidebar = $(".bs-sidebar.affix"),
+        sidebarInitialPos = sidebar.css("position"),
+        hidden,
+        componentToggle = $(".component-toggle"),
+        navbar = $(".navbar-fixed-top"),
+        rollUpLink = $(".zf-components-rollup a");
+
+    // Initial setup on document load
+    components.insertBefore(navbar);
+    $(".zf-logo a").tooltip();
+    componentToggle.tooltip();
+    rollUpLink.attr({ href: "#", alt: "Hide component list" });
+
+    // Cast initial sidebar position value
+    if (undefined === sidebarInitialPos) {
+      sidebarInitialPos = "fixed";
+    }
+
+    // Setup onclick events to toggle list
+    componentToggle.click(toggleComponentList);
+    rollUpLink.click(toggleComponentList);
+
+    // Toggle the component list display
+    function toggleComponentList(event) {
+      event.preventDefault();
+
+      if (hidden === undefined) {
+        // Not loaded yet; load and display.
+        loadComponentList();
+        return;
+      }
+
+      if (hidden) {
+        // Hidden; display.
+        showComponentList();
+        return;
+      }
+
+      // Currently visible; hide
+      hideComponentList();
+    }
+
+    // Show the component list
+    function showComponentList() {
+      navbar.css({position: "relative"});
+      sidebar.css({position: "relative"});
+      components
+        .css({"margin-top": "-" + components.outerHeight() + "px"})
+        .show()
+        .animate({"margin-top": 0}, {
+          complete: function () {
+            componentToggle
+              .data("placement", "top")
+              .attr("data-original-title", "Hide component list");
+            hidden = false;
+          },
+          queue: false
+        });
+    }
+
+    // Hide the component list
+    function hideComponentList() {
+      components.animate({"margin-top": "-" + components.outerHeight() + "px"}, {
+        complete: function () {
+          navbar.css({position: "fixed"});
+          sidebar.css({position: sidebarInitialPos});
+          componentToggle
+            .data("placement", "bottom")
+            .attr("data-original-title", "Show component list");
+          components.hide();
+          hidden = true;
+        },
+        queue: false
+      });
+      sidebar.animate({ top: sidebarInitialTop + "px" }, { queue: false});
+    }
+
+    // Inject a component into the componet list DOM.
+    function injectComponent(index, component) {
+      componentList.append('<div class="component"><h4><a href="' + component.url + '">' + component.name + '</a></h4><p>' + component.description + '</p></div>');
+    }
+
+    // Parse the component list, build the DOM, and display it.
+    function parseComponentList(components) {
+      $.each(components, injectComponent);
+      showComponentList();
+    }
+
+    // Fetch the component list and display it.
+    function loadComponentList () {
+      $.ajax({
+        url: "//zendframework.github.io/zf-mkdoc-theme/scripts/zf-component-list.json",
+        dataType: "text json",
+        success: parseComponentList,
+        error: function (e) {
+          console.log("Error occurred with XHR call", e);
+        }
+      });
+    }
+  });
+</script>
+    </body>
+
+</html>
