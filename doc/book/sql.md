@@ -43,7 +43,7 @@ $select = $sql->select();
 $select->from('foo');
 $select->where(['id' => 2]);
 
-$statement = $sql->prepareStatementForSqlObject($select);
+$statement = $sql->prepareSqlStatement($select);
 $results = $statement->execute();
 ```
 
@@ -78,19 +78,16 @@ $select->where(['id' => 2]); // $select already has from('foo') applied
 Each of these objects implements the following two interfaces:
 
 ```php
-interface PreparableSqlInterface
+interface SelectableInterface
 {
-     public function prepareStatement(Adapter $adapter, StatementInterface $statement) : void;
 }
 
-interface SqlInterface
+interface PreparableSqlInterface
 {
-     public function getSqlString(PlatformInterface $adapterPlatform = null) : string;
 }
 ```
 
-Use these functions to produce either (a) a prepared statement, or (b) a string
-to execute.
+Use these interfaces for create user defined sql objects.
 
 ## Select
 
@@ -113,22 +110,33 @@ Once you have a valid `Select` object, the following API can be used to further
 specify various select statement parts:
 
 ```php
-class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
+class Select extends AbstractSql implements PreparableSqlInterface, SelectableInterface
 {
-    const JOIN_INNER = 'inner';
-    const JOIN_OUTER = 'outer';
-    const JOIN_LEFT = 'left';
-    const JOIN_RIGHT = 'right';
+    const QUANTIFIER_DISTINCT = 'DISTINCT';
+    const QUANTIFIER_ALL = 'ALL';
     const SQL_STAR = '*';
     const ORDER_ASCENDING = 'ASC';
     const ORDER_DESCENDING = 'DESC';
 
+    public $table // @param TableSource $table
+    public $quantifier; // @param string|Expression $quantifier DISTINCT|ALL
+    public $columns; // @param array $columns
+    public $joins; // @param $joins
     public $where; // @param Where $where
+    public $order; // @param string|array $order
+    public $group; // @param $group
+    public $having; // @param Having $having
+    public $limit; // @param int $limit
+    public $offset; // @param int $offset
+    public $combine; // @param $combine
+    public $prefixColumnsWithTable; // @param $prefixColumnsWithTable
 
-    public function __construct(string|array|TableIdentifier $table = null);
-    public function from(string|array|TableIdentifier $table) : self;
-    public function columns(array $columns, bool $prefixColumnsWithTable = true) : self;
-    public function join(string|array $name, string $on, string|array $columns = self::SQL_STAR, string $type = self::JOIN_INNER) : self;
+    public function __construct(null|string|array|TableIdentifier|TableSource $table = null);
+    public function from(string|array|TableIdentifier|TableSource $table) : self;
+    public function quantifier(string|ExpressionInterface $quantifier) :self;
+    public function columns(array $columns) : self;
+    public function setPrefixColumnsWithTable(bool $flag) :self;
+    public function join(string|array|TableIdentifier|TableSource $name, string $on, string|array $columns = self::SQL_STAR, string $type = Joins::JOIN_INNER) : self;
     public function where(Where|callable|string|array|PredicateInterface $predicate, string $combination = Predicate\PredicateSet::OP_AND) : self;
     public function group(string|array $group);
     public function having(Having|callable|string|array $predicate, string $combination = Predicate\PredicateSet::OP_AND) : self;
@@ -148,9 +156,17 @@ $select->from('foo');
 // (produces SELECT "t".* FROM "table" AS "t")
 $select->from(['t' => 'table']);
 
+// As an array to specify an alias and schema
+// (produces SELECT "t".* FROM "schema"."table" AS "t")
+$select->from(['t' => ['schema', 'table']]);
+
 // Using a Sql\TableIdentifier:
-// (same output as above)
+// (produces SELECT "t".* FROM "table" AS "t")
 $select->from(new TableIdentifier(['t' => 'table']));
+
+// Using a Sql\TableSource:
+// (produces SELECT "t".* FROM "table" AS "t")
+$select->from(new TableSource('table', 't'));
 ```
 
 ### columns()
@@ -286,15 +302,20 @@ $select->offset(10); // similarly takes an integer/numeric
 The Insert API:
 
 ```php
-class Insert implements SqlInterface, PreparableSqlInterface
+class Insert extends AbstractSql implements PreparableSqlInterface
 {
     const VALUES_MERGE = 'merge';
     const VALUES_SET   = 'set';
 
-    public function __construct(string|TableIdentifier $table = null);
-    public function into(string|TableIdentifier $table) : self;
+    public $table // @param TableSource $table
+    public $columns // @param array $columns
+    public $values // @param array|SelectableInterface $values
+
+    public function __construct(null|string|array|TableIdentifier|TableSource $table = null);
+    public function into(string|array|TableIdentifier|TableSource $table) : self;
     public function columns(array $columns) : self;
-    public function values(array $values, string $flag = self::VALUES_SET) : self;
+    public function values(array|SelectableInterface $values, string $flag = self::VALUES_SET) : self;
+    public function select(SelectableInterface $select) : self;
 }
 ```
 
@@ -323,17 +344,27 @@ $insert->values([
 $insert->values(['col_2' => 'value2'], $insert::VALUES_MERGE);
 ```
 
+```php
+// To use `Select` for values:
+$insert->values(new Select('foo');
+// or
+$insert->select(new Select('foo');
+```
+
 ## Update
 
 ```php
-class Update
+class Update extends AbstractSql implements PreparableSqlInterface
 {
     const VALUES_MERGE = 'merge';
     const VALUES_SET   = 'set';
 
+    public $table // @param TableSource $table
+    public $set // @param PriorityList $set
     public $where; // @param Where $where
-    public function __construct(string|TableIdentifier $table = null);
-    public function table(string|TableIdentifier $table) : self;
+
+    public function __construct(null|string|array|TableIdentifier|TableSource $table = null);
+    public function table(string|array|TableIdentifier|TableSource $table) : self;
     public function set(array $values, string $flag = self::VALUES_SET) : self;
     public function where(Where|callable|string|array|PredicateInterface $predicate, string $combination = Predicate\PredicateSet::OP_AND) : self;
 }
@@ -352,12 +383,13 @@ See the [section on Where and Having](#where-and-having).
 ## Delete
 
 ```php
-class Delete
+class Delete extends AbstractSql implements PreparableSqlInterface
 {
+    public $table // @param TableSource $table
     public $where; // @param Where $where
 
-    public function __construct(string|TableIdentifier $table = null);
-    public function from(string|TableIdentifier $table);
+    public function __construct(null|string|array|TableIdentifier|TableSource $table = null);
+    public function from(string|array|TableIdentifier|TableSource $table);
     public function where(Where|callable|string|array|PredicateInterface $predicate, string $combination = Predicate\PredicateSet::OP_AND) : self;
 }
 ```

@@ -115,13 +115,13 @@ use Zend\Db\Sql\Sql;
 $sql = new Sql($adapter);
 
 $adapter->query(
-    $sql->getSqlStringForSqlObject($ddl),
+    $sql->buildSqlString($ddl),
     $adapter::QUERY_MODE_EXECUTE
 );
 ```
 
 By passing the `$ddl` object through the `$sql` instance's
-`getSqlStringForSqlObject()` method, we ensure that any platform specific
+`buildSqlString()` method, we ensure that any platform specific
 specializations/modifications are utilized to create a platform specific SQL
 statement.
 
