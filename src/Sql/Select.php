@@ -31,14 +31,6 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
     const SQL_STAR = '*';
     const ORDER_ASCENDING = 'ASC';
     const ORDER_DESCENDING = 'DESC';
-    const COMBINE = 'combine';
-    const COMBINE_UNION = 'union';
-    const COMBINE_EXCEPT = 'except';
-    const COMBINE_INTERSECT = 'intersect';
-
-    /**
-     * @var array Specifications
-     */
 
     /**
      * @var bool
@@ -109,10 +101,11 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
         'combine',
         'prefixColumnsWithTable',
     ];
+
     /**
-     * @var array
+     * @var Combine
      */
-    protected $combine = [];
+    protected $combine;
 
     /**
      * Constructor
@@ -316,16 +309,12 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
      * @return self
      * @throws Exception\InvalidArgumentException
      */
-    public function combine(SelectableInterface $select, $type = self::COMBINE_UNION, $modifier = '')
+    public function combine(SelectableInterface $select, $type = Combine::COMBINE_UNION, $modifier = '')
     {
-        if ($this->combine !== []) {
-            throw new Exception\InvalidArgumentException('This Select object is already combined and cannot be combined with multiple Selects objects');
+        if (!$this->combine) {
+            $this->combine = new Combine($this);
         }
-        $this->combine[] = [
-            'select' => $select,
-            'type' => $type,
-            'modifier' => $modifier
-        ];
+        $this->combine->combine($select, $type, $modifier);
         return $this;
     }
 
@@ -376,7 +365,7 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
                 $this->prefixColumnsWithTable = true;
                 break;
             case 'combine':
-                $this->combine = [];
+                $this->combine = null;
                 break;
             default :
                 throw new Exception\InvalidArgumentException(
@@ -401,5 +390,17 @@ class Select extends AbstractSqlObject implements PreparableSqlObjectInterface, 
         $this->where  = clone $this->where;
         $this->joins  = clone $this->joins;
         $this->having = clone $this->having;
+
+        if ($this->combine) {
+            $combine = $this->combine->combine;
+            $this->combine = new Combine();
+            foreach ($combine as $i => $value) {
+                $this->combine->combine(
+                    $i == 0 ? $this : clone $value['select'],
+                    $value['type'],
+                    $value['modifier']
+                );
+            }
+        }
     }
 }

@@ -169,4 +169,18 @@ class Combine extends AbstractSqlObject implements PreparableSqlObjectInterface,
         }
         return parent::__get($name);
     }
+
+    /**
+     * __clone
+     *
+     * Resets the where object each time the Select is cloned.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        foreach ($this->combine as $k => $v) {
+            $this->combine[$k]['select'] = clone $v['select'];
+        }
+    }
 }

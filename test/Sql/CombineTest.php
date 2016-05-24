@@ -29,6 +29,20 @@ class CombineTest extends \PHPUnit_Framework_TestCase
         $this->combine = new Combine;
     }
 
+    public function testCloning()
+    {
+        $select = new Select();
+        $select->from('foo');
+        $this->combine->combine($select);
+
+        $combine = clone $this->combine;
+        $selectCloned = $combine->combine[0]['select'];
+        $selectCloned->from('bar');
+
+        $this->assertEquals('foo', $select->table->getSource()->getTable());
+        $this->assertEquals('bar', $selectCloned->table->getSource()->getTable());
+    }
+
     public function testRejectsInvalidStatement()
     {
         $this->setExpectedException('Zend\Db\Sql\Exception\InvalidArgumentException');

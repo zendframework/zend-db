@@ -221,4 +221,29 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, $select->having->count());
         $this->assertEquals(1, $select1->having->count());
     }
+
+    public function testCloningWithCombine()
+    {
+        $selectInCombine = new Select;
+        $selectInCombine->from('subFoo');
+
+        $select = new Select;
+        $select
+            ->from('foo')
+            ->combine($selectInCombine);
+
+        $selectCloned = clone $select;
+        $selectCloned->from('bar');
+
+        $this->assertEquals('foo', $select->table->getSource()->getTable());
+        $this->assertEquals('bar', $selectCloned->table->getSource()->getTable());
+
+        $selectCloned0 = $selectCloned->combine->combine[0]['select'];
+        $this->assertEquals('bar', $selectCloned0->table->getSource()->getTable());
+
+        $selectCloned1 = $selectCloned->combine->combine[1]['select'];
+        $selectCloned1->from('subBar');
+        $this->assertEquals('subFoo', $selectInCombine->table->getSource()->getTable());
+        $this->assertEquals('subBar', $selectCloned1->table->getSource()->getTable());
+    }
 }

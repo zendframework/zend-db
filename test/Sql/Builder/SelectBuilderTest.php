@@ -14,6 +14,7 @@ use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Sql\Joins;
+use Zend\Db\Sql\Combine;
 
 /**
  * @covers Zend\Db\Sql\Builder\IbmDb2\SelectBuilder
@@ -148,7 +149,7 @@ class SelectBuilderTest extends AbstractTestCase
                                         ->where('a = b')
                                         ->combine(
                                             $this->select()->from('bar')->where('c = d'),
-                                            Select::COMBINE_UNION,
+                                            Combine::COMBINE_UNION,
                                             'ALL'
                                         ),
                 'expected'  => [

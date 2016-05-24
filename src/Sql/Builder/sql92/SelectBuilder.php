@@ -331,12 +331,9 @@ class SelectBuilder extends AbstractSqlBuilder
      */
     protected function build_Combine(Select $sqlObject, Context $context)
     {
-        $select = clone $sqlObject;
-
-        $combine = new Combine($select);
-        $combine->combine($select->combine);
-        unset($select->combine);
-
+        $combine = clone $sqlObject->combine;
+        $combineInternal = $combine->combine;
+        unset($combineInternal[0]['select']->combine);
         return $this->platformBuilder->getPlatformBuilder($combine)->build($combine, $context);
     }
 
