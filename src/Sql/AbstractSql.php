@@ -9,6 +9,7 @@
 
 namespace Zend\Db\Sql;
 
+use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
@@ -17,6 +18,12 @@ use Zend\Db\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
 
 abstract class AbstractSql implements SqlInterface
 {
+
+    /**
+     * @var null|AdapterInterface
+     */
+    protected $adapter;
+
     /**
      * Specifications for Sql String generation
      *
@@ -39,7 +46,9 @@ abstract class AbstractSql implements SqlInterface
      */
     public function getSqlString(PlatformInterface $adapterPlatform = null)
     {
-        $adapterPlatform = ($adapterPlatform) ?: new DefaultAdapterPlatform;
+        if (! $adapterPlatform) {
+            $adapterPlatform = $this->adapter ? $this->adapter->getPlatform() : new DefaultAdapterPlatform();
+        }
         return $this->buildSqlString($adapterPlatform);
     }
 
