@@ -117,7 +117,7 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT ' . $platform->quoteIdentifier($this->sequenceName) . '.CURRVAL as "currval" FROM dual';
                 break;
             case 'PostgreSQL':
-                $sql = 'SELECT CURRVAL(\'' . $this->sequenceName . '\')';
+                $sql = 'SELECT CURRVAL(\'"' . $this->sequenceName . '"\')';
                 break;
             default :
                 return;
