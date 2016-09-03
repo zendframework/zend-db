@@ -24,5 +24,7 @@ class PostgresqlTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertArrayHasKey('Zend\Db\Sql\Ddl\CreateTable', $decorators);
         $this->assertInstanceOf(Ddl\CreateTableDecorator::class, $decorators['Zend\Db\Sql\Ddl\CreateTable']);
+        $this->assertArrayHasKey('Zend\Db\Sql\Ddl\AlterTable', $decorators);
+        $this->assertInstanceOf(Ddl\AlterTableDecorator::class, $decorators['Zend\Db\Sql\Ddl\AlterTable']);
     }
 }

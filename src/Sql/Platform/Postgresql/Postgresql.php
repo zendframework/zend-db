@@ -16,5 +16,6 @@ class Postgresql extends AbstractPlatform
     public function __construct()
     {
         $this->setTypeDecorator('Zend\Db\Sql\Ddl\CreateTable', new Ddl\CreateTableDecorator());
+        $this->setTypeDecorator('Zend\Db\Sql\Ddl\AlterTable', new Ddl\AlterTableDecorator());
     }
 }
