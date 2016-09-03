@@ -44,10 +44,11 @@ class CreateTableDecoratorTest extends \PHPUnit_Framework_TestCase
         $columnsOnly->addColumn($id);
         $columnsOnly->addColumn($name);
 
-        $expectedColumnsOnly = 'CREATE TABLE "columns_only" ( '."\n".
-            '    "id" INTEGER NOT NULL,'."\n".
-            '    "username" VARCHAR(1024) NOT NULL '."\n".
-            ');';
+        $expectedColumnsOnly =
+        'CREATE TABLE "columns_only" ( '."\n".
+        '    "id" INTEGER NOT NULL,'."\n".
+        '    "username" VARCHAR(1024) NOT NULL '."\n".
+        ');';
 
         return [
             [$columnsOnly, $expectedColumnsOnly]
