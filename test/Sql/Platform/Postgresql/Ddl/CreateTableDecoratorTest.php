@@ -83,7 +83,7 @@ class CreateTableDecoratorTest extends \PHPUnit_Framework_TestCase
         return [
             [$columnsOnly,      $expectedColumnsOnly],
             [$withSingleIndex,  $expectedWithSingleInstance],
-            [$mixed,            $expectedMixed]
+            [$mixed,            $expectedMixed],
         ];
     }
 
