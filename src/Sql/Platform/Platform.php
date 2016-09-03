@@ -13,6 +13,7 @@ use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\StatementContainerInterface;
 use Zend\Db\Sql\Exception;
+use Zend\Db\Sql\Platform\Postgresql;
 use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\SqlInterface;
 
@@ -32,17 +33,19 @@ class Platform extends AbstractPlatform
     {
         $this->defaultPlatform = $adapter->getPlatform();
 
-        $mySqlPlatform     = new Mysql\Mysql();
-        $sqlServerPlatform = new SqlServer\SqlServer();
-        $oraclePlatform    = new Oracle\Oracle();
-        $ibmDb2Platform    = new IbmDb2\IbmDb2();
-        $sqlitePlatform    = new Sqlite\Sqlite();
+        $mySqlPlatform      = new Mysql\Mysql();
+        $sqlServerPlatform  = new SqlServer\SqlServer();
+        $oraclePlatform     = new Oracle\Oracle();
+        $ibmDb2Platform     = new IbmDb2\IbmDb2();
+        $sqlitePlatform     = new Sqlite\Sqlite();
+        $postgresqlPlatform = new Postgresql\Postgresql();
 
-        $this->decorators['mysql']     = $mySqlPlatform->getDecorators();
-        $this->decorators['sqlserver'] = $sqlServerPlatform->getDecorators();
-        $this->decorators['oracle']    = $oraclePlatform->getDecorators();
-        $this->decorators['ibmdb2']    = $ibmDb2Platform->getDecorators();
-        $this->decorators['sqlite']    = $sqlitePlatform->getDecorators();
+        $this->decorators['mysql']      = $mySqlPlatform->getDecorators();
+        $this->decorators['sqlserver']  = $sqlServerPlatform->getDecorators();
+        $this->decorators['oracle']     = $oraclePlatform->getDecorators();
+        $this->decorators['ibmdb2']     = $ibmDb2Platform->getDecorators();
+        $this->decorators['sqlite']     = $sqlitePlatform->getDecorators();
+        $this->decorators['postgresql'] = $postgresqlPlatform->getDecorators();
     }
 
     /**

@@ -13,8 +13,9 @@ use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\StatementContainer;
-use Zend\Db\Sql\Platform\Platform;
+use Zend\Db\Sql\Platform\Postgresql\Postgresql;
 use ZendTest\Db\TestAsset;
+use Zend\Db\Sql\Platform\Platform;
 
 class PlatformTest extends TestCase
 {
@@ -38,13 +39,26 @@ class PlatformTest extends TestCase
 
         $reflectionMethod->setAccessible(true);
 
-        self::assertEquals('mysql', $reflectionMethod->invoke($platform, new TestAsset\TrustingMysqlPlatform()));
+        self::assertEquals('mysql', $reflectionMethod->invoke(
+            $platform,
+            new TestAsset\TrustingMysqlPlatform()
+        ));
         self::assertEquals('sqlserver', $reflectionMethod->invoke(
             $platform,
             new TestAsset\TrustingSqlServerPlatform()
         ));
-        self::assertEquals('oracle', $reflectionMethod->invoke($platform, new TestAsset\TrustingOraclePlatform()));
-        self::assertEquals('sql92', $reflectionMethod->invoke($platform, new TestAsset\TrustingSql92Platform()));
+        self::assertEquals('oracle', $reflectionMethod->invoke(
+            $platform,
+            new TestAsset\TrustingOraclePlatform()
+        ));
+        self::assertEquals('sql92', $reflectionMethod->invoke(
+            $platform,
+            new TestAsset\TrustingSql92Platform()
+        ));
+        $this->assertEquals('postgresql', $reflectionMethod->invoke(
+            $platform,
+            new TestAsset\TrustingPostgresqlPlatform()
+        ));
     }
 
     /**
@@ -90,6 +104,17 @@ class PlatformTest extends TestCase
     }
 
     /**
+     * @dataProvider availablePlatformDecorators
+     */
+    public function testDecoratorsRegistered($adapter, $decorators)
+    {
+        $platform = new Platform($adapter);
+        $registeredDecorators = $platform->getDecorators();
+
+        $this->assertEquals($registeredDecorators, $decorators);
+    }
+
+    /**
      * @param string $platformName
      *
      * @return Adapter
@@ -111,6 +136,8 @@ class PlatformTest extends TestCase
             case 'SqlServer':
                 $platform = new TestAsset\TrustingSqlServerPlatform();
                 break;
+            case 'PostgreSQL' :
+                $platform = new TestAsset\TrustingPostgresqlPlatform();
         }
 
         /* @var $mockDriver \Zend\Db\Adapter\Driver\DriverInterface|\PHPUnit_Framework_MockObject_MockObject */
@@ -122,5 +149,13 @@ class PlatformTest extends TestCase
         }));
 
         return new Adapter($mockDriver, $platform);
+    }
+
+    public function availablePlatformDecorators()
+    {
+        return [
+            //@TODO add all supported platforms
+            [$this->resolveAdapter('PostgreSQL'), (new Postgresql())->getDecorators()],
+        ];
     }
 }
