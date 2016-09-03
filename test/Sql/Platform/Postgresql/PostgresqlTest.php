@@ -14,11 +14,15 @@ use Zend\Db\Sql\Platform\Postgresql\Ddl;
 
 class PostgresqlTest extends \PHPUnit_Framework_TestCase {
     /*
-    * @testdox unit test / object test:
+    * @testdox unit test / object test: Has CreateTable proxy
     * @covers Zend\Db\Sql\Platform\Postgresql\Postgresql::__construct
     */
     public function testConstruct()
     {
+        $postgresql = new Postgresql();
+        $decorators = $postgresql->getDecorators();
 
+        $this->assertArrayHasKey('Zend\Db\Sql\Ddl\CreateTable', $decorators);
+        $this->assertInstanceOf(Ddl\CreateTableDecorator::class, $decorators['Zend\Db\Sql\Ddl\CreateTable']);
     }
 }
