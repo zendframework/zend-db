@@ -27,7 +27,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     protected $subject;
 
     /**
-     * @var string[]
+     * @var IndexDecorator[]
      */
     protected $indexes = [];
 
