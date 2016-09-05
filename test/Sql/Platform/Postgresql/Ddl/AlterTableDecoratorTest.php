@@ -38,19 +38,19 @@ class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase {
         $noIndex = new Ddl\AlterTable('no_index');
         $noIndex->addColumn($newField_2);
 
+        $expectedNewFieldNoIndex = 'ALTER TABLE "no_index"' . "\n"
+                                 . ' ADD COLUMN "field_2" VARCHAR(1024) NOT NULL;';
+
         // AlterTable on its own
         $onlyIndex = new Ddl\AlterTable('only_index');
         $onlyIndex->addConstraint($newIdx);
+
+        $expectedOnlyIndex = 'CREATE INDEX "new_idx" ON "only_index"("field_1");';
 
         // AlterTable with Create Index
         $mixedAddIndex = new Ddl\AlterTable('mixed_index');
         $mixedAddIndex->addColumn($newField_2);
         $mixedAddIndex->addConstraint($newIdx);
-
-        $expectedNewFieldNoIndex = 'ALTER TABLE "no_index"' . "\n"
-                                 . ' ADD COLUMN "field_2" VARCHAR(1024) NOT NULL;';
-
-        $expectedOnlyIndex = 'CREATE INDEX "new_idx" ON "only_index"("field_1");';
 
         $expectedMixedAddIndex = 'ALTER TABLE "mixed_index"' . "\n"
                                . ' ADD COLUMN "field_2" VARCHAR(1024) NOT NULL;' . "\n"

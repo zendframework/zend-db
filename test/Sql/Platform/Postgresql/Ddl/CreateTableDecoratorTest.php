@@ -43,34 +43,36 @@ class CreateTableDecoratorTest extends \PHPUnit_Framework_TestCase
         $idIndex = new Ddl\Index\Index('id', 'id_idx');
         $nameIndex = new Ddl\Index\Index('username', 'username_index');
 
-
+        // CREATE TABLE only.
         $columnsOnly = new CreateTable('columns_only');
         $columnsOnly->addColumn($id);
         $columnsOnly->addColumn($name);
-
-        $withSingleIndex = new CreateTable('with_single_index');
-        $withSingleIndex->addColumn($id);
-        $withSingleIndex->addColumn($name);
-        $withSingleIndex->addConstraint($idIndex);
-
-        $mixed = new CreateTable('mixed');
-        $mixed->addColumn($id);
-        $mixed->addColumn($name);
-        $mixed->addConstraint($nameUnique);
-        $mixed->addConstraint($idIndex);
-        $mixed->addConstraint($nameIndex);
-
 
         $expectedColumnsOnly = 'CREATE TABLE "columns_only" ( ' . "\n"
                              . '    "id" INTEGER NOT NULL,' . "\n"
                              . '    "username" VARCHAR(1024) NOT NULL ' . "\n"
                              . ');';
 
+        // CreateTable with Create Index
+        $withSingleIndex = new CreateTable('with_single_index');
+        $withSingleIndex->addColumn($id);
+        $withSingleIndex->addColumn($name);
+        $withSingleIndex->addConstraint($idIndex);
+
         $expectedWithSingleInstance = 'CREATE TABLE "with_single_index" ( ' . "\n"
                                     . '    "id" INTEGER NOT NULL,' . "\n"
                                     . '    "username" VARCHAR(1024) NOT NULL ' . "\n"
                                     . '); ' . "\n"
                                     . 'CREATE INDEX "id_idx" ON "with_single_index"("id");';
+
+
+        // Mixed handling of index separation from constraints.
+        $mixed = new CreateTable('mixed');
+        $mixed->addColumn($id);
+        $mixed->addColumn($name);
+        $mixed->addConstraint($nameUnique);
+        $mixed->addConstraint($idIndex);
+        $mixed->addConstraint($nameIndex);
 
         $expectedMixed = 'CREATE TABLE "mixed" ( ' . "\n"
                        . '    "id" INTEGER NOT NULL,' . "\n"
