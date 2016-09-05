@@ -24,7 +24,7 @@ class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase {
         $alterTableDecorator->setSubject($createTable);
 
         $adapterPlatform = new Postgresql();
-        $createTableSql = $alterTableDecorator->getSqlString($adapterPlatform);
+        $createTableSql = $this->trimExtraIndents($alterTableDecorator->getSqlString($adapterPlatform));
         $this->assertEquals($expectedSql, $createTableSql);
     }
 
@@ -39,7 +39,7 @@ class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase {
         $noIndex->addColumn($newField_2);
 
         $expectedNewFieldNoIndex = 'ALTER TABLE "no_index"' . "\n"
-                                 . ' ADD COLUMN "field_2" VARCHAR(1024) NOT NULL;';
+                                 . 'ADD COLUMN "field_2" VARCHAR(1024) NOT NULL;';
 
         // AlterTable on its own
         $onlyIndex = new Ddl\AlterTable('only_index');
@@ -53,13 +53,28 @@ class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase {
         $mixedAddIndex->addConstraint($newIdx);
 
         $expectedMixedAddIndex = 'ALTER TABLE "mixed_index"' . "\n"
-                               . ' ADD COLUMN "field_2" VARCHAR(1024) NOT NULL;' . "\n"
-                               . ' CREATE INDEX "new_idx" ON "mixed_index"("field_1");';
+                               . 'ADD COLUMN "field_2" VARCHAR(1024) NOT NULL;' . "\n"
+                               . 'CREATE INDEX "new_idx" ON "mixed_index"("field_1");';
+
+        // Drop Index
+        // DROP CONSTRAINT always with DROP INDEX to compensate for dropConstraint()
+        // interface only accepting strings, not inspectable object.
+        $dropIndex = new Ddl\AlterTable('drop_index');
+        $dropIndex->dropConstraint('new_idx');
+
+        $expectedOnlyDropIndex = 'ALTER TABLE "drop_index"' . "\n"
+                               . 'DROP CONSTRAINT IF EXISTS "new_idx";' . "\n"
+                               . 'DROP INDEX IF EXISTS "new_idx";';
 
         return [
             [$noIndex,          $expectedNewFieldNoIndex],
             [$onlyIndex,        $expectedOnlyIndex],
             [$mixedAddIndex,    $expectedMixedAddIndex],
+            [$dropIndex,        $expectedOnlyDropIndex]
         ];
+    }
+
+    private function trimExtraIndents($sqlString) {
+        return join("\n", array_map("trim", explode("\n", $sqlString)));
     }
 }

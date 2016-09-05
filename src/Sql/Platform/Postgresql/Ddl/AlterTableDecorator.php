@@ -20,6 +20,7 @@ use Zend\Db\Sql\Platform\Postgresql\Ddl\Index\IndexDecorator;
 class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterface
 {
     const ADD_INDEXES = 'addIndexes';
+    const DROP_INDEXES = 'dropIndexes';
 
     /**
      * @var AlterTable
@@ -32,9 +33,26 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     protected $addIndexes = [];
 
     /**
+     * @var string[]
+     */
+    protected $dropIndexes = [];
+
+    /**
      * @var bool
      */
     private $hasCreateTable = true;
+
+    /**
+     * Compensate for dropConstraint() interface not distinguishing between string and index object.
+     * Add IF EXISTS for safety to handle either until/if new signature is approved.
+     *
+     * @var array
+     */
+    protected $dropConstraintSpecification = [
+        "%1\$s" => [
+            [1 => "DROP CONSTRAINT IF EXISTS %1\$s,\n", 'combinedby' => ""],
+        ]
+    ];
 
     protected $indexSpecification = [
         'statementEnd' => '%1$s',
@@ -43,6 +61,11 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
                 [1 => '%1$s;', 'combinedby' => "\n"]
             ]
         ],
+        self::DROP_INDEXES => [
+            "%1\$s" => [
+                [1 => 'DROP INDEX IF EXISTS %1$s;', 'combinedby' => "\n"]
+            ]
+        ]
     ];
 
     /**
@@ -50,6 +73,9 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
      */
     public function setSubject($subject) {
         $this->subject = $subject;
+
+        $this->specifications[self::DROP_CONSTRAINTS] = $this->dropConstraintSpecification;
+        $this->subject->specifications = $this->specifications;
 
         return $this;
     }
@@ -63,8 +89,13 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         ParameterContainer $parameterContainer = null
     ) {
         $this->separateIndexesFromConstraints();
+        $this->duplicateDropConstraintToDropIndex();
         $this->deleteUnneededSpecification();
 
+        // unlike CreateTableDecorator where CREATE TABLE is always present for new tables, regardless of Incex creation
+        // PostgreSQL does not use ALTER TABLE to add/drop indexes to existing tables.
+        // Therefore, if the only change is index related, DDL would have dangling ALTER TABLE.
+        // Consequently, table alterations outside of ALTER TABLE syntax get processed as whole different specification chunk
         $alterTable = '';
         if ($this->hasCreateTable) {
             $alterTable = parent::buildSqlString($platform, $driver, $parameterContainer);
@@ -97,6 +128,16 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     }
 
     /**
+     * DROP CONSTRAINT always with DROP INDEX to compensate for dropConstraint() interface
+     * only accepting strings, not inspectable objects.
+     * @TODO if new signature removeConstraint(string|AbstractConstraint) gets approved, delete this method
+     */
+    private function duplicateDropConstraintToDropIndex()
+    {
+        $this->dropIndexes = $this->subject->dropConstraints;
+    }
+
+    /**
      * @param PlatformInterface|null $adapterPlatform
      * @return array|void
      */
@@ -109,6 +150,20 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
         foreach ($this->addIndexes as $index) {
             $sqls[] = $this->processExpression($index, $adapterPlatform);
+        }
+
+        return [$sqls];
+    }
+
+    protected function processDropIndexes(PlatformInterface $adapterPlatform = null) {
+        if (!$this->dropIndexes) {
+            return;
+        }
+
+        $sqls = [];
+
+        foreach ($this->dropIndexes as $index) {
+            $sqls[] = $adapterPlatform->quoteIdentifier($index);
         }
 
         return [$sqls];
