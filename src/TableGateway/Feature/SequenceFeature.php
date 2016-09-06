@@ -21,7 +21,7 @@ class SequenceFeature extends AbstractFeature
     protected $primaryKeyField;
 
     /**
-     * @var string
+     * @var string|array
      */
     protected $sequenceName;
 
