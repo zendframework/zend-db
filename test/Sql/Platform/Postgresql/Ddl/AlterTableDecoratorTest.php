@@ -12,9 +12,9 @@ namespace Zend\Db\Sql\Platform\Postgresql\Ddl;
 use Zend\Db\Adapter\Platform\Postgresql;
 use Zend\Db\Sql\Ddl\AlterTable;
 use Zend\Db\Sql\Ddl;
-use Zend\Db\Sql\Platform\Postgresql\Ddl\AlterTableDecorator;
 
-class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase {
+class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @dataProvider tableAlterationsProvider
      */
@@ -74,7 +74,8 @@ class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase {
         ];
     }
 
-    private function trimExtraIndents($sqlString) {
-        return join("\n", array_map("trim", explode("\n", $sqlString)));
+    private function trimExtraIndents($sqlString)
+    {
+        return implode("\n", array_map("trim", explode("\n", $sqlString)));
     }
 }

@@ -12,7 +12,8 @@ namespace ZendTest\Db\Sql\Platform;
 use Zend\Db\Sql\Platform\Postgresql\Postgresql;
 use Zend\Db\Sql\Platform\Postgresql\Ddl;
 
-class PostgresqlTest extends \PHPUnit_Framework_TestCase {
+class PostgresqlTest extends \PHPUnit_Framework_TestCase
+{
     /*
     * @testdox unit test / object test: Has CreateTable proxy
     * @covers Zend\Db\Sql\Platform\Postgresql\Postgresql::__construct

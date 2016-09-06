@@ -13,7 +13,6 @@ use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\StatementContainerInterface;
 use Zend\Db\Sql\Exception;
-use Zend\Db\Sql\Platform\Postgresql;
 use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\SqlInterface;
 

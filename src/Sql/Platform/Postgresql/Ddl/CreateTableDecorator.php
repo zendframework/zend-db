@@ -46,7 +46,8 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
      * @param $subject
      * @return mixed
      */
-    public function setSubject($subject) {
+    public function setSubject($subject)
+    {
         $this->subject = $subject;
 
         $this->specifications = array_merge($this->specifications, $this->indexSpecification);
@@ -71,11 +72,11 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     private function separateIndexesFromConstraints()
     {
         // take advantage of PHP's ability to access protected properties of different instances created from same class
-        $this->indexes = array_filter($this->subject->constraints, function($constraint) {
+        $this->indexes = array_filter($this->subject->constraints, function ($constraint) {
             return $constraint instanceof Index;
         });
 
-        $filteredConstraints = array_filter($this->subject->constraints, function($constraint) {
+        $filteredConstraints = array_filter($this->subject->constraints, function ($constraint) {
             return !($constraint instanceof Index);
         });
 
@@ -93,7 +94,8 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
      * @param PlatformInterface|null $adapterPlatform
      * @return array|void
      */
-    protected function processIndexes(PlatformInterface $adapterPlatform = null) {
+    protected function processIndexes(PlatformInterface $adapterPlatform = null)
+    {
         if (!$this->indexes) {
             return;
         }
@@ -115,5 +117,4 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     {
         return ["\n);"];
     }
-
 }

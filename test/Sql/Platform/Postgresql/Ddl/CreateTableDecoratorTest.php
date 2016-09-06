@@ -9,7 +9,6 @@
 
 namespace Zend\Db\Sql\Platform\Postgresql\Ddl;
 
-
 use Zend\Db\Adapter\Platform\Postgresql;
 use Zend\Db\Sql\Ddl\CreateTable;
 use Zend\Db\Sql\Ddl;
@@ -88,5 +87,4 @@ class CreateTableDecoratorTest extends \PHPUnit_Framework_TestCase
             [$mixed,            $expectedMixed],
         ];
     }
-
 }
