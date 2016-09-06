@@ -71,7 +71,8 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     /**
      * @inheritDoc
      */
-    public function setSubject($subject) {
+    public function setSubject($subject)
+    {
         $this->subject = $subject;
 
         $this->specifications[self::DROP_CONSTRAINTS] = $this->dropConstraintSpecification;
@@ -109,11 +110,11 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     private function separateIndexesFromConstraints()
     {
         // take advantage of PHP's ability to access protected properties of different instances created from same class
-        $this->addIndexes = array_filter($this->subject->addConstraints, function($constraint) {
+        $this->addIndexes = array_filter($this->subject->addConstraints, function ($constraint) {
             return $constraint instanceof Index;
         });
 
-        $filteredConstraints = array_filter($this->subject->addConstraints, function($constraint) {
+        $filteredConstraints = array_filter($this->subject->addConstraints, function ($constraint) {
             return !($constraint instanceof Index);
         });
 
@@ -141,7 +142,8 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
      * @param PlatformInterface|null $adapterPlatform
      * @return array|void
      */
-    protected function processAddIndexes(PlatformInterface $adapterPlatform = null) {
+    protected function processAddIndexes(PlatformInterface $adapterPlatform = null)
+    {
         if (!$this->addIndexes) {
             return;
         }
@@ -155,7 +157,8 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         return [$sqls];
     }
 
-    protected function processDropIndexes(PlatformInterface $adapterPlatform = null) {
+    protected function processDropIndexes(PlatformInterface $adapterPlatform = null)
+    {
         if (!$this->dropIndexes) {
             return;
         }
@@ -183,7 +186,6 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         $subject = $this->subject;
         if (!($subject->addColumns || $subject->changeColumns || $subject->dropColumns
             || $subject->addConstraints || $subject->dropConstraints)) {
-
             $this->hasCreateTable = false;
 
             unset($this->indexSpecification['statementEnd']);
