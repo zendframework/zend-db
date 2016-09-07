@@ -44,6 +44,7 @@ class BuilderTest extends AbstractTestCase
     }
 
     /**
+     * @covers Zend\Db\Sql\Builder\Builder::getPlatformBuilder
      * @expectedException Zend\Db\Sql\Exception\RuntimeException
      */
     public function testGePlatformBuilderForNotExistsPlatform()
@@ -55,6 +56,9 @@ class BuilderTest extends AbstractTestCase
         $this->builder->getPlatformBuilder(new Sql\Ddl\CreateTable(), 'NotExistingPlatform');
     }
 
+    /**
+     * @covers Zend\Db\Sql\Builder\Builder::getPlatformBuilder
+     */
     public function testGetPlatformBuilder()
     {
         $this->assertInstanceOf(
@@ -79,6 +83,9 @@ class BuilderTest extends AbstractTestCase
         );
     }
 
+    /**
+     * @covers Zend\Db\Sql\Builder\Builder::setPlatformBuilder
+     */
     public function testSetPlatformBuilder()
     {
         $this->builder->setPlatformBuilder('ibmdb2', 'Zend\Db\Sql\Select', 'Zend\Db\Sql\Builder\IbmDb2\SelectBuilder');
@@ -93,6 +100,35 @@ class BuilderTest extends AbstractTestCase
 
         $oracleSelectBuilder = new \Zend\Db\Sql\Builder\Oracle\SelectBuilder($this->builder);
         $this->builder->setPlatformBuilder('oracle', 'Zend\Db\Sql\Select', $oracleSelectBuilder);
+        $this->assertSame(
+            $oracleSelectBuilder,
+            $this->builder->getPlatformBuilder(new Sql\Select(), 'oracle')
+        );
+    }
+
+    /**
+     * @covers Zend\Db\Sql\Builder\Builder::setPlatformBuilders
+     */
+    public function testSetPlatformBuilders()
+    {
+        $oracleSelectBuilder = new \Zend\Db\Sql\Builder\Oracle\SelectBuilder($this->builder);
+        $this->builder->setPlatformBuilders([
+            'ibmdb2' => [
+                'Zend\Db\Sql\Select' => 'Zend\Db\Sql\Builder\IbmDb2\SelectBuilder',
+            ],
+            'oracle' => [
+                'Zend\Db\Sql\Select' => $oracleSelectBuilder,
+            ],
+        ]);
+
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Builder\sql92\SelectBuilder',
+            $this->builder->getPlatformBuilder(new Sql\Select(), 'sql92')
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Builder\IbmDb2\SelectBuilder',
+            $this->builder->getPlatformBuilder(new Sql\Select(), 'ibmdb2')
+        );
         $this->assertSame(
             $oracleSelectBuilder,
             $this->builder->getPlatformBuilder(new Sql\Select(), 'oracle')

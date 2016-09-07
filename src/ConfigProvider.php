@@ -34,6 +34,7 @@ class ConfigProvider
             ],
             'factories' => [
                 Adapter\AdapterInterface::class => Adapter\AdapterServiceFactory::class,
+                'SqlBuilder' => Sql\Builder\BuilderServiceFactory::class,
             ],
             'aliases' => [
                 Adapter\Adapter::class => Adapter\AdapterInterface::class,

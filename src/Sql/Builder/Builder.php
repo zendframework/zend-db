@@ -152,6 +152,19 @@ class Builder extends AbstractBuilder
     }
 
     /**
+     * @param array $builders
+     * @return self
+     */
+    public function setPlatformBuilders(array $builders)
+    {
+        foreach ($builders as $platform => $classes) {
+            foreach ($classes as $objectClass => $builderClass) {
+                $this->setPlatformBuilder($platform, $objectClass, $builderClass);
+            }
+        }
+        return $this;
+    }
+    /**
      * @param string|Context|PlatformInterface|Adapter\AdapterInterface $platform
      * @param string $objectClass
      * @param string $builderClass
