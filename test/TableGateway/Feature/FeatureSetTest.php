@@ -15,6 +15,7 @@ use Zend\Db\TableGateway\Feature\MasterSlaveFeature;
 use Zend\Db\TableGateway\Feature\SequenceFeature;
 use Zend\Db\TableGateway\Feature\MetadataFeature;
 use Zend\Db\Metadata\Object\ConstraintObject;
+use ZendTest\Db\TestAsset\TrustingPostgresqlPlatform;
 
 class FeatureSetTest extends \PHPUnit_Framework_TestCase
 {
@@ -126,11 +127,9 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testCallMagicCallSucceedsForValidMethodOfAddedFeature()
     {
-        $sequenceName = 'table_sequence';
+        $sequenceName = '"schema"."table_sequence"';
 
-        $platformMock = $this->getMock('Zend\Db\Adapter\Platform\Postgresql');
-        $platformMock->expects($this->any())
-            ->method('getName')->will($this->returnValue('PostgreSQL'));
+        $platformStub = new TrustingPostgresqlPlatform();
 
         $resultMock = $this->getMock('Zend\Db\Adapter\Driver\Pgsql\Result');
         $resultMock->expects($this->any())
@@ -140,7 +139,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         $statementMock = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
         $statementMock->expects($this->any())
             ->method('prepare')
-            ->with('SELECT CURRVAL(\'"' . $sequenceName . '"\')');
+            ->with('SELECT CURRVAL(' . $sequenceName . ')');
         $statementMock->expects($this->any())
             ->method('execute')
             ->will($this->returnValue($resultMock));
@@ -149,7 +148,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $adapterMock->expects($this->any())
-            ->method('getPlatform')->will($this->returnValue($platformMock));
+            ->method('getPlatform')->will($this->returnValue($platformStub));
         $adapterMock->expects($this->any())
             ->method('createStatement')->will($this->returnValue($statementMock));
 
@@ -162,7 +161,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($tableGatewayMock, $adapterMock);
 
-        $feature = new SequenceFeature('id', 'table_sequence');
+        $feature = new SequenceFeature('id', ['schema', 'table_sequence']);
         $feature->setTableGateway($tableGatewayMock);
         $featureSet = new FeatureSet;
         $featureSet->addFeature($feature);
