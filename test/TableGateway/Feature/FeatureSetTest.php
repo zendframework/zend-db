@@ -139,7 +139,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         $statementMock = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
         $statementMock->expects($this->any())
             ->method('prepare')
-            ->with('SELECT CURRVAL(' . $sequenceName . ')');
+            ->with('SELECT CURRVAL(\'' . $sequenceName . '\')');
         $statementMock->expects($this->any())
             ->method('execute')
             ->will($this->returnValue($resultMock));
