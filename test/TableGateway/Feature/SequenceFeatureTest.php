@@ -57,8 +57,8 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
     {
         return [
             //@TODO MS SQL SERVER 2016 now supports sequences too
-            ['PostgreSQL', 'table_sequence',            'SELECT NEXTVAL("table_sequence")'],
-            ['PostgreSQL', ['schema','table_sequence'], 'SELECT NEXTVAL("schema"."table_sequence")'],
+            ['PostgreSQL', 'table_sequence',            'SELECT NEXTVAL(\'"table_sequence"\')'],
+            ['PostgreSQL', ['schema','table_sequence'], 'SELECT NEXTVAL(\'"schema"."table_sequence"\')'],
             ['Oracle',     'table_sequence',            'SELECT "table_sequence".NEXTVAL as "nextval" FROM dual']
         ];
     }
