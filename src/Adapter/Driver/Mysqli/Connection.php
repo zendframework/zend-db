@@ -111,6 +111,13 @@ class Connection extends AbstractConnection
         $port     = (isset($p['port'])) ? (int) $p['port'] : null;
         $socket   = (isset($p['socket'])) ? $p['socket'] : null;
 
+        $useSSL = (isset($p['use_ssl'])) ? $p['use_ssl'] : 0;
+        $clientKey = (isset($p['client_key'])) ? $p['client_key'] : null;
+        $clientCert = (isset($p['client_cert'])) ? $p['client_cert'] : null;
+        $caCert = (isset($p['ca_cert'])) ? $p['ca_cert'] : null;
+        $caPath = (isset($p['ca_path'])) ? $p['ca_path'] : null;
+        $cipher = (isset($p['cipher'])) ? $p['cipher'] : null;
+
         $this->resource = new \mysqli();
         $this->resource->init();
 
@@ -127,7 +134,19 @@ class Connection extends AbstractConnection
             }
         }
 
-        $this->resource->real_connect($hostname, $username, $password, $database, $port, $socket);
+        $flags = null;
+
+        if ($useSSL && !$socket) {
+            $this->resource->ssl_set($clientKey, $clientCert, $caCert, $caPath, $cipher);
+            //MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT is not valid option, needs to be set as flag
+            if (isset($p['driver_options'])
+                && isset($p['driver_options'][MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT])
+            ) {
+                $flags = MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT;
+            }
+        }
+
+        $this->resource->real_connect($hostname, $username, $password, $database, $port, $socket, $flags);
 
         if ($this->resource->connect_error) {
             throw new Exception\RuntimeException(
