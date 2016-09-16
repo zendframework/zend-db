@@ -60,4 +60,13 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $this->connection->setConnectionParameters(['foo' => 'bar']);
         $this->assertEquals(['foo' => 'bar'], $this->connection->getConnectionParameters());
     }
+
+    /**
+     * @expectedException Zend\Db\Adapter\Exception\RuntimeException
+     * @expectedExceptionMessage Connection error
+     */
+    public function testConnectionFails()
+    {
+        $this->connection->connect();
+    }
 }

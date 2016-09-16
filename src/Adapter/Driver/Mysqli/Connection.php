@@ -146,7 +146,7 @@ class Connection extends AbstractConnection
             }
         }
 
-        $this->resource->real_connect($hostname, $username, $password, $database, $port, $socket, $flags);
+        @$this->resource->real_connect($hostname, $username, $password, $database, $port, $socket, $flags);
 
         if ($this->resource->connect_error) {
             throw new Exception\RuntimeException(
