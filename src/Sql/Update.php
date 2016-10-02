@@ -183,8 +183,13 @@ class Update extends AbstractPreparableSql
         foreach ($this->set as $column => $value) {
             $prefix = $platform->quoteIdentifier($column) . ' = ';
             if (is_scalar($value) && $parameterContainer) {
-                $setSql[] = $prefix . $driver->formatParameterName($column);
-                $parameterContainer->offsetSet($column, $value);
+                $parameterName = $driver->formatParameterName($column);
+                $setSql[] = $prefix . $parameterName;
+                if ($parameterName == '?') {
+                    $parameterContainer->offsetSet($column, $value);
+                } else {
+                    $parameterContainer->offsetSet(substr($parameterName, 1), $value);
+                }
             } else {
                 $setSql[] = $prefix . $this->resolveColumnValue(
                     $value,

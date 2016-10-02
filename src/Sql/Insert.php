@@ -180,8 +180,13 @@ class Insert extends AbstractPreparableSql
         foreach ($this->columns as $column => $value) {
             $columns[] = $platform->quoteIdentifier($column);
             if (is_scalar($value) && $parameterContainer) {
-                $values[] = $driver->formatParameterName($column);
-                $parameterContainer->offsetSet($column, $value);
+                $parameterName = $driver->formatParameterName($column);
+                $values[] = $parameterName;
+                if ($parameterName == '?') {
+                    $parameterContainer->offsetSet($column, $value);
+                } else {
+                    $parameterContainer->offsetSet(substr($parameterName, 1), $value);
+                }
             } else {
                 $values[] = $this->resolveColumnValue(
                     $value,
