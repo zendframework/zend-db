@@ -182,7 +182,7 @@ class Insert extends AbstractPreparableSql
             if (is_scalar($value) && $parameterContainer) {
                 $parameterName = $driver->formatParameterName($column);
                 $values[] = $parameterName;
-                if ($parameterName == '?') {
+                if ($driver->getPrepareType() == $driver::PARAMETERIZATION_POSITIONAL or $parameterName == '?') {
                     $parameterContainer->offsetSet($column, $value);
                 } else {
                     $parameterContainer->offsetSet(substr($parameterName, 1), $value);
