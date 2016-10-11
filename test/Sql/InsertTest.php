@@ -125,6 +125,16 @@ class InsertTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Zend\Db\Sql\Insert::select
+     */
+    public function testSelectIncludedInRawState()
+    {
+        $select = new Select;
+        $this->insert->select($select);
+        $this->assertSame($select, $this->insert->getRawState('select'));
+    }
+
+    /**
      * @covers Zend\Db\Sql\Insert::prepareStatement
      */
     public function testPrepareStatement()

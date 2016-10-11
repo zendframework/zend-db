@@ -160,7 +160,8 @@ class Insert extends AbstractPreparableSql
         $rawState = [
             'table' => $this->table,
             'columns' => array_keys($this->columns),
-            'values' => array_values($this->columns)
+            'values' => array_values($this->columns),
+            'select' => $this->select
         ];
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
