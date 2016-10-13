@@ -185,10 +185,10 @@ class Update extends AbstractPreparableSql
             if (is_scalar($value) && $parameterContainer) {
                 $parameterName = $driver->formatParameterName($column);
                 $setSql[] = $prefix . $parameterName;
-                if ($driver->getPrepareType() == $driver::PARAMETERIZATION_POSITIONAL or $parameterName == '?') {
-                    $parameterContainer->offsetSet($column, $value);
-                } else {
+                if ($driver->getPrepareType() == $driver::PARAMETERIZATION_NAMED and $parameterName != '?') {
                     $parameterContainer->offsetSet(substr($parameterName, 1), $value);
+                } else {
+                    $parameterContainer->offsetSet($column, $value);
                 }
             } else {
                 $setSql[] = $prefix . $this->resolveColumnValue(
