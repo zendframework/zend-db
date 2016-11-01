@@ -184,6 +184,13 @@ class ColumnBuilderTest extends AbstractTestCase
                     'sql92' => '"foo" VARCHAR(20) NOT NULL DEFAULT \'bar\'',
                 ],
             ],
+            [
+                'sqlObject' => $this->column_Varchar('foo', 20)->setOption('charset', 'UTF8'),
+                'expected'  => [
+                    'sql92' => '"foo" VARCHAR(20) NOT NULL',
+                    'mysql' => '`foo` VARCHAR(20) CHARACTER SET UTF8 NOT NULL',
+                ],
+            ],
         ];
     }
 }

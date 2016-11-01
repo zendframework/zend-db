@@ -37,6 +37,7 @@ class ColumnBuilder extends BaseBuilder
                     ],
                 ],
             ],
+            'charset'      => 'CHARACTER SET %s',
             'nullable'     => $this->specifications['nullable'],
             'identity'     => [
                 'valueMap' => [true => 'AUTO_INCREMENT', false => null],
