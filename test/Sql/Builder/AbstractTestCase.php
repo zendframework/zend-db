@@ -48,22 +48,22 @@ use Zend\Db\Sql\Builder;
  * @method \Zend\Db\Sql\Ddl\Constraint\PrimaryKey constraint_PrimaryKey($columns = null, $name = null);
  * @method \Zend\Db\Sql\Ddl\Constraint\UniqueKey  constraint_UniqueKey ($columns = null, $name = null);
  *
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\BigInteger  column_BigInteger ($name = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Binary      column_Binary     ($name, $length = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Blob        column_Blob       ($name, $length = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Boolean     column_Boolean    ($name = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Char        column_Char       ($name, $length = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Column      column_Column     ($name = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Date        column_Date       ($name = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Datetime    column_Datetime   ($name = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Decimal     column_Decimal    ($name, $digits = null, $decimal = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Floating    column_Floating   ($name, $digits = null, $decimal = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Integer     column_Integer    ($name = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Text        column_Text       ($name, $length = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Time        column_Time       ($name = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Timestamp   column_Timestamp  ($name = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Varbinary   column_Varbinary  ($name, $length = null, $nullable = false, $default = null, array $options = array());
- * @method \ZendTest\Db\Sql\Builder\Ddl\Column\Varchar     column_Varchar    ($name, $length = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\BigInteger  column_BigInteger ($name = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Binary      column_Binary     ($name, $length = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Blob        column_Blob       ($name, $length = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Boolean     column_Boolean    ($name = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Char        column_Char       ($name, $length = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Column      column_Column     ($name = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Date        column_Date       ($name = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Datetime    column_Datetime   ($name = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Decimal     column_Decimal    ($name, $digits = null, $decimal = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Floating    column_Floating   ($name, $digits = null, $decimal = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Integer     column_Integer    ($name = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Text        column_Text       ($name, $length = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Time        column_Time       ($name = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Timestamp   column_Timestamp  ($name = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Varbinary   column_Varbinary  ($name, $length = null, $nullable = false, $default = null, array $options = array());
+ * @method \Zend\Db\Sql\Builder\Ddl\Column\Varchar     column_Varchar    ($name, $length = null, $nullable = false, $default = null, array $options = array());
  */
 class AbstractTestCase extends \PHPUnit_Framework_TestCase
 {
