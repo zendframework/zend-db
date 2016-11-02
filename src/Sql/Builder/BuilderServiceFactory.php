@@ -19,10 +19,10 @@ class BuilderServiceFactory implements FactoryInterface
     {
         $builder = new Builder();
 
-        if (!$container->has('Config')) {
+        if (!$container->has('config')) {
             return $builder;
         }
-        $config = $container->get('Config');
+        $config = $container->get('config');
         if (!isset($config['sql_builder'])) {
             return $builder;
         }

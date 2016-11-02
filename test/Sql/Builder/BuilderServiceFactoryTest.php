@@ -24,7 +24,7 @@ class BuilderServiceFactoryTest extends TestCase
             (new Db\ConfigProvider)->getDependencyConfig(),
             ArrayUtils::merge([
                 'services' => [
-                    'Config' => [],
+                    'config' => [],
                 ],
             ], $config)
         );
@@ -47,7 +47,7 @@ class BuilderServiceFactoryTest extends TestCase
 
     public function testFactoryWithoutAdapterConfig()
     {
-        $builder = $this->getBuilder(['services' => ['Config' => [
+        $builder = $this->getBuilder(['services' => ['config' => [
             'sql_builder' => [
                 'builders' => [
                     'sql92' => [
@@ -67,12 +67,12 @@ class BuilderServiceFactoryTest extends TestCase
 
     public function testFactoryWithFullConfig()
     {
-        $builder = $this->getBuilder(['services' => ['Config' => [
+        $builder = $this->getBuilder(['services' => ['config' => [
             'db' => [
                 'driver' => 'mysqli',
             ],
             'sql_builder' => [
-                'default_adapter' => Db\Adapter\Adapter::class,
+                'default_adapter' => Db\Adapter\AdapterInterface::class,
                 'builders' => [
                     'sql92' => [
                         Db\Sql\Select::class => Db\Sql\Builder\MySql\SelectBuilder::class,

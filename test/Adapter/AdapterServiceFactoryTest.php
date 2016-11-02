@@ -31,7 +31,7 @@ class AdapterServiceFactoryTest extends TestCase
 
     public function testV2FactoryReturnsAdapter()
     {
-        $this->services->get('Config')->willReturn([
+        $this->services->get('config')->willReturn([
             'db' => [
                 'driver' => 'Pdo_Sqlite',
                 'database' => 'sqlite::memory:',
@@ -44,7 +44,7 @@ class AdapterServiceFactoryTest extends TestCase
 
     public function testV3FactoryReturnsAdapter()
     {
-        $this->services->get('Config')->willReturn([
+        $this->services->get('config')->willReturn([
             'db' => [
                 'driver' => 'Pdo_Sqlite',
                 'database' => 'sqlite::memory:',

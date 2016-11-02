@@ -98,12 +98,12 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
             return $this->config;
         }
 
-        if (! $container->has('Config')) {
+        if (! $container->has('config')) {
             $this->config = [];
             return $this->config;
         }
 
-        $config = $container->get('Config');
+        $config = $container->get('config');
         if (! isset($config['db'])
             || ! is_array($config['db'])
         ) {
