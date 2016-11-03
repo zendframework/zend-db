@@ -369,26 +369,4 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         }
         return $profiler;
     }
-
-    /**
-     * @param array $parameters
-     * @return Driver\DriverInterface
-     * @throws \InvalidArgumentException
-     * @throws Exception\InvalidArgumentException
-     * @deprecated
-     */
-    protected function createDriverFromParameters(array $parameters)
-    {
-        return $this->createDriver($parameters);
-    }
-
-    /**
-     * @param Driver\DriverInterface $driver
-     * @return Platform\PlatformInterface
-     * @deprecated
-     */
-    protected function createPlatformFromDriver(Driver\DriverInterface $driver)
-    {
-        return $this->createPlatform($driver);
-    }
 }

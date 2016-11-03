@@ -77,16 +77,6 @@ class TableIdentifier
     }
 
     /**
-     * @param string $table
-     *
-     * @deprecated please use the constructor and build a new {@see TableIdentifier} instead
-     */
-    public function setTable($table)
-    {
-        $this->table = $table;
-    }
-
-    /**
      * @return string
      */
     public function getTable()
@@ -100,16 +90,6 @@ class TableIdentifier
     public function hasSchema()
     {
         return ($this->schema !== null);
-    }
-
-    /**
-     * @param $schema
-     *
-     * @deprecated please use the constructor and build a new {@see TableIdentifier} instead
-     */
-    public function setSchema($schema)
-    {
-        $this->schema = $schema;
     }
 
     /**
