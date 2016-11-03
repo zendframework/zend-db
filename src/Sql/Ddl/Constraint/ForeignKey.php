@@ -32,19 +32,6 @@ class ForeignKey extends AbstractConstraint
     protected $referenceTable = '';
 
     /**
-     * {@inheritDoc}
-     */
-    protected $columnSpecification = 'FOREIGN KEY (%s) ';
-
-    /**
-     * @var string[]
-     */
-    protected $referenceSpecification = [
-        'REFERENCES %s ',
-        'ON DELETE %s ON UPDATE %s'
-    ];
-
-    /**
      * @param null|string       $name
      * @param null|string|array $columns
      * @param string            $referenceTable
@@ -141,38 +128,5 @@ class ForeignKey extends AbstractConstraint
     public function getOnUpdateRule()
     {
         return $this->onUpdateRule;
-    }
-
-    /**
-     * @return array
-     */
-    public function getExpressionData()
-    {
-        $data         = parent::getExpressionData();
-        $colCount     = count($this->referenceColumn);
-        $newSpecTypes = [self::TYPE_IDENTIFIER];
-        $values       = [$this->referenceTable];
-
-        $data[0][0] .= $this->referenceSpecification[0];
-
-        if ($colCount) {
-            $values       = array_merge($values, $this->referenceColumn);
-            $newSpecParts = array_fill(0, $colCount, '%s');
-            $newSpecTypes = array_merge($newSpecTypes, array_fill(0, $colCount, self::TYPE_IDENTIFIER));
-
-            $data[0][0] .= sprintf('(%s) ', implode(', ', $newSpecParts));
-        }
-
-        $data[0][0] .= $this->referenceSpecification[1];
-
-        $values[]       = $this->onDeleteRule;
-        $values[]       = $this->onUpdateRule;
-        $newSpecTypes[] = self::TYPE_LITERAL;
-        $newSpecTypes[] = self::TYPE_LITERAL;
-
-        $data[0][1] = array_merge($data[0][1], $values);
-        $data[0][2] = array_merge($data[0][2], $newSpecTypes);
-
-        return $data;
     }
 }

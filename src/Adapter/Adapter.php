@@ -11,10 +11,6 @@ namespace Zend\Db\Adapter;
 
 use Zend\Db\ResultSet;
 
-/**
- * @property Driver\DriverInterface $driver
- * @property Platform\PlatformInterface $platform
- */
 class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 {
     /**
@@ -56,9 +52,9 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     protected $queryResultSetPrototype = null;
 
     /**
-     * @var Driver\StatementInterface
+     * @var SqlBuilderInterface
      */
-    protected $lastPreparedStatement = null;
+    protected $sqlBuilder;
 
     /**
      * @param Driver\DriverInterface|array $driver
@@ -74,6 +70,9 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 
         if (is_array($driver)) {
             $parameters = $driver;
+            if (isset($parameters['sql_builder'])) {
+                $this->setSqlBuilder($parameters['sql_builder']);
+            }
             if ($profiler === null && isset($parameters['profiler'])) {
                 $profiler = $this->createProfiler($parameters);
             }
@@ -156,6 +155,24 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
+     * @return SqlBuilderInterface
+     */
+    public function getSqlBuilder()
+    {
+        return $this->sqlBuilder;
+    }
+
+    /**
+     * @param SqlBuilderInterface $sqlBuilder
+     * @return self
+     */
+    public function setSqlBuilder(SqlBuilderInterface $sqlBuilder)
+    {
+        $this->sqlBuilder = $sqlBuilder;
+        return $this;
+    }
+
+    /**
      * query() is a convenience function
      *
      * @param string $sql
@@ -176,17 +193,31 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
             throw new Exception\InvalidArgumentException('Parameter 2 to this method must be a flag, an array, or ParameterContainer');
         }
 
+        $sqlIsString = is_string($sql) || (is_object($sql) && method_exists($sql, '__toString'));
+
         if ($mode == self::QUERY_MODE_PREPARE) {
-            $this->lastPreparedStatement = null;
-            $this->lastPreparedStatement = $this->driver->createStatement($sql);
-            $this->lastPreparedStatement->prepare();
-            if (is_array($parameters) || $parameters instanceof ParameterContainer) {
-                $this->lastPreparedStatement->setParameterContainer((is_array($parameters)) ? new ParameterContainer($parameters) : $parameters);
-                $result = $this->lastPreparedStatement->execute();
+            if ($sqlIsString) {
+                $preparedStatement = $this->driver->createStatement($sql);
             } else {
-                return $this->lastPreparedStatement;
+                if (!$this->sqlBuilder) {
+                    throw new Exception\RuntimeException('sqlBuilder must be set for non string sql');
+                }
+                $preparedStatement = $this->sqlBuilder->prepareSqlStatement($sql, $this);
+            }
+            $preparedStatement->prepare();
+            if ($parameters !== null) {
+                $preparedStatement->setParameterContainer((is_array($parameters)) ? new ParameterContainer($parameters) : $parameters);
+                $result = $preparedStatement->execute();
+            } else {
+                return $preparedStatement;
             }
         } else {
+            if (!$sqlIsString) {
+                if (!$this->sqlBuilder) {
+                    throw new Exception\RuntimeException('sqlBuilder must be set for non string sql');
+                }
+                $sql = $this->sqlBuilder->buildSqlString($sql, $this);
+            }
             $result = $this->driver->getConnection()->execute($sql);
         }
 
@@ -230,23 +261,6 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
                     break;
 
             }
-        }
-    }
-
-    /**
-     * @param $name
-     * @throws Exception\InvalidArgumentException
-     * @return Driver\DriverInterface|Platform\PlatformInterface
-     */
-    public function __get($name)
-    {
-        switch (strtolower($name)) {
-            case 'driver':
-                return $this->driver;
-            case 'platform':
-                return $this->platform;
-            default:
-                throw new Exception\InvalidArgumentException('Invalid magic property on adapter');
         }
     }
 
@@ -368,27 +382,5 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
             );
         }
         return $profiler;
-    }
-
-    /**
-     * @param array $parameters
-     * @return Driver\DriverInterface
-     * @throws \InvalidArgumentException
-     * @throws Exception\InvalidArgumentException
-     * @deprecated
-     */
-    protected function createDriverFromParameters(array $parameters)
-    {
-        return $this->createDriver($parameters);
-    }
-
-    /**
-     * @param Driver\DriverInterface $driver
-     * @return Platform\PlatformInterface
-     * @deprecated
-     */
-    protected function createPlatformFromDriver(Driver\DriverInterface $driver)
-    {
-        return $this->createPlatform($driver);
     }
 }

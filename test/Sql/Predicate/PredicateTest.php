@@ -10,279 +10,272 @@
 namespace ZendTest\Db\Sql\Predicate;
 
 use PHPUnit_Framework_TestCase as TestCase;
-use Zend\Db\Sql\Expression;
-use Zend\Db\Sql\Predicate\IsNull;
 use Zend\Db\Sql\Predicate\Predicate;
+use Zend\Db\Sql\Predicate\Literal as predicateLiteral;
+use Zend\Db\Sql\Predicate\Expression as predicateExpression;
+use Zend\Db\Sql\ExpressionParameter;
 
 class PredicateTest extends TestCase
 {
-    public function testEqualToCreatesOperatorPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->equalTo('foo.bar', 'bar');
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%s = %s', $parts[0]);
-        $this->assertContains(['foo.bar', 'bar'], $parts[0]);
-    }
-
-    public function testNotEqualToCreatesOperatorPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->notEqualTo('foo.bar', 'bar');
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%s != %s', $parts[0]);
-        $this->assertContains(['foo.bar', 'bar'], $parts[0]);
-    }
-
-
-    public function testLessThanCreatesOperatorPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->lessThan('foo.bar', 'bar');
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%s < %s', $parts[0]);
-        $this->assertContains(['foo.bar', 'bar'], $parts[0]);
-    }
-
-    public function testGreaterThanCreatesOperatorPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->greaterThan('foo.bar', 'bar');
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%s > %s', $parts[0]);
-        $this->assertContains(['foo.bar', 'bar'], $parts[0]);
-    }
-
-    public function testLessThanOrEqualToCreatesOperatorPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->lessThanOrEqualTo('foo.bar', 'bar');
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%s <= %s', $parts[0]);
-        $this->assertContains(['foo.bar', 'bar'], $parts[0]);
-    }
-
-    public function testGreaterThanOrEqualToCreatesOperatorPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->greaterThanOrEqualTo('foo.bar', 'bar');
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%s >= %s', $parts[0]);
-        $this->assertContains(['foo.bar', 'bar'], $parts[0]);
-    }
-
-    public function testLikeCreatesLikePredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->like('foo.bar', 'bar%');
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%1$s LIKE %2$s', $parts[0]);
-        $this->assertContains(['foo.bar', 'bar%'], $parts[0]);
-    }
-
-    public function testNotLikeCreatesLikePredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->notLike('foo.bar', 'bar%');
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%1$s NOT LIKE %2$s', $parts[0]);
-        $this->assertContains(['foo.bar', 'bar%'], $parts[0]);
-    }
-
-    public function testLiteralCreatesLiteralPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->literal('foo.bar = ?', 'bar');
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('foo.bar = %s', $parts[0]);
-        $this->assertContains(['bar'], $parts[0]);
-    }
-
-    public function testIsNullCreatesIsNullPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->isNull('foo.bar');
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%1$s IS NULL', $parts[0]);
-        $this->assertContains(['foo.bar'], $parts[0]);
-    }
-
-    public function testIsNotNullCreatesIsNotNullPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->isNotNull('foo.bar');
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%1$s IS NOT NULL', $parts[0]);
-        $this->assertContains(['foo.bar'], $parts[0]);
-    }
-
-    public function testInCreatesInPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->in('foo.bar', ['foo', 'bar']);
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%s IN (%s, %s)', $parts[0]);
-        $this->assertContains(['foo.bar', 'foo', 'bar'], $parts[0]);
-    }
-
-    public function testNotInCreatesNotInPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->notIn('foo.bar', ['foo', 'bar']);
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%s NOT IN (%s, %s)', $parts[0]);
-        $this->assertContains(['foo.bar', 'foo', 'bar'], $parts[0]);
-    }
-
-    public function testBetweenCreatesBetweenPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->between('foo.bar', 1, 10);
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%1$s BETWEEN %2$s AND %3$s', $parts[0]);
-        $this->assertContains(['foo.bar', 1, 10], $parts[0]);
-    }
-
-    public function testBetweenCreatesNotBetweenPredicate()
-    {
-        $predicate = new Predicate();
-        $predicate->notBetween('foo.bar', 1, 10);
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(1, count($parts));
-        $this->assertContains('%1$s NOT BETWEEN %2$s AND %3$s', $parts[0]);
-        $this->assertContains(['foo.bar', 1, 10], $parts[0]);
-    }
-
-    public function testCanChainPredicateFactoriesBetweenOperators()
-    {
-        $predicate = new Predicate();
-        $predicate->isNull('foo.bar')
-                  ->or
-                  ->isNotNull('bar.baz')
-                  ->and
-                  ->equalTo('baz.bat', 'foo');
-        $parts = $predicate->getExpressionData();
-        $this->assertEquals(5, count($parts));
-
-        $this->assertContains('%1$s IS NULL', $parts[0]);
-        $this->assertContains(['foo.bar'], $parts[0]);
-
-        $this->assertEquals(' OR ', $parts[1]);
-
-        $this->assertContains('%1$s IS NOT NULL', $parts[2]);
-        $this->assertContains(['bar.baz'], $parts[2]);
-
-        $this->assertEquals(' AND ', $parts[3]);
-
-        $this->assertContains('%s = %s', $parts[4]);
-        $this->assertContains(['baz.bat', 'foo'], $parts[4]);
-    }
-
-    public function testCanNestPredicates()
-    {
-        $predicate = new Predicate();
-        $predicate->isNull('foo.bar')
-                  ->nest()
-                  ->isNotNull('bar.baz')
-                  ->and
-                  ->equalTo('baz.bat', 'foo')
-                  ->unnest();
-        $parts = $predicate->getExpressionData();
-
-        $this->assertEquals(7, count($parts));
-
-        $this->assertContains('%1$s IS NULL', $parts[0]);
-        $this->assertContains(['foo.bar'], $parts[0]);
-
-        $this->assertEquals(' AND ', $parts[1]);
-
-        $this->assertEquals('(', $parts[2]);
-
-        $this->assertContains('%1$s IS NOT NULL', $parts[3]);
-        $this->assertContains(['bar.baz'], $parts[3]);
-
-        $this->assertEquals(' AND ', $parts[4]);
-
-        $this->assertContains('%s = %s', $parts[5]);
-        $this->assertContains(['baz.bat', 'foo'], $parts[5]);
-
-        $this->assertEquals(')', $parts[6]);
-    }
-
     /**
-     * @testdox Unit test: Test expression() is chainable and returns proper values
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
+     * @covers Zend\Db\Sql\Predicate\Predicate::getPredicates
      */
-    public function testExpression()
+    public function testWhereArgument1IsAssociativeArrayContainingReplacementCharacter()
     {
-        $predicate = new Predicate;
-
-        // is chainable
-        $this->assertSame($predicate, $predicate->expression('foo = ?', 0));
-        // with parameter
+        $where = new Predicate;
+        $predicates = $where
+                ->addPredicates(['foo > ?' => 5])
+                ->getPredicates();
+        $this->assertEquals(1, count($predicates));
+        $this->assertInstanceOf('Zend\Db\Sql\Predicate\Expression', $predicates[0][1]);
+        $this->assertEquals(Predicate::OP_AND, $predicates[0][0]);
+        $this->assertEquals('foo > ?', $predicates[0][1]->getExpression());
         $this->assertEquals(
-            [['foo = %s', [0], [Expression::TYPE_VALUE]]],
-            $predicate->getExpressionData()
+            [
+                new ExpressionParameter(5)
+            ],
+            $predicates[0][1]->getParameters()
         );
     }
 
     /**
-     * @testdox Unit test: Test expression() allows null $parameters
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
+     * @covers Zend\Db\Sql\Predicate\Predicate::getPredicates
      */
-    public function testExpressionNullParameters()
+    public function testWhereArgument1IsAssociativeArrayNotContainingReplacementCharacter()
     {
-        $predicate = new Predicate;
+        $where = new Predicate;
+        $predicates = $where
+                ->addPredicates(['name' => 'Ralph', 'age' => 33])
+                ->getPredicates();
+        $this->assertEquals(2, count($predicates));
 
-        $predicate->expression('foo = bar');
-        $predicates = $predicate->getPredicates();
-        $expression = $predicates[0][1];
-        $this->assertEquals([null], $expression->getParameters());
+        $this->assertInstanceOf('Zend\Db\Sql\Predicate\Operator', $predicates[0][1]);
+        $this->assertEquals(Predicate::OP_AND, $predicates[0][0]);
+        $this->assertEquals('name', $predicates[0][1]->getLeft()->getValue());
+        $this->assertEquals('Ralph', $predicates[0][1]->getRight()->getValue());
+
+        $this->assertInstanceOf('Zend\Db\Sql\Predicate\Operator', $predicates[1][1]);
+        $this->assertEquals(Predicate::OP_AND, $predicates[1][0]);
+        $this->assertEquals('age', $predicates[1][1]->getLeft()->getValue());
+        $this->assertEquals(33, $predicates[1][1]->getRight()->getValue());
+
+        $where = new Predicate;
+        $predicates = $where
+                ->addPredicates(['x = y'])
+                ->getPredicates();
+        $this->assertInstanceOf('Zend\Db\Sql\Predicate\Literal', $predicates[0][1]);
     }
 
     /**
-     * @testdox Unit test: Test literal() is chainable, returns proper values, and is backwards compatible with 2.0.*
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
      */
-    public function testLiteral()
+    public function testWhereArgument1IsAssociativeArrayIsPredicate()
+    {
+        $this->setExpectedException('Zend\Db\Sql\Exception\InvalidArgumentException', 'Using Predicate must not use string keys');
+        $where = new Predicate;
+        $where->addPredicates([
+            'name' => new predicateLiteral("name = 'Ralph'"),
+            'age' => new predicateExpression('age = ?', 33),
+        ]);
+    }
+
+    /**
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
+     * @covers Zend\Db\Sql\Predicate\Predicate::getPredicates
+     */
+    public function testWhereArgument1IsIndexedArray()
+    {
+        $where = new Predicate;
+        $predicates = $where
+                ->addPredicates(['name = "Ralph"'])
+                ->getPredicates();
+
+        $this->assertEquals(1, count($predicates));
+        $this->assertInstanceOf('Zend\Db\Sql\Predicate\Literal', $predicates[0][1]);
+        $this->assertEquals(Predicate::OP_AND, $predicates[0][0]);
+        $this->assertEquals('name = "Ralph"', $predicates[0][1]->getLiteral());
+    }
+
+    /**
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
+     * @covers Zend\Db\Sql\Predicate\Predicate::getPredicates
+     */
+    public function testWhereArgument1IsIndexedArrayArgument2IsOr()
+    {
+        $where = new Predicate;
+        $predicates = $where
+                ->addPredicates(['name = "Ralph"'], Predicate::OP_OR)
+                ->getPredicates();
+
+        $this->assertEquals(1, count($predicates));
+        $this->assertInstanceOf('Zend\Db\Sql\Predicate\Literal', $predicates[0][1]);
+        $this->assertEquals(Predicate::OP_OR, $predicates[0][0]);
+        $this->assertEquals('name = "Ralph"', $predicates[0][1]->getLiteral());
+    }
+
+    /**
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
+     */
+    public function testWhereArgument1IsClosure()
+    {
+        $where = new Predicate;
+        $test = $this;
+        $where->addPredicates(function ($what) use ($test, $where) {
+            $test->assertSame($where, $what);
+        });
+    }
+
+    /**
+     * @covers Zend\Db\Sql\Predicate\Predicate::addPredicates
+     * @covers Zend\Db\Sql\Predicate\Predicate::getPredicates
+     */
+    public function testWhereArgument1IsString()
+    {
+        $where = new Predicate;
+        $predicates = $where
+                ->addPredicates('x = ?')
+                ->getPredicates();
+
+        $this->assertEquals(1, count($predicates));
+        $this->assertInstanceOf('Zend\Db\Sql\Predicate\Expression', $predicates[0][1]);
+        $this->assertEquals(Predicate::OP_AND, $predicates[0][0]);
+        $this->assertEquals('x = ?', $predicates[0][1]->getExpression());
+
+        $where = new Predicate;
+        $predicates = $where
+                ->addPredicates('x = y')
+                ->getPredicates();
+
+        $this->assertInstanceOf('Zend\Db\Sql\Predicate\Literal', $predicates[0][1]);
+    }
+
+    public function testMethodsIsMutable()
     {
         $predicate = new Predicate;
 
-        // is chainable
-        $this->assertSame($predicate, $predicate->literal('foo = bar'));
-        // with parameter
-        $this->assertEquals(
-            [['foo = bar', [], []]],
-            $predicate->getExpressionData()
+        $this->assertSame($predicate, $predicate->equalTo('foo.bar', 'bar'));
+        $this->assertSame($predicate, $predicate->notEqualTo('foo.bar', 'bar'));
+        $this->assertSame($predicate, $predicate->lessThan('foo.bar', 'bar'));
+        $this->assertSame($predicate, $predicate->greaterThan('foo.bar', 'bar'));
+        $this->assertSame($predicate, $predicate->lessThanOrEqualTo('foo.bar', 'bar'));
+        $this->assertSame($predicate, $predicate->greaterThanOrEqualTo('foo.bar', 'bar'));
+        $this->assertSame($predicate, $predicate->like('foo.bar', 'bar%'));
+        $this->assertSame($predicate, $predicate->notLike('foo.bar', 'bar%'));
+        $this->assertSame($predicate, $predicate->literal('foo.bar = ?', 'bar'));
+        $this->assertSame($predicate, $predicate->isNull('foo.bar'));
+        $this->assertSame($predicate, $predicate->isNotNull('foo.bar'));
+        $this->assertSame($predicate, $predicate->in('foo.bar', ['foo', 'bar']));
+        $this->assertSame($predicate, $predicate->notIn('foo.bar', ['foo', 'bar']));
+        $this->assertSame($predicate, $predicate->between('foo.bar', 1, 10));
+        $this->assertSame($predicate, $predicate->expression('foo = ?', 'bar'));
+        $this->assertSame(
+            $predicate,
+            $predicate
+                ->isNull('foo.bar')
+                ->or
+                ->isNotNull('bar.baz')
+                ->and
+                ->equalTo('baz.bat', 'foo')
         );
-
-        // test literal() is backwards-compatible, and works with with parameters
-        $predicate = new Predicate;
-        $predicate->expression('foo = ?', 'bar');
-        // with parameter
-        $this->assertEquals(
-            [['foo = %s', ['bar'], [Expression::TYPE_VALUE]]],
-            $predicate->getExpressionData()
+        $this->assertSame(
+            $predicate,
+            $predicate
+                ->isNull('foo.bar')
+                ->nest()
+                ->isNotNull('bar.baz')
+                ->and
+                ->equalTo('baz.bat', 'foo')
+                ->unnest()
         );
+    }
 
-        // test literal() is backwards-compatible, and works with with parameters, even 0 which tests as false
+    /**
+     * @covers Zend\Db\Sql\Predicate\Predicate::between
+     * @covers Zend\Db\Sql\Predicate\Predicate::equalTo
+     * @covers Zend\Db\Sql\Predicate\Predicate::expression
+     * @covers Zend\Db\Sql\Predicate\Predicate::greaterThan
+     * @covers Zend\Db\Sql\Predicate\Predicate::greaterThanOrEqualTo
+     * @covers Zend\Db\Sql\Predicate\Predicate::in
+     * @covers Zend\Db\Sql\Predicate\Predicate::isNotNull
+     * @covers Zend\Db\Sql\Predicate\Predicate::isNull
+     * @covers Zend\Db\Sql\Predicate\Predicate::lessThan
+     * @covers Zend\Db\Sql\Predicate\Predicate::lessThanOrEqualTo
+     * @covers Zend\Db\Sql\Predicate\Predicate::like
+     * @covers Zend\Db\Sql\Predicate\Predicate::literal
+     * @covers Zend\Db\Sql\Predicate\Predicate::notBetween
+     * @covers Zend\Db\Sql\Predicate\Predicate::notEqualTo
+     * @covers Zend\Db\Sql\Predicate\Predicate::notIn
+     * @covers Zend\Db\Sql\Predicate\Predicate::notLike
+     */
+    public function testPredicatesIsCorrectInstances()
+    {
         $predicate = new Predicate;
-        $predicate->expression('foo = ?', 0);
-        // with parameter
-        $this->assertEquals(
-            [['foo = %s', [0], [Expression::TYPE_VALUE]]],
-            $predicate->getExpressionData()
+
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Between',
+            $predicate->between('p1', 'p2', 'p3')->getPredicates()[0][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Operator',
+            $predicate->equalTo('p1', 'p2')->getPredicates()[1][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Expression',
+            $predicate->expression('', [])->getPredicates()[2][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Operator',
+            $predicate->greaterThan('p1', 'p2')->getPredicates()[3][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Operator',
+            $predicate->greaterThanOrEqualTo('p1', 'p2')->getPredicates()[4][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\In',
+            $predicate->in('p1')->getPredicates()[5][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\IsNotNull',
+            $predicate->isNotNull('p1')->getPredicates()[6][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\IsNull',
+            $predicate->isNull('p1')->getPredicates()[7][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Operator',
+            $predicate->lessThan('p1', 'p2')->getPredicates()[8][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Operator',
+            $predicate->lessThanOrEqualTo('p1', 'p2')->getPredicates()[9][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Like',
+            $predicate->like('p1', 'p2')->getPredicates()[10][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Literal',
+            $predicate->literal('p1')->getPredicates()[11][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\NotBetween',
+            $predicate->notBetween('p1', 'p2', 'p3')->getPredicates()[12][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\Operator',
+            $predicate->notEqualTo('p1', 'p2')->getPredicates()[13][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\NotIn',
+            $predicate->notIn('p1')->getPredicates()[14][1]
+        );
+        $this->assertInstanceOf(
+            'Zend\Db\Sql\Predicate\NotLike',
+            $predicate->notLike('p1', 'p2')->getPredicates()[15][1]
         );
     }
 }

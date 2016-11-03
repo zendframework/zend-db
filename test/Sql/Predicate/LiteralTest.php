@@ -24,10 +24,4 @@ class LiteralTest extends \PHPUnit_Framework_TestCase
         $literal = new Literal('bar');
         $this->assertEquals('bar', $literal->getLiteral());
     }
-
-    public function testGetExpressionData()
-    {
-        $literal = new Literal('bar');
-        $this->assertEquals([['bar', [], []]], $literal->getExpressionData());
-    }
 }

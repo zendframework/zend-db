@@ -17,11 +17,6 @@ class Check extends AbstractConstraint
     protected $expression;
 
     /**
-     * {@inheritDoc}
-     */
-    protected $specification = 'CHECK (%s)';
-
-    /**
      * @param  string|\Zend\Db\Sql\ExpressionInterface $expression
      * @param  null|string $name
      */
@@ -32,25 +27,20 @@ class Check extends AbstractConstraint
     }
 
     /**
-     * {@inheritDoc}
+     * @param string|\Zend\Db\Sql\ExpressionInterface $expression
+     * @return \Zend\Db\Sql\Ddl\Constraint\Check
      */
-    public function getExpressionData()
+    public function setExpression($expression)
     {
-        $newSpecTypes = [self::TYPE_LITERAL];
-        $values       = [$this->expression];
-        $newSpec      = '';
+        $this->expression = $expression;
+        return $this;
+    }
 
-        if ($this->name) {
-            $newSpec .= $this->namedSpecification;
-
-            array_unshift($values, $this->name);
-            array_unshift($newSpecTypes, self::TYPE_IDENTIFIER);
-        }
-
-        return [[
-            $newSpec . $this->specification,
-            $values,
-            $newSpecTypes,
-        ]];
+    /**
+     * @return string|\Zend\Db\Sql\ExpressionInterface
+     */
+    public function getExpression()
+    {
+        return $this->expression;
     }
 }

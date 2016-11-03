@@ -99,29 +99,4 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(['autoincrement' => true], $column->getOptions());
     }
-
-    /**
-     * @covers Zend\Db\Sql\Ddl\Column\Column::getExpressionData
-     */
-    public function testGetExpressionData()
-    {
-        $column = new Column;
-        $column->setName('foo');
-        $this->assertEquals(
-            [['%s %s NOT NULL', ['foo', 'INTEGER'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
-
-        $column->setNullable(true);
-        $this->assertEquals(
-            [['%s %s', ['foo', 'INTEGER'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
-
-        $column->setDefault('bar');
-        $this->assertEquals(
-            [['%s %s DEFAULT %s', ['foo', 'INTEGER', 'bar'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL, $column::TYPE_VALUE]]],
-            $column->getExpressionData()
-        );
-    }
 }

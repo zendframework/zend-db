@@ -9,11 +9,6 @@
 
 namespace Zend\Db\Adapter;
 
-/**
- *
- * @property Driver\DriverInterface $driver
- * @property Platform\PlatformInterface $platform
- */
 interface AdapterInterface
 {
     /**

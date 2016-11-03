@@ -88,4 +88,29 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $actual = $this->serviceManager->get($service);
     }
+
+    public function testInjectSqlBuilder()
+    {
+        $mockBuilder = $this->getMock('Zend\Db\Adapter\SqlBuilderInterface');
+        $this->serviceManager->setAllowOverride(true);
+        $this->serviceManager->setService('sqlBuilderAlias', $mockBuilder);
+        $this->serviceManager->setService('config', [
+            'db' => [
+                'adapters' => [
+                    'Zend\Db\Adapter\Writer' => [
+                        'driver' => 'mysqli',
+                        'sql_builder' => 'sqlBuilderAlias',
+                    ],
+                    'Zend\Db\Adapter\Reader' => [
+                        'driver' => 'mysqli',
+                        'sql_builder' => 'sqlBuilderAlias',
+                    ],
+                ],
+            ],
+        ]);
+
+        $adapter = $this->serviceManager->get('Zend\Db\Adapter\Writer');
+        $this->assertInstanceOf('Zend\Db\Adapter\Adapter', $adapter);
+        $this->assertSame($mockBuilder, $adapter->getSqlBuilder());
+    }
 }

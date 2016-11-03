@@ -21,16 +21,4 @@ class BigIntegerTest extends \PHPUnit_Framework_TestCase
         $integer = new BigInteger('foo');
         $this->assertEquals('foo', $integer->getName());
     }
-
-    /**
-     * @covers Zend\Db\Sql\Ddl\Column\Column::getExpressionData
-     */
-    public function testGetExpressionData()
-    {
-        $column = new BigInteger('foo');
-        $this->assertEquals(
-            [['%s %s NOT NULL', ['foo', 'BIGINT'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
-    }
 }

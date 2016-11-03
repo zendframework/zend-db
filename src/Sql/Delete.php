@@ -9,90 +9,49 @@
 
 namespace Zend\Db\Sql;
 
-use Zend\Db\Adapter\ParameterContainer;
-use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Adapter\Driver\DriverInterface;
-
 /**
- *
+ * @property TableSource $table
  * @property Where $where
  */
-class Delete extends AbstractPreparableSql
+class Delete extends AbstractSqlObject implements PreparableSqlObjectInterface
 {
-    /**@#+
-     * @const
-     */
-    const SPECIFICATION_DELETE = 'delete';
-    const SPECIFICATION_WHERE = 'where';
-    /**@#-*/
-
     /**
-     * {@inheritDoc}
-     */
-    protected $specifications = [
-        self::SPECIFICATION_DELETE => 'DELETE FROM %1$s',
-        self::SPECIFICATION_WHERE => 'WHERE %1$s'
-    ];
-
-    /**
-     * @var string|TableIdentifier
+     * @var TableSource
      */
     protected $table = '';
-
-    /**
-     * @var bool
-     */
-    protected $emptyWhereProtection = true;
-
-    /**
-     * @var array
-     */
-    protected $set = [];
 
     /**
      * @var null|string|Where
      */
     protected $where = null;
 
+    protected $__getProperties = [
+        'table',
+        'where',
+    ];
+
     /**
      * Constructor
      *
-     * @param  null|string|TableIdentifier $table
+     * @param  null|string|array|TableIdentifier|TableSource $table
      */
     public function __construct($table = null)
     {
-        if ($table) {
-            $this->from($table);
-        }
+        parent::__construct();
+        $this->from($table);
         $this->where = new Where();
     }
 
     /**
      * Create from statement
      *
-     * @param  string|TableIdentifier $table
+     * @param  string|array|TableIdentifier|TableSource $table
      * @return Delete
      */
     public function from($table)
     {
-        $this->table = $table;
+        $this->table = TableSource::factory($table);
         return $this;
-    }
-
-    /**
-     * @param null $key
-     *
-     * @return mixed
-     */
-    public function getRawState($key = null)
-    {
-        $rawState = [
-            'emptyWhereProtection' => $this->emptyWhereProtection,
-            'table' => $this->table,
-            'set' => $this->set,
-            'where' => $this->where
-        ];
-        return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
     /**
@@ -113,54 +72,8 @@ class Delete extends AbstractPreparableSql
         return $this;
     }
 
-    /**
-     * @param PlatformInterface       $platform
-     * @param DriverInterface|null    $driver
-     * @param ParameterContainer|null $parameterContainer
-     *
-     * @return string
-     */
-    protected function processDelete(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    public function __clone()
     {
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_DELETE],
-            $this->resolveTable($this->table, $platform, $driver, $parameterContainer)
-        );
-    }
-
-    /**
-     * @param PlatformInterface       $platform
-     * @param DriverInterface|null    $driver
-     * @param ParameterContainer|null $parameterContainer
-     *
-     * @return null|string
-     */
-    protected function processWhere(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
-        if ($this->where->count() == 0) {
-            return;
-        }
-
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_WHERE],
-            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where')
-        );
-    }
-
-    /**
-     * Property overloading
-     *
-     * Overloads "where" only.
-     *
-     * @param  string $name
-     *
-     * @return Where|null
-     */
-    public function __get($name)
-    {
-        switch (strtolower($name)) {
-            case 'where':
-                return $this->where;
-        }
+        $this->table = clone $this->table;
     }
 }

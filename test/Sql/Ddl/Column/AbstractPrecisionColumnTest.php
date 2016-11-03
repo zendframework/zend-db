@@ -58,19 +58,4 @@ class AbstractPrecisionColumnTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->assertEquals(5, $column->getDecimal());
     }
-
-    /**
-     * @covers Zend\Db\Sql\Ddl\Column\AbstractPrecisionColumn::getExpressionData
-     */
-    public function testGetExpressionData()
-    {
-        $column = $this->getMockForAbstractClass('Zend\Db\Sql\Ddl\Column\AbstractPrecisionColumn', [
-            'foo', 10, 5
-        ]);
-
-        $this->assertEquals(
-            [['%s %s NOT NULL', ['foo', 'INTEGER(10,5)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
-    }
 }

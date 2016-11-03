@@ -23,12 +23,26 @@ class TableIdentifier
      */
     protected $schema;
 
+    public static function factory($table, $schema = null)
+    {
+        if (null === $table) {
+            return;
+        }
+        if ($table instanceof self) {
+            return $table;
+        }
+        return new self($table, $schema);
+    }
     /**
      * @param string      $table
      * @param null|string $schema
      */
     public function __construct($table, $schema = null)
     {
+        if (is_array($table)) {
+            $schema = isset($table[0]) ? $table[0] : $schema;
+            $table  = isset($table[1]) ? $table[1] : null;
+        }
         if (! (is_string($table) || is_callable([$table, '__toString']))) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '$table must be a valid table name, parameter of type %s given',
@@ -63,16 +77,6 @@ class TableIdentifier
     }
 
     /**
-     * @param string $table
-     *
-     * @deprecated please use the constructor and build a new {@see TableIdentifier} instead
-     */
-    public function setTable($table)
-    {
-        $this->table = $table;
-    }
-
-    /**
      * @return string
      */
     public function getTable()
@@ -86,16 +90,6 @@ class TableIdentifier
     public function hasSchema()
     {
         return ($this->schema !== null);
-    }
-
-    /**
-     * @param $schema
-     *
-     * @deprecated please use the constructor and build a new {@see TableIdentifier} instead
-     */
-    public function setSchema($schema)
-    {
-        $this->schema = $schema;
     }
 
     /**

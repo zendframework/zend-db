@@ -9,35 +9,39 @@
 
 namespace Zend\Db\Sql\Ddl;
 
-use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Sql\AbstractSql;
+use Zend\Db\Sql\AbstractSqlObject;
+use Zend\Db\Sql\TableIdentifier;
 
-class DropTable extends AbstractSql implements SqlInterface
+/**
+ * @property TableIdentifier $table
+ * @property bool $ifExists
+ */
+class DropTable extends AbstractSqlObject
 {
-    const TABLE = 'table';
-
     /**
-     * @var array
+     * @var TableIdentifier
      */
-    protected $specifications = [
-        self::TABLE => 'DROP TABLE %1$s'
+    protected $table;
+
+    protected $ifExists = false;
+
+    protected $__getProperties = [
+        'table',
+        'ifExists',
     ];
-
-    /**
-     * @var string
-     */
-    protected $table = '';
 
     /**
      * @param string $table
      */
-    public function __construct($table = '')
+    public function __construct($table = null)
     {
-        $this->table = $table;
+        parent::__construct();
+        $this->table = TableIdentifier::factory($table);
     }
 
-    protected function processTable(PlatformInterface $adapterPlatform = null)
+    public function ifExists($ifExists = false)
     {
-        return [$adapterPlatform->quoteIdentifier($this->table)];
+        $this->ifExists = (bool)$ifExists;
+        return $this;
     }
 }

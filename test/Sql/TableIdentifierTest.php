@@ -96,7 +96,7 @@ class TableIdentifierTest extends \PHPUnit_Framework_TestCase
     public function invalidTableProvider()
     {
         return array_merge(
-            [[null]],
+            [/*[null]*/],
             $this->invalidSchemaProvider()
         );
     }

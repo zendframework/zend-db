@@ -9,11 +9,10 @@
 
 namespace Zend\Db\Sql\Predicate;
 
-use Zend\Db\Sql\AbstractExpression;
+use Zend\Db\Sql\ExpressionParameter;
 
-class Between extends AbstractExpression implements PredicateInterface
+class Between implements PredicateInterface
 {
-    protected $specification = '%1$s BETWEEN %2$s AND %3$s';
     protected $identifier    = null;
     protected $minValue      = null;
     protected $maxValue      = null;
@@ -44,9 +43,9 @@ class Between extends AbstractExpression implements PredicateInterface
      * @param  string $identifier
      * @return Between
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier($identifier, $type = self::TYPE_IDENTIFIER)
     {
-        $this->identifier = $identifier;
+        $this->identifier = new ExpressionParameter($identifier, $type);
         return $this;
     }
 
@@ -66,9 +65,9 @@ class Between extends AbstractExpression implements PredicateInterface
      * @param  int|float|string $minValue
      * @return Between
      */
-    public function setMinValue($minValue)
+    public function setMinValue($minValue, $type = self::TYPE_VALUE)
     {
-        $this->minValue = $minValue;
+        $this->minValue = new ExpressionParameter($minValue, $type);
         return $this;
     }
 
@@ -88,9 +87,9 @@ class Between extends AbstractExpression implements PredicateInterface
      * @param  int|float|string $maxValue
      * @return Between
      */
-    public function setMaxValue($maxValue)
+    public function setMaxValue($maxValue, $type = self::TYPE_VALUE)
     {
-        $this->maxValue = $maxValue;
+        $this->maxValue = new ExpressionParameter($maxValue, $type);
         return $this;
     }
 
@@ -102,46 +101,5 @@ class Between extends AbstractExpression implements PredicateInterface
     public function getMaxValue()
     {
         return $this->maxValue;
-    }
-
-    /**
-     * Set specification string to use in forming SQL predicate
-     *
-     * @param  string $specification
-     * @return Between
-     */
-    public function setSpecification($specification)
-    {
-        $this->specification = $specification;
-        return $this;
-    }
-
-    /**
-     * Get specification string to use in forming SQL predicate
-     *
-     * @return string
-     */
-    public function getSpecification()
-    {
-        return $this->specification;
-    }
-
-    /**
-     * Return "where" parts
-     *
-     * @return array
-     */
-    public function getExpressionData()
-    {
-        list($values[], $types[]) = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
-        list($values[], $types[]) = $this->normalizeArgument($this->minValue,   self::TYPE_VALUE);
-        list($values[], $types[]) = $this->normalizeArgument($this->maxValue,   self::TYPE_VALUE);
-        return [
-            [
-                $this->getSpecification(),
-                $values,
-                $types,
-            ],
-        ];
     }
 }

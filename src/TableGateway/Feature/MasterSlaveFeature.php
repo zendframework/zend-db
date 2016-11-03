@@ -66,7 +66,7 @@ class MasterSlaveFeature extends AbstractFeature
             $this->slaveSql = new Sql(
                 $this->slaveAdapter,
                 $this->tableGateway->sql->getTable(),
-                $this->tableGateway->sql->getSqlPlatform()
+                $this->tableGateway->sql->getBuilder()
             );
         }
     }

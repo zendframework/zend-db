@@ -10,8 +10,7 @@
 namespace ZendTest\Db\Sql\Ddl;
 
 use Zend\Db\Sql\Ddl\AlterTable;
-use Zend\Db\Sql\Ddl\Column;
-use Zend\Db\Sql\Ddl\Constraint;
+use Zend\Db\Sql\TableIdentifier;
 
 class AlterTableTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,9 +20,11 @@ class AlterTableTest extends \PHPUnit_Framework_TestCase
     public function testSetTable()
     {
         $at = new AlterTable();
-        $this->assertEquals('', $at->getRawState('table'));
-        $this->assertSame($at, $at->setTable('test'));
-        $this->assertEquals('test', $at->getRawState('table'));
+        $this->assertEquals(null, $at->table);
+
+        $this->assertSame(null, $at->setTable(null)->table);
+        $this->assertEquals('test', $at->setTable('test')->table->getTable());
+        $this->assertEquals('test', $at->setTable(new TableIdentifier('test'))->table->getTable());
     }
 
     /**
@@ -35,7 +36,7 @@ class AlterTableTest extends \PHPUnit_Framework_TestCase
         /** @var \Zend\Db\Sql\Ddl\Column\ColumnInterface $colMock */
         $colMock = $this->getMock('Zend\Db\Sql\Ddl\Column\ColumnInterface');
         $this->assertSame($at, $at->addColumn($colMock));
-        $this->assertEquals([$colMock], $at->getRawState($at::ADD_COLUMNS));
+        $this->assertEquals([$colMock], $at->addColumns);
     }
 
     /**
@@ -47,7 +48,7 @@ class AlterTableTest extends \PHPUnit_Framework_TestCase
         /** @var \Zend\Db\Sql\Ddl\Column\ColumnInterface $colMock */
         $colMock = $this->getMock('Zend\Db\Sql\Ddl\Column\ColumnInterface');
         $this->assertSame($at, $at->changeColumn('newname', $colMock));
-        $this->assertEquals(['newname' => $colMock], $at->getRawState($at::CHANGE_COLUMNS));
+        $this->assertEquals(['newname' => $colMock], $at->changeColumns);
     }
 
     /**
@@ -57,7 +58,7 @@ class AlterTableTest extends \PHPUnit_Framework_TestCase
     {
         $at = new AlterTable();
         $this->assertSame($at, $at->dropColumn('foo'));
-        $this->assertEquals(['foo'], $at->getRawState($at::DROP_COLUMNS));
+        $this->assertEquals(['foo'], $at->dropColumns);
     }
 
     /**
@@ -67,7 +68,7 @@ class AlterTableTest extends \PHPUnit_Framework_TestCase
     {
         $at = new AlterTable();
         $this->assertSame($at, $at->dropConstraint('foo'));
-        $this->assertEquals(['foo'], $at->getRawState($at::DROP_CONSTRAINTS));
+        $this->assertEquals(['foo'], $at->dropConstraints);
     }
 
     /**
@@ -79,34 +80,6 @@ class AlterTableTest extends \PHPUnit_Framework_TestCase
         /** @var \Zend\Db\Sql\Ddl\Constraint\ConstraintInterface $conMock */
         $conMock = $this->getMock('Zend\Db\Sql\Ddl\Constraint\ConstraintInterface');
         $this->assertSame($at, $at->addConstraint($conMock));
-        $this->assertEquals([$conMock], $at->getRawState($at::ADD_CONSTRAINTS));
-    }
-
-    /**
-     * @covers Zend\Db\Sql\Ddl\AlterTable::getSqlString
-     * @todo   Implement testGetSqlString().
-     */
-    public function testGetSqlString()
-    {
-        $at = new AlterTable('foo');
-        $at->addColumn(new Column\Varchar('another', 255));
-        $at->changeColumn('name', new Column\Varchar('new_name', 50));
-        $at->dropColumn('foo');
-        $at->addConstraint(new Constraint\ForeignKey('my_fk', 'other_id', 'other_table', 'id', 'CASCADE', 'CASCADE'));
-        $at->dropConstraint('my_index');
-        $expected =<<<EOS
-ALTER TABLE "foo"
- ADD COLUMN "another" VARCHAR(255) NOT NULL,
- CHANGE COLUMN "name" "new_name" VARCHAR(50) NOT NULL,
- DROP COLUMN "foo",
- ADD CONSTRAINT "my_fk" FOREIGN KEY ("other_id") REFERENCES "other_table" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
- DROP CONSTRAINT "my_index"
-EOS;
-
-        $actual = $at->getSqlString();
-        $this->assertEquals(
-            str_replace(["\r", "\n"], "", $expected),
-            str_replace(["\r", "\n"], "", $actual)
-        );
+        $this->assertEquals([$conMock], $at->addConstraints);
     }
 }

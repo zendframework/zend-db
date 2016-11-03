@@ -24,6 +24,9 @@ class AdapterServiceFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = $container->get('config');
+        if (isset($config['db']['sql_builder'])) {
+            $config['db']['sql_builder'] = $container->get($config['db']['sql_builder']);
+        }
         return new Adapter($config['db']);
     }
 

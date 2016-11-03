@@ -10,6 +10,7 @@
 namespace ZendTest\Db\Sql;
 
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\ExpressionParameter;
 
 /**
  * This is a unit testing test case.
@@ -78,78 +79,17 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetParameters(Expression $expression)
     {
-        $this->assertEquals('foo', $expression->getParameters());
-    }
-
-    /**
-     * @covers Zend\Db\Sql\Expression::setTypes
-     */
-    public function testSetTypes()
-    {
-        $expression = new Expression();
-        $return = $expression->setTypes([Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_LITERAL]);
-        $this->assertSame($expression, $return);
-        return $expression;
-    }
-
-    /**
-     * @covers Zend\Db\Sql\Expression::getTypes
-     * @depends testSetTypes
-     */
-    public function testGetTypes(Expression $expression)
-    {
         $this->assertEquals(
-            [Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_LITERAL],
-            $expression->getTypes()
-        );
-    }
-
-    /**
-     * @covers Zend\Db\Sql\Expression::getExpressionData
-     */
-    public function testGetExpressionData()
-    {
-        $expression = new Expression(
-            'X SAME AS ? AND Y = ? BUT LITERALLY ?',
-            ['foo', 5, 'FUNC(FF%X)'],
-            [Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_LITERAL]
-        );
-
-        $this->assertEquals(
-            [[
-                'X SAME AS %s AND Y = %s BUT LITERALLY %s',
-                ['foo', 5, 'FUNC(FF%X)'],
-                [Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_LITERAL]
-            ]],
-            $expression->getExpressionData()
-        );
-        $expression = new Expression(
-            'X SAME AS ? AND Y = ? BUT LITERALLY ?',
             [
-                ['foo'        => Expression::TYPE_IDENTIFIER],
-                [5            => Expression::TYPE_VALUE],
-                ['FUNC(FF%X)' => Expression::TYPE_LITERAL],
-            ]
-        );
-
-        $expected = [[
-            'X SAME AS %s AND Y = %s BUT LITERALLY %s',
-            ['foo', 5, 'FUNC(FF%X)'],
-            [Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_LITERAL]
-        ]];
-
-        $this->assertEquals($expected, $expression->getExpressionData());
-    }
-
-    public function testGetExpressionDataWillEscapePercent()
-    {
-        $expression = new Expression('X LIKE "foo%"');
-        $this->assertEquals(
-            ['X LIKE "foo%%"'],
-            $expression->getExpressionData()
+                new ExpressionParameter('foo', Expression::TYPE_VALUE)
+            ],
+            $expression->getParameters()
         );
     }
 
+    /**
+     * @covers Zend\Db\Sql\Expression::__construct
+     */
     public function testConstructorWithLiteralZero()
     {
         $expression = new Expression('0');
@@ -165,11 +105,5 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase
         $expression       = new Expression($expressionString);
 
         $this->assertSame($expressionString, $expression->getExpression());
-    }
-
-    public function testNumberOfReplacemensConsidersWhenSameVariableIsUsedManyTimes()
-    {
-        $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
-        $expression->getExpressionData();
     }
 }

@@ -34,19 +34,4 @@ class AbstractLengthColumnTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->assertEquals(55, $column->getLength());
     }
-
-    /**
-     * @covers Zend\Db\Sql\Ddl\Column\AbstractLengthColumn::getExpressionData
-     */
-    public function testGetExpressionData()
-    {
-        $column = $this->getMockForAbstractClass('Zend\Db\Sql\Ddl\Column\AbstractLengthColumn', [
-            'foo', 4
-        ]);
-
-        $this->assertEquals(
-            [['%s %s NOT NULL', ['foo', 'INTEGER(4)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
-    }
 }

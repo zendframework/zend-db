@@ -41,11 +41,6 @@ class Column implements ColumnInterface
     /**
      * @var string
      */
-    protected $specification = '%s %s';
-
-    /**
-     * @var string
-     */
     protected $type = 'INTEGER';
 
     /**
@@ -78,6 +73,11 @@ class Column implements ColumnInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**
@@ -157,40 +157,8 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getExpressionData()
+    public function getConstraints()
     {
-        $spec = $this->specification;
-
-        $params   = [];
-        $params[] = $this->name;
-        $params[] = $this->type;
-
-        $types = [self::TYPE_IDENTIFIER, self::TYPE_LITERAL];
-
-        if (!$this->isNullable) {
-            $spec .= ' NOT NULL';
-        }
-
-        if ($this->default !== null) {
-            $spec    .= ' DEFAULT %s';
-            $params[] = $this->default;
-            $types[]  = self::TYPE_VALUE;
-        }
-
-        $data = [[
-            $spec,
-            $params,
-            $types,
-        ]];
-
-        foreach ($this->constraints as $constraint) {
-            $data[] = ' ';
-            $data = array_merge($data, $constraint->getExpressionData());
-        }
-
-        return $data;
+        return $this->constraints;
     }
 }

@@ -9,15 +9,10 @@
 
 namespace Zend\Db\Sql\Predicate;
 
-use Zend\Db\Sql\AbstractExpression;
+use Zend\Db\Sql\ExpressionParameter;
 
-class IsNull extends AbstractExpression implements PredicateInterface
+class IsNull implements PredicateInterface
 {
-    /**
-     * @var string
-     */
-    protected $specification = '%1$s IS NULL';
-
     /**
      * @var
      */
@@ -41,9 +36,9 @@ class IsNull extends AbstractExpression implements PredicateInterface
      * @param  string $identifier
      * @return IsNull
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier($identifier, $type = self::TYPE_IDENTIFIER)
     {
-        $this->identifier = $identifier;
+        $this->identifier = new ExpressionParameter($identifier, $type);
         return $this;
     }
 
@@ -55,42 +50,5 @@ class IsNull extends AbstractExpression implements PredicateInterface
     public function getIdentifier()
     {
         return $this->identifier;
-    }
-
-    /**
-     * Set specification string to use in forming SQL predicate
-     *
-     * @param  string $specification
-     * @return IsNull
-     */
-    public function setSpecification($specification)
-    {
-        $this->specification = $specification;
-        return $this;
-    }
-
-    /**
-     * Get specification string to use in forming SQL predicate
-     *
-     * @return string
-     */
-    public function getSpecification()
-    {
-        return $this->specification;
-    }
-
-    /**
-     * Get parts for where statement
-     *
-     * @return array
-     */
-    public function getExpressionData()
-    {
-        $identifier = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
-        return [[
-            $this->getSpecification(),
-            [$identifier[0]],
-            [$identifier[1]],
-        ]];
     }
 }

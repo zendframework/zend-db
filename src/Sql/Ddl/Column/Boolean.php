@@ -26,6 +26,6 @@ class Boolean extends Column
      */
     public function setNullable($nullable)
     {
-        return parent::setNullable(false);
+        return parent::setNullable($nullable);
     }
 }

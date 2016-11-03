@@ -72,14 +72,12 @@ class Predicate extends PredicateSet
      *
      * @param  int|float|bool|string $left
      * @param  int|float|bool|string $right
-     * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      * @return Predicate
      */
-    public function equalTo($left, $right, $leftType = self::TYPE_IDENTIFIER, $rightType = self::TYPE_VALUE)
+    public function equalTo($left, $right)
     {
         $this->addPredicate(
-            new Operator($left, Operator::OPERATOR_EQUAL_TO, $right, $leftType, $rightType),
+            new Operator($left, Operator::OPERATOR_EQUAL_TO, $right),
             ($this->nextPredicateCombineOperator) ?: $this->defaultCombination
         );
         $this->nextPredicateCombineOperator = null;
@@ -94,14 +92,12 @@ class Predicate extends PredicateSet
      *
      * @param  int|float|bool|string $left
      * @param  int|float|bool|string $right
-     * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      * @return Predicate
      */
-    public function notEqualTo($left, $right, $leftType = self::TYPE_IDENTIFIER, $rightType = self::TYPE_VALUE)
+    public function notEqualTo($left, $right)
     {
         $this->addPredicate(
-            new Operator($left, Operator::OPERATOR_NOT_EQUAL_TO, $right, $leftType, $rightType),
+            new Operator($left, Operator::OPERATOR_NOT_EQUAL_TO, $right),
             ($this->nextPredicateCombineOperator) ?: $this->defaultCombination
         );
         $this->nextPredicateCombineOperator = null;
@@ -116,14 +112,12 @@ class Predicate extends PredicateSet
      *
      * @param  int|float|bool|string $left
      * @param  int|float|bool|string $right
-     * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      * @return Predicate
      */
-    public function lessThan($left, $right, $leftType = self::TYPE_IDENTIFIER, $rightType = self::TYPE_VALUE)
+    public function lessThan($left, $right)
     {
         $this->addPredicate(
-            new Operator($left, Operator::OPERATOR_LESS_THAN, $right, $leftType, $rightType),
+            new Operator($left, Operator::OPERATOR_LESS_THAN, $right),
             ($this->nextPredicateCombineOperator) ?: $this->defaultCombination
         );
         $this->nextPredicateCombineOperator = null;
@@ -138,14 +132,12 @@ class Predicate extends PredicateSet
      *
      * @param  int|float|bool|string $left
      * @param  int|float|bool|string $right
-     * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      * @return Predicate
      */
-    public function greaterThan($left, $right, $leftType = self::TYPE_IDENTIFIER, $rightType = self::TYPE_VALUE)
+    public function greaterThan($left, $right)
     {
         $this->addPredicate(
-            new Operator($left, Operator::OPERATOR_GREATER_THAN, $right, $leftType, $rightType),
+            new Operator($left, Operator::OPERATOR_GREATER_THAN, $right),
             ($this->nextPredicateCombineOperator) ?: $this->defaultCombination
         );
         $this->nextPredicateCombineOperator = null;
@@ -160,14 +152,12 @@ class Predicate extends PredicateSet
      *
      * @param  int|float|bool|string $left
      * @param  int|float|bool|string $right
-     * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      * @return Predicate
      */
-    public function lessThanOrEqualTo($left, $right, $leftType = self::TYPE_IDENTIFIER, $rightType = self::TYPE_VALUE)
+    public function lessThanOrEqualTo($left, $right)
     {
         $this->addPredicate(
-            new Operator($left, Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $right, $leftType, $rightType),
+            new Operator($left, Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $right),
             ($this->nextPredicateCombineOperator) ?: $this->defaultCombination
         );
         $this->nextPredicateCombineOperator = null;
@@ -182,14 +172,12 @@ class Predicate extends PredicateSet
      *
      * @param  int|float|bool|string $left
      * @param  int|float|bool|string $right
-     * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      * @return Predicate
      */
-    public function greaterThanOrEqualTo($left, $right, $leftType = self::TYPE_IDENTIFIER, $rightType = self::TYPE_VALUE)
+    public function greaterThanOrEqualTo($left, $right)
     {
         $this->addPredicate(
-            new Operator($left, Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $right, $leftType, $rightType),
+            new Operator($left, Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $right),
             ($this->nextPredicateCombineOperator) ?: $this->defaultCombination
         );
         $this->nextPredicateCombineOperator = null;

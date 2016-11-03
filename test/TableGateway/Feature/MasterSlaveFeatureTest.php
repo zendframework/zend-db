@@ -28,25 +28,19 @@ class MasterSlaveFeatureTest extends \PHPUnit_Framework_TestCase
 
     public function setup()
     {
-        $this->mockMasterAdapter = $this->getMock('Zend\Db\Adapter\AdapterInterface');
+        $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
+        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue(
+            $mockStatement
+        ));
+        $this->mockMasterAdapter = new \Zend\Db\Adapter\Adapter($mockDriver, new \Zend\Db\Adapter\Platform\Sql92());
 
         $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue(
             $mockStatement
         ));
-        $this->mockMasterAdapter->expects($this->any())->method('getDriver')->will($this->returnValue($mockDriver));
-        $this->mockMasterAdapter->expects($this->any())->method('getPlatform')->will($this->returnValue(new \Zend\Db\Adapter\Platform\Sql92()));
-
-        $this->mockSlaveAdapter = $this->getMock('Zend\Db\Adapter\AdapterInterface');
-
-        $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
-        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
-        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue(
-            $mockStatement
-        ));
-        $this->mockSlaveAdapter->expects($this->any())->method('getDriver')->will($this->returnValue($mockDriver));
-        $this->mockSlaveAdapter->expects($this->any())->method('getPlatform')->will($this->returnValue(new \Zend\Db\Adapter\Platform\Sql92()));
+        $this->mockSlaveAdapter = new \Zend\Db\Adapter\Adapter($mockDriver, new \Zend\Db\Adapter\Platform\Sql92());
 
         $this->feature = new MasterSlaveFeature($this->mockSlaveAdapter);
     }
