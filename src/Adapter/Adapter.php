@@ -56,11 +56,6 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     protected $queryResultSetPrototype = null;
 
     /**
-     * @var Driver\StatementInterface
-     */
-    protected $lastPreparedStatement = null;
-
-    /**
      * @param Driver\DriverInterface|array $driver
      * @param Platform\PlatformInterface $platform
      * @param ResultSet\ResultSetInterface $queryResultPrototype
@@ -177,14 +172,13 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         }
 
         if ($mode == self::QUERY_MODE_PREPARE) {
-            $this->lastPreparedStatement = null;
-            $this->lastPreparedStatement = $this->driver->createStatement($sql);
-            $this->lastPreparedStatement->prepare();
+            $preparedStatement = $this->driver->createStatement($sql);
+            $preparedStatement->prepare();
             if (is_array($parameters) || $parameters instanceof ParameterContainer) {
-                $this->lastPreparedStatement->setParameterContainer((is_array($parameters)) ? new ParameterContainer($parameters) : $parameters);
-                $result = $this->lastPreparedStatement->execute();
+                $preparedStatement->setParameterContainer((is_array($parameters)) ? new ParameterContainer($parameters) : $parameters);
+                $result = $preparedStatement->execute();
             } else {
-                return $this->lastPreparedStatement;
+                return $preparedStatement;
             }
         } else {
             $result = $this->driver->getConnection()->execute($sql);
