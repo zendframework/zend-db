@@ -83,25 +83,25 @@ class AdapterTest extends \PHPUnit_Framework_TestCase
     {
         if (extension_loaded('mysqli')) {
             $adapter = new Adapter(['driver' => 'mysqli'], $this->mockPlatform);
-            $this->assertInstanceOf('Zend\Db\Adapter\Driver\Mysqli\Mysqli', $adapter->driver);
+            $this->assertInstanceOf('Zend\Db\Adapter\Driver\Mysqli\Mysqli', $adapter->getDriver());
             unset($adapter);
         }
 
         if (extension_loaded('pgsql')) {
             $adapter = new Adapter(['driver' => 'pgsql'], $this->mockPlatform);
-            $this->assertInstanceOf('Zend\Db\Adapter\Driver\Pgsql\Pgsql', $adapter->driver);
+            $this->assertInstanceOf('Zend\Db\Adapter\Driver\Pgsql\Pgsql', $adapter->getDriver());
             unset($adapter);
         }
 
         if (extension_loaded('sqlsrv')) {
             $adapter = new Adapter(['driver' => 'sqlsrv'], $this->mockPlatform);
-            $this->assertInstanceOf('Zend\Db\Adapter\Driver\Sqlsrv\Sqlsrv', $adapter->driver);
+            $this->assertInstanceOf('Zend\Db\Adapter\Driver\Sqlsrv\Sqlsrv', $adapter->getDriver());
             unset($adapter);
         }
 
         if (extension_loaded('pdo')) {
             $adapter = new Adapter(['driver' => 'pdo_sqlite'], $this->mockPlatform);
-            $this->assertInstanceOf('Zend\Db\Adapter\Driver\Pdo\Pdo', $adapter->driver);
+            $this->assertInstanceOf('Zend\Db\Adapter\Driver\Pdo\Pdo', $adapter->getDriver());
             unset($adapter);
         }
     }
@@ -115,49 +115,49 @@ class AdapterTest extends \PHPUnit_Framework_TestCase
         $driver = clone $this->mockDriver;
         $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('Mysql'));
         $adapter = new Adapter($driver);
-        $this->assertInstanceOf('Zend\Db\Adapter\Platform\Mysql', $adapter->platform);
+        $this->assertInstanceOf('Zend\Db\Adapter\Platform\Mysql', $adapter->getPlatform());
         unset($adapter, $driver);
 
         $driver = clone $this->mockDriver;
         $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('SqlServer'));
         $adapter = new Adapter($driver);
-        $this->assertInstanceOf('Zend\Db\Adapter\Platform\SqlServer', $adapter->platform);
+        $this->assertInstanceOf('Zend\Db\Adapter\Platform\SqlServer', $adapter->getPlatform());
         unset($adapter, $driver);
 
         $driver = clone $this->mockDriver;
         $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('Postgresql'));
         $adapter = new Adapter($driver);
-        $this->assertInstanceOf('Zend\Db\Adapter\Platform\Postgresql', $adapter->platform);
+        $this->assertInstanceOf('Zend\Db\Adapter\Platform\Postgresql', $adapter->getPlatform());
         unset($adapter, $driver);
 
         $driver = clone $this->mockDriver;
         $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('Sqlite'));
         $adapter = new Adapter($driver);
-        $this->assertInstanceOf('Zend\Db\Adapter\Platform\Sqlite', $adapter->platform);
+        $this->assertInstanceOf('Zend\Db\Adapter\Platform\Sqlite', $adapter->getPlatform());
         unset($adapter, $driver);
 
         $driver = clone $this->mockDriver;
         $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('IbmDb2'));
         $adapter = new Adapter($driver);
-        $this->assertInstanceOf('Zend\Db\Adapter\Platform\IbmDb2', $adapter->platform);
+        $this->assertInstanceOf('Zend\Db\Adapter\Platform\IbmDb2', $adapter->getPlatform());
         unset($adapter, $driver);
 
         $driver = clone $this->mockDriver;
         $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('Oracle'));
         $adapter = new Adapter($driver);
-        $this->assertInstanceOf('Zend\Db\Adapter\Platform\Oracle', $adapter->platform);
+        $this->assertInstanceOf('Zend\Db\Adapter\Platform\Oracle', $adapter->getPlatform());
         unset($adapter, $driver);
 
         $driver = clone $this->mockDriver;
         $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('Foo'));
         $adapter = new Adapter($driver);
-        $this->assertInstanceOf('Zend\Db\Adapter\Platform\Sql92', $adapter->platform);
+        $this->assertInstanceOf('Zend\Db\Adapter\Platform\Sql92', $adapter->getPlatform());
         unset($adapter, $driver);
 
         // ensure platform can created via string, and also that it passed in options to platform object
         $driver = ['driver' => 'pdo_sqlite', 'platform' => 'Oracle', 'platform_options' => ['quote_identifiers' => false]];
         $adapter = new Adapter($driver);
-        $this->assertInstanceOf('Zend\Db\Adapter\Platform\Oracle', $adapter->platform);
+        $this->assertInstanceOf('Zend\Db\Adapter\Platform\Oracle', $adapter->getPlatform());
         $this->assertEquals('foo', $adapter->getPlatform()->quoteIdentifier('foo'));
         unset($adapter, $driver);
     }
@@ -284,21 +284,6 @@ class AdapterTest extends \PHPUnit_Framework_TestCase
     public function testCreateStatement()
     {
         $this->assertSame($this->mockStatement, $this->adapter->createStatement());
-    }
-
-    /**
-     * @testdox unit test: Test __get() works
-     * @covers Zend\Db\Adapter\Adapter::__get
-     */
-    public function test__get()
-    {
-        $this->assertSame($this->mockDriver, $this->adapter->driver);
-        $this->assertSame($this->mockDriver, $this->adapter->DrivER);
-        $this->assertSame($this->mockPlatform, $this->adapter->PlatForm);
-        $this->assertSame($this->mockPlatform, $this->adapter->platform);
-
-        $this->setExpectedException('InvalidArgumentException', 'Invalid magic');
-        $this->adapter->foo;
     }
 }
 

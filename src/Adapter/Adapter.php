@@ -11,10 +11,6 @@ namespace Zend\Db\Adapter;
 
 use Zend\Db\ResultSet;
 
-/**
- * @property Driver\DriverInterface $driver
- * @property Platform\PlatformInterface $platform
- */
 class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 {
     /**
@@ -224,23 +220,6 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
                     break;
 
             }
-        }
-    }
-
-    /**
-     * @param $name
-     * @throws Exception\InvalidArgumentException
-     * @return Driver\DriverInterface|Platform\PlatformInterface
-     */
-    public function __get($name)
-    {
-        switch (strtolower($name)) {
-            case 'driver':
-                return $this->driver;
-            case 'platform':
-                return $this->platform;
-            default:
-                throw new Exception\InvalidArgumentException('Invalid magic property on adapter');
         }
     }
 
