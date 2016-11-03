@@ -52,6 +52,11 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     protected $queryResultSetPrototype = null;
 
     /**
+     * @var SqlBuilderInterface
+     */
+    protected $sqlBuilder;
+
+    /**
      * @param Driver\DriverInterface|array $driver
      * @param Platform\PlatformInterface $platform
      * @param ResultSet\ResultSetInterface $queryResultPrototype
@@ -65,6 +70,9 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 
         if (is_array($driver)) {
             $parameters = $driver;
+            if (isset($parameters['sql_builder'])) {
+                $this->setSqlBuilder($parameters['sql_builder']);
+            }
             if ($profiler === null && isset($parameters['profiler'])) {
                 $profiler = $this->createProfiler($parameters);
             }
@@ -147,6 +155,24 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
+     * @return SqlBuilderInterface
+     */
+    public function getSqlBuilder()
+    {
+        return $this->sqlBuilder;
+    }
+
+    /**
+     * @param SqlBuilderInterface $sqlBuilder
+     * @return self
+     */
+    public function setSqlBuilder(SqlBuilderInterface $sqlBuilder)
+    {
+        $this->sqlBuilder = $sqlBuilder;
+        return $this;
+    }
+
+    /**
      * query() is a convenience function
      *
      * @param string $sql
@@ -167,16 +193,31 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
             throw new Exception\InvalidArgumentException('Parameter 2 to this method must be a flag, an array, or ParameterContainer');
         }
 
+        $sqlIsString = is_string($sql) || (is_object($sql) && method_exists($sql, '__toString'));
+
         if ($mode == self::QUERY_MODE_PREPARE) {
-            $preparedStatement = $this->driver->createStatement($sql);
+            if ($sqlIsString) {
+                $preparedStatement = $this->driver->createStatement($sql);
+            } else {
+                if (!$this->sqlBuilder) {
+                    throw new Exception\RuntimeException('sqlBuilder must be set for non string sql');
+                }
+                $preparedStatement = $this->sqlBuilder->prepareSqlStatement($sql, $this);
+            }
             $preparedStatement->prepare();
-            if (is_array($parameters) || $parameters instanceof ParameterContainer) {
+            if ($parameters !== null) {
                 $preparedStatement->setParameterContainer((is_array($parameters)) ? new ParameterContainer($parameters) : $parameters);
                 $result = $preparedStatement->execute();
             } else {
                 return $preparedStatement;
             }
         } else {
+            if (!$sqlIsString) {
+                if (!$this->sqlBuilder) {
+                    throw new Exception\RuntimeException('sqlBuilder must be set for non string sql');
+                }
+                $sql = $this->sqlBuilder->buildSqlString($sql, $this);
+            }
             $result = $this->driver->getConnection()->execute($sql);
         }
 

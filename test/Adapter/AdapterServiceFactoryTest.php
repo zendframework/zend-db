@@ -54,4 +54,21 @@ class AdapterServiceFactoryTest extends TestCase
         $adapter = $this->factory->__invoke($this->services->reveal(), Adapter::class);
         $this->assertInstanceOf(Adapter::class, $adapter);
     }
+
+    public function testInjectSqlBuilder()
+    {
+        $mockBuilder = $this->getMock('Zend\Db\Adapter\SqlBuilderInterface');
+        $this->services->get('sqlBuilderAlias')->willReturn($mockBuilder);
+        $this->services->get('config')->willReturn([
+            'db' => [
+                'driver' => 'Pdo_Sqlite',
+                'database' => 'sqlite::memory:',
+                'sql_builder' => 'sqlBuilderAlias',
+            ],
+        ]);
+
+        $adapter = $this->factory->__invoke($this->services->reveal(), Adapter::class);
+        $this->assertInstanceOf(Adapter::class, $adapter);
+        $this->assertSame($mockBuilder, $adapter->getSqlBuilder());
+    }
 }

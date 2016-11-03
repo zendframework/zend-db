@@ -15,6 +15,7 @@ use Zend\ServiceManager\Config;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Db;
 use Zend\Db\Sql\Builder\Builder;
+use Zend\Db\Adapter\SqlBuilderInterface;
 
 class BuilderServiceFactoryTest extends TestCase
 {
@@ -30,7 +31,7 @@ class BuilderServiceFactoryTest extends TestCase
         );
         $serviceManager = new ServiceManager();
         (new Config($config))->configureServiceManager($serviceManager);
-        return $serviceManager->get('SqlBuilder');
+        return $serviceManager->get(SqlBuilderInterface::class);
     }
 
     public function testFactoryWithEmptyConfig()

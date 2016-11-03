@@ -18,8 +18,9 @@ use Zend\Db\Sql\ExpressionParameter;
 use Zend\Db\Sql\ExpressionInterface;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Sql\TableSource;
+use Zend\Db\Adapter\SqlBuilderInterface;
 
-class Builder extends AbstractBuilder
+class Builder extends AbstractBuilder implements SqlBuilderInterface
 {
     /**
      * @var Adapter\AdapterInterface

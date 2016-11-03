@@ -11,6 +11,7 @@ namespace ZendTest\Db\Adapter;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\Profiler;
+use Zend\Db\Sql\Select;
 
 class AdapterTest extends \PHPUnit_Framework_TestCase
 {
@@ -201,6 +202,36 @@ class AdapterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Zend\Db\Adapter\Adapter::getSqlBuilder
+     * @covers Zend\Db\Adapter\Adapter::setSqlBuilder
+     */
+    public function testSetGetSqlBuilder()
+    {
+        $mockBuilder = $this->getMock('Zend\Db\Adapter\SqlBuilderInterface');
+
+        $this->assertNull($this->adapter->getSqlBuilder());
+        $this->assertSame($this->adapter, $this->adapter->setSqlBuilder($mockBuilder));
+        $this->assertSame($mockBuilder, $this->adapter->getSqlBuilder());
+    }
+
+    /**
+     * @covers Zend\Db\Adapter\Adapter::getSqlBuilder
+     * @covers Zend\Db\Adapter\Adapter::setSqlBuilder
+     */
+    public function testSetSqlBuilderViaConstructor()
+    {
+        $mockBuilder = $this->getMock('Zend\Db\Adapter\SqlBuilderInterface');
+        $adapter = new Adapter(
+            [
+                'driver' => $this->mockDriver,
+                'sql_builder' => $mockBuilder,
+            ],
+            $this->mockPlatform
+        );
+        $this->assertSame($mockBuilder, $adapter->getSqlBuilder());
+    }
+
+    /**
      * @testdox unit test: Test query() in prepare mode produces a statement object
      * @covers Zend\Db\Adapter\Adapter::query
      */
@@ -275,6 +306,53 @@ class AdapterTest extends \PHPUnit_Framework_TestCase
 
         $r = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE, new TemporaryResultSet());
         $this->assertInstanceOf('ZendTest\Db\Adapter\TemporaryResultSet', $r);
+    }
+
+    /**
+     * @covers Zend\Db\Adapter\Adapter::query
+     */
+    public function testQueryWithObjectSql()
+    {
+        $sql = 'SELECT bar';
+        $sqlObject = new Select('bar');
+
+        $resultInterface = $this->getMock('Zend\Db\Adapter\Driver\ResultInterface');
+        $statementInterface = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
+
+        $this->mockConnection->expects($this->any())->method('execute')->with($sql)->will($this->returnValue($resultInterface));
+
+        $mockBuilder = $this->getMock('Zend\Db\Adapter\SqlBuilderInterface');
+        $mockBuilder->expects($this->any())->method('buildSqlString')->with($sqlObject)->will($this->returnValue($sql));
+        $mockBuilder->expects($this->any())->method('prepareSqlStatement')->with($sqlObject)->will($this->returnValue($statementInterface));
+
+        $this->adapter->setSqlBuilder($mockBuilder);
+
+        $this->assertSame(
+            $resultInterface,
+            $this->adapter->query($sqlObject, Adapter::QUERY_MODE_EXECUTE)
+        );
+        $this->assertSame(
+            $statementInterface,
+            $this->adapter->query($sqlObject, Adapter::QUERY_MODE_PREPARE)
+        );
+    }
+
+    /**
+     * @covers Zend\Db\Adapter\Adapter::query
+     */
+    public function testQueryExecuteObjectSqlWithoutSqlBuilder()
+    {
+        $this->setExpectedException('Zend\Db\Adapter\Exception\RuntimeException', 'sqlBuilder must be set for non string sql');
+        $this->adapter->query(new Select('bar'), Adapter::QUERY_MODE_EXECUTE);
+    }
+
+    /**
+     * @covers Zend\Db\Adapter\Adapter::query
+     */
+    public function testQueryPrepareObjectSqlWithoutSqlBuilder()
+    {
+        $this->setExpectedException('Zend\Db\Adapter\Exception\RuntimeException', 'sqlBuilder must be set for non string sql');
+        $this->adapter->query(new Select('bar'), Adapter::QUERY_MODE_PREPARE);
     }
 
     /**

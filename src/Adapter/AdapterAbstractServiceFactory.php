@@ -70,6 +70,9 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = $this->getConfig($container);
+        if (isset($config[$requestedName]['sql_builder'])) {
+            $config[$requestedName]['sql_builder'] = $container->get($config[$requestedName]['sql_builder']);
+        }
         return new Adapter($config[$requestedName]);
     }
 
