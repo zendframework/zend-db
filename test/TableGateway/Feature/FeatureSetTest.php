@@ -84,7 +84,8 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers Zend\Db\TableGateway\Feature\FeatureSet::getFeatureByClassName
      */
-    public function testGetSingleFeatureByClassName() {
+    public function testGetSingleFeatureByClassName()
+    {
         $featureMock = $this->getMock(AbstractFeature::class);
 
         $featureSet = new FeatureSet();
@@ -100,7 +101,8 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers Zend\Db\TableGateway\Feature\FeatureSet::getFeatureByClassName
      */
-    public function testGetAllFeaturesOfSameTypeByClassName() {
+    public function testGetAllFeaturesOfSameTypeByClassName()
+    {
         $featureMock1 = $this->getMock(AbstractFeature::class);
         $featureMock2 = $this->getMock(AbstractFeature::class);
 
@@ -119,7 +121,8 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers Zend\Db\TableGateway\Feature\FeatureSet::getFeatureByClassName
      */
-    public function testGetFeatureByClassNameReturnsFalseIfNotAdded() {
+    public function testGetFeatureByClassNameReturnsFalseIfNotAdded()
+    {
         $featureMock = $this->getMock(AbstractFeature::class);
 
         $featureSet = new FeatureSet();
@@ -184,7 +187,8 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers Zend\Db\TableGateway\Feature\FeatureSet::callMagicCall
      */
-    public function testCallMagicMethodAllSimilarFeaturesUntilNotNull() {
+    public function testCallMagicMethodAllSimilarFeaturesUntilNotNull()
+    {
         $featureSet = new FeatureSet();
 
         $featureSet->addFeature($this->getMockSequence('seq_1', 1));
@@ -197,7 +201,8 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
     }
 
     // FeatureSet uses method_exists which does not work on mock objects. Therefore, need a real object.
-    private function getMockSequence($sequenceName, $expectedCurrVal) {
+    private function getMockSequence($sequenceName, $expectedCurrVal)
+    {
         $platformMock = $this->getMock('Zend\Db\Adapter\Platform\Postgresql');
         $platformMock->expects($this->any())
             ->method('getName')->will($this->returnValue('PostgreSQL'));

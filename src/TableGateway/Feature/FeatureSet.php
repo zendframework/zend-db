@@ -39,7 +39,7 @@ class FeatureSet
     {
         $this->tableGateway = $tableGateway;
         foreach ($this->features as $featureClass => $featureSet) {
-            foreach($featureSet as $feature) {
+            foreach ($featureSet as $feature) {
                 $feature->setTableGateway($this->tableGateway);
             }
         }
@@ -48,10 +48,12 @@ class FeatureSet
 
     public function getFeatureByClassName($featureClassName)
     {
-        if(!array_key_exists($featureClassName, $this->features)) return false;
+        if (!array_key_exists($featureClassName, $this->features)) {
+            return false;
+        }
 
         $featuresByType = $this->features[$featureClassName];
-        if(count($featuresByType) == 1) {
+        if (count($featuresByType) == 1) {
             return $featuresByType[0];
         } else {
             return $featuresByType;
@@ -78,7 +80,7 @@ class FeatureSet
     public function apply($method, $args)
     {
         foreach ($this->features as $featureClass => $featureSet) {
-            foreach($featureSet as $feature) {
+            foreach ($featureSet as $feature) {
                 if (method_exists($feature, $method)) {
                     $return = call_user_func_array([$feature, $method], $args);
                     if ($return === self::APPLY_HALT) {
@@ -159,7 +161,7 @@ class FeatureSet
                 // iterator management instead of foreach to avoid extra conditions and indentations
                 reset($featuresSet);
                 $featureReturn = null;
-                while($featureReturn === null) {
+                while ($featureReturn === null) {
                     $current = current($featuresSet);
                     $featureReturn = $current->$method($arguments);
                     next($featuresSet);
