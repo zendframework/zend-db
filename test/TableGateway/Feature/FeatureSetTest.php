@@ -10,6 +10,7 @@
 namespace ZendTest\Db\TableGateway\Feature;
 
 use ReflectionClass;
+use Zend\Db\TableGateway\Feature\AbstractFeature;
 use Zend\Db\TableGateway\Feature\FeatureSet;
 use Zend\Db\TableGateway\Feature\MasterSlaveFeature;
 use Zend\Db\TableGateway\Feature\SequenceFeature;
@@ -81,6 +82,55 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Zend\Db\TableGateway\Feature\FeatureSet::getFeatureByClassName
+     */
+    public function testGetSingleFeatureByClassName() {
+        $featureMock = $this->getMock(AbstractFeature::class);
+
+        $featureSet = new FeatureSet();
+        $featureSet->addFeature($featureMock);
+
+        $this->assertInstanceOf(
+            get_class($featureMock),
+            $featureSet->getFeatureByClassName(get_class($featureMock)),
+            "When only one feature of its type is added to FeatureSet, getFeatureByClassName() should return that single instance"
+        );
+    }
+
+    /**
+     * @covers Zend\Db\TableGateway\Feature\FeatureSet::getFeatureByClassName
+     */
+    public function testGetAllFeaturesOfSameTypeByClassName() {
+        $featureMock1 = $this->getMock(AbstractFeature::class);
+        $featureMock2 = $this->getMock(AbstractFeature::class);
+
+        $featureSet = new FeatureSet();
+        $featureSet->addFeature($featureMock1);
+        $featureSet->addFeature($featureMock2);
+
+        $features = $featureSet->getFeatureByClassName(get_class($featureMock1));
+
+        $this->assertTrue(is_array($features), "When multiple features of same type are added, they all should be return in array");
+
+        $this->assertInstanceOf(get_class($featureMock1), $features[0]);
+        $this->assertInstanceOf(get_class($featureMock2), $features[1]);
+    }
+
+    /**
+     * @covers Zend\Db\TableGateway\Feature\FeatureSet::getFeatureByClassName
+     */
+    public function testGetFeatureByClassNameReturnsFalseIfNotAdded() {
+        $featureMock = $this->getMock(AbstractFeature::class);
+
+        $featureSet = new FeatureSet();
+
+        $this->assertFalse(
+            $featureSet->getFeatureByClassName(get_class($featureMock)),
+            "Requesting unregistered feature should return false"
+        );
+    }
+
+    /**
      * @covers Zend\Db\TableGateway\Feature\FeatureSet::canCallMagicCall
      */
     public function testCanCallMagicCallReturnsTrueForAddedMethodOfAddedFeature()
@@ -126,8 +176,28 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testCallMagicCallSucceedsForValidMethodOfAddedFeature()
     {
-        $sequenceName = 'table_sequence';
+        $featureSet = new FeatureSet;
+        $featureSet->addFeature($this->getMockSequence('table_sequence', 1));
+        $this->assertEquals(1, $featureSet->callMagicCall('lastSequenceId', null));
+    }
 
+    /**
+     * @covers Zend\Db\TableGateway\Feature\FeatureSet::callMagicCall
+     */
+    public function testCallMagicMethodAllSimilarFeaturesUntilNotNull() {
+        $featureSet = new FeatureSet();
+
+        $featureSet->addFeature($this->getMockSequence('seq_1', 1));
+        $featureSet->addFeature($this->getMockSequence('seq_2', 2));
+        $featureSet->addFeature($this->getMockSequence('seq_3', 3));
+
+        $result = $featureSet->callMagicCall('lastSequenceId','seq_2');
+
+        $this->assertEquals(2, $result);
+    }
+
+    // FeatureSet uses method_exists which does not work on mock objects. Therefore, need a real object.
+    private function getMockSequence($sequenceName, $expectedCurrVal) {
         $platformMock = $this->getMock('Zend\Db\Adapter\Platform\Postgresql');
         $platformMock->expects($this->any())
             ->method('getName')->will($this->returnValue('PostgreSQL'));
@@ -135,7 +205,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         $resultMock = $this->getMock('Zend\Db\Adapter\Driver\Pgsql\Result');
         $resultMock->expects($this->any())
             ->method('current')
-            ->will($this->returnValue(['currval' => 1]));
+            ->will($this->returnValue(['currval' => $expectedCurrVal]));
 
         $statementMock = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
         $statementMock->expects($this->any())
@@ -162,10 +232,9 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($tableGatewayMock, $adapterMock);
 
-        $feature = new SequenceFeature('id', 'table_sequence');
+        $feature = new SequenceFeature('id', $sequenceName);
         $feature->setTableGateway($tableGatewayMock);
-        $featureSet = new FeatureSet;
-        $featureSet->addFeature($feature);
-        $this->assertEquals(1, $featureSet->callMagicCall('lastSequenceId', null));
+
+        return $feature;
     }
 }

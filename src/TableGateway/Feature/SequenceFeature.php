@@ -107,8 +107,10 @@ class SequenceFeature extends AbstractFeature
      * Return the most recent value from the specified sequence in the database.
      * @return int
      */
-    public function lastSequenceId()
+    public function lastSequenceId($sequenceName = null)
     {
+        if($sequenceName !== null && strcmp($sequenceName, $this->sequenceName) !== 0) return null;
+
         $platform = $this->tableGateway->adapter->getPlatform();
         $platformName = $platform->getName();
 

@@ -19,7 +19,7 @@ class FeatureSet
     protected $tableGateway = null;
 
     /**
-     * @var AbstractFeature[]
+     * @var string[]AbstractFeature[]
      */
     protected $features = [];
 
@@ -46,14 +46,14 @@ class FeatureSet
 
     public function getFeatureByClassName($featureClassName)
     {
-        $feature = false;
-        foreach ($this->features as $potentialFeature) {
-            if ($potentialFeature instanceof $featureClassName) {
-                $feature = $potentialFeature;
-                break;
-            }
+        if(!array_key_exists($featureClassName, $this->features)) return false;
+
+        $featuresByType = $this->features[$featureClassName];
+        if(count($featuresByType) == 1) {
+            return $featuresByType[0];
+        } else {
+            return $featuresByType;
         }
-        return $feature;
     }
 
     public function addFeatures(array $features)
@@ -69,7 +69,7 @@ class FeatureSet
         if ($this->tableGateway instanceof TableGatewayInterface) {
             $feature->setTableGateway($this->tableGateway);
         }
-        $this->features[] = $feature;
+        $this->features[get_class($feature)][] = $feature;
         return $this;
     }
 
@@ -132,8 +132,8 @@ class FeatureSet
     public function canCallMagicCall($method)
     {
         if (!empty($this->features)) {
-            foreach ($this->features as $feature) {
-                if (method_exists($feature, $method)) {
+            foreach ($this->features as $featureClass => $featuresSet) {
+                if (method_exists($featureClass, $method)) {
                     return true;
                 }
             }
@@ -149,9 +149,19 @@ class FeatureSet
      */
     public function callMagicCall($method, $arguments)
     {
-        foreach ($this->features as $feature) {
-            if (method_exists($feature, $method)) {
-                return $feature->$method($arguments);
+        foreach ($this->features as $featureClass => $featuresSet) {
+            if (method_exists($featureClass, $method)) {
+
+                // iterator management instead of foreach to avoid extra conditions and indentations
+                reset($featuresSet);
+                $featureReturn = null;
+                while($featureReturn === null) {
+                    $current = current($featuresSet);
+                    $featureReturn = $current->$method($arguments);
+                    next($featuresSet);
+                }
+
+                return $featureReturn;
             }
         }
 
