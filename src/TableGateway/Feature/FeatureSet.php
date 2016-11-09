@@ -77,11 +77,13 @@ class FeatureSet
 
     public function apply($method, $args)
     {
-        foreach ($this->features as $feature) {
-            if (method_exists($feature, $method)) {
-                $return = call_user_func_array([$feature, $method], $args);
-                if ($return === self::APPLY_HALT) {
-                    break;
+        foreach ($this->features as $featureClass => $featureSet) {
+            foreach($featureSet as $feature) {
+                if (method_exists($feature, $method)) {
+                    $return = call_user_func_array([$feature, $method], $args);
+                    if ($return === self::APPLY_HALT) {
+                        break;
+                    }
                 }
             }
         }
