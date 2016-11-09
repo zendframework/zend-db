@@ -109,8 +109,8 @@ class SequenceFeature extends AbstractFeature
      */
     public function lastSequenceId($sequenceName = null)
     {
-        if($sequenceName !== null && strcmp($sequenceName, $this->sequenceName) !== 0) {
-            return null;
+        if ($sequenceName !== null && strcmp($sequenceName, $this->sequenceName) !== 0) {
+            return;
         }
 
         $platform = $this->tableGateway->adapter->getPlatform();

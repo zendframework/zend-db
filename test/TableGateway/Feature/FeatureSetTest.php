@@ -195,7 +195,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         $featureSet->addFeature($this->getMockSequence('seq_2', 2));
         $featureSet->addFeature($this->getMockSequence('seq_3', 3));
 
-        $result = $featureSet->callMagicCall('lastSequenceId','seq_2');
+        $result = $featureSet->callMagicCall('lastSequenceId', 'seq_2');
 
         $this->assertEquals(2, $result);
     }
