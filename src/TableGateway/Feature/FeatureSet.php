@@ -38,8 +38,10 @@ class FeatureSet
     public function setTableGateway(AbstractTableGateway $tableGateway)
     {
         $this->tableGateway = $tableGateway;
-        foreach ($this->features as $feature) {
-            $feature->setTableGateway($this->tableGateway);
+        foreach ($this->features as $featureClass => $featureSet) {
+            foreach($featureSet as $feature) {
+                $feature->setTableGateway($this->tableGateway);
+            }
         }
         return $this;
     }
