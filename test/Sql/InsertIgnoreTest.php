@@ -126,7 +126,7 @@ class InsertIgnoreTest extends \PHPUnit_Framework_TestCase
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()')]);
         $this->insert->prepareStatement($mockAdapter, $mockStatement);
         // with TableIdentifier
-        $this->insert = new Insert;
+        $this->insert = new InsertIgnore;
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
