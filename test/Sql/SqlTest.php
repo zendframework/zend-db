@@ -89,7 +89,7 @@ class SqlTest extends \PHPUnit_Framework_TestCase
      */
     public function testInsertIgnore()
     {
-        $insert = $this->sql->insertInore();
+        $insert = $this->sql->insertIgnore();
         $this->assertInstanceOf('Zend\Db\Sql\InsertIgnore', $insert);
         $this->assertSame('foo', $insertIgnore->getRawState('table'));
 
