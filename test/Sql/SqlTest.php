@@ -84,19 +84,21 @@ class SqlTest extends \PHPUnit_Framework_TestCase
             'This Sql object is intended to work with only the table "foo" provided at construction time.');
         $this->sql->insert('bar');
     }
+
     /**
      * @covers Zend\Db\Sql\Sql::insertIgnore
      */
     public function testInsertIgnore()
     {
         $insert = $this->sql->insertIgnore();
-        $this->assertInstanceOf('Zend\Db\Sql\InsertIgnore', $insert);
+        $this->assertInstanceOf('Zend\Db\Sql\InsertIgnore', $insertIgnore);
         $this->assertSame('foo', $insertIgnore->getRawState('table'));
 
         $this->setExpectedException('Zend\Db\Sql\Exception\InvalidArgumentException',
             'This Sql object is intended to work with only the table "foo" provided at construction time.');
         $this->sql->insertIgnore('bar');
-    } 
+    }
+
     /**
      * @covers Zend\Db\Sql\Sql::update
      */
