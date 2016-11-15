@@ -173,7 +173,7 @@ class InsertIgnoreTest extends \PHPUnit_Framework_TestCase
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
         $this->assertEquals('INSERT IGNORE INTO "foo" ("bar", "boo", "bam") VALUES (\'baz\', NOW(), NULL)', $this->insert->getSqlString(new TrustingSql92Platform()));
         // with TableIdentifier
-        $this->insert = new Insert;
+        $this->insert = new InsertIgnore;
         $this->insert->into(new TableIdentifier('foo', 'sch'))
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
         $this->assertEquals('INSERT IGNORE INTO "sch"."foo" ("bar", "boo", "bam") VALUES (\'baz\', NOW(), NULL)', $this->insert->getSqlString(new TrustingSql92Platform()));
