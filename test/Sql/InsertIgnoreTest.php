@@ -197,7 +197,7 @@ class InsertIgnoreTest extends \PHPUnit_Framework_TestCase
             ->columns(['col1', 'col2', 'col3'])
             ->values(['val1', 'val2', 'val3']);
         $this->assertEquals(
-            'INSERT IGNORE INTO "foo" ("col1", "col2", "col3") VALUES (\'val1\', \'val2\', \'val3\')',
+            'INSERT IGNORE INTO \'foo\' (\'col1\', \'col2\', \'col3\') VALUES (\'val1\', \'val2\', \'val3\')',
             $this->insert->getSqlString(new TrustingSql92Platform())
         );
     }
