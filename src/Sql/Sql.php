@@ -104,7 +104,6 @@ class Sql
         return new InsertIgnore(($table) ?: $this->table);
     }
 
-    
     public function update($table = null)
     {
         if ($this->table !== null && $table !== null) {
