@@ -178,7 +178,7 @@ class InsertIgnoreTest extends \PHPUnit_Framework_TestCase
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
         $this->assertEquals('INSERT IGNORE INTO "sch"."foo" ("bar", "boo", "bam") VALUES (\'baz\', NOW(), NULL)', $this->insert->getSqlString(new TrustingSql92Platform()));
         // with Select
-        $this->insert = new Insert;
+        $this->insert = new InsertIgnore;
         $select = new Select();
         $this->insert->into('foo')->select($select->from('bar'));
         $this->assertEquals('INSERT IGNORE INTO "foo"  SELECT "bar".* FROM "bar"', $this->insert->getSqlString(new TrustingSql92Platform()));
