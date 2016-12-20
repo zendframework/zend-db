@@ -12,6 +12,7 @@ namespace Zend\Db\TableGateway\Feature;
 use Zend\Db\Sql\Insert;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\Adapter\Driver\StatementInterface;
+use Zend\Db\Sql\TableIdentifier;
 
 class SequenceFeature extends AbstractFeature
 {
@@ -33,12 +34,40 @@ class SequenceFeature extends AbstractFeature
 
     /**
      * @param string $primaryKeyField
-     * @param string $sequenceName
+     * @param string|array|null $sequenceName
      */
-    public function __construct($primaryKeyField, $sequenceName)
+    public function __construct($primaryKeyField, $sequenceName = null)
     {
         $this->primaryKeyField = $primaryKeyField;
         $this->sequenceName    = $sequenceName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSequenceName() {
+        if ($this->sequenceName !== null) {
+            return $this->sequenceName;
+        }
+
+        $platform = $this->tableGateway->getAdapter()->getPlatform();
+        $table = $this->tableGateway->getTable();
+
+        $sequenceSuffix = '_' . $this->primaryKeyField . '_seq';
+
+        if(is_string($table)) {
+            $this->sequenceName = $table . $sequenceSuffix;
+        } elseif(is_array($table)) {
+            // assuming key 0 is schema name
+            $table[1] .= $sequenceSuffix;
+            $this->sequenceName = $table;
+        } elseif($table instanceof TableIdentifier) {
+            $this->sequenceName = $table->hasSchema() ? [$table->getSchema(), $table->getTable().$sequenceSuffix] : $table->getTable().$sequenceSuffix;
+        }
+
+        $this->sequenceName = $platform->quoteIdentifierChain($this->sequenceName);
+
+        return $this->sequenceName;
     }
 
     /**

@@ -10,13 +10,13 @@
 namespace ZendTest\Db\TableGateway\Feature;
 
 use PHPUnit_Framework_TestCase;
+use Zend\Db\Adapter\Platform\Postgresql;
+use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\TableGateway\Feature\SequenceFeature;
+use ZendTest\Db\TestAsset\TrustingPostgresqlPlatform;
 
 class SequenceFeatureTest extends PHPUnit_Framework_TestCase
 {
-    /** @var SequenceFeature */
-    protected $feature = null;
-
     /** @var \Zend\Db\TableGateway\TableGateway */
     protected $tableGateway = null;
 
@@ -26,15 +26,51 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
     /** @var string  sequence name */
     protected $sequenceName = 'table_sequence';
 
-    public function setup()
-    {
-        $this->feature = new SequenceFeature($this->primaryKeyField, $this->sequenceName);
-    }
-
     /**
      * @dataProvider nextSequenceIdProvider
      */
-    public function testNextSequenceId($platformName, $statementSql)
+    public function testNextSequenceIdForNamedSequence($platformName, $statementSql)
+    {
+        $feature = new SequenceFeature($this->primaryKeyField, $this->sequenceName);
+        $feature->setTableGateway($this->tableGateway);
+        $feature->nextSequenceId();
+    }
+
+    /**
+     * @dataProvider tableIdentifierProvider
+     */
+    public function testSequenceNameGenerated($tableIdentifier, $sequenceName)
+    {
+        $adapter = $this->getMock('Zend\Db\Adapter\Adapter', ['getPlatform', 'createStatement'], [], '', false);
+        $adapter->expects($this->any())
+            ->method('getPlatform')
+            ->will($this->returnValue(new TrustingPostgresqlPlatform()));
+
+        $this->tableGateway = $this->getMockForAbstractClass('Zend\Db\TableGateway\TableGateway', [$tableIdentifier, $adapter], '', true);
+
+        $sequence = new SequenceFeature('serial_column');
+        $sequence->setTableGateway($this->tableGateway);
+        $sequence->getSequenceName();
+    }
+
+    public function testSequenceNameQueriedWhenTooLong()
+    {
+
+    }
+
+    /**
+     * Sequences for SERIAL columns start with no name which eventually gets filled.
+     * Ensure null value is replaced with actual on first call
+     * so that repeated calls to getSequenceName() do not make extra database calls (for long name case)
+     *
+     * Also test do not try to generate when name is manually supplied in constructor.
+     */
+    public function testCacheSequenceName()
+    {
+
+    }
+
+    public function testNextSequenceIdForSerialColumn($platformName, $statementSql)
     {
         $platform = $this->getMockForAbstractClass('Zend\Db\Adapter\Platform\PlatformInterface', ['getName']);
         $platform->expects($this->any())
@@ -62,13 +98,24 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
             ->method('createStatement')
             ->will($this->returnValue($statement));
         $this->tableGateway = $this->getMockForAbstractClass('Zend\Db\TableGateway\TableGateway', ['table', $adapter], '', true);
-        $this->feature->setTableGateway($this->tableGateway);
-        $this->feature->nextSequenceId();
+
+        $feature = new SequenceFeature($this->primaryKeyField);
+        $feature->setTableGateway($this->tableGateway);
+        $feature->nextSequenceId();
     }
 
     public function nextSequenceIdProvider()
     {
         return [['PostgreSQL', 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')'],
             ['Oracle', 'SELECT ' . $this->sequenceName . '.NEXTVAL as "nextval" FROM dual']];
+    }
+
+    public function tableIdentifierProvider()
+    {
+        return [
+            ['table', 'table_serial_column_seq'],
+            [['schema', 'table'], '"schema"."table_serial_column_seq"'],
+            [new TableIdentifier('table', 'schema'), '"schema"."table_serial_column_seq"']
+        ];
     }
 }
