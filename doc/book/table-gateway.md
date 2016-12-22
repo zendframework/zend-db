@@ -293,11 +293,12 @@ There are a number of features built-in and shipped with zend-db:
   to run an extra metadata query on every `TableGateway` object construction. If that is the case,
   take note of what PostgreSQL created using
   ```sql
-    SELECT 'column_default' FROM information_schema.columns WHERE
-    table_schema = 'public'
-    AND table_name = 'artist'
-    AND column_name = 'id'
-    AND column_default LIKE 'nextval%';
+    SELECT 'column_default'
+    FROM information_schema.columns 
+    WHERE table_schema = 'public'
+      AND table_name = 'artist'
+      AND column_name = 'id'
+      AND column_default LIKE 'nextval%';
   ```
   
   take note of what `nextval` is reading from, and add it to `SequenceFeature` constructor.
