@@ -70,6 +70,9 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @dataProvider nextSequenceIdProvider
+     */
     public function testNextSequenceIdForSerialColumn($platformName, $statementSql)
     {
         $platform = $this->getMockForAbstractClass('Zend\Db\Adapter\Platform\PlatformInterface', ['getName']);
@@ -99,9 +102,15 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue($statement));
         $this->tableGateway = $this->getMockForAbstractClass('Zend\Db\TableGateway\TableGateway', ['table', $adapter], '', true);
 
-        $feature = new SequenceFeature($this->primaryKeyField);
+        $feature = new SequenceFeature($this->primaryKeyField, $this->sequenceName);
         $feature->setTableGateway($this->tableGateway);
         $feature->nextSequenceId();
+    }
+
+    public function testDoNotReactToDifferentColumnName() {
+        $sequence1 = new SequenceFeature('col_1', 'seq_1');
+        $this->assertEquals($sequence1->lastSequenceId('col_2'), null, 'Sequence should not react to foreign column name');
+        $this->assertEquals($sequence1->nextSequenceId('col_2'), null, 'Sequence should not react to foreign column name');
     }
 
     public function nextSequenceIdProvider()

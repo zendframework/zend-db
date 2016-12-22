@@ -215,3 +215,103 @@ There are a number of features built-in and shipped with zend-db:
     $artistRow->name = 'New Name';
     $artistRow->save();
     ```
+- `SequenceFeature`: the ability to integrate with Oracle, PostgreSQL, 
+  (TODO: and SqlServer 2016) sequence objects. Sequences are used for generating sequential integers.
+  These are usually used for automatically generating Primary Key IDs (similar to MySQL's
+  `AUTO_INCREMENT` but without performance penalties), or ensuring uniqueness of entity IDs
+  across multiple tables following some business rule (for example, unique invoice numbers across
+  multiple order systems).  Sequence objects are 
+  exclusively used for incrementing an integer and are not tied to table values. Therefore, they
+  need to be created manually prior to inserting data into tables requiring PKs and `UNIQUE` columns
+  using DDL 
+   ```sql
+     CREATE SEQUENCE album_id;
+    ``` 
+  
+  Sequence's `NEXTVAL` SQL construct can be used either as a default value for a column specified in
+  table's `CREATE` DDL, 
+  or ran manually at every `insert` operation to have next available integer captured and inserted 
+  in a table along with the rest of the values.
+  
+  Unless need to guarantee uniqueness across all tables, thus calling `sequence_name.nextval` on every `insert`
+  query across entire codebase, usually a separate sequence is created per table. Every `insert`
+  statement would have `album_id.nextval`, `artist_id.nextval` etc. as one of the values along with
+  the actual data.
+  
+  To be able to do these operations at the DB abstraction level, `TableGateway` needs to be informed 
+  what columns should be managed by what sequence.
+  
+  If developer chooses to manually create a sequence for each table's autoincremented column (in Oracle 
+  prior to *12c* this was the only way), then the name of sequence responsible for particular table
+  would known and can be applied to `TableGateway` right away.
+  
+  ```php
+    $table = new TableGateway('artist', $adapter, new Feature\SequenceFeature('id', 'artist_id_sequence'));
+  
+    $table->insert(['name'] => 'New Name';
+    $nextId = $table->nextSequenceId('id');
+    $lastInsertId = $table->lastSequenceId('id');
+  ```
+  
+  However, PostgreSQL (TODO: and Oracle since *12c*) allows automatic creation of sequences during `CREATE TABLE`
+  or `ALTER TABLE` operation by specifying column type `SERIAL`:
+  
+  ```sql
+    CREATE TABLE artist 
+    {
+      id SERIAL,
+      name CHARACTER VARYING (30)
+    };
+  ````
+  
+  Or using Zend's `Db\Sql\DDL`
+  
+  ```php
+    $table = new CreateTable('artist');
+    
+    $idColumn = new Serial('id');
+    $nameColumn = new Char('name');
+  
+    $table->addColumn($idColumn);
+    $table->addColumn($nameColumn);
+  ```
+  
+  In this case, sequence is created automatically. `TableGateway` still has to be aware of what column
+  is getting autoincrement treatment but without knowing exactly what the sequence name is, second parameter
+  should be left blank:
+  
+  ```php
+    $table = new TableGateway('artist' $adapter, new Feature\SequenceFeature('id');
+  ```
+  
+  With second parameter left null, `TableGateway` will generate sequence name based on same rule
+  PostgreSQL uses (*tablename_columnname_seq* but if the resultant name is determined to be greater than 
+  63 characters, an additional query will be made to database schema to find what PostgreSQL has created 
+  instead, since transaction rules are more complex.
+  
+  This is important to know if you have long table and column names, and do not want
+  to run an extra metadata query on every `TableGateway` object construction. If that is the case,
+  take note of what PostgreSQL created using
+  ```sql
+    SELECT 'column_default' FROM information_schema.columns WHERE
+    table_schema = 'public'
+    AND table_name = 'artist'
+    AND column_name = 'id'
+    AND column_default LIKE 'nextval%';
+  ```
+  
+  take note of what `nextval` is reading from, and add it to `SequenceFeature` constructor.
+  
+  There could be complex business rules needing multiple sequences in a table. `TableGateway` can have
+  multiple sequences added in an array:
+  
+  ```php
+    $table = new TableGateway('wholesales', $adapter, [
+      new Feature\Sequence('id', 'sale_id_sequence'),
+      new Feature\Sequence('invoice_id', 'invoice_id_sequence)'
+    ]);
+  ```
+  
+  Then calls to `$table->lastSequenceId('invoice_id')` will find the appropriate sequence instance to
+  get ID from.
+  

@@ -106,10 +106,16 @@ class SequenceFeature extends AbstractFeature
 
     /**
      * Generate a new value from the specified sequence in the database, and return it.
+     * @param $columnName string Column name which this sequence instance is expected to manage.
+     * If expectation does not match, ignore the call.
      * @return int
      */
-    public function nextSequenceId()
+    public function nextSequenceId($columnName = null)
     {
+        if ($columnName !== null && strcmp($columnName, $this->primaryKeyField) !== 0) {
+            return;
+        }
+
         $platform = $this->tableGateway->adapter->getPlatform();
         $platformName = $platform->getName();
 
@@ -134,11 +140,13 @@ class SequenceFeature extends AbstractFeature
 
     /**
      * Return the most recent value from the specified sequence in the database.
+     * @param $columnName string Column name which this sequence instance is expected to manage.
+     * If expectation does not match, ignore the call.
      * @return int
      */
-    public function lastSequenceId($sequenceName = null)
+    public function lastSequenceId($columnName = null)
     {
-        if ($sequenceName !== null && strcmp($sequenceName, $this->sequenceName) !== 0) {
+        if ($columnName !== null && strcmp($columnName, $this->primaryKeyField) !== 0) {
             return;
         }
 
