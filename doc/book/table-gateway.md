@@ -296,7 +296,7 @@ There are a number of features built-in and shipped with zend-db:
     pg_get_serial_sequence('artist', 'id');
   ```
   
-  take note of what `nextval` is reading from, and add it to `SequenceFeature` constructor.
+  and add it to `SequenceFeature` constructor.
   
   There could be complex business rules needing multiple sequences in a table. `TableGateway` can have
   multiple sequences added in an array:
