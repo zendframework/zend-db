@@ -81,7 +81,32 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
      */
     public function testCacheSequenceName()
     {
+        $adapter = $this->getMock('Zend\Db\Adapter\Adapter', ['getPlatform', 'createStatement'], [], '', false);
+        $adapter->expects($this->any())
+            ->method('getPlatform')
+            ->will($this->returnValue(new TrustingPostgresqlPlatform()));
+        $result = $this->getMockForAbstractClass('Zend\Db\Adapter\Driver\ResultInterface', [], '', false, true, true, ['current']);
+        $result->expects($this->once())
+            ->method('current')
+            ->will($this->returnValue(['pg_get_serial_sequence' => 'table_name_column_very_long_name_causing_postgresql_to_trun_seq']));
+        $statement = $this->getMockForAbstractClass('Zend\Db\Adapter\Driver\StatementInterface', [], '', false, true, true, ['prepare', 'execute']);
+        $statement->expects($this->once())
+            ->method('execute')
+            ->with(['table' => 'table_name', 'column' => 'column_very_long_name_causing_postgresql_to_truncate'])
+            ->will($this->returnValue($result));
+        $statement->expects($this->once())
+            ->method('prepare')
+            ->with('SELECT pg_get_serial_sequence(:table, :column)');
+        $adapter->expects($this->once())
+            ->method('createStatement')
+            ->will($this->returnValue($statement));
+        $this->tableGateway = $this->getMockForAbstractClass('Zend\Db\TableGateway\TableGateway', ['table_name', $adapter], '', true);
 
+        $sequence = new SequenceFeature('column_very_long_name_causing_postgresql_to_truncate');
+        $sequence->setTableGateway($this->tableGateway);
+
+        $this->assertEquals('table_name_column_very_long_name_causing_postgresql_to_trun_seq', $sequence->getSequenceName());
+        $this->assertEquals('table_name_column_very_long_name_causing_postgresql_to_trun_seq', $sequence->getSequenceName());
     }
 
     /**
