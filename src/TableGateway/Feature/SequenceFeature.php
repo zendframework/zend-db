@@ -1,8 +1,10 @@
 <?php
+
 /**
- * Zend Framework (http://framework.zend.com/)
+ * Zend Framework (http://framework.zend.com/).
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ *
  * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
@@ -32,9 +34,8 @@ class SequenceFeature extends AbstractFeature
      */
     protected $sequenceValue;
 
-
     /**
-     * @param string $sequencedColumn
+     * @param string            $sequencedColumn
      * @param string|array|null $sequenceName
      */
     public function __construct($sequencedColumn, $sequenceName = null)
@@ -46,7 +47,8 @@ class SequenceFeature extends AbstractFeature
     /**
      * @return string
      */
-    public function getSequenceName() {
+    public function getSequenceName()
+    {
         if ($this->sequenceName !== null) {
             return $this->sequenceName;
         }
@@ -60,31 +62,32 @@ class SequenceFeature extends AbstractFeature
         // (case for large resultant identifier names)
         $tableName = '';
 
-        $sequenceSuffix = '_' . $this->sequencedColumn . '_seq';
+        $sequenceSuffix = '_'.$this->sequencedColumn.'_seq';
         // To find whether exceed identifier length, need to keep track of combination of
         // table name ane suffix but not including schema name.
         // Since schema has to be appended in the end,
         $sequenceObjectName = '';
 
-        if(is_string($tableIdentifier)) {
+        if (is_string($tableIdentifier)) {
             $tableName = $tableIdentifier;
 
-            $sequenceObjectName = $this->sequenceName = $tableIdentifier . $sequenceSuffix;
-        } elseif(is_array($tableIdentifier)) {
+            $sequenceObjectName = $this->sequenceName = $tableIdentifier.$sequenceSuffix;
+        } elseif (is_array($tableIdentifier)) {
             // assuming key 0 is schema name
             $tableName = $tableIdentifier[1];
 
             $this->sequenceName = $tableIdentifier;
             $this->sequenceName[1] = $tableName.$sequenceSuffix;
             $sequenceObjectName = $this->sequenceName[1];
-        } elseif($tableIdentifier instanceof TableIdentifier) {
+        } elseif ($tableIdentifier instanceof TableIdentifier) {
             $tableName = $tableIdentifier->getTable();
             $sequenceObjectName = $tableName.$sequenceSuffix;
             $this->sequenceName = $tableIdentifier->hasSchema() ? [$tableIdentifier->getSchema(), $sequenceObjectName] : $sequenceObjectName;
         }
 
-        if(strlen($sequenceObjectName) < 64 ) {
+        if (strlen($sequenceObjectName) < 64) {
             $this->sequenceName = $platform->quoteIdentifierChain($this->sequenceName);
+
             return  $this->sequenceName;
         }
 
@@ -101,6 +104,7 @@ class SequenceFeature extends AbstractFeature
 
     /**
      * @param Insert $insert
+     *
      * @return Insert
      */
     public function preInsert(Insert $insert)
@@ -110,6 +114,7 @@ class SequenceFeature extends AbstractFeature
         $key = array_search($this->sequencedColumn, $columns);
         if ($key !== false) {
             $this->sequenceValue = $values[$key];
+
             return $insert;
         }
 
@@ -119,12 +124,13 @@ class SequenceFeature extends AbstractFeature
         }
 
         $insert->values([$this->sequencedColumn => $this->sequenceValue],  Insert::VALUES_MERGE);
+
         return $insert;
     }
 
     /**
      * @param StatementInterface $statement
-     * @param ResultInterface $result
+     * @param ResultInterface    $result
      */
     public function postInsert(StatementInterface $statement, ResultInterface $result)
     {
@@ -135,8 +141,10 @@ class SequenceFeature extends AbstractFeature
 
     /**
      * Generate a new value from the specified sequence in the database, and return it.
+     *
      * @param $columnName string Column name which this sequence instance is expected to manage.
      * If expectation does not match, ignore the call.
+     *
      * @return int
      */
     public function nextSequenceId($columnName = null)
@@ -152,7 +160,7 @@ class SequenceFeature extends AbstractFeature
 
         switch ($platformName) {
             case 'Oracle':
-                $sql = 'SELECT ' . $platform->quoteIdentifier($this->sequenceName) . '.NEXTVAL as "nextval" FROM dual';
+                $sql = 'SELECT '.$platform->quoteIdentifier($this->sequenceName).'.NEXTVAL as "nextval" FROM dual';
                 $param = [];
                 break;
             case 'PostgreSQL':
@@ -168,13 +176,16 @@ class SequenceFeature extends AbstractFeature
         $result = $statement->execute($param);
         $sequence = $result->current();
         unset($statement, $result);
+
         return $sequence['nextval'];
     }
 
     /**
      * Return the most recent value from the specified sequence in the database.
+     *
      * @param $columnName string Column name which this sequence instance is expected to manage.
      * If expectation does not match, ignore the call.
+     *
      * @return int
      */
     public function lastSequenceId($columnName = null)
@@ -190,7 +201,7 @@ class SequenceFeature extends AbstractFeature
 
         switch ($platformName) {
             case 'Oracle':
-                $sql = 'SELECT ' . $platform->quoteIdentifier($this->sequenceName) . '.CURRVAL as "currval" FROM dual';
+                $sql = 'SELECT '.$platform->quoteIdentifier($this->sequenceName).'.CURRVAL as "currval" FROM dual';
                 $param = [];
                 break;
             case 'PostgreSQL':
@@ -207,6 +218,7 @@ class SequenceFeature extends AbstractFeature
         $result = $statement->execute($param);
         $sequence = $result->current();
         unset($statement, $result);
+
         return $sequence['currval'];
     }
 }

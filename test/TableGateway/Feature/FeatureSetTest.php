@@ -1,8 +1,10 @@
 <?php
+
 /**
- * Zend Framework (http://framework.zend.com/)
+ * Zend Framework (http://framework.zend.com/).
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ *
  * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
@@ -50,7 +52,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         //feature doesn't have tableGateway, but FeatureSet has
         $feature = new MasterSlaveFeature($mockSlaveAdapter);
 
-        $featureSet = new FeatureSet;
+        $featureSet = new FeatureSet();
         $featureSet->setTableGateway($tableGatewayMock);
 
         $this->assertInstanceOf('Zend\Db\TableGateway\Feature\FeatureSet', $featureSet->addFeature($feature));
@@ -77,7 +79,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         $feature = new MetadataFeature($metadataMock);
         $feature->setTableGateway($tableGatewayMock);
 
-        $featureSet = new FeatureSet;
+        $featureSet = new FeatureSet();
         $this->assertInstanceOf('Zend\Db\TableGateway\Feature\FeatureSet', $featureSet->addFeature($feature));
     }
 
@@ -94,7 +96,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(
             get_class($featureMock),
             $featureSet->getFeatureByClassName(get_class($featureMock)),
-            "When only one feature of its type is added to FeatureSet, getFeatureByClassName() should return that single instance"
+            'When only one feature of its type is added to FeatureSet, getFeatureByClassName() should return that single instance'
         );
     }
 
@@ -112,7 +114,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
 
         $features = $featureSet->getFeatureByClassName(get_class($featureMock1));
 
-        $this->assertTrue(is_array($features), "When multiple features of same type are added, they all should be return in array");
+        $this->assertTrue(is_array($features), 'When multiple features of same type are added, they all should be return in array');
 
         $this->assertInstanceOf(get_class($featureMock1), $features[0]);
         $this->assertInstanceOf(get_class($featureMock2), $features[1]);
@@ -129,7 +131,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse(
             $featureSet->getFeatureByClassName(get_class($featureMock)),
-            "Requesting unregistered feature should return false"
+            'Requesting unregistered feature should return false'
         );
     }
 
@@ -139,12 +141,12 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
     public function testCanCallMagicCallReturnsTrueForAddedMethodOfAddedFeature()
     {
         $feature = new SequenceFeature('id', 'table_sequence');
-        $featureSet = new FeatureSet;
+        $featureSet = new FeatureSet();
         $featureSet->addFeature($feature);
 
         $this->assertTrue(
             $featureSet->canCallMagicCall('lastSequenceId'),
-            "Should have been able to call lastSequenceId from the Sequence Feature"
+            'Should have been able to call lastSequenceId from the Sequence Feature'
         );
     }
 
@@ -154,12 +156,12 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
     public function testCanCallMagicCallReturnsFalseForAddedMethodOfAddedFeature()
     {
         $feature = new SequenceFeature('id', 'table_sequence');
-        $featureSet = new FeatureSet;
+        $featureSet = new FeatureSet();
         $featureSet->addFeature($feature);
 
         $this->assertFalse(
             $featureSet->canCallMagicCall('postInitialize'),
-            "Should have been able to call postInitialize from the MetaData Feature"
+            'Should have been able to call postInitialize from the MetaData Feature'
         );
     }
 
@@ -168,7 +170,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanCallMagicCallReturnsFalseWhenNoFeaturesHaveBeenAdded()
     {
-        $featureSet = new FeatureSet;
+        $featureSet = new FeatureSet();
         $this->assertFalse(
             $featureSet->canCallMagicCall('lastSequenceId')
         );
@@ -179,7 +181,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testCallMagicCallSucceedsForValidMethodOfAddedFeature()
     {
-        $featureSet = new FeatureSet;
+        $featureSet = new FeatureSet();
         $featureSet->addFeature($this->getMockSequence('table_name', 'sequence_name', 1));
         $this->assertEquals(1, $featureSet->callMagicCall('lastSequenceId', null));
     }

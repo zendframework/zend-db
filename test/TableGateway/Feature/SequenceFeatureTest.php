@@ -1,8 +1,10 @@
 <?php
+
 /**
- * Zend Framework (http://framework.zend.com/)
+ * Zend Framework (http://framework.zend.com/).
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ *
  * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
@@ -75,7 +77,7 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
     /**
      * Sequences for SERIAL columns start with no name which eventually gets filled.
      * Ensure null value is replaced with actual on first call
-     * so that repeated calls to getSequenceName() do not make extra database calls (for long name case)
+     * so that repeated calls to getSequenceName() do not make extra database calls (for long name case).
      *
      * Also test do not try to generate when name is manually supplied in constructor.
      */
@@ -140,7 +142,6 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
         $feature->nextSequenceId();
     }
 
-
     /**
      * @dataProvider lastSequenceIdProvider
      */
@@ -172,7 +173,8 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
         $feature->lastSequenceId();
     }
 
-    public function testDoNotReactToDifferentColumnName() {
+    public function testDoNotReactToDifferentColumnName()
+    {
         $sequence1 = new SequenceFeature('col_1', 'seq_1');
         $this->assertEquals($sequence1->lastSequenceId('col_2'), null, 'Sequence should not react to foreign column name');
         $this->assertEquals($sequence1->nextSequenceId('col_2'), null, 'Sequence should not react to foreign column name');
@@ -182,7 +184,7 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
     {
         return [
             [new TrustingPostgresqlPlatform(), 'SELECT NEXTVAL( :sequence_name )', ['sequence_name' => $this->sequenceName]],
-            [new TrustingOraclePlatform(),     'SELECT "' . $this->sequenceName . '".NEXTVAL as "nextval" FROM dual', []]
+            [new TrustingOraclePlatform(),     'SELECT "'.$this->sequenceName.'".NEXTVAL as "nextval" FROM dual', []],
         ];
     }
 
@@ -190,7 +192,7 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
     {
         return [
             [new TrustingPostgresqlPlatform(), 'SELECT CURRVAL( :sequence_name )', ['sequence_name' => $this->sequenceName]],
-            [new TrustingOraclePlatform(),     'SELECT "' . $this->sequenceName . '".CURRVAL as "currval" FROM dual', []]
+            [new TrustingOraclePlatform(),     'SELECT "'.$this->sequenceName.'".CURRVAL as "currval" FROM dual', []],
         ];
     }
 
@@ -199,7 +201,7 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
         return [
             ['table', 'table_serial_column_seq'],
             [['schema', 'table'], '"schema"."table_serial_column_seq"'],
-            [new TableIdentifier('table', 'schema'), '"schema"."table_serial_column_seq"']
+            [new TableIdentifier('table', 'schema'), '"schema"."table_serial_column_seq"'],
         ];
     }
 }
