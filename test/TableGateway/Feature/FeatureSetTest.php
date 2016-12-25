@@ -12,12 +12,13 @@
 namespace ZendTest\Db\TableGateway\Feature;
 
 use ReflectionClass;
+use Zend\Db\Metadata\Object\ConstraintObject;
 use Zend\Db\TableGateway\Feature\AbstractFeature;
 use Zend\Db\TableGateway\Feature\FeatureSet;
 use Zend\Db\TableGateway\Feature\MasterSlaveFeature;
-use Zend\Db\TableGateway\Feature\SequenceFeature;
 use Zend\Db\TableGateway\Feature\MetadataFeature;
-use Zend\Db\Metadata\Object\ConstraintObject;
+use Zend\Db\TableGateway\Feature\SequenceFeature;
+use ZendTest\Db\TestAsset\TrustingPostgresqlPlatform;
 
 class FeatureSetTest extends \PHPUnit_Framework_TestCase
 {
@@ -221,17 +222,16 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->will($this->returnValue($resultMock));
 
-        $adapterMock = $this->getMockBuilder('Zend\Db\Adapter\Adapter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $adapterMock = $this->getMock('Zend\Db\Adapter\Adapter', ['getPlatform', 'createStatement'], [], '', false);
+        $adapterMock->expects($this->any())
+            ->method('getPlatform')
+            ->will($this->returnValue(new TrustingPostgresqlPlatform()));
         $adapterMock->expects($this->any())
             ->method('getPlatform')->will($this->returnValue($platformMock));
         $adapterMock->expects($this->any())
             ->method('createStatement')->will($this->returnValue($statementMock));
 
-        $tableGatewayMock = $this->getMockBuilder('Zend\Db\TableGateway\AbstractTableGateway')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $tableGatewayMock = $this->getMockForAbstractClass('Zend\Db\TableGateway\TableGateway', ['table', $adapterMock], '', true);
 
         $reflectionClass = new ReflectionClass('Zend\Db\TableGateway\AbstractTableGateway');
         $reflectionProperty = $reflectionClass->getProperty('adapter');
