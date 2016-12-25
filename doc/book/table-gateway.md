@@ -220,10 +220,10 @@ There are a number of features built-in and shipped with zend-db:
   These are usually used for automatically generating Primary Key IDs (similar to MySQL's
   `AUTO_INCREMENT` but without performance penalties), or ensuring uniqueness of entity IDs
   across multiple tables following some business rule (for example, unique invoice numbers across
-  multiple order systems).  Sequence objects are 
-  exclusively used for incrementing an integer and are not tied to table values. Therefore, they
-  need to be created manually prior to inserting data into tables requiring PKs and `UNIQUE` columns
-  using DDL 
+  multiple order systems).  Sequence objects are   exclusively used for incrementing an integer
+  by specified interval (1 by default) and are not tied to table values. Therefore,
+  they need to be created manually prior to inserting data into tables requiring PKs and `UNIQUE`
+  columns using DDL 
    ```sql
      CREATE SEQUENCE album_id;
     ``` 
