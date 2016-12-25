@@ -115,6 +115,38 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
         $feature->nextSequenceId();
     }
 
+
+    /**
+     * @dataProvider lastSequenceIdProvider
+     */
+    public function testLastSequenceIdByPlatform($platform, $statementSql, $statementParameter)
+    {
+        $adapter = $this->getMock('Zend\Db\Adapter\Adapter', ['getPlatform', 'createStatement'], [], '', false);
+        $adapter->expects($this->any())
+            ->method('getPlatform')
+            ->will($this->returnValue($platform));
+        $result = $this->getMockForAbstractClass('Zend\Db\Adapter\Driver\ResultInterface', [], '', false, true, true, ['current']);
+        $result->expects($this->any())
+            ->method('current')
+            ->will($this->returnValue(['currval' => 1]));
+        $statement = $this->getMockForAbstractClass('Zend\Db\Adapter\Driver\StatementInterface', [], '', false, true, true, ['prepare', 'execute']);
+        $statement->expects($this->any())
+            ->method('execute')
+            ->with($statementParameter)
+            ->will($this->returnValue($result));
+        $statement->expects($this->any())
+            ->method('prepare')
+            ->with($statementSql);
+        $adapter->expects($this->once())
+            ->method('createStatement')
+            ->will($this->returnValue($statement));
+        $this->tableGateway = $this->getMockForAbstractClass('Zend\Db\TableGateway\TableGateway', ['table', $adapter], '', true);
+
+        $feature = new SequenceFeature($this->primaryKeyField, $this->sequenceName);
+        $feature->setTableGateway($this->tableGateway);
+        $feature->lastSequenceId();
+    }
+
     public function testDoNotReactToDifferentColumnName() {
         $sequence1 = new SequenceFeature('col_1', 'seq_1');
         $this->assertEquals($sequence1->lastSequenceId('col_2'), null, 'Sequence should not react to foreign column name');
@@ -126,6 +158,14 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
         return [
             [new TrustingPostgresqlPlatform(), 'SELECT NEXTVAL( :sequence_name )', ['sequence_name' => $this->sequenceName]],
             [new TrustingOraclePlatform(),     'SELECT "' . $this->sequenceName . '".NEXTVAL as "nextval" FROM dual', []]
+        ];
+    }
+
+    public function lastSequenceIdProvider()
+    {
+        return [
+            [new TrustingPostgresqlPlatform(), 'SELECT CURRVAL( :sequence_name )', ['sequence_name' => $this->sequenceName]],
+            [new TrustingOraclePlatform(),     'SELECT "' . $this->sequenceName . '".CURRVAL as "currval" FROM dual', []]
         ];
     }
 
