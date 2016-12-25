@@ -49,14 +49,19 @@ class SequenceFeature extends AbstractFeature
      */
     public function getSequenceName()
     {
-        if ($this->sequenceName !== null) {
-            return $this->sequenceName;
-        }
-
         //@TODO move to PostgreSQL specific class (possibly decorator)
         /** @var Adapter $adapter */
         $adapter = $this->tableGateway->getAdapter();
         $platform = $adapter->getPlatform();
+
+        if ($this->sequenceName !== null) {
+            if (is_array($this->sequenceName)) {
+                $this->sequenceName = $platform->quoteIdentifierChain($this->sequenceName);
+            }
+
+            return $this->sequenceName;
+        }
+
         $tableIdentifier = $this->tableGateway->getTable();
         // need to preserve table name in case have to query postgres metadata
         // (case for large resultant identifier names)

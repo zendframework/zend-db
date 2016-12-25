@@ -29,20 +29,34 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
     protected $sequenceName = 'sequence_name';
 
     /**
-     * @dataProvider tableIdentifierProvider
+     * @dataProvider identifierProvider
      */
-    public function testSequenceNameGenerated($tableIdentifier, $sequenceName)
+    public function testSequenceNameGenerated($platform, $tableIdentifier, $sequenceName, $expectedSequenceName)
     {
         $adapter = $this->getMock('Zend\Db\Adapter\Adapter', ['getPlatform', 'createStatement'], [], '', false);
         $adapter->expects($this->any())
             ->method('getPlatform')
-            ->will($this->returnValue(new TrustingPostgresqlPlatform()));
+            ->will($this->returnValue($platform));
 
         $this->tableGateway = $this->getMockForAbstractClass('Zend\Db\TableGateway\TableGateway', [$tableIdentifier, $adapter], '', true);
 
-        $sequence = new SequenceFeature('serial_column');
+        $sequence = new SequenceFeature('serial_column', $sequenceName);
         $sequence->setTableGateway($this->tableGateway);
-        $sequence->getSequenceName();
+        $this->assertEquals($expectedSequenceName, $sequence->getSequenceName());
+    }
+
+    public function identifierProvider()
+    {
+        return [
+            [new TrustingPostgresqlPlatform(),
+                'table',                                null,                        '"table_serial_column_seq"', ],
+            [new TrustingPostgresqlPlatform(),
+                ['schema', 'table'],                    null,                        '"schema"."table_serial_column_seq"', ],
+            [new TrustingPostgresqlPlatform(),
+                new TableIdentifier('table', 'schema'), null,                        '"schema"."table_serial_column_seq"', ],
+            [new TrustingPostgresqlPlatform(),
+                new TableIdentifier('table', 'schema'), ['schema', 'sequence_name'], '"schema"."sequence_name"', ],
+        ];
     }
 
     public function testSequenceNameQueriedWhenTooLong()
@@ -142,6 +156,13 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
         $feature->nextSequenceId();
     }
 
+    public function nextSequenceIdProvider()
+    {
+        return [
+            [new TrustingPostgresqlPlatform(), 'SELECT NEXTVAL( :sequence_name )', ['sequence_name' => $this->sequenceName]],
+            [new TrustingOraclePlatform(),     'SELECT "'.$this->sequenceName.'".NEXTVAL as "nextval" FROM dual', []],
+        ];
+    }
     /**
      * @dataProvider lastSequenceIdProvider
      */
@@ -173,21 +194,6 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
         $feature->lastSequenceId();
     }
 
-    public function testDoNotReactToDifferentColumnName()
-    {
-        $sequence1 = new SequenceFeature('col_1', 'seq_1');
-        $this->assertEquals($sequence1->lastSequenceId('col_2'), null, 'Sequence should not react to foreign column name');
-        $this->assertEquals($sequence1->nextSequenceId('col_2'), null, 'Sequence should not react to foreign column name');
-    }
-
-    public function nextSequenceIdProvider()
-    {
-        return [
-            [new TrustingPostgresqlPlatform(), 'SELECT NEXTVAL( :sequence_name )', ['sequence_name' => $this->sequenceName]],
-            [new TrustingOraclePlatform(),     'SELECT "'.$this->sequenceName.'".NEXTVAL as "nextval" FROM dual', []],
-        ];
-    }
-
     public function lastSequenceIdProvider()
     {
         return [
@@ -196,12 +202,10 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function tableIdentifierProvider()
+    public function testDoNotReactToDifferentColumnName()
     {
-        return [
-            ['table', 'table_serial_column_seq'],
-            [['schema', 'table'], '"schema"."table_serial_column_seq"'],
-            [new TableIdentifier('table', 'schema'), '"schema"."table_serial_column_seq"'],
-        ];
+        $sequence1 = new SequenceFeature('col_1', 'seq_1');
+        $this->assertEquals($sequence1->lastSequenceId('col_2'), null, 'Sequence should not react to foreign column name');
+        $this->assertEquals($sequence1->nextSequenceId('col_2'), null, 'Sequence should not react to foreign column name');
     }
 }
