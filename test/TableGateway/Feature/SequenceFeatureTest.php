@@ -10,9 +10,9 @@
 namespace ZendTest\Db\TableGateway\Feature;
 
 use PHPUnit_Framework_TestCase;
-use Zend\Db\Adapter\Platform\Postgresql;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\TableGateway\Feature\SequenceFeature;
+use ZendTest\Db\TestAsset\TrustingOraclePlatform;
 use ZendTest\Db\TestAsset\TrustingPostgresqlPlatform;
 
 class SequenceFeatureTest extends PHPUnit_Framework_TestCase
@@ -24,17 +24,7 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
     protected $primaryKeyField = 'id';
 
     /** @var string  sequence name */
-    protected $sequenceName = 'table_sequence';
-
-    /**
-     * @dataProvider nextSequenceIdProvider
-     */
-    public function testNextSequenceIdForNamedSequence($platformName, $statementSql)
-    {
-        $feature = new SequenceFeature($this->primaryKeyField, $this->sequenceName);
-        $feature->setTableGateway($this->tableGateway);
-        $feature->nextSequenceId();
-    }
+    protected $sequenceName = 'sequence_name';
 
     /**
      * @dataProvider tableIdentifierProvider
@@ -55,7 +45,31 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
 
     public function testSequenceNameQueriedWhenTooLong()
     {
+        $adapter = $this->getMock('Zend\Db\Adapter\Adapter', ['getPlatform', 'createStatement'], [], '', false);
+        $adapter->expects($this->any())
+            ->method('getPlatform')
+            ->will($this->returnValue(new TrustingPostgresqlPlatform()));
+        $result = $this->getMockForAbstractClass('Zend\Db\Adapter\Driver\ResultInterface', [], '', false, true, true, ['current']);
+        $result->expects($this->any())
+            ->method('current')
+            ->will($this->returnValue(['pg_get_serial_sequence' => 'table_name_column_very_long_name_causing_postgresql_to_trun_seq']));
+        $statement = $this->getMockForAbstractClass('Zend\Db\Adapter\Driver\StatementInterface', [], '', false, true, true, ['prepare', 'execute']);
+        $statement->expects($this->any())
+            ->method('execute')
+            ->with(['table' => 'table_name', 'column' => 'column_very_long_name_causing_postgresql_to_truncate'])
+            ->will($this->returnValue($result));
+        $statement->expects($this->any())
+            ->method('prepare')
+            ->with('SELECT pg_get_serial_sequence(:table, :column)');
+        $adapter->expects($this->once())
+            ->method('createStatement')
+            ->will($this->returnValue($statement));
+        $this->tableGateway = $this->getMockForAbstractClass('Zend\Db\TableGateway\TableGateway', ['table_name', $adapter], '', true);
 
+        $sequence = new SequenceFeature('column_very_long_name_causing_postgresql_to_truncate');
+        $sequence->setTableGateway($this->tableGateway);
+
+        $this->assertEquals('table_name_column_very_long_name_causing_postgresql_to_trun_seq', $sequence->getSequenceName());
     }
 
     /**
@@ -73,15 +87,8 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider nextSequenceIdProvider
      */
-    public function testNextSequenceIdForSerialColumn($platformName, $statementSql)
+    public function testNextSequenceIdByPlatform($platform, $statementSql, $statementParameter)
     {
-        $platform = $this->getMockForAbstractClass('Zend\Db\Adapter\Platform\PlatformInterface', ['getName']);
-        $platform->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue($platformName));
-        $platform->expects($this->any())
-            ->method('quoteIdentifier')
-            ->will($this->returnValue($this->sequenceName));
         $adapter = $this->getMock('Zend\Db\Adapter\Adapter', ['getPlatform', 'createStatement'], [], '', false);
         $adapter->expects($this->any())
             ->method('getPlatform')
@@ -93,6 +100,7 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
         $statement = $this->getMockForAbstractClass('Zend\Db\Adapter\Driver\StatementInterface', [], '', false, true, true, ['prepare', 'execute']);
         $statement->expects($this->any())
             ->method('execute')
+            ->with($statementParameter)
             ->will($this->returnValue($result));
         $statement->expects($this->any())
             ->method('prepare')
@@ -115,8 +123,10 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
 
     public function nextSequenceIdProvider()
     {
-        return [['PostgreSQL', 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')'],
-            ['Oracle', 'SELECT ' . $this->sequenceName . '.NEXTVAL as "nextval" FROM dual']];
+        return [
+            [new TrustingPostgresqlPlatform(), 'SELECT NEXTVAL( :sequence_name )', ['sequence_name' => $this->sequenceName]],
+            [new TrustingOraclePlatform(),     'SELECT "' . $this->sequenceName . '".NEXTVAL as "nextval" FROM dual', []]
+        ];
     }
 
     public function tableIdentifierProvider()

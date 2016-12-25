@@ -180,7 +180,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
     public function testCallMagicCallSucceedsForValidMethodOfAddedFeature()
     {
         $featureSet = new FeatureSet;
-        $featureSet->addFeature($this->getMockSequence('table_sequence', 1));
+        $featureSet->addFeature($this->getMockSequence('table_name', 'sequence_name', 1));
         $this->assertEquals(1, $featureSet->callMagicCall('lastSequenceId', null));
     }
 
@@ -191,17 +191,17 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
     {
         $featureSet = new FeatureSet();
 
-        $featureSet->addFeature($this->getMockSequence('seq_1', 1));
-        $featureSet->addFeature($this->getMockSequence('seq_2', 2));
-        $featureSet->addFeature($this->getMockSequence('seq_3', 3));
+        $featureSet->addFeature($this->getMockSequence('col_1', 'seq_1', 1));
+        $featureSet->addFeature($this->getMockSequence('col_2', 'seq_2', 2));
+        $featureSet->addFeature($this->getMockSequence('col_3', 'seq_3', 3));
 
-        $result = $featureSet->callMagicCall('lastSequenceId', 'seq_2');
+        $result = $featureSet->callMagicCall('lastSequenceId', 'col_2');
 
         $this->assertEquals(2, $result);
     }
 
     // FeatureSet uses method_exists which does not work on mock objects. Therefore, need a real object.
-    private function getMockSequence($sequenceName, $expectedCurrVal)
+    private function getMockSequence($columnName, $sequenceName, $expectedCurrVal)
     {
         $platformMock = $this->getMock('Zend\Db\Adapter\Platform\Postgresql');
         $platformMock->expects($this->any())
@@ -214,8 +214,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
 
         $statementMock = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
         $statementMock->expects($this->any())
-            ->method('prepare')
-            ->with('SELECT CURRVAL(\'' . $sequenceName . '\')');
+            ->method('prepare');
         $statementMock->expects($this->any())
             ->method('execute')
             ->will($this->returnValue($resultMock));
@@ -237,7 +236,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($tableGatewayMock, $adapterMock);
 
-        $feature = new SequenceFeature('id', $sequenceName);
+        $feature = new SequenceFeature($columnName, $sequenceName);
         $feature->setTableGateway($tableGatewayMock);
 
         return $feature;

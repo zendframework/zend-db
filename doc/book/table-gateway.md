@@ -286,19 +286,14 @@ There are a number of features built-in and shipped with zend-db:
   
   With second parameter left null, `TableGateway` will generate sequence name based on same rule
   PostgreSQL uses (*tablename_columnname_seq* but if the resultant name is determined to be greater than 
-  63 characters, an additional query will be made to database schema to find what PostgreSQL has created 
+  63 bytes, an additional query will be made to database schema to find what PostgreSQL has created 
   instead, since transaction rules are more complex.
   
   This is important to know if you have long table and column names, and do not want
   to run an extra metadata query on every `TableGateway` object construction. If that is the case,
   take note of what PostgreSQL created using
   ```sql
-    SELECT 'column_default'
-    FROM information_schema.columns 
-    WHERE table_schema = 'public'
-      AND table_name = 'artist'
-      AND column_name = 'id'
-      AND column_default LIKE 'nextval%';
+    pg_get_serial_sequence('artist', 'id');
   ```
   
   take note of what `nextval` is reading from, and add it to `SequenceFeature` constructor.

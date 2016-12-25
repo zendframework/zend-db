@@ -9,6 +9,7 @@
 
 namespace Zend\Db\TableGateway\Feature;
 
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Insert;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\Adapter\Driver\StatementInterface;
@@ -50,22 +51,50 @@ class SequenceFeature extends AbstractFeature
             return $this->sequenceName;
         }
 
-        $platform = $this->tableGateway->getAdapter()->getPlatform();
-        $table = $this->tableGateway->getTable();
+        //@TODO move to PostgreSQL specific class (possibly decorator)
+        /** @var Adapter $adapter */
+        $adapter = $this->tableGateway->getAdapter();
+        $platform = $adapter->getPlatform();
+        $tableIdentifier = $this->tableGateway->getTable();
+        // need to preserve table name in case have to query postgres metadata
+        // (case for large resultant identifier names)
+        $tableName = '';
 
         $sequenceSuffix = '_' . $this->primaryKeyField . '_seq';
+        // To find whether exceed identifier length, need to keep track of combination of
+        // table name ane suffix but not including schema name.
+        // Since schema has to be appended in the end,
+        $sequenceObjectName = '';
 
-        if(is_string($table)) {
-            $this->sequenceName = $table . $sequenceSuffix;
-        } elseif(is_array($table)) {
+        if(is_string($tableIdentifier)) {
+            $tableName = $tableIdentifier;
+
+            $sequenceObjectName = $this->sequenceName = $tableIdentifier . $sequenceSuffix;
+        } elseif(is_array($tableIdentifier)) {
             // assuming key 0 is schema name
-            $table[1] .= $sequenceSuffix;
-            $this->sequenceName = $table;
-        } elseif($table instanceof TableIdentifier) {
-            $this->sequenceName = $table->hasSchema() ? [$table->getSchema(), $table->getTable().$sequenceSuffix] : $table->getTable().$sequenceSuffix;
+            $tableName = $tableIdentifier[1];
+
+            $this->sequenceName = $tableIdentifier;
+            $this->sequenceName[1] = $tableName.$sequenceSuffix;
+            $sequenceObjectName = $this->sequenceName[1];
+        } elseif($tableIdentifier instanceof TableIdentifier) {
+            $tableName = $tableIdentifier->getTable();
+            $sequenceObjectName = $tableName.$sequenceSuffix;
+            $this->sequenceName = $tableIdentifier->hasSchema() ? [$tableIdentifier->getSchema(), $sequenceObjectName] : $sequenceObjectName;
         }
 
-        $this->sequenceName = $platform->quoteIdentifierChain($this->sequenceName);
+        if(strlen($sequenceObjectName) < 64 ) {
+            $this->sequenceName = $platform->quoteIdentifierChain($this->sequenceName);
+            return  $this->sequenceName;
+        }
+
+        $statement = $adapter->createStatement();
+        $statement->prepare('SELECT pg_get_serial_sequence(:table, :column)');
+        $result = $statement->execute(['table' => $tableIdentifier, 'column' => $this->primaryKeyField]);
+        $this->sequenceName = $result->current()['pg_get_serial_sequence'];
+
+        // there could be a benefit porting this algorithm here instead of extra query call
+        // https://github.com/postgres/postgres/blob/f0e44751d7175fa3394da2c8f85e3ceb3cdbfe63/src/backend/commands/indexcmds.c#L1485
 
         return $this->sequenceName;
     }
@@ -116,23 +145,27 @@ class SequenceFeature extends AbstractFeature
             return;
         }
 
-        $platform = $this->tableGateway->adapter->getPlatform();
+        /** @var Adapter $adapter */
+        $adapter = $this->tableGateway->adapter;
+        $platform = $adapter->getPlatform();
         $platformName = $platform->getName();
 
         switch ($platformName) {
             case 'Oracle':
                 $sql = 'SELECT ' . $platform->quoteIdentifier($this->sequenceName) . '.NEXTVAL as "nextval" FROM dual';
+                $param = [];
                 break;
             case 'PostgreSQL':
-                $sql = 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')';
+                $sql = 'SELECT NEXTVAL( :sequence_name )';
+                $param = ['sequence_name' => $this->getSequenceName()];
                 break;
             default :
                 return;
         }
 
-        $statement = $this->tableGateway->adapter->createStatement();
+        $statement = $adapter->createStatement();
         $statement->prepare($sql);
-        $result = $statement->execute();
+        $result = $statement->execute($param);
         $sequence = $result->current();
         unset($statement, $result);
         return $sequence['nextval'];
@@ -150,23 +183,28 @@ class SequenceFeature extends AbstractFeature
             return;
         }
 
-        $platform = $this->tableGateway->adapter->getPlatform();
+        /** @var Adapter $adapter */
+        $adapter = $this->tableGateway->adapter;
+        $platform = $adapter->getPlatform();
         $platformName = $platform->getName();
 
         switch ($platformName) {
             case 'Oracle':
                 $sql = 'SELECT ' . $platform->quoteIdentifier($this->sequenceName) . '.CURRVAL as "currval" FROM dual';
+                $param = [];
                 break;
             case 'PostgreSQL':
-                $sql = 'SELECT CURRVAL(\'' . $this->sequenceName . '\')';
+                $sql = 'SELECT CURRVAL( :sequence_name )';
+                $param = ['sequence_name' => $this->getSequenceName()];
                 break;
+            //@TODO add SQLServer2016
             default :
                 return;
         }
 
-        $statement = $this->tableGateway->adapter->createStatement();
+        $statement = $adapter->createStatement();
         $statement->prepare($sql);
-        $result = $statement->execute();
+        $result = $statement->execute($param);
         $sequence = $result->current();
         unset($statement, $result);
         return $sequence['currval'];
