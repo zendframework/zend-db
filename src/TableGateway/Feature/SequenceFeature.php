@@ -20,7 +20,7 @@ class SequenceFeature extends AbstractFeature
     /**
      * @var string
      */
-    protected $primaryKeyField;
+    protected $sequencedColumn;
 
     /**
      * @var string
@@ -34,12 +34,12 @@ class SequenceFeature extends AbstractFeature
 
 
     /**
-     * @param string $primaryKeyField
+     * @param string $sequencedColumn
      * @param string|array|null $sequenceName
      */
-    public function __construct($primaryKeyField, $sequenceName = null)
+    public function __construct($sequencedColumn, $sequenceName = null)
     {
-        $this->primaryKeyField = $primaryKeyField;
+        $this->sequencedColumn = $sequencedColumn;
         $this->sequenceName    = $sequenceName;
     }
 
@@ -60,7 +60,7 @@ class SequenceFeature extends AbstractFeature
         // (case for large resultant identifier names)
         $tableName = '';
 
-        $sequenceSuffix = '_' . $this->primaryKeyField . '_seq';
+        $sequenceSuffix = '_' . $this->sequencedColumn . '_seq';
         // To find whether exceed identifier length, need to keep track of combination of
         // table name ane suffix but not including schema name.
         // Since schema has to be appended in the end,
@@ -90,7 +90,7 @@ class SequenceFeature extends AbstractFeature
 
         $statement = $adapter->createStatement();
         $statement->prepare('SELECT pg_get_serial_sequence(:table, :column)');
-        $result = $statement->execute(['table' => $tableIdentifier, 'column' => $this->primaryKeyField]);
+        $result = $statement->execute(['table' => $tableIdentifier, 'column' => $this->sequencedColumn]);
         $this->sequenceName = $result->current()['pg_get_serial_sequence'];
 
         // there could be a benefit porting this algorithm here instead of extra query call
@@ -107,7 +107,7 @@ class SequenceFeature extends AbstractFeature
     {
         $columns = $insert->getRawState('columns');
         $values = $insert->getRawState('values');
-        $key = array_search($this->primaryKeyField, $columns);
+        $key = array_search($this->sequencedColumn, $columns);
         if ($key !== false) {
             $this->sequenceValue = $values[$key];
             return $insert;
@@ -118,7 +118,7 @@ class SequenceFeature extends AbstractFeature
             return $insert;
         }
 
-        $insert->values([$this->primaryKeyField => $this->sequenceValue],  Insert::VALUES_MERGE);
+        $insert->values([$this->sequencedColumn => $this->sequenceValue],  Insert::VALUES_MERGE);
         return $insert;
     }
 
@@ -141,7 +141,7 @@ class SequenceFeature extends AbstractFeature
      */
     public function nextSequenceId($columnName = null)
     {
-        if ($columnName !== null && strcmp($columnName, $this->primaryKeyField) !== 0) {
+        if ($columnName !== null && strcmp($columnName, $this->sequencedColumn) !== 0) {
             return;
         }
 
@@ -179,7 +179,7 @@ class SequenceFeature extends AbstractFeature
      */
     public function lastSequenceId($columnName = null)
     {
-        if ($columnName !== null && strcmp($columnName, $this->primaryKeyField) !== 0) {
+        if ($columnName !== null && strcmp($columnName, $this->sequencedColumn) !== 0) {
             return;
         }
 
