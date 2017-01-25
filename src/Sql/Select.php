@@ -255,7 +255,7 @@ class Select extends AbstractPreparableSql
      * Create join clause
      *
      * @param  string|array $name
-     * @param  string $on
+     * @param  string|ExpressionInterface $on
      * @param  string|array $columns
      * @param  string $type one of the JOIN_* constants
      * @throws Exception\InvalidArgumentException
