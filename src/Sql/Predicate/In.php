@@ -16,7 +16,7 @@ use Zend\Db\Sql\AbstractExpression;
 class In extends AbstractExpression implements PredicateInterface
 {
     protected $identifier;
-    protected $valueSet = [];
+    protected $valueSet;
 
     protected $specification = '%s IN %s';
 
@@ -33,7 +33,7 @@ class In extends AbstractExpression implements PredicateInterface
         if ($identifier) {
             $this->setIdentifier($identifier);
         }
-        if ($valueSet) {
+        if ($valueSet !== null) {
             $this->setValueSet($valueSet);
         }
     }
