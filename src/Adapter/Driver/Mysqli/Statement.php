@@ -293,6 +293,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
                         break;
                     case ParameterContainer::TYPE_NULL:
                         $value = null; // as per @see http://www.php.net/manual/en/mysqli-stmt.bind-param.php#96148
+                        break;
                     case ParameterContainer::TYPE_INTEGER:
                         $type .= 'i';
                         break;
