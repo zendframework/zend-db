@@ -20,7 +20,6 @@ use Zend\Db\Adapter\Driver\Pdo\Result;
  */
 class ResultTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * Tests current method returns same data on consecutive calls.
      *

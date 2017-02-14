@@ -9,6 +9,7 @@
 
 namespace Zend\Db\Sql;
 
+use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\Driver\DriverInterface;
@@ -72,12 +73,18 @@ class Update extends AbstractPreparableSql
      * Constructor
      *
      * @param  null|string|TableIdentifier $table
+     * @param  null|AdapterInterface $adapter
      */
-    public function __construct($table = null)
+    public function __construct($table = null, AdapterInterface $adapter = null)
     {
         if ($table) {
             $this->table($table);
         }
+
+        if ($adapter) {
+            $this->adapter = $adapter;
+        }
+
         $this->where = new Where();
         $this->joins = new Join();
         $this->set = new PriorityList();

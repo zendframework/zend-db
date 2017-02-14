@@ -9,9 +9,11 @@
 
 namespace ZendTest\Db\Sql;
 
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\TableIdentifier;
 use ZendTest\Db\TestAsset\TrustingSql92Platform;
 
@@ -368,6 +370,30 @@ class InsertTest extends \PHPUnit_Framework_TestCase
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
 
         $this->assertEquals('REPLACE INTO "sch"."foo" ("bar", "boo", "bam") VALUES (\'baz\', NOW(), NULL)', $replace->getSqlString(new TrustingSql92Platform()));
+    }
+
+    public function testPropagateAdapterWithGetSqlStringThatAlreadyBroughtBySqlObject()
+    {
+        if (extension_loaded('mysqli')) {
+            try {
+                $adapter = new Adapter([
+                    'driver'   => 'mysqli',
+                    'database' => 'testdb',
+                    'username' => 'test',
+                    'password' => 'secret'
+                ]);
+
+                $sql = new Sql($adapter);
+                $insert = $sql->insert('foo');
+                $insert->values(['x' => 'xvalue']);
+
+                $this->assertEquals('INSERT INTO `foo` (`x`) VALUES (\'xvalue\')', $insert->getSqlString());
+            } catch (\Exception $e) {
+                $this->markTestSkipped(
+                    'insert->values() bring connection which can\'t be connected.'
+                );
+            }
+        }
     }
 }
 

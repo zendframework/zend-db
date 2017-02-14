@@ -9,10 +9,12 @@
 
 namespace ZendTest\Db\Sql;
 
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Join;
 use Zend\Db\Sql\Update;
 use Zend\Db\Sql\Where;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\TableIdentifier;
 use ZendTest\Db\TestAsset\TrustingSql92Platform;
 
@@ -363,6 +365,24 @@ class UpdateTest extends \PHPUnit_Framework_TestCase
     {
         $return = $this->update->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_LEFT);
         $this->assertSame($this->update, $return);
+    }
+
+    public function testPropagateAdapterWithGetSqlStringThatAlreadyBroughtBySqlObject()
+    {
+        if (extension_loaded('mysqli')) {
+            $adapter = new Adapter([
+                'driver'   => 'mysqli',
+                'database' => 'testdb',
+                'username' => 'test',
+                'password' => 'secret'
+            ]);
+
+            $sql = new Sql($adapter);
+            $update = $sql->update('foo');
+            $update->where('x = y');
+
+            $this->assertEquals('UPDATE `foo` SET  WHERE x = y', $update->getSqlString());
+        }
     }
 }
 
