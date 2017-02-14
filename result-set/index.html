@@ -207,7 +207,7 @@ assume an instance of a <code>ResultSetInterface</code> should be returned. In m
 the prototype pattern will be used by consuming object to clone a prototype of
 a <code>ResultSet</code> and return a specialized <code>ResultSet</code> with a specific data source
 injected. <code>ResultSetInterface</code> is defined as follows:</p>
-<pre class="codehilite"><code class="language-php">use Countable;
+<pre class="codehilite"><code class="language-php linenums">use Countable;
 use Traversable;
 
 interface ResultSetInterface extends Traversable, Countable
@@ -215,7 +215,6 @@ interface ResultSetInterface extends Traversable, Countable
     public function initialize(mixed $dataSource) : void;
     public function getFieldCount() : int;
 }</code></pre>
-
 
 <h2 id="quick-start">Quick start</h2>
 <p><code>Zend\Db\ResultSet\ResultSet</code> is the most basic form of a <code>ResultSet</code> object
@@ -225,7 +224,7 @@ row data. By default, <code>Zend\Db\Adapter\Adapter</code> will use a prototypic
 <code>Zend\Db\Adapter\Adapter::query()</code> method.</p>
 <p>The following is an example workflow similar to what one might find inside
 <code>Zend\Db\Adapter\Adapter::query()</code>:</p>
-<pre class="codehilite"><code class="language-php">use Zend\Db\Adapter\Driver\ResultInterface;
+<pre class="codehilite"><code class="language-php linenums">use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\ResultSet;
 
 $statement = $driver-&gt;createStatement('SELECT * FROM users');
@@ -241,13 +240,12 @@ if ($result instanceof ResultInterface &amp;&amp; $result-&gt;isQueryResult()) {
     }
 }</code></pre>
 
-
 <h2 id="zend92db92resultset92resultset-and-zend92db92resultset92abstractresultset">Zend\Db\ResultSet\ResultSet and Zend\Db\ResultSet\AbstractResultSet</h2>
 <p>For most purposes, either an instance of <code>Zend\Db\ResultSet\ResultSet</code> or a
 derivative of <code>Zend\Db\ResultSet\AbstractResultSet</code> will be used. The
 implementation of the <code>AbstractResultSet</code> offers the following core
 functionality:</p>
-<pre class="codehilite"><code class="language-php">namespace Zend\Db\ResultSet;
+<pre class="codehilite"><code class="language-php linenums">namespace Zend\Db\ResultSet;
 
 use Iterator;
 
@@ -271,7 +269,6 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
     public function toArray() : array;
 }</code></pre>
 
-
 <h2 id="zend92db92resultset92hydratingresultset">Zend\Db\ResultSet\HydratingResultSet</h2>
 <p><code>Zend\Db\ResultSet\HydratingResultSet</code> is a more flexible <code>ResultSet</code> object
 that allows the developer to choose an appropriate "hydration strategy" for
@@ -282,14 +279,13 @@ row data.</p>
 <p>The <code>HydratingResultSet</code> depends on
 <a href="https://zendframework.github.io/zend-hydrator">zend-hydrator</a>, which you will
 need to install:</p>
-<pre class="codehilite"><code class="language-bash">$ composer require zendframework/zend-hydrator</code></pre>
-
+<pre class="codehilite"><code class="language-bash linenums">$ composer require zendframework/zend-hydrator</code></pre>
 
 <p>In the example below, rows from the database will be iterated, and during
 iteration, <code>HydratingResultSet</code> will use the <code>Reflection</code> based hydrator to
 inject the row data directly into the protected members of the cloned
 <code>UserEntity</code> object:</p>
-<pre class="codehilite"><code class="language-php">use Zend\Db\Adapter\Driver\ResultInterface;
+<pre class="codehilite"><code class="language-php linenums">use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Hydrator\Reflection as ReflectionHydrator;
 
@@ -331,7 +327,6 @@ if ($result instanceof ResultInterface &amp;&amp; $result-&gt;isQueryResult()) {
         echo $user-&gt;getFirstName() . ' ' . $user-&gt;getLastName() . PHP_EOL;
     }
 }</code></pre>
-
 
 <p>For more information, see the <a href="https://zendframework.github.io/zend-hydrator/">zend-hydrator</a>
 documentation to get a better sense of the different strategies that can be
