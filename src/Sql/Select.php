@@ -254,7 +254,7 @@ class Select extends AbstractPreparableSql
     /**
      * Create join clause
      *
-     * @param  string|array $name
+     * @param  string|array|TableIdentifier $name
      * @param  string $on
      * @param  string|array $columns
      * @param  string $type one of the JOIN_* constants
@@ -651,7 +651,7 @@ class Select extends AbstractPreparableSql
                     $v = self::ORDER_ASCENDING;
                 }
             }
-            if (strtoupper($v) == self::ORDER_DESCENDING) {
+            if (strcasecmp(trim($v), self::ORDER_DESCENDING) === 0) {
                 $orders[] = [$platform->quoteIdentifierInFragment($k), self::ORDER_DESCENDING];
             } else {
                 $orders[] = [$platform->quoteIdentifierInFragment($k), self::ORDER_ASCENDING];
