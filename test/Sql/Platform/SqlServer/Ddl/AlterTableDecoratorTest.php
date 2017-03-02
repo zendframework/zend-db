@@ -38,5 +38,13 @@ class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase
                 ' ADD [id] INTEGER NOT NULL PRIMARY KEY',
             $ctd->setSubject($ct)->getSqlString($platform)
         );
+
+        $ct = new AlterTable('constrained');
+        $ct->addConstraint(new PrimaryKey(['u_id', 'g_id'], 'UserGroup_PK'));
+        $this->assertEquals(
+            "ALTER TABLE [constrained]\n".
+                '    ADD CONSTRAINT [UserGroup_PK] PRIMARY KEY ([u_id], [g_id])',
+            $ctd->setSubject($ct)->getSqlString($platform)
+        );
     }
 }
