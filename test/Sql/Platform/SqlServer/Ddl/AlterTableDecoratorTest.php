@@ -13,7 +13,8 @@ namespace ZendTest\Db\Sql\Platform\SqlServer\Ddl;
 
 use Zend\Db\Sql\Ddl\AlterTable;
 use Zend\Db\Sql\Ddl\Column\Column;
-use Zend\Db\Sql\Platform\SqlServer\Ddl\AlterTableDecorator;
+use Zend\Db\Sql\Ddl\Constraint\PrimaryKey;
+use Zend\Db\Sql\Platform\Sqlserver\Ddl\AlterTableDecorator;
 use ZendTest\Db\TestAsset\TrustingSqlServerPlatform;
 
 class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase
@@ -28,10 +29,13 @@ class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase
         $ctd = new AlterTableDecorator();
 
         $ct = new AlterTable('altered');
-        $ct->addColumn(new Column('addedColumn'));
+
+        $id = new Column('id');
+        $id->addConstraint(new PrimaryKey());
+        $ct->addColumn($id);
         $this->assertEquals(
             "ALTER TABLE [altered]\n".
-                ' ADD [addedColumn] INTEGER NOT NULL',
+                ' ADD [id] INTEGER NOT NULL PRIMARY KEY',
             $ctd->setSubject($ct)->getSqlString($platform)
         );
     }
