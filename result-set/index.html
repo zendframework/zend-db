@@ -203,7 +203,7 @@ can be anything that is iterable, generally these will be populated from
 <code>Zend\Db\Adapter\Driver\ResultInterface</code> instances.</p>
 <p>Result sets must implement the <code>Zend\Db\ResultSet\ResultSetInterface</code>, and all
 sub-components of zend-db that return a result set as part of their API will
-assume an instance of a <code>ResultSetInterface</code> should be returned. In most casts,
+assume an instance of a <code>ResultSetInterface</code> should be returned. In most cases,
 the prototype pattern will be used by consuming object to clone a prototype of
 a <code>ResultSet</code> and return a specialized <code>ResultSet</code> with a specific data source
 injected. <code>ResultSetInterface</code> is defined as follows:</p>
