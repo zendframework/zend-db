@@ -1,12 +1,13 @@
 <?php
+
 /**
- * Zend Framework (http://framework.zend.com/)
+ * Zend Framework (http://framework.zend.com/).
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ *
  * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
-
 namespace Zend\Db\Adapter\Driver\Mysqli;
 
 use Zend\Db\Adapter\Driver\AbstractConnection;
@@ -25,9 +26,10 @@ class Connection extends AbstractConnection
     protected $resource = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param  array|mysqli|null $connectionInfo
+     * @param array|mysqli|null $connectionInfo
+     *
      * @throws \Zend\Db\Adapter\Exception\InvalidArgumentException
      */
     public function __construct($connectionInfo = null)
@@ -42,7 +44,8 @@ class Connection extends AbstractConnection
     }
 
     /**
-     * @param  Mysqli $driver
+     * @param Mysqli $driver
+     *
      * @return self
      */
     public function setDriver(Mysqli $driver)
@@ -68,9 +71,10 @@ class Connection extends AbstractConnection
     }
 
     /**
-     * Set resource
+     * Set resource.
      *
-     * @param  \mysqli $resource
+     * @param \mysqli $resource
+     *
      * @return self
      */
     public function setResource(\mysqli $resource)
@@ -145,11 +149,9 @@ class Connection extends AbstractConnection
             }
         }
 
-
         try {
             $this->resource->real_connect($hostname, $username, $password, $database, $port, $socket, $flags);
         } catch (\Exception $e) {
-
             throw new Exception\RuntimeException(
                 'Connection error',
                 null,
