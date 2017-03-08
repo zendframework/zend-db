@@ -10,6 +10,7 @@
  */
 namespace Zend\Db\Adapter\Driver\Mysqli;
 
+use Exception as GenericException;
 use Zend\Db\Adapter\Driver\AbstractConnection;
 use Zend\Db\Adapter\Exception;
 
@@ -151,7 +152,15 @@ class Connection extends AbstractConnection
 
         try {
             $this->resource->real_connect($hostname, $username, $password, $database, $port, $socket, $flags);
-        } catch (\Exception $e) {
+        } catch (GenericException $e) {
+            throw new Exception\RuntimeException(
+                'Connection error',
+                null,
+                new Exception\ErrorException($this->resource->connect_error, $this->resource->connect_errno)
+            );
+        }
+
+        if ($this->resource->connect_error) {
             throw new Exception\RuntimeException(
                 'Connection error',
                 null,
