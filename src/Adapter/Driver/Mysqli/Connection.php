@@ -1,13 +1,12 @@
 <?php
-
 /**
- * Zend Framework (http://framework.zend.com/).
+ * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- *
  * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
+
 namespace Zend\Db\Adapter\Driver\Mysqli;
 
 use Exception as GenericException;
@@ -27,7 +26,7 @@ class Connection extends AbstractConnection
     protected $resource = null;
 
     /**
-     * Constructor.
+     * Constructor
      *
      * @param array|mysqli|null $connectionInfo
      *
@@ -45,9 +44,8 @@ class Connection extends AbstractConnection
     }
 
     /**
-     * @param Mysqli $driver
-     *
-     * @return self
+     * @param  Mysqli $driver
+     * @return self Provides a fluent interface
      */
     public function setDriver(Mysqli $driver)
     {
@@ -72,11 +70,10 @@ class Connection extends AbstractConnection
     }
 
     /**
-     * Set resource.
+     * Set resource
      *
-     * @param \mysqli $resource
-     *
-     * @return self
+     * @param  \mysqli $resource
+     * @return self Provides a fluent interface
      */
     public function setResource(\mysqli $resource)
     {
