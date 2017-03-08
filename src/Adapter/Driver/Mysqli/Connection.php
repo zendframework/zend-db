@@ -108,8 +108,8 @@ class Connection extends AbstractConnection
         $username = $findParameterValue(['username', 'user']);
         $password = $findParameterValue(['password', 'passwd', 'pw']);
         $database = $findParameterValue(['database', 'dbname', 'db', 'schema']);
-        $port     = (isset($p['port'])) ? (int) $p['port'] : null;
-        $socket   = (isset($p['socket'])) ? $p['socket'] : null;
+        $port = (isset($p['port'])) ? (int)$p['port'] : null;
+        $socket = (isset($p['socket'])) ? $p['socket'] : null;
 
         $useSSL = (isset($p['use_ssl'])) ? $p['use_ssl'] : 0;
         $clientKey = (isset($p['client_key'])) ? $p['client_key'] : null;
@@ -146,14 +146,12 @@ class Connection extends AbstractConnection
             }
         }
 
-        @$this->resource->real_connect($hostname, $username, $password, $database, $port, $socket, $flags);
-
-        if ($this->resource->connect_error) {
+        try {
+            $this->resource->real_connect($hostname, $username, $password, $database, $port, $socket, $flags);
+        } catch (\Exception $e) {
             throw new Exception\RuntimeException(
-                'Connection error',
-                null,
-                new Exception\ErrorException($this->resource->connect_error, $this->resource->connect_errno)
-            );
+                'Connection error :' . $this->resource->connect_errno . ' - ' . $this->resource->connect_error);
+
         }
 
         if (!empty($p['charset'])) {
@@ -161,6 +159,7 @@ class Connection extends AbstractConnection
         }
 
         return $this;
+
     }
 
     /**
@@ -251,7 +250,7 @@ class Connection extends AbstractConnection
         $resultResource = $this->resource->query($sql);
 
         if ($this->profiler) {
-            $this->profiler->profilerFinish($sql);
+            $this->profiler->profilerFinish();
         }
 
         // if the returnValue is something other than a mysqli_result, bypass wrapping it
