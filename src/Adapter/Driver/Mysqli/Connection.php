@@ -27,7 +27,7 @@ class Connection extends AbstractConnection
     /**
      * Constructor
      *
-     * @param  array|mysqli|null                                   $connectionInfo
+     * @param  array|mysqli|null $connectionInfo
      * @throws \Zend\Db\Adapter\Exception\InvalidArgumentException
      */
     public function __construct($connectionInfo = null)
@@ -61,7 +61,6 @@ class Connection extends AbstractConnection
             $this->connect();
         }
 
-        /** @var $result \mysqli_result */
         $result = $this->resource->query('SELECT DATABASE()');
         $r = $result->fetch_row();
 
@@ -108,8 +107,8 @@ class Connection extends AbstractConnection
         $username = $findParameterValue(['username', 'user']);
         $password = $findParameterValue(['password', 'passwd', 'pw']);
         $database = $findParameterValue(['database', 'dbname', 'db', 'schema']);
-        $port = (isset($p['port'])) ? (int)$p['port'] : null;
-        $socket = (isset($p['socket'])) ? $p['socket'] : null;
+        $port     = (isset($p['port'])) ? (int) $p['port'] : null;
+        $socket   = (isset($p['socket'])) ? $p['socket'] : null;
 
         $useSSL = (isset($p['use_ssl'])) ? $p['use_ssl'] : 0;
         $clientKey = (isset($p['client_key'])) ? $p['client_key'] : null;
@@ -146,6 +145,7 @@ class Connection extends AbstractConnection
             }
         }
 
+
         try {
             $this->resource->real_connect($hostname, $username, $password, $database, $port, $socket, $flags);
         } catch (\Exception $e) {
@@ -162,7 +162,6 @@ class Connection extends AbstractConnection
         }
 
         return $this;
-
     }
 
     /**
@@ -253,7 +252,7 @@ class Connection extends AbstractConnection
         $resultResource = $this->resource->query($sql);
 
         if ($this->profiler) {
-            $this->profiler->profilerFinish();
+            $this->profiler->profilerFinish($sql);
         }
 
         // if the returnValue is something other than a mysqli_result, bypass wrapping it
