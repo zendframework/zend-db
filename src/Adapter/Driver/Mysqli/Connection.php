@@ -149,9 +149,12 @@ class Connection extends AbstractConnection
         try {
             $this->resource->real_connect($hostname, $username, $password, $database, $port, $socket, $flags);
         } catch (\Exception $e) {
-            throw new Exception\RuntimeException(
-                'Connection error :' . $this->resource->connect_errno . ' - ' . $this->resource->connect_error);
 
+            throw new Exception\RuntimeException(
+                'Connection error',
+                null,
+                new Exception\ErrorException($this->resource->connect_error, $this->resource->connect_errno)
+            );
         }
 
         if (!empty($p['charset'])) {
