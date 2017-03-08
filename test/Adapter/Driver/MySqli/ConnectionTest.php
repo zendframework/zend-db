@@ -69,4 +69,19 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $this->connection->connect();
     }
+
+    public function testConnectionOk()
+    {
+        $params = [
+            'hostname' => getenv("TESTS_ZEND_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME"),
+            'username' => getenv("TESTS_ZEND_DB_ADAPTER_DRIVER_MYSQL_USERNAME"),
+            'password' => getenv("TESTS_ZEND_DB_ADAPTER_DRIVER_MYSQL_PASSWORD"),
+            'database' => getenv("TESTS_ZEND_DB_ADAPTER_DRIVER_MYSQL_DATABASE"),
+        ];
+
+        $connection = new Connection($params);
+        $connection->connect();
+
+        $this->assertTrue($connection->isConnected());
+    }
 }
