@@ -15,6 +15,7 @@ use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Ddl\AlterTable;
+use Zend\Db\Sql\Ddl\Column\Column;
 use Zend\Db\Sql\Ddl\Column\Varbinary;
 use Zend\Db\Sql\Exception\InvalidArgumentException;
 use Zend\Db\Sql\ExpressionInterface;
@@ -30,37 +31,36 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     protected $alterSpecifications = [
         self::ADD_COLUMNS  => [
             "%1\$s" => [
-                [2 => "ALTER TABLE %1\$s\n ADD %2\$s;", 'combinedby' => "\n"]
-            ]
+                [2 => "ALTER TABLE %1\$s\n ADD %2\$s;", 'combinedby' => "\n"],
+            ],
         ],
         self::CHANGE_COLUMNS  => [
             "%1\$s" => [
-                [2 => "CHANGE COLUMN %1\$s %2\$s,\n", 'combinedby' => ""],
-            ]
+                [2 => "CHANGE COLUMN %1\$s %2\$s,\n", 'combinedby' => ''],
+            ],
         ],
         self::DROP_COLUMNS  => [
             "%1\$s" => [
-                [1 => "DROP COLUMN %1\$s,\n", 'combinedby' => ""],
-            ]
+                [1 => "DROP COLUMN %1\$s,\n", 'combinedby' => ''],
+            ],
         ],
         self::ADD_CONSTRAINTS  => [
             "%1\$s" => [
                 [2 => "ALTER TABLE %1\$s\n ADD %2\$s;", 'combinedby' => "\n"],
-            ]
+            ],
         ],
         self::DROP_CONSTRAINTS  => [
             "%1\$s" => [
-                [1 => "DROP CONSTRAINT %1\$s,\n", 'combinedby' => ""],
-            ]
+                [1 => "DROP CONSTRAINT %1\$s,\n", 'combinedby' => ''],
+            ],
         ],
     ];
 
     private $alterTableExpression;
 
-
     /**
      * @var int[]
-     * https://msdn.microsoft.com/en-us/library/ms187742.aspx#Syntax
+     *            https://msdn.microsoft.com/en-us/library/ms187742.aspx#Syntax
      */
     protected $columnOptionSortOrder = [
         'filestream'    => 0,
@@ -89,13 +89,13 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         return $this;
     }
 
-
     // SqlServer cannot have multiple operations in ALTER TABLE
     // generate on first time, and reuse for all operations
 
 
     /**
      * @param string $sql
+     *
      * @return array
      */
     protected function getSqlInsertOffsets($sql)
@@ -104,7 +104,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         $insertStart = [];
 
         foreach (['NOT NULL', 'NULL', 'DEFAULT', 'UNIQUE', 'PRIMARY', 'REFERENCES'] as $needle) {
-            $insertPos = strpos($sql, ' ' . $needle);
+            $insertPos = strpos($sql, ' '.$needle);
 
             if ($insertPos !== false) {
                 switch ($needle) {
@@ -132,8 +132,8 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     {
         $sqls = [];
         /**
-         * @var int $i
-         * @var Varbinary $column
+         * @var int
+         * @var Column
          */
         foreach ($this->addColumns as $i => $column) {
             $sql           = $this->processExpression($column, $adapterPlatform);
@@ -145,7 +145,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
             foreach ($columnOptions as $coName => $coValue) {
                 $insert = '';
 
-                if (! $coValue) {
+                if (!$coValue) {
                     continue;
                 }
 
@@ -155,13 +155,13 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
                         $j = 0;
                         break;
                     case 'collate':
-                        $insert = ' COLLATE ' . $adapterPlatform->quoteIdentifier($coValue);
+                        $insert = ' COLLATE '.$adapterPlatform->quoteIdentifier($coValue);
                         $j = 0;
                         break;
                     case 'identity':
                     case 'serial':
                     case 'autoincrement':
-                        $insert = ' IDENTITY ' . $this->normalizeIdentityOptionValue($coValue);
+                        $insert = ' IDENTITY '.$this->normalizeIdentityOptionValue($coValue);
                         $j = 0;
                         break;
                     case 'rowguidcol':
@@ -173,15 +173,15 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
                         $j = 1;
                         break;
                     case 'encryptedwith':
-                        $insert = ' ENCRYPTED WITH ' . $coValue;
+                        $insert = ' ENCRYPTED WITH '.$coValue;
                         $j = 1;
                         break;
                     case 'maskedwith':
-                        $insert = ' MASKED WITH ' . $coValue;
+                        $insert = ' MASKED WITH '.$coValue;
                         $j = 1;
                         break;
                     case 'comment':
-                        $insert = ' COMMENT ' . $adapterPlatform->quoteValue($coValue);
+                        $insert = ' COMMENT '.$adapterPlatform->quoteValue($coValue);
                         $j = 2;
                         break;
                 }
@@ -197,25 +197,25 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
             }
             $sqls[] = [
                 $adapterPlatform->quoteIdentifier($this->subject->table),
-                $sql
+                $sql,
             ];
         }
 
         return [$sqls];
     }
 
-    protected function processAddConstraints(PlatformInterface $adapterPlatform = null) {
+    protected function processAddConstraints(PlatformInterface $adapterPlatform = null)
+    {
         $sqls = [];
         foreach ($this->addConstraints as $constraint) {
             $sqls[] = [
                 $adapterPlatform->quoteIdentifier($this->subject->table),
-                $this->processExpression($constraint, $adapterPlatform)
+                $this->processExpression($constraint, $adapterPlatform),
             ];
         }
 
         return [$sqls];
     }
-
 
     protected function processExpression(
         ExpressionInterface $expression,
@@ -228,27 +228,29 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
         // alternatively add column decorators
         // varbinary data type without length parameter
-        if($expression instanceof Varbinary && preg_match('/VARBINARY(\s)*[^\(]/', $sql) === 1) {
+        if ($expression instanceof Varbinary && preg_match('/VARBINARY(\s)*[^\(]/', $sql) === 1) {
             $sql = str_replace('VARBINARY', 'VARBINARY (max)', $sql);
         }
+
         return $sql;
     }
 
-    private function normalizeIdentityOptionValue($value) {
-        if(is_bool($value)) {
+    private function normalizeIdentityOptionValue($value)
+    {
+        if (is_bool($value)) {
             return '(1, 1)';
         }
 
         $value = trim($value);
         // if user did not use brackets for identity function parameters
         // add them.
-        if(strpos($value, '(') !== 0) {
+        if (strpos($value, '(') !== 0) {
             $value = '('.$value.')';
         }
 
         // end result should be (seed, increment)
-        if(preg_match('/\([1-9]+\,(\s)*[1-9]+\)/', $value) === 0) {
-            throw new InvalidArgumentException('Identity format should be: (seed, increment). ' .$value. ' is given instead.');
+        if (preg_match('/\([1-9]+\,(\s)*[1-9]+\)/', $value) === 0) {
+            throw new InvalidArgumentException('Identity format should be: (seed, increment). '.$value.' is given instead.');
         }
 
         return $value;
@@ -265,7 +267,6 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     }
 
     /**
-     *
      * @param string $columnA
      * @param string $columnB
      *
