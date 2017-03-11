@@ -1,12 +1,8 @@
 <?php
-
 /**
- * Zend Framework (http://framework.zend.com/).
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- *
- * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-expressive for the canonical source repository
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-expressive/blob/master/LICENSE.md New BSD License
  */
 
 namespace ZendTest\Db\Sql;
@@ -17,7 +13,7 @@ use Zend\Db\Sql\TableIdentifier;
 use ZendTest\Db\TestAsset\TrustingSql92Platform;
 
 /**
- * Tests for {@see \Zend\Db\Sql\TableIdentifier}.
+ * Tests for {@see \Zend\Db\Sql\TableIdentifier}
  *
  * @covers \Zend\Db\Sql\TableIdentifier
  */
@@ -103,7 +99,7 @@ class TableIdentifierTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Data provider.
+     * Data provider
      *
      * @return mixed[][]
      */
@@ -116,7 +112,7 @@ class TableIdentifierTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Data provider.
+     * Data provider
      *
      * @return mixed[][]
      */
