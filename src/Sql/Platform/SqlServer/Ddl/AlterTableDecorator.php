@@ -1,12 +1,8 @@
 <?php
-
 /**
- * Zend Framework (http://framework.zend.com/).
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- *
- * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       http://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Db\Sql\Platform\SqlServer\Ddl;
@@ -56,11 +52,9 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         ],
     ];
 
-    private $alterTableExpression;
-
     /**
      * @var int[]
-     *            https://msdn.microsoft.com/en-us/library/ms187742.aspx#Syntax
+     * @see https://msdn.microsoft.com/en-us/library/ms187742.aspx#Syntax
      */
     protected $columnOptionSortOrder = [
         'filestream'    => 0,
@@ -95,7 +89,6 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
     /**
      * @param string $sql
-     *
      * @return array
      */
     protected function getSqlInsertOffsets($sql)
@@ -128,6 +121,10 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         return $insertStart;
     }
 
+    /**
+     * @param PlatformInterface|null $adapterPlatform
+     * @return array
+     */
     protected function processAddColumns(PlatformInterface $adapterPlatform = null)
     {
         $sqls = [];
@@ -204,6 +201,10 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         return [$sqls];
     }
 
+    /**
+     * @param PlatformInterface|null $adapterPlatform
+     * @return array
+     */
     protected function processAddConstraints(PlatformInterface $adapterPlatform = null)
     {
         $sqls = [];
@@ -217,6 +218,14 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         return [$sqls];
     }
 
+    /**
+     * @param ExpressionInterface $expression
+     * @param PlatformInterface $platform
+     * @param DriverInterface|null $driver
+     * @param ParameterContainer|null $parameterContainer
+     * @param null $namedParameterPrefix
+     * @return mixed|string
+     */
     protected function processExpression(
         ExpressionInterface $expression,
         PlatformInterface $platform,
@@ -235,6 +244,10 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         return $sql;
     }
 
+    /**
+     * @param $value
+     * @return string
+     */
     private function normalizeIdentityOptionValue($value)
     {
         if (is_bool($value)) {
@@ -258,7 +271,6 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
     /**
      * @param string $name
-     *
      * @return string
      */
     private function normalizeColumnOption($name)
@@ -269,7 +281,6 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     /**
      * @param string $columnA
      * @param string $columnB
-     *
      * @return int
      */
     private function compareColumnOptions($columnA, $columnB)

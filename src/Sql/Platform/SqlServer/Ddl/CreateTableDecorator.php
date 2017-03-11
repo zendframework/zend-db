@@ -1,12 +1,8 @@
 <?php
-
 /**
- * Zend Framework (http://framework.zend.com/).
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- *
- * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       http://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Db\Sql\Platform\SqlServer\Ddl;
@@ -26,7 +22,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
 
     /**
      * @var int[]
-     *            https://msdn.microsoft.com/en-us/library/ms187742.aspx#Syntax
+     * @see https://msdn.microsoft.com/en-us/library/ms187742.aspx#Syntax
      */
     protected $columnOptionSortOrder = [
         'filestream'    => 0,
@@ -42,7 +38,6 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
 
     /**
      * @param CreateTable $subject
-     *
      * @return self
      */
     public function setSubject($subject)
@@ -54,7 +49,6 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
 
     /**
      * @param string $sql
-     *
      * @return array
      */
     protected function getSqlInsertOffsets($sql)
@@ -87,6 +81,10 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
         return $insertStart;
     }
 
+    /**
+     * @param PlatformInterface|null $adapterPlatform
+     * @return array
+     */
     protected function processColumns(PlatformInterface $adapterPlatform = null)
     {
         $sqls = [];
@@ -162,7 +160,6 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
 
     /**
      * @param string $name
-     *
      * @return string
      */
     private function normalizeColumnOption($name)
@@ -173,7 +170,6 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     /**
      * @param string $columnA
      * @param string $columnB
-     *
      * @return int
      */
     private function compareColumnOptions($columnA, $columnB)
@@ -189,6 +185,10 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
         return $columnA - $columnB;
     }
 
+    /**
+     * @param $value
+     * @return string
+     */
     private function normalizeIdentityOptionValue($value)
     {
         if (is_bool($value)) {
@@ -204,7 +204,9 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
 
         // end result should be (seed, increment)
         if (preg_match('/\([1-9]+\,(\s)*[1-9]+\)/', $value) === 0) {
-            throw new InvalidArgumentException('Identity format should be: (seed, increment). '.$value.' is given instead.');
+            throw new InvalidArgumentException(
+                'Identity format should be: (seed, increment). '.$value.' is given instead.'
+            );
         }
 
         return $value;
@@ -212,7 +214,6 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
 
     /**
      * @param PlatformInterface $adapterPlatform
-     *
      * @return array
      */
     protected function processTable(PlatformInterface $adapterPlatform = null)

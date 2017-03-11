@@ -1,23 +1,20 @@
 <?php
-
 /**
- * Zend Framework (http://framework.zend.com/).
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- *
- * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       http://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
 
 namespace ZendTest\Db\Sql\Platform\SqlServer\Ddl;
 
+use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\Sql\Ddl\Column\Column;
 use Zend\Db\Sql\Ddl\Constraint\PrimaryKey;
 use Zend\Db\Sql\Ddl\CreateTable;
 use Zend\Db\Sql\Platform\SqlServer\Ddl\CreateTableDecorator;
 use ZendTest\Db\TestAsset\TrustingSqlServerPlatform;
 
-class CreateTableDecoratorTest extends \PHPUnit_Framework_TestCase
+class CreateTableDecoratorTest extends TestCase
 {
     /**
      * @covers Zend\Db\Sql\Platform\SqlServer\Ddl\CreateTableDecorator::getSqlString
@@ -26,23 +23,35 @@ class CreateTableDecoratorTest extends \PHPUnit_Framework_TestCase
     {
         $platform = new TrustingSqlServerPlatform();
 
-        $ctd = new CreateTableDecorator();
+        $createDecorator = new CreateTableDecorator();
 
-        $ct = new CreateTable('foo');
-        $this->assertEquals("CREATE TABLE [foo] ( \n     \n)", $ctd->setSubject($ct)->getSqlString($platform));
+        $createTable = new CreateTable('foo');
+        $this->assertEquals(
+            "CREATE TABLE [foo] ( \n     \n)",
+            $createDecorator->setSubject($createTable)->getSqlString($platform)
+        );
 
-        $ct = new CreateTable('foo', true);
-        $this->assertEquals("CREATE TABLE [#foo] ( \n     \n)", $ctd->setSubject($ct)->getSqlString($platform));
+        $createTable = new CreateTable('foo', true);
+        $this->assertEquals(
+            "CREATE TABLE [#foo] ( \n     \n)",
+            $createDecorator->setSubject($createTable)->getSqlString($platform)
+        );
 
-        $ct = new CreateTable('foo');
-        $ct->addColumn(new Column('bar'));
-        $this->assertEquals("CREATE TABLE [foo] ( \n    [bar] INTEGER NOT NULL \n)", $ctd->setSubject($ct)->getSqlString($platform));
+        $createTable = new CreateTable('foo');
+        $createTable->addColumn(new Column('bar'));
+        $this->assertEquals(
+            "CREATE TABLE [foo] ( \n    [bar] INTEGER NOT NULL \n)",
+            $createDecorator->setSubject($createTable)->getSqlString($platform)
+        );
 
-        $ct = new CreateTable('foo', true);
-        $ct->addColumn(new Column('bar'));
-        $this->assertEquals("CREATE TABLE [#foo] ( \n    [bar] INTEGER NOT NULL \n)", $ctd->setSubject($ct)->getSqlString($platform));
+        $createTable = new CreateTable('foo', true);
+        $createTable->addColumn(new Column('bar'));
+        $this->assertEquals(
+            "CREATE TABLE [#foo] ( \n    [bar] INTEGER NOT NULL \n)",
+            $createDecorator->setSubject($createTable)->getSqlString($platform)
+        );
 
-        $ct = new CreateTable('opinionated');
+        $createTable = new CreateTable('opinionated');
         // test for valid syntax, not valid engine semantics
         $id = new Column('id');
         $id->addConstraint(new PrimaryKey());
@@ -53,18 +62,21 @@ class CreateTableDecoratorTest extends \PHPUnit_Framework_TestCase
         $id->setOption('encrypted with', '(COLUMN_ENCRYPTION_KEY = key_name)');
         $id->setOption('masked with', "(FUNCTION = ' mask_function ')");
         $id->setOption('identity', '(1, 1)');
-        $ct->addColumn($id);
+        $createTable->addColumn($id);
 
-        $pk = new Column('named_pk');
-        $pk->addConstraint(new PrimaryKey(null, 'specified_pk'));
-        $ct->addColumn($pk);
+        $primaryKey = new Column('named_key');
+        $primaryKey->addConstraint(new PrimaryKey(null, 'specified_primary_key_name'));
+        $createTable->addColumn($primaryKey);
 
         $this->assertEquals(
             "CREATE TABLE [opinionated] ( \n".
-            "    [id] INTEGER FILESTREAM COLLATE [Cyrillic_General_CI_AS] IDENTITY (1, 1) NOT NULL ROWGUIDCOL SPARSE ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = key_name) MASKED WITH (FUNCTION = ' mask_function ') PRIMARY KEY,\n".
-            "    [named_pk] INTEGER NOT NULL CONSTRAINT [specified_pk] PRIMARY KEY \n".
-            ')',
-            $ctd->setSubject($ct)->getSqlString($platform)
+            "    [id] INTEGER FILESTREAM COLLATE [Cyrillic_General_CI_AS] IDENTITY (1, 1) NOT NULL " .
+                    "ROWGUIDCOL SPARSE ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = key_name) " .
+                    "MASKED WITH (FUNCTION = ' mask_function ') ".
+                    "PRIMARY KEY,\n".
+            "    [named_key] INTEGER NOT NULL CONSTRAINT [specified_primary_key_name] PRIMARY KEY \n".
+            ")",
+            $createDecorator->setSubject($createTable)->getSqlString($platform)
         );
     }
 }
