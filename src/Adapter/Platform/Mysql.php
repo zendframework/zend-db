@@ -72,14 +72,6 @@ class Mysql extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteIdentifierChain($identifierChain)
-    {
-        return '`' . implode('`.`', (array) str_replace('`', '``', $identifierChain)) . '`';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function quoteValue($value)
     {
         if ($this->resource instanceof DriverInterface) {

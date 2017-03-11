@@ -77,14 +77,6 @@ class SqlServer extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteIdentifierChain($identifierChain)
-    {
-        return '[' . implode('].[', (array) $identifierChain) . ']';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function quoteValue($value)
     {
         if ($this->resource instanceof DriverInterface) {

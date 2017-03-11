@@ -12,7 +12,7 @@ namespace Zend\Db\Adapter\Platform;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\Driver\Oci8\Oci8;
 use Zend\Db\Adapter\Driver\Pdo\Pdo;
-use \Zend\Db\Adapter\Exception\InvalidArgumentException;
+use Zend\Db\Adapter\Exception\InvalidArgumentException;
 
 class Oracle extends AbstractPlatform
 {
@@ -76,18 +76,6 @@ class Oracle extends AbstractPlatform
     public function getName()
     {
         return 'Oracle';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function quoteIdentifierChain($identifierChain)
-    {
-        if ($this->quoteIdentifiers === false) {
-            return implode('.', (array) $identifierChain);
-        }
-
-        return '"' . implode('"."', (array) str_replace('"', '\\"', $identifierChain)) . '"';
     }
 
     /**
