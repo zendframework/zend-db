@@ -1,12 +1,8 @@
 <?php
-
 /**
- * Zend Framework (http://framework.zend.com/).
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- *
- * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       http://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Db\Adapter\Platform;
@@ -33,7 +29,7 @@ abstract class AbstractPlatform implements PlatformInterface
      */
     public function quoteIdentifierInFragment($identifier, array $safeWords = [])
     {
-        if (!$this->quoteIdentifiers) {
+        if (! $this->quoteIdentifiers) {
             return $identifier;
         }
 
@@ -56,8 +52,8 @@ abstract class AbstractPlatform implements PlatformInterface
             $identifier .= isset($safeWordsInt[strtolower($part)])
                 ? $part
                 : $this->quoteIdentifier[0]
-                .str_replace($this->quoteIdentifier[0], $this->quoteIdentifierTo, $part)
-                .$this->quoteIdentifier[1];
+                . str_replace($this->quoteIdentifier[0], $this->quoteIdentifierTo, $part)
+                . $this->quoteIdentifier[1];
         }
 
         return $identifier;
@@ -80,7 +76,7 @@ abstract class AbstractPlatform implements PlatformInterface
             $identifierChain = [$identifierChain];
         }
 
-        if (!$this->quoteIdentifiers) {
+        if (! $this->quoteIdentifiers) {
             return implode($this->getIdentifierSeparator(), $identifierChain);
         }
 
@@ -88,9 +84,9 @@ abstract class AbstractPlatform implements PlatformInterface
         foreach ($identifierChain as $key => $identifier) {
             $identifierChain[$key] = str_replace($this->quoteIdentifier[0], $this->quoteIdentifierTo, $identifier);
         }
-        $chainGlue = $this->quoteIdentifier[1].$this->getIdentifierSeparator().$this->quoteIdentifier[0];
+        $chainGlue = $this->quoteIdentifier[1] . $this->getIdentifierSeparator() . $this->quoteIdentifier[0];
 
-        return $this->quoteIdentifier[0].implode($chainGlue, $identifierChain).$this->quoteIdentifier[1];
+        return $this->quoteIdentifier[0] . implode($chainGlue, $identifierChain) . $this->quoteIdentifier[1];
     }
 
     /**
@@ -115,11 +111,10 @@ abstract class AbstractPlatform implements PlatformInterface
     public function quoteValue($value)
     {
         trigger_error(
-            'Attempting to quote a value in '.get_class($this).
+            'Attempting to quote a value in ' . get_class($this) .
             ' without extension/driver support can introduce security vulnerabilities in a production environment'
         );
-
-        return '\''.addcslashes((string) $value, "\x00\n\r\\'\"\x1a").'\'';
+        return '\'' . addcslashes((string) $value, "\x00\n\r\\'\"\x1a") . '\'';
     }
 
     /**
@@ -127,7 +122,7 @@ abstract class AbstractPlatform implements PlatformInterface
      */
     public function quoteTrustedValue($value)
     {
-        return '\''.addcslashes((string) $value, "\x00\n\r\\'\"\x1a").'\'';
+        return '\'' . addcslashes((string) $value, "\x00\n\r\\'\"\x1a") . '\'';
     }
 
     /**
