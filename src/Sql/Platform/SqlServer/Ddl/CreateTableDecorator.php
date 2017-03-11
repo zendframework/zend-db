@@ -1,16 +1,20 @@
 <?php
+
 /**
- * Zend Framework (http://framework.zend.com/)
+ * Zend Framework (http://framework.zend.com/).
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ *
+ * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Db\Sql\Platform\SqlServer\Ddl;
 
 use Zend\Db\Adapter\Platform\PlatformInterface;
+use Zend\Db\Sql\Ddl\Column\Column;
 use Zend\Db\Sql\Ddl\CreateTable;
+use Zend\Db\Sql\Exception\InvalidArgumentException;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 
 class CreateTableDecorator extends CreateTable implements PlatformDecoratorInterface
@@ -21,22 +25,200 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     protected $subject;
 
     /**
+     * @var int[]
+     *            https://msdn.microsoft.com/en-us/library/ms187742.aspx#Syntax
+     */
+    protected $columnOptionSortOrder = [
+        'filestream'    => 0,
+        'collate'       => 1,
+        'identity'      => 2,
+        'serial'        => 2,
+        'autoincrement' => 2,
+        'rowguidcol'    => 3,
+        'sparse'        => 4,
+        'encryptedwith' => 4,
+        'maskedwith'    => 5,
+    ];
+
+    /**
      * @param CreateTable $subject
-     * @return self Provides a fluent interface
+     *
+     * @return self
      */
     public function setSubject($subject)
     {
         $this->subject = $subject;
+
         return $this;
     }
 
     /**
+     * @param string $sql
+     *
+     * @return array
+     */
+    protected function getSqlInsertOffsets($sql)
+    {
+        $sqlLength   = strlen($sql);
+        $insertStart = [];
+
+        foreach (['NOT NULL', 'NULL', 'DEFAULT', 'UNIQUE', 'PRIMARY', 'REFERENCES'] as $needle) {
+            $insertPos = strpos($sql, ' '.$needle);
+
+            if ($insertPos !== false) {
+                switch ($needle) {
+                    case 'REFERENCES':
+                        $insertStart[2] = !isset($insertStart[2]) ? $insertPos : $insertStart[2];
+                    // no break
+                    case 'PRIMARY':
+                    case 'UNIQUE':
+                        $insertStart[1] = !isset($insertStart[1]) ? $insertPos : $insertStart[1];
+                    // no break
+                    default:
+                        $insertStart[0] = !isset($insertStart[0]) ? $insertPos : $insertStart[0];
+                }
+            }
+        }
+
+        foreach (range(0, 3) as $i) {
+            $insertStart[$i] = isset($insertStart[$i]) ? $insertStart[$i] : $sqlLength;
+        }
+
+        return $insertStart;
+    }
+
+    protected function processColumns(PlatformInterface $adapterPlatform = null)
+    {
+        $sqls = [];
+        /**
+         * @var int
+         * @var Column
+         */
+        foreach ($this->columns as $i => $column) {
+            $sql = $this->processExpression($column, $adapterPlatform);
+            $insertStart = $this->getSqlInsertOffsets($sql);
+            $columnOptions = $column->getOptions();
+
+            uksort($columnOptions, [$this, 'compareColumnOptions']);
+
+            foreach ($columnOptions as $coName => $coValue) {
+                $insert = '';
+
+                if (!$coValue) {
+                    continue;
+                }
+
+                switch ($this->normalizeColumnOption($coName)) {
+                    case 'filestream':
+                        $insert = ' FILESTREAM';
+                        $j = 0;
+                        break;
+                    case 'collate':
+                        $insert = ' COLLATE '.$adapterPlatform->quoteIdentifier($coValue);
+                        $j = 0;
+                        break;
+                    case 'identity':
+                    case 'serial':
+                    case 'autoincrement':
+                        $insert = ' IDENTITY '.$this->normalizeIdentityOptionValue($coValue);
+                        $j = 0;
+                        break;
+                    case 'rowguidcol':
+                        $insert = ' ROWGUIDCOL';
+                        $j = 1;
+                        break;
+                    case 'sparse':
+                        $insert = ' SPARSE';
+                        $j = 1;
+                        break;
+                    case 'encryptedwith':
+                        $insert = ' ENCRYPTED WITH '.$coValue;
+                        $j = 1;
+                        break;
+                    case 'maskedwith':
+                        $insert = ' MASKED WITH '.$coValue;
+                        $j = 1;
+                        break;
+                    case 'comment':
+                        $insert = ' COMMENT '.$adapterPlatform->quoteValue($coValue);
+                        $j = 2;
+                        break;
+                }
+
+                if ($insert) {
+                    $j = isset($j) ? $j : 0;
+                    $sql = substr_replace($sql, $insert, $insertStart[$j], 0);
+                    $insertStartCount = count($insertStart);
+                    for (; $j < $insertStartCount; ++$j) {
+                        $insertStart[$j] += strlen($insert);
+                    }
+                }
+            }
+            $sqls[] = $sql;
+        }
+
+        return [$sqls];
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    private function normalizeColumnOption($name)
+    {
+        return strtolower(str_replace(['-', '_', ' '], '', $name));
+    }
+
+    /**
+     * @param string $columnA
+     * @param string $columnB
+     *
+     * @return int
+     */
+    private function compareColumnOptions($columnA, $columnB)
+    {
+        $columnA = $this->normalizeColumnOption($columnA);
+        $columnA = isset($this->columnOptionSortOrder[$columnA])
+            ? $this->columnOptionSortOrder[$columnA] : count($this->columnOptionSortOrder);
+
+        $columnB = $this->normalizeColumnOption($columnB);
+        $columnB = isset($this->columnOptionSortOrder[$columnB])
+            ? $this->columnOptionSortOrder[$columnB] : count($this->columnOptionSortOrder);
+
+        return $columnA - $columnB;
+    }
+
+    private function normalizeIdentityOptionValue($value)
+    {
+        if (is_bool($value)) {
+            return '(1, 1)';
+        }
+
+        $value = trim($value);
+        // if user did not use brackets for identity function parameters
+        // add them.
+        if (strpos($value, '(') !== 0) {
+            $value = '('.$value.')';
+        }
+
+        // end result should be (seed, increment)
+        if (preg_match('/\([1-9]+\,(\s)*[1-9]+\)/', $value) === 0) {
+            throw new InvalidArgumentException('Identity format should be: (seed, increment). '.$value.' is given instead.');
+        }
+
+        return $value;
+    }
+
+    /**
      * @param PlatformInterface $adapterPlatform
+     *
      * @return array
      */
     protected function processTable(PlatformInterface $adapterPlatform = null)
     {
-        $table = ($this->isTemporary ? '#' : '') . ltrim($this->table, '#');
+        $table = ($this->isTemporary ? '#' : '').ltrim($this->table, '#');
+
         return [
             '',
             $adapterPlatform->quoteIdentifier($table),
