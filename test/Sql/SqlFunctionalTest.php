@@ -9,8 +9,8 @@
 
 namespace ZendTest\Db\Sql;
 
-use Zend\Db\Sql;
 use Zend\Db\Adapter;
+use Zend\Db\Sql;
 use ZendTest\Db\TestAsset;
 
 /**
@@ -158,7 +158,7 @@ class SqlFunctionalTest extends \PHPUnit_Framework_TestCase
                     'sql92'     => "CREATE TABLE \"foo\" ( \n    \"col1\" INTEGER NOT NULL,\n    \"col2\" INTEGER NOT NULL \n)",
                     'MySql'     => "CREATE TABLE `foo` ( \n    `col1` INTEGER NOT NULL AUTO_INCREMENT COMMENT 'Comment1',\n    `col2` INTEGER NOT NULL AUTO_INCREMENT COMMENT 'Comment2' \n)",
                     'Oracle'    => "CREATE TABLE \"foo\" ( \n    \"col1\" INTEGER NOT NULL,\n    \"col2\" INTEGER NOT NULL \n)",
-                    'SqlServer' => "CREATE TABLE [foo] ( \n    [col1] INTEGER NOT NULL,\n    [col2] INTEGER NOT NULL \n)",
+                    'SqlServer' => "CREATE TABLE [foo] ( \n    [col1] INTEGER IDENTITY (1, 1) NOT NULL COMMENT 'Comment1',\n    [col2] INTEGER IDENTITY (1, 1) NOT NULL COMMENT 'Comment2' \n)",
                 ],
             ],
             'Ddl::CreateTable::processTable()' => [
@@ -167,7 +167,7 @@ class SqlFunctionalTest extends \PHPUnit_Framework_TestCase
                     'sql92'     => "CREATE TEMPORARY TABLE \"foo\" ( \n)",
                     'MySql'     => "CREATE TEMPORARY TABLE `foo` ( \n)",
                     'Oracle'    => "CREATE TEMPORARY TABLE \"foo\" ( \n)",
-                    'SqlServer' => "CREATE TABLE [#foo] ( \n)",
+                    'SqlServer' => "CREATE TABLE [#foo] ( \n     \n)",
                 ],
             ],
             'Select::processSubSelect()' => [
