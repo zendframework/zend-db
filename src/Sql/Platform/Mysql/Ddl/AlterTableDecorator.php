@@ -33,11 +33,12 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         'columnformat'  => 4,
         'format'        => 4,
         'storage'       => 5,
+        'after'         => 6
     ];
 
     /**
      * @param AlterTable $subject
-     * @return \Zend\Db\Sql\Platform\PlatformDecoratorInterface
+     * @return self Provides a fluent interface
      */
     public function setSubject($subject)
     {
@@ -130,6 +131,9 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
                         $insert = ' STORAGE ' . strtoupper($coValue);
                         $j = 2;
                         break;
+                    case 'after':
+                        $insert = ' AFTER ' . $adapterPlatform->quoteIdentifier($coValue);
+                        $j = 2;
                 }
 
                 if ($insert) {
