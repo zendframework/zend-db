@@ -201,8 +201,9 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * @param Select $select
      * @param array  $params - statement params
-     *
-     * @return null|\Zend\Db\ResultSet\ResultSetInterface
+     * 
+     * @return ResultSetInterface
+     * @throws \RuntimeException
      */
     public function selectWith(Select $select, array $params = [])
     {
