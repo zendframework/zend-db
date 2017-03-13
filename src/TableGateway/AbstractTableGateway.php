@@ -201,7 +201,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * @param Select $select
      * @param array  $params - statement params
-     * 
+     *
      * @return ResultSetInterface
      * @throws \RuntimeException
      */
