@@ -54,4 +54,19 @@ class AdapterServiceFactoryTest extends TestCase
         $adapter = $this->factory->__invoke($this->services->reveal(), Adapter::class);
         $this->assertInstanceOf(Adapter::class, $adapter);
     }
+
+    public function testV3FactoryWithRequestedNameReturnsAdapter()
+    {
+        $this->services->get('config')->willReturn([
+            'db' => [
+                Adapter::class => [
+                    'driver' => 'Pdo_Sqlite',
+                    'database' => 'sqlite::memory:',
+                ],
+            ],
+        ]);
+
+        $adapter = $this->factory->__invoke($this->services->reveal(), Adapter::class);
+        $this->assertInstanceOf(Adapter::class, $adapter);
+    }
 }
