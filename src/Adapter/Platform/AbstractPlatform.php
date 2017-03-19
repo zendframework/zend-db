@@ -111,8 +111,11 @@ abstract class AbstractPlatform implements PlatformInterface
     public function quoteValue($value)
     {
         trigger_error(
-            'Attempting to quote a value in ' . get_class($this) .
-            ' without extension/driver support can introduce security vulnerabilities in a production environment'
+            sprintf(
+                'Attempting to quote a value in %s without extension/driver support ' .
+                'can introduce security vulnerabilities in a production environment',
+                get_class($this)
+            )
         );
         return '\'' . addcslashes((string) $value, "\x00\n\r\\'\"\x1a") . '\'';
     }
