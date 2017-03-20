@@ -150,7 +150,7 @@ $select->from(['t' => 'table']);
 
 // Using a Sql\TableIdentifier:
 // (same output as above)
-$select->from(new TableIdentifier(['t' => 'table']));
+$select->from(['t' => new TableIdentifier('table')]);
 
 // If your database engine requires full path to get to the table object,
 // for example SQL Server uses database name as part of the table name,
