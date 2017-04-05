@@ -12,6 +12,7 @@ namespace Zend\Db\TableGateway\Feature;
 use Zend\Db\Sql\Insert;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\Adapter\Driver\StatementInterface;
+use Zend\Db\Sql\TableIdentifier;
 
 class SequenceFeature extends AbstractFeature
 {
@@ -89,7 +90,15 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT ' . $platform->quoteIdentifier($this->sequenceName) . '.NEXTVAL as "nextval" FROM dual';
                 break;
             case 'PostgreSQL':
-                $sql = 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')';
+                $table = $this->tableGateway->getTable();
+                if ($table instanceof TableIdentifier) {
+                    $table = $table->hasSchema() ? [$table->getSchema(), $table->getTable()] : $table->getTable();
+                }
+                $sql = sprintf(
+                    'SELECT NEXTVAL(pg_get_serial_sequence(%s, %s))',
+                    $platform->quoteValue($platform->quoteIdentifierChain($table)),
+                    $platform->quoteValue($this->primaryKeyField)
+                );
                 break;
             default :
                 return;
@@ -117,7 +126,15 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT ' . $platform->quoteIdentifier($this->sequenceName) . '.CURRVAL as "currval" FROM dual';
                 break;
             case 'PostgreSQL':
-                $sql = 'SELECT CURRVAL(\'' . $this->sequenceName . '\')';
+                $table = $this->tableGateway->getTable();
+                if ($table instanceof TableIdentifier) {
+                    $table = $table->hasSchema() ? [$table->getSchema(), $table->getTable()] : $table->getTable();
+                }
+                $sql = sprintf(
+                    'SELECT CURRVAL(pg_get_serial_sequence(%s, %s))',
+                    $platform->quoteValue($platform->quoteIdentifierChain($table)),
+                    $platform->quoteValue($this->primaryKeyField)
+                );
                 break;
             default :
                 return;
