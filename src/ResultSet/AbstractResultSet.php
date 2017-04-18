@@ -211,6 +211,9 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      */
     public function valid()
     {
+        if ($this->count !== null && $this->count <= $this->position) {
+            return false;
+        }
         if (is_array($this->buffer) && isset($this->buffer[$this->position])) {
             return true;
         }
