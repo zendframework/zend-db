@@ -13,9 +13,10 @@ use ArrayIterator;
 use Countable;
 use Iterator;
 use IteratorAggregate;
+use JsonSerializable;
 use Zend\Db\Adapter\Driver\ResultInterface;
 
-abstract class AbstractResultSet implements Iterator, ResultSetInterface
+abstract class AbstractResultSet implements Iterator, JsonSerializable, ResultSetInterface
 {
     /**
      * if -1, datasource is already buffered
@@ -280,5 +281,13 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
             }
         }
         return $return;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 }
