@@ -423,6 +423,17 @@ $select-&gt;from('foo')-&gt;where([
     new \Zend\Db\Sql\Predicate\IsNotNull('c3'),
 ]);</code></pre>
 
+<p>As another example of complex queries with nested conditions e.g.</p>
+<pre class="codehilite"><code class="language-sql linenums">SELECT * WHERE (column1 is null or column1 = 2) AND (column2 = 3)</code></pre>
+
+<p>you need to use the <code>nest()</code> and <code>unnest()</code> methods, as follows:</p>
+<pre class="codehilite"><code class="language-php linenums">$select-&gt;where-&gt;nest() // bracket opened
+    -&gt;isNull('column1')
+    -&gt;or
+    -&gt;equalTo('column1', '2')
+    -&gt;unnest();  // bracket closed
+    -&gt;equalTo('column2', '3');</code></pre>
+
 <h3 id="order">order()</h3>
 <pre class="codehilite"><code class="language-php linenums">$select = new Select;
 $select-&gt;order('id DESC'); // produces 'id' DESC
