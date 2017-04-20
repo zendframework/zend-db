@@ -28,7 +28,10 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#216](https://github.com/zendframework/zend-db/pull/216) added AFTER support
+  in ALTER TABLE syntax for MySQL
+- [#223](https://github.com/zendframework/zend-db/pull/223) added support for
+  empty values set with IN predicate
 
 ### Deprecated
 
@@ -40,7 +43,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#205](https://github.com/zendframework/zend-db/pull/205) fixes the spaces in
+  ORDER BY syntax.
 
 ## 2.8.2 - 2016-08-09
 
