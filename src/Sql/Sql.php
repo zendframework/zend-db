@@ -97,6 +97,17 @@ class Sql
         }
         return new Insert(($table) ?: $this->table);
     }
+    
+      public function insertIgnore($table = null)
+    {
+        if ($this->table !== null && $table !== null) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                'This Sql object is intended to work with only the table "%s" provided at construction time.',
+                $this->table
+            ));
+        }
+        return new InsertIgnore(($table) ?: $this->table);
+    }
 
     public function update($table = null)
     {
