@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.9.0 - TBD
+
+### Added
+
+- [#216](https://github.com/zendframework/zend-db/pull/216) added AFTER support
+  in ALTER TABLE syntax for MySQL
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#205](https://github.com/zendframework/zend-db/pull/205) fixes the spaces in
+  ORDER BY syntax.
+
 ## 2.8.3 - TBD
 
 ### Added
