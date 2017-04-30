@@ -56,20 +56,20 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
         $sqlLength   = strlen($sql);
         $insertStart = [];
 
-        foreach (['NOT NULL', 'NULL', 'DEFAULT', 'UNIQUE', 'PRIMARY', 'REFERENCES'] as $needle) {
-            $insertPos = strpos($sql, ' '.$needle);
+        foreach (['NOT NULL', 'NULL', 'DEFAULT', 'UNIQUE', 'PRIMARY', 'REFERENCES'] as $option) {
+            $insertAt = strpos($sql, ' ' . $option);
 
-            if ($insertPos !== false) {
-                switch ($needle) {
+            if ($insertAt !== false) {
+                switch ($option) {
                     case 'REFERENCES':
-                        $insertStart[2] = !isset($insertStart[2]) ? $insertPos : $insertStart[2];
+                        $insertStart[2] = !isset($insertStart[2]) ? $insertAt : $insertStart[2];
                     // no break
                     case 'PRIMARY':
                     case 'UNIQUE':
-                        $insertStart[1] = !isset($insertStart[1]) ? $insertPos : $insertStart[1];
+                        $insertStart[1] = !isset($insertStart[1]) ? $insertAt : $insertStart[1];
                     // no break
                     default:
-                        $insertStart[0] = !isset($insertStart[0]) ? $insertPos : $insertStart[0];
+                        $insertStart[0] = !isset($insertStart[0]) ? $insertAt : $insertStart[0];
                 }
             }
         }
@@ -89,66 +89,66 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     {
         $sqls = [];
         /**
-         * @var int
-         * @var Column
+         * @var Column $column
          */
-        foreach ($this->columns as $i => $column) {
-            $sql = $this->processExpression($column, $adapterPlatform);
-            $insertStart = $this->getSqlInsertOffsets($sql);
+        foreach ($this->columns as $column) {
+            $sql           = $this->processExpression($column, $adapterPlatform);
+            $optionOffsets = $this->getSqlInsertOffsets($sql);
             $columnOptions = $column->getOptions();
 
             uksort($columnOptions, [$this, 'compareColumnOptions']);
 
-            foreach ($columnOptions as $coName => $coValue) {
+            foreach ($columnOptions as $optionName => $optionValue) {
                 $insert = '';
 
-                if (!$coValue) {
+                if (!$optionValue) {
                     continue;
                 }
 
-                switch ($this->normalizeColumnOption($coName)) {
+                switch ($this->normalizeColumnOption($optionName)) {
                     case 'filestream':
                         $insert = ' FILESTREAM';
-                        $j = 0;
+                        $offsetIndex = 0;
                         break;
                     case 'collate':
-                        $insert = ' COLLATE '.$adapterPlatform->quoteIdentifier($coValue);
-                        $j = 0;
+                        // collate syntax does not use quotes
+                        $insert = ' COLLATE ' . $optionValue;
+                        $offsetIndex = 0;
                         break;
                     case 'identity':
                     case 'serial':
                     case 'autoincrement':
-                        $insert = ' IDENTITY '.$this->normalizeIdentityOptionValue($coValue);
-                        $j = 0;
+                        $insert = ' IDENTITY ' . $this->normalizeIdentityOptionValue($optionValue);
+                        $offsetIndex = 0;
                         break;
                     case 'rowguidcol':
                         $insert = ' ROWGUIDCOL';
-                        $j = 1;
+                        $offsetIndex = 1;
                         break;
                     case 'sparse':
                         $insert = ' SPARSE';
-                        $j = 1;
+                        $offsetIndex = 1;
                         break;
                     case 'encryptedwith':
-                        $insert = ' ENCRYPTED WITH '.$coValue;
-                        $j = 1;
+                        $insert = ' ENCRYPTED WITH ' . $optionValue;
+                        $offsetIndex = 1;
                         break;
                     case 'maskedwith':
-                        $insert = ' MASKED WITH '.$coValue;
-                        $j = 1;
+                        $insert = ' MASKED WITH ' . $optionValue;
+                        $offsetIndex = 1;
                         break;
                     case 'comment':
-                        $insert = ' COMMENT '.$adapterPlatform->quoteValue($coValue);
-                        $j = 2;
+                        $insert = ' COMMENT ' . $adapterPlatform->quoteValue($optionValue);
+                        $offsetIndex = 2;
                         break;
                 }
 
                 if ($insert) {
-                    $j = isset($j) ? $j : 0;
-                    $sql = substr_replace($sql, $insert, $insertStart[$j], 0);
-                    $insertStartCount = count($insertStart);
-                    for (; $j < $insertStartCount; ++$j) {
-                        $insertStart[$j] += strlen($insert);
+                    $offsetIndex = isset($offsetIndex) ? $offsetIndex : 0;
+                    $sql = substr_replace($sql, $insert, $optionOffsets[$offsetIndex], 0);
+                    $insertStartCount = count($optionOffsets);
+                    for (; $offsetIndex < $insertStartCount; ++$offsetIndex) {
+                        $optionOffsets[$offsetIndex] += strlen($insert);
                     }
                 }
             }
@@ -186,30 +186,30 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     }
 
     /**
-     * @param $value
+     * @param $optionValue
      * @return string
      */
-    private function normalizeIdentityOptionValue($value)
+    private function normalizeIdentityOptionValue($optionValue)
     {
-        if (is_bool($value)) {
+        if (is_bool($optionValue)) {
             return '(1, 1)';
         }
 
-        $value = trim($value);
+        $optionValue = trim($optionValue);
         // if user did not use brackets for identity function parameters
         // add them.
-        if (strpos($value, '(') !== 0) {
-            $value = '('.$value.')';
+        if (strpos($optionValue, '(') !== 0) {
+            $optionValue = '(' . $optionValue . ')';
         }
 
         // end result should be (seed, increment)
-        if (preg_match('/\([1-9]+\,(\s)*[1-9]+\)/', $value) === 0) {
+        if (preg_match('/\([1-9]+\,(\s)*[1-9]+\)/', $optionValue) === 0) {
             throw new InvalidArgumentException(
-                'Identity format should be: (seed, increment). '.$value.' is given instead.'
+                'Identity format should be: (seed, increment). ' . $optionValue . ' is given instead.'
             );
         }
 
-        return $value;
+        return $optionValue;
     }
 
     /**

@@ -70,7 +70,7 @@ class CreateTableDecoratorTest extends TestCase
 
         self::assertEquals(
             "CREATE TABLE [opinionated] ( \n".
-            "    [id] INTEGER FILESTREAM COLLATE [Cyrillic_General_CI_AS] IDENTITY (1, 1) NOT NULL " .
+            "    [id] INTEGER FILESTREAM COLLATE Cyrillic_General_CI_AS IDENTITY (1, 1) NOT NULL " .
                     "ROWGUIDCOL SPARSE ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = key_name) " .
                     "MASKED WITH (FUNCTION = ' mask_function ') ".
                     "PRIMARY KEY,\n".
