@@ -12,6 +12,7 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Ddl\AlterTable;
 use Zend\Db\Sql\Ddl\Column\Column;
+use Zend\Db\Sql\Ddl\Column\ColumnInterface;
 use Zend\Db\Sql\Ddl\Column\Varbinary;
 use Zend\Db\Sql\Exception\InvalidArgumentException;
 use Zend\Db\Sql\ExpressionInterface;
@@ -19,20 +20,33 @@ use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 
 class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterface
 {
+
+    const RENAME_COLUMNS = "renameColumns";
+
+    /**
+     * @var array
+     */
+    protected $renameColumns = [];
+
     /**
      * @var AlterTable
      */
     protected $subject;
 
-    protected $alterSpecifications = [
+    protected $specifications = [
         self::ADD_COLUMNS  => [
             "%1\$s" => [
                 [2 => "ALTER TABLE %1\$s\n ADD %2\$s;", 'combinedby' => "\n"],
             ],
         ],
+        self::RENAME_COLUMNS => [
+            "%1\$s" => [
+                [2 => "sp_rename '%1\$s', '%2\$s', 'COLUMN';\n", 'combinedby' => "\n"],
+            ]
+        ],
         self::CHANGE_COLUMNS  => [
             "%1\$s" => [
-                [3 => "ALTER TABLE %1\$s\n ALTER COLUMN %2\$s %3\$s;", 'combinedby' => "\n"],
+                [2 => "ALTER TABLE %1\$s\n ALTER COLUMN %2\$s;", 'combinedby' => "\n"],
             ],
         ],
         self::DROP_COLUMNS  => [
@@ -76,16 +90,10 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     public function setSubject($subject)
     {
         $this->subject = $subject;
-        $this->specifications = array_merge($this->specifications, $this->alterSpecifications);
-        unset($this->specifications[self::TABLE]);
         $this->subject->specifications = $this->specifications;
 
         return $this;
     }
-
-    // SqlServer cannot have multiple operations in ALTER TABLE
-    // generate on first time, and reuse for all operations
-
 
     /**
      * @param string $sql
@@ -201,6 +209,10 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         return [$sqls];
     }
 
+    /**
+     * @param PlatformInterface|null $adapterPlatform
+     * @return array
+     */
     protected function processChangeColumns(PlatformInterface $adapterPlatform = null)
     {
         $sqls = [];
@@ -270,8 +282,34 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
             }
             $sqls[] = [
                 $adapterPlatform->quoteIdentifier($this->subject->table),
-                $adapterPlatform->quoteIdentifier($name),
                 $sql,
+            ];
+        }
+
+        return [$sqls];
+    }
+
+    /**
+     * @param PlatformInterface|null $adapterPlatform
+     */
+    protected function processRenameColumns(PlatformInterface $adapterPlatform = null)
+    {
+        // because altered in format $alterTable->changeColumn('old_name', new Column('new_name'))
+        /** @var ColumnInterface $column */
+        foreach ($this->changeColumns as $oldName => $column) {
+            if(strcmp($oldName, $column->getName()) !== 0) {
+                $this->renameColumns[$oldName] = $column;
+            }
+        }
+
+        $sqls = [];
+        foreach ($this->renameColumns as $oldName => $column) {
+            /** sp_ utility stored procedures do not quote identifiers unlike regular SQL syntax
+             * @see https://docs.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/sp-rename-transact-sql
+             */
+            $sqls[] = [
+                $this->subject->table . '.' . $oldName,
+                $column->getName(),
             ];
         }
 
