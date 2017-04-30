@@ -46,7 +46,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         ],
         self::DROP_COLUMNS  => [
             "%1\$s" => [
-                [2 => "ALTER TABLE %1\$s\n DROP COLUMN %2\$s;", 'combinedby' => ''],
+                [2 => "ALTER TABLE %1\$s\n DROP COLUMN %2\$s;", 'combinedby' => "\n"],
             ],
         ],
         self::ADD_CONSTRAINTS  => [
@@ -56,7 +56,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         ],
         self::DROP_CONSTRAINTS  => [
             "%1\$s" => [
-                [1 => "DROP CONSTRAINT %1\$s,\n", 'combinedby' => ''],
+                [2 => "ALTER TABLE %1\$s\n DROP CONSTRAINT %2\$s;\n", 'combinedby' => "\n"],
             ],
         ],
     ];
@@ -317,7 +317,8 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
      * @param PlatformInterface|null $adapterPlatform
      * @return array
      */
-    protected function processDropColumns(PlatformInterface $adapterPlatform = null) {
+    protected function processDropColumns(PlatformInterface $adapterPlatform = null)
+    {
         $sqls = [];
         foreach ($this->dropColumns as $column) {
             $sqls[] = [
@@ -328,7 +329,6 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
         return [$sqls];
     }
-
 
     /**
      * @param PlatformInterface|null $adapterPlatform
@@ -346,6 +346,20 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
         return [$sqls];
     }
+
+    protected function processDropConstraints(PlatformInterface $adapterPlatform = null)
+    {
+        $sqls = [];
+        foreach ($this->dropConstraints as $constraint) {
+            $sqls[] = [
+                $adapterPlatform->quoteIdentifier($this->subject->table),
+                $adapterPlatform->quoteIdentifier($constraint)
+            ];
+        }
+
+        return [$sqls];
+    }
+
 
     /**
      * @param ExpressionInterface $expression
