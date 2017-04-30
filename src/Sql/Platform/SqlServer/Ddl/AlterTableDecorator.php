@@ -28,6 +28,9 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
      */
     protected $subject;
 
+    /**
+     * @var array
+     */
     protected $specifications = [
         self::ADD_COLUMNS  => [
             "%1\$s" => [
@@ -347,6 +350,10 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         return [$sqls];
     }
 
+    /**
+     * @param PlatformInterface|null $adapterPlatform
+     * @return array
+     */
     protected function processDropConstraints(PlatformInterface $adapterPlatform = null)
     {
         $sqls = [];
