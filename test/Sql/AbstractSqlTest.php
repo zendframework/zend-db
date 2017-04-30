@@ -149,7 +149,7 @@ class AbstractSqlTest extends TestCase
         $expression = new Expression('FROM_UNIXTIME(?)', [10000000]);
         $this->invokeProcessExpressionMethod($expression, $parameterContainer, $namedParameterPrefix);
 
-        self::assertSame($namedParameterPrefix . '1', key($parameterContainer->getNamedArray()));
+        self::assertSame($namedParameterPrefix . '1', (string)key($parameterContainer->getNamedArray()));
     }
 
     public function testProcessExpressionWorksWithNamedParameterPrefixContainingWhitespace()
