@@ -99,6 +99,15 @@ class AlterTableDecoratorTest extends TestCase
             . " DROP COLUMN [drop_this];",
             trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
         );
+
+        // drop constraint
+        $alterTable = new AlterTable('altered');
+        $alterTable->dropConstraint('drop_this');
+        $this->assertEquals(
+            "ALTER TABLE [altered]\n"
+            . " DROP CONSTRAINT [drop_this];",
+            trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
+        );
     }
 
     /**
