@@ -76,6 +76,20 @@ class AlterTableDecoratorTest extends TestCase
               " ALTER COLUMN [changed] VARCHAR(10) COLLATE Cyrillic_General_CI_AS NOT NULL;",
             trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
         );
+
+        // rename column
+        $alterTable = new AlterTable('altered');
+        $changedColumn = new Varchar('new_name', 10);
+        $alterTable->changeColumn('old_name', $changedColumn);
+
+        // Cannot reliably detect if any other options for column have changed besides name.
+        // Therefore, have to run at least most basic ALTER TABLE command that performs a benign change.
+        $this->assertEquals(
+            "sp_rename 'altered.old_name', 'new_name', 'COLUMN';\n".
+            " ALTER TABLE [altered]\n".
+              " ALTER COLUMN [new_name] VARCHAR(10) NOT NULL;",
+            trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
+        );
     }
 
     /**
