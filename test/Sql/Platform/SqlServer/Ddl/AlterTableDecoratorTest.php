@@ -11,6 +11,7 @@ use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\Sql\Ddl\AlterTable;
 use Zend\Db\Sql\Ddl\Column\Column;
 use Zend\Db\Sql\Ddl\Column\Varbinary;
+use Zend\Db\Sql\Ddl\Column\Varchar;
 use Zend\Db\Sql\Ddl\Constraint\PrimaryKey;
 use Zend\Db\Sql\Exception\InvalidArgumentException;
 use Zend\Db\Sql\Platform\Sqlserver\Ddl\AlterTableDecorator;
@@ -44,9 +45,10 @@ class AlterTableDecoratorTest extends TestCase
         $primaryKey->addConstraint(new PrimaryKey(null, 'specified_pk'));
         $alterTable->addColumn($primaryKey);
 
+        //SQL Server needs separate ALTER command per operation
         $this->assertEquals(
             "ALTER TABLE [altered]\n".
-                " ADD [id] INTEGER FILESTREAM COLLATE [Cyrillic_General_CI_AS] IDENTITY (1, 1) NOT NULL " .
+                " ADD [id] INTEGER FILESTREAM COLLATE Cyrillic_General_CI_AS IDENTITY (1, 1) NOT NULL " .
                     "ROWGUIDCOL SPARSE ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = key_name) " .
                     "MASKED WITH (FUNCTION = ' mask_function ') PRIMARY KEY;\n".
             "ALTER TABLE [altered]\n".
@@ -55,12 +57,23 @@ class AlterTableDecoratorTest extends TestCase
             $alterDecorator->setSubject($alterTable)->getSqlString($platform)
         );
 
-        // add constraint without columns
+        // add table constraint without column definition
         $alterTable = new AlterTable('constrained');
         $alterTable->addConstraint(new PrimaryKey(['u_id', 'g_id'], 'UserGroup_PK'));
         $this->assertEquals(
             "ALTER TABLE [constrained]\n".
                 " ADD CONSTRAINT [UserGroup_PK] PRIMARY KEY ([u_id], [g_id]);",
+            trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
+        );
+
+        // change column options
+        $alterTable = new AlterTable('altered');
+        $changedColumn = new Varchar('changed', 10);
+        $changedColumn->setOption('COLLATE', 'Cyrillic_General_CI_AS');
+        $alterTable->changeColumn('changed', $changedColumn);
+        $this->assertEquals(
+            "ALTER TABLE [altered]\n".
+              " ALTER COLUMN [changed] VARCHAR(10) COLLATE Cyrillic_General_CI_AS NOT NULL;",
             trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
         );
     }
@@ -72,16 +85,16 @@ class AlterTableDecoratorTest extends TestCase
     {
         $platform = new TrustingSqlServerPlatform();
 
-        $atd = new AlterTableDecorator();
-        $at = new AlterTable('identifiable');
+        $alterDecorator = new AlterTableDecorator();
+        $alterTable = new AlterTable('identifiable');
         $id = new Column('id');
         $id->setOption('identity', true);
-        $at->addColumn($id);
+        $alterTable->addColumn($id);
 
         $this->assertEquals(
             "ALTER TABLE [identifiable]\n".
                 " ADD [id] INTEGER IDENTITY (1, 1) NOT NULL;",
-            $atd->setSubject($at)->getSqlString($platform)
+            $alterDecorator->setSubject($alterTable)->getSqlString($platform)
         );
     }
 
@@ -92,15 +105,15 @@ class AlterTableDecoratorTest extends TestCase
     {
         $platform = new TrustingSqlServerPlatform();
 
-        $atd = new AlterTableDecorator();
-        $at = new AlterTable('invalid');
+        $alterDecorator = new AlterTableDecorator();
+        $alterTable = new AlterTable('invalid');
 
         $id = new Column('id');
         $id->setOption('identity', '1');
-        $at->addColumn($id);
+        $alterTable->addColumn($id);
 
         $this->setExpectedException(InvalidArgumentException::class);
-        $atd->setSubject($at)->getSqlString($platform);
+        $alterDecorator->setSubject($alterTable)->getSqlString($platform);
     }
 
     /**
@@ -110,14 +123,14 @@ class AlterTableDecoratorTest extends TestCase
     {
         $platform = new TrustingSqlServerPlatform();
 
-        $atd = new AlterTableDecorator();
-        $at = new AlterTable('hasbinarydata');
+        $alterDecorator = new AlterTableDecorator();
+        $alterTable = new AlterTable('hasbinarydata');
 
-        $at->addColumn(new Varbinary('binary'));
+        $alterTable->addColumn(new Varbinary('binary'));
         $this->assertEquals(
             "ALTER TABLE [hasbinarydata]\n".
                 " ADD [binary] VARBINARY (max) NOT NULL;",
-            $atd->setSubject($at)->getSqlString($platform)
+            $alterDecorator->setSubject($alterTable)->getSqlString($platform)
         );
     }
 }

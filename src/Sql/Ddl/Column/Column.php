@@ -45,6 +45,8 @@ class Column implements ColumnInterface
 
     /**
      * @var string
+     * @TODO Base Column class should not have a default type.
+     * @TODO There are cases, such as AlterTable where type should NOT be included for some column operations
      */
     protected $type = 'INTEGER';
 
