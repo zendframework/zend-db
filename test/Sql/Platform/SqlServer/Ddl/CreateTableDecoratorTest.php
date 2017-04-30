@@ -69,13 +69,13 @@ class CreateTableDecoratorTest extends TestCase
         $createTable->addColumn($primaryKey);
 
         $this->assertEquals(
-            "CREATE TABLE [opinionated] ( \n".
-            "    [id] INTEGER FILESTREAM COLLATE Cyrillic_General_CI_AS IDENTITY (1, 1) NOT NULL " .
-                    "ROWGUIDCOL SPARSE ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = key_name) " .
-                    "MASKED WITH (FUNCTION = ' mask_function ') ".
-                    "PRIMARY KEY,\n".
-            "    [named_key] INTEGER NOT NULL CONSTRAINT [specified_primary_key_name] PRIMARY KEY \n".
-            ")",
+              "CREATE TABLE [opinionated] ( \n"
+            .  "    [id] INTEGER FILESTREAM COLLATE Cyrillic_General_CI_AS IDENTITY (1, 1) NOT NULL "
+            .       "ROWGUIDCOL SPARSE ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = key_name) "
+            .       "MASKED WITH (FUNCTION = ' mask_function ') "
+            .       "PRIMARY KEY,\n"
+            . "    [named_key] INTEGER NOT NULL CONSTRAINT [specified_primary_key_name] PRIMARY KEY \n"
+            . ")",
             $createDecorator->setSubject($createTable)->getSqlString($platform)
         );
     }

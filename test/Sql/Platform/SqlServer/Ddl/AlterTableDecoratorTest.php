@@ -47,13 +47,13 @@ class AlterTableDecoratorTest extends TestCase
 
         //SQL Server needs separate ALTER command per operation
         $this->assertEquals(
-            "ALTER TABLE [altered]\n".
-                " ADD [id] INTEGER FILESTREAM COLLATE Cyrillic_General_CI_AS IDENTITY (1, 1) NOT NULL " .
-                    "ROWGUIDCOL SPARSE ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = key_name) " .
-                    "MASKED WITH (FUNCTION = ' mask_function ') PRIMARY KEY;\n".
-            "ALTER TABLE [altered]\n".
-                " ADD [named_pk] INTEGER NOT NULL " .
-                    "CONSTRAINT [specified_pk] PRIMARY KEY;",
+              "ALTER TABLE [altered]\n"
+            .    " ADD [id] INTEGER FILESTREAM COLLATE Cyrillic_General_CI_AS IDENTITY (1, 1) NOT NULL "
+            .       "ROWGUIDCOL SPARSE ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = key_name) "
+            .       "MASKED WITH (FUNCTION = ' mask_function ') PRIMARY KEY;\n"
+            . "ALTER TABLE [altered]\n"
+            .    " ADD [named_pk] INTEGER NOT NULL "
+            .       "CONSTRAINT [specified_pk] PRIMARY KEY;",
             $alterDecorator->setSubject($alterTable)->getSqlString($platform)
         );
 
@@ -61,8 +61,8 @@ class AlterTableDecoratorTest extends TestCase
         $alterTable = new AlterTable('constrained');
         $alterTable->addConstraint(new PrimaryKey(['u_id', 'g_id'], 'UserGroup_PK'));
         $this->assertEquals(
-            "ALTER TABLE [constrained]\n".
-                " ADD CONSTRAINT [UserGroup_PK] PRIMARY KEY ([u_id], [g_id]);",
+              "ALTER TABLE [constrained]\n"
+            .   " ADD CONSTRAINT [UserGroup_PK] PRIMARY KEY ([u_id], [g_id]);",
             trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
         );
 
@@ -72,8 +72,8 @@ class AlterTableDecoratorTest extends TestCase
         $changedColumn->setOption('COLLATE', 'Cyrillic_General_CI_AS');
         $alterTable->changeColumn('changed', $changedColumn);
         $this->assertEquals(
-            "ALTER TABLE [altered]\n".
-              " ALTER COLUMN [changed] VARCHAR(10) COLLATE Cyrillic_General_CI_AS NOT NULL;",
+              "ALTER TABLE [altered]\n"
+            . " ALTER COLUMN [changed] VARCHAR(10) COLLATE Cyrillic_General_CI_AS NOT NULL;",
             trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
         );
 
@@ -85,9 +85,9 @@ class AlterTableDecoratorTest extends TestCase
         // Cannot reliably detect if any other options for column have changed besides name.
         // Therefore, have to run at least most basic ALTER TABLE command that performs a benign change.
         $this->assertEquals(
-            "sp_rename 'altered.old_name', 'new_name', 'COLUMN';\n".
-            " ALTER TABLE [altered]\n".
-              " ALTER COLUMN [new_name] VARCHAR(10) NOT NULL;",
+              "sp_rename 'altered.old_name', 'new_name', 'COLUMN';\n"
+            . " ALTER TABLE [altered]\n"
+            . " ALTER COLUMN [new_name] VARCHAR(10) NOT NULL;",
             trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
         );
     }
@@ -106,8 +106,8 @@ class AlterTableDecoratorTest extends TestCase
         $alterTable->addColumn($id);
 
         $this->assertEquals(
-            "ALTER TABLE [identifiable]\n".
-                " ADD [id] INTEGER IDENTITY (1, 1) NOT NULL;",
+              "ALTER TABLE [identifiable]\n"
+            .   " ADD [id] INTEGER IDENTITY (1, 1) NOT NULL;",
             $alterDecorator->setSubject($alterTable)->getSqlString($platform)
         );
     }
@@ -142,8 +142,8 @@ class AlterTableDecoratorTest extends TestCase
 
         $alterTable->addColumn(new Varbinary('binary'));
         $this->assertEquals(
-            "ALTER TABLE [hasbinarydata]\n".
-                " ADD [binary] VARBINARY (max) NOT NULL;",
+              "ALTER TABLE [hasbinarydata]\n"
+            .   " ADD [binary] VARBINARY (max) NOT NULL;",
             $alterDecorator->setSubject($alterTable)->getSqlString($platform)
         );
     }
