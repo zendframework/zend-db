@@ -294,7 +294,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         // because altered in format $alterTable->changeColumn('old_name', new Column('new_name'))
         /** @var ColumnInterface $column */
         foreach ($this->changeColumns as $oldName => $column) {
-            if(strcmp($oldName, $column->getName()) !== 0) {
+            if (strcmp($oldName, $column->getName()) !== 0) {
                 $renameColumns[$oldName] = $column;
             }
         }

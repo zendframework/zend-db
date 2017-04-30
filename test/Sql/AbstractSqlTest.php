@@ -9,13 +9,13 @@
 
 namespace ZendTest\Db\Sql;
 
+use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\ExpressionInterface;
-use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Sql\Predicate;
 use Zend\Db\Sql\Select;
 use ZendTest\Db\TestAsset\TrustingSql92Platform;
-use Zend\Db\Adapter\ParameterContainer;
 
 class AbstractSqlTest extends \PHPUnit_Framework_TestCase
 {
@@ -148,7 +148,7 @@ class AbstractSqlTest extends \PHPUnit_Framework_TestCase
         $expression = new Expression('FROM_UNIXTIME(?)', [10000000]);
         $this->invokeProcessExpressionMethod($expression, $parameterContainer, $namedParameterPrefix);
 
-        $this->assertSame($namedParameterPrefix . '1', key($parameterContainer->getNamedArray()));
+        $this->assertSame($namedParameterPrefix . '1', (string)key($parameterContainer->getNamedArray()));
     }
 
     public function testProcessExpressionWorksWithNamedParameterPrefixContainingWhitespace()
