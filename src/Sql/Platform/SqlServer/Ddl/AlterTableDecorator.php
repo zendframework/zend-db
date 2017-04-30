@@ -24,11 +24,6 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     const RENAME_COLUMNS = "renameColumns";
 
     /**
-     * @var array
-     */
-    protected $renameColumns = [];
-
-    /**
      * @var AlterTable
      */
     protected $subject;
@@ -51,7 +46,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         ],
         self::DROP_COLUMNS  => [
             "%1\$s" => [
-                [1 => "DROP COLUMN %1\$s,\n", 'combinedby' => ''],
+                [2 => "ALTER TABLE %1\$s\n DROP COLUMN %2\$s;", 'combinedby' => ''],
             ],
         ],
         self::ADD_CONSTRAINTS  => [
@@ -294,16 +289,18 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
      */
     protected function processRenameColumns(PlatformInterface $adapterPlatform = null)
     {
+        $renameColumns = [];
+
         // because altered in format $alterTable->changeColumn('old_name', new Column('new_name'))
         /** @var ColumnInterface $column */
         foreach ($this->changeColumns as $oldName => $column) {
             if(strcmp($oldName, $column->getName()) !== 0) {
-                $this->renameColumns[$oldName] = $column;
+                $renameColumns[$oldName] = $column;
             }
         }
 
         $sqls = [];
-        foreach ($this->renameColumns as $oldName => $column) {
+        foreach ($renameColumns as $oldName => $column) {
             /** sp_ utility stored procedures do not quote identifiers unlike regular SQL syntax
              * @see https://docs.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/sp-rename-transact-sql
              */
@@ -315,6 +312,23 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
         return [$sqls];
     }
+
+    /**
+     * @param PlatformInterface|null $adapterPlatform
+     * @return array
+     */
+    protected function processDropColumns(PlatformInterface $adapterPlatform = null) {
+        $sqls = [];
+        foreach ($this->dropColumns as $column) {
+            $sqls[] = [
+                $adapterPlatform->quoteIdentifier($this->subject->table),
+                $adapterPlatform->quoteIdentifier($column),
+            ];
+        }
+
+        return [$sqls];
+    }
+
 
     /**
      * @param PlatformInterface|null $adapterPlatform

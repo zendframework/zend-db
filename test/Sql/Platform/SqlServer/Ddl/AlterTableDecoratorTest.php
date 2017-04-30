@@ -90,6 +90,15 @@ class AlterTableDecoratorTest extends TestCase
             . " ALTER COLUMN [new_name] VARCHAR(10) NOT NULL;",
             trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
         );
+
+        // drop columns
+        $alterTable = new AlterTable('altered');
+        $alterTable->dropColumn('drop_this');
+        $this->assertEquals(
+              "ALTER TABLE [altered]\n"
+            . " DROP COLUMN [drop_this];",
+            trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
+        );
     }
 
     /**
