@@ -68,6 +68,13 @@ interface ConnectionInterface
     public function rollback();
 
     /**
+     * Checks whether the connection is in transaction state.
+     *
+     * @return boolean
+     */
+    public function inTransaction();
+    
+    /**
      * Execute
      *
      * @param  string $sql
