@@ -12,10 +12,8 @@ namespace Zend\Db\Sql\Platform\Mysql\Ddl;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Metadata\Object\ConstraintObject;
 use Zend\Db\Sql\Ddl\AlterTable;
-use Zend\Db\Sql\Ddl\Constraint\ConstraintInterface;
 use Zend\Db\Sql\Ddl\Constraint\ForeignKey;
 use Zend\Db\Sql\Ddl\Constraint\PrimaryKey;
-use Zend\Db\Sql\Ddl\Constraint\UniqueKey;
 use Zend\Db\Sql\Ddl\Index\AbstractIndex;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 
