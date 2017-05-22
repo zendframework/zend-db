@@ -10,6 +10,7 @@
 namespace ZendTest\Db\Sql\Platform\Mysql\Ddl;
 
 use Zend\Db\Adapter\Platform\Mysql;
+use Zend\Db\Metadata\Object\ConstraintObject;
 use Zend\Db\Sql\Ddl\AlterTable;
 use Zend\Db\Sql\Ddl\Column\Column;
 use Zend\Db\Sql\Ddl\Constraint\PrimaryKey;
@@ -45,8 +46,13 @@ class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase
         $col->addConstraint(new PrimaryKey());
         $ct->addColumn($col);
 
+        $fk = new ConstraintObject('my_fk', null);
+        $fk->setType('FOREIGN KEY');
+        $ct->dropConstraint($fk);
+
         $this->assertEquals(
-            "ALTER TABLE `foo`\n ADD COLUMN `bar` INTEGER UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'baz' AFTER `bar`",
+            "ALTER TABLE `foo`\n ADD COLUMN `bar` INTEGER UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'baz' AFTER `bar`,\n"
+            ."    DROP FOREIGN KEY `my_fk`",
             @$ctd->getSqlString(new Mysql())
         );
     }

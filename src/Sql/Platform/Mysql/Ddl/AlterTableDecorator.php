@@ -248,4 +248,17 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
         return $columnA - $columnB;
     }
+
+    protected function processDropConstraints(PlatformInterface $adapterPlatform = null)
+    {
+        $sqls = [];
+        foreach ($this->dropConstraints as $constraint) {
+            $sqls[] = [
+                $constraint->getType(),
+                $adapterPlatform->quoteIdentifier($constraint->getName())
+            ];
+        }
+
+        return [$sqls];
+    }
 }

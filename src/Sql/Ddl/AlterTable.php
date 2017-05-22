@@ -10,6 +10,7 @@
 namespace Zend\Db\Sql\Ddl;
 
 use Zend\Db\Adapter\Platform\PlatformInterface;
+use Zend\Db\Metadata\Object\ConstraintObject;
 use Zend\Db\Sql\AbstractSql;
 
 class AlterTable extends AbstractSql implements SqlInterface
@@ -27,7 +28,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     protected $addColumns = [];
 
     /**
-     * @var array
+     * @var Constraint\ConstraintInterface[]
      */
     protected $addConstraints = [];
 
@@ -42,7 +43,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     protected $dropColumns = [];
 
     /**
-     * @var array
+     * @var ConstraintObject[]
      */
     protected $dropConstraints = [];
 
@@ -74,7 +75,7 @@ class AlterTable extends AbstractSql implements SqlInterface
         ],
         self::DROP_CONSTRAINTS  => [
             "%1\$s" => [
-                [1 => "DROP CONSTRAINT %1\$s,\n", 'combinedby' => ""],
+                [2 => "DROP %1\$s %2\$s,\n", 'combinedby' => ""],
             ]
         ]
     ];
@@ -138,12 +139,12 @@ class AlterTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param  string $name
+     * @param  ConstraintObject $constraint
      * @return self Provides a fluent interface
      */
-    public function dropConstraint($name)
+    public function dropConstraint(ConstraintObject $constraint)
     {
-        $this->dropConstraints[] = $name;
+        $this->dropConstraints[] = $constraint;
 
         return $this;
     }
@@ -229,7 +230,10 @@ class AlterTable extends AbstractSql implements SqlInterface
     {
         $sqls = [];
         foreach ($this->dropConstraints as $constraint) {
-            $sqls[] = $adapterPlatform->quoteIdentifier($constraint);
+            $sqls[] = [
+                'CONSTRAINT',
+                $adapterPlatform->quoteIdentifier($constraint->getName())
+            ];
         }
 
         return [$sqls];
