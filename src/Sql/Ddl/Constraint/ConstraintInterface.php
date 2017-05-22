@@ -14,4 +14,6 @@ use Zend\Db\Sql\ExpressionInterface;
 interface ConstraintInterface extends ExpressionInterface
 {
     public function getColumns();
+
+    public function getName();
 }

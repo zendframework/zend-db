@@ -96,13 +96,15 @@ class AlterTableTest extends \PHPUnit_Framework_TestCase
         $at->dropColumn('foo');
         $at->addConstraint(new Constraint\ForeignKey('my_fk', 'other_id', 'other_table', 'id', 'CASCADE', 'CASCADE'));
         $at->dropConstraint(new ConstraintObject('my_index', null));
+        $at->dropConstraint(new Constraint\UniqueKey(null, 'my_unique_index'));
         $expected =<<<EOS
 ALTER TABLE "foo"
  ADD COLUMN "another" VARCHAR(255) NOT NULL,
  CHANGE COLUMN "name" "new_name" VARCHAR(50) NOT NULL,
  DROP COLUMN "foo",
  ADD CONSTRAINT "my_fk" FOREIGN KEY ("other_id") REFERENCES "other_table" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
- DROP CONSTRAINT "my_index"
+ DROP CONSTRAINT "my_index",
+ DROP CONSTRAINT "my_unique_index"
 EOS;
 
         $actual = $at->getSqlString();

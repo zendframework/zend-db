@@ -43,7 +43,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     protected $dropColumns = [];
 
     /**
-     * @var ConstraintObject[]
+     * @var Constraint\ConstraintInterface[]|ConstraintObject[]
      */
     protected $dropConstraints = [];
 
@@ -75,7 +75,7 @@ class AlterTable extends AbstractSql implements SqlInterface
         ],
         self::DROP_CONSTRAINTS  => [
             "%1\$s" => [
-                [2 => "DROP %1\$s %2\$s,\n", 'combinedby' => ""],
+                [1 => "DROP CONSTRAINT %1\$s,\n", 'combinedby' => " "],
             ]
         ]
     ];
@@ -139,10 +139,10 @@ class AlterTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param  ConstraintObject $constraint
+     * @param  Constraint\ConstraintInterface|ConstraintObject $constraint
      * @return self Provides a fluent interface
      */
-    public function dropConstraint(ConstraintObject $constraint)
+    public function dropConstraint($constraint)
     {
         $this->dropConstraints[] = $constraint;
 
@@ -230,10 +230,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     {
         $sqls = [];
         foreach ($this->dropConstraints as $constraint) {
-            $sqls[] = [
-                'CONSTRAINT',
-                $adapterPlatform->quoteIdentifier($constraint->getName())
-            ];
+            $sqls[] = $adapterPlatform->quoteIdentifier($constraint->getName());
         }
 
         return [$sqls];

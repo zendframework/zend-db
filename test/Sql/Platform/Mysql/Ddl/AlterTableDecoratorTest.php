@@ -14,6 +14,7 @@ use Zend\Db\Metadata\Object\ConstraintObject;
 use Zend\Db\Sql\Ddl\AlterTable;
 use Zend\Db\Sql\Ddl\Column\Column;
 use Zend\Db\Sql\Ddl\Constraint\PrimaryKey;
+use Zend\Db\Sql\Ddl\Constraint\UniqueKey;
 use Zend\Db\Sql\Platform\Mysql\Ddl\AlterTableDecorator;
 
 class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase
@@ -50,9 +51,12 @@ class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase
         $fk->setType('FOREIGN KEY');
         $ct->dropConstraint($fk);
 
+        $ct->dropConstraint(new UniqueKey(null, 'my_unique_index'));
+
         $this->assertEquals(
             "ALTER TABLE `foo`\n ADD COLUMN `bar` INTEGER UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'baz' AFTER `bar`,\n"
-            ."    DROP FOREIGN KEY `my_fk`",
+            ."    DROP FOREIGN KEY `my_fk`,\n"
+            ." DROP KEY `my_unique_index`",
             @$ctd->getSqlString(new Mysql())
         );
     }
