@@ -10,7 +10,6 @@
 namespace Zend\Db\Sql\Platform\Mysql\Ddl;
 
 use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Exception\InvalidArgumentException;
 use Zend\Db\Metadata\Object\ConstraintObject;
 use Zend\Db\Sql\Ddl\AlterTable;
 use Zend\Db\Sql\Ddl\Constraint\ConstraintInterface;
