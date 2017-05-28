@@ -14,6 +14,7 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 use Zend\Db\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
+use Zend\Db\Exception\RuntimeException;
 
 abstract class AbstractSql implements SqlInterface
 {
