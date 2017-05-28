@@ -410,10 +410,13 @@ abstract class AbstractSql implements SqlInterface
         if ($isIdentifier) {
             $matches = [];
             preg_match(
-                '#(?P<star>\.{0,1}\*(?=\s*$))|(?P<column>[^\s].+?)(?:\s*$|(?:\s+as\s+(?P<alias>.*(?:\S))))#i',
+                '#(?:(?<table>[^\s].*?)\.(?=\S)){0,1}(?:(?<star>\.{0,1}\*(?=\s*$))|(?<column>[^\s].*?)(?:\s*$|(?:\s+as\s+(?<alias>.*(?:\S)))))#i',
                 $column,
                 $matches
             );
+            if (!empty($matches['table'])) {
+                $fromTable = $platform->quoteIdentifier($matches['table']) . $platform->getIdentifierSeparator();
+            }
             if (Select::SQL_STAR === $matches['star']) {
                 return $fromTable . Select::SQL_STAR;
             }
