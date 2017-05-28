@@ -405,9 +405,21 @@ abstract class AbstractSql implements SqlInterface
         if ($column === null) {
             return 'NULL';
         }
-        return $isIdentifier
-                ? $fromTable . $platform->quoteIdentifierInFragment($column)
-                : $platform->quoteValue($column);
+
+        if ($isIdentifier) {
+            $matches = [];
+            preg_match('#(?P<column>[^\s].+?)(?:\s*$|(?:\s+as\s+(?P<alias>.*(?:\S))))#i', $column, $matches);
+            if (array_key_exists('column', $matches)) {
+                $column = $platform->quoteIdentifier($matches['column']);
+                if (array_key_exists('alias', $matches)) {
+                    $column .= ' AS ' . $platform->quoteIdentifier($matches['alias']);
+                }
+                return $fromTable . $column;
+            }
+            throw new RuntimeException('Invalid column name');
+        }
+
+        return $platform->quoteValue($column);
     }
 
     /**
