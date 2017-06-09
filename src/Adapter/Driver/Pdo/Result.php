@@ -195,7 +195,7 @@ class Result implements Iterator, ResultInterface
      */
     public function valid()
     {
-        return ($this->currentData !== false);
+        return isset($this->currentData) && ($this->currentData !== false);
     }
 
     /**
