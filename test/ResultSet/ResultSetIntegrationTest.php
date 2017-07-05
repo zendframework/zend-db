@@ -90,6 +90,20 @@ class ResultSetIntegrationTest extends TestCase
         $this->assertSame($it, $this->resultSet->getDataSource());
     }
 
+    public function testCanProvideArrayAsDataSource()
+    {
+        $dataSource = [['foo']];
+        $this->resultSet->initialize($dataSource);
+        $this->assertEquals($dataSource[0], (array) $this->resultSet->current());
+
+        $returnType = new ReturnType();
+        $dataSource = [$returnType];
+        $this->resultSet->setArrayObjectPrototype($returnType);
+        $this->resultSet->initialize($dataSource);
+        $this->assertEquals($dataSource[0], $this->resultSet->current());
+        $this->assertContains($dataSource[0], $this->resultSet);
+    }
+
     public function testCanProvideIteratorAggregateAsDataSource()
     {
         $iteratorAggregate = $this->getMock('IteratorAggregate', ['getIterator'], [new SplStack]);
