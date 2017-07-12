@@ -42,7 +42,7 @@ abstract class AbstractPlatform implements PlatformInterface
         }
 
         $parts = preg_split(
-            '/([^0-9,a-z,A-Z$_:])/i',
+            '/([^0-9,a-z,A-Z$_:\x{4e00}-\x{9fa5}])/iu',
             $identifier,
             -1,
             PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
