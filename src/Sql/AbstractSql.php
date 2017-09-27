@@ -181,6 +181,8 @@ abstract class AbstractSql implements SqlInterface
                     );
                 } elseif ($type == ExpressionInterface::TYPE_IDENTIFIER) {
                     $values[$vIndex] = $platform->quoteIdentifierInFragment($value);
+                } elseif ($type == ExpressionInterface::TYPE_IDENTIFIER_ATOMIC) {
+                    $values[$vIndex] = $platform->quoteIdentifier($value);
                 } elseif ($type == ExpressionInterface::TYPE_VALUE) {
                     // if prepareType is set, it means that this particular value must be
                     // passed back to the statement in a way it can be used as a placeholder value

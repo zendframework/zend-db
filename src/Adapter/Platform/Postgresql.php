@@ -17,13 +17,6 @@ use Zend\Db\Adapter\Exception;
 class Postgresql extends AbstractPlatform
 {
     /**
-     * Overrides value from AbstractPlatform to use proper escaping for Postgres
-     *
-     * @var string
-     */
-    protected $quoteIdentifierTo = '""';
-
-    /**
      * @var resource|\PDO
      */
     protected $resource = null;

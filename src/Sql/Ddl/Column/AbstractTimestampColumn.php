@@ -27,7 +27,7 @@ abstract class AbstractTimestampColumn extends Column
         $params[] = $this->name;
         $params[] = $this->type;
 
-        $types = [self::TYPE_IDENTIFIER, self::TYPE_LITERAL];
+        $types = [self::TYPE_IDENTIFIER_ATOMIC, self::TYPE_LITERAL];
 
         if (!$this->isNullable) {
             $spec .= ' NOT NULL';
