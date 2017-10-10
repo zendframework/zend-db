@@ -7,6 +7,7 @@ use Zend\Db\Sql\Select;
 
 class WhereInvokable
 {
+    /** @var  string */
     private $value;
 
     /**
@@ -20,7 +21,6 @@ class WhereInvokable
 
     public function __invoke($select)
     {
-        /** @var Select $select */
         $select->where->addPredicate(new Like('foo', $this->value));
     }
 
