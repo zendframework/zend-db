@@ -78,7 +78,7 @@ class PredicateSet implements PredicateInterface, Countable
             $this->addPredicate($predicates, $combination);
             return $this;
         }
-        if ($predicates instanceof \Closure || is_callable($predicates)) {
+        if ($predicates instanceof \Closure || \is_callable($predicates)) {
             $predicates($this);
             return $this;
         }
