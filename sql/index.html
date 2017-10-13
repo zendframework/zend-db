@@ -393,7 +393,7 @@ $select-&gt;from('foo')-&gt;where(['x = 5', 'y = z']);</code></pre>
 
 <p>If you provide an associative array with string keys, any value with a string
 key will be cast as follows:</p>
-<div class="table-responsive"><table>
+<div class="table-responsive"><div class="table-responsive"><table>
 <thead>
 <tr>
 <th>PHP value</th>
@@ -414,7 +414,7 @@ key will be cast as follows:</p>
 <td><code>Predicate\Operator</code>, where the key is the identifier.</td>
 </tr>
 </tbody>
-</table></div>
+</table></div></div>
 <p>As an example:</p>
 <pre class="codehilite"><code class="language-php linenums">// SELECT &quot;foo&quot;.* FROM &quot;foo&quot; WHERE &quot;c1&quot; IS NULL AND &quot;c2&quot; IN (?, ?, ?) AND &quot;c3&quot; IS NOT NULL
 $select-&gt;from('foo')-&gt;where([

@@ -302,7 +302,7 @@ platforms cannot be prepared, only executed.</p>
 <p>These types exist in the <code>Zend\Db\Sql\Ddl\Column</code> namespace. Data types must
 implement <code>Zend\Db\Sql\Ddl\Column\ColumnInterface</code>.</p>
 <p>In alphabetical order:</p>
-<div class="table-responsive"><table>
+<div class="table-responsive"><div class="table-responsive"><table>
 <thead>
 <tr>
 <th>Type</th>
@@ -363,7 +363,7 @@ implement <code>Zend\Db\Sql\Ddl\Column\ColumnInterface</code>.</p>
 <td><code>$name</code>, <code>$length</code></td>
 </tr>
 </tbody>
-</table></div>
+</table></div></div>
 <p>Each of the above types can be utilized in any place that accepts a <code>Column\ColumnInterface</code>
 instance. Currently, this is primarily in <code>CreateTable::addColumn()</code> and <code>AlterTable</code>'s
 <code>addColumn()</code> and <code>changeColumn()</code> methods.</p>
@@ -371,7 +371,7 @@ instance. Currently, this is primarily in <code>CreateTable::addColumn()</code> 
 <p>These types exist in the <code>Zend\Db\Sql\Ddl\Constraint</code> namespace. Data types
 must implement <code>Zend\Db\Sql\Ddl\Constraint\ConstraintInterface</code>.</p>
 <p>In alphabetical order:</p>
-<div class="table-responsive"><table>
+<div class="table-responsive"><div class="table-responsive"><table>
 <thead>
 <tr>
 <th>Type</th>
@@ -396,7 +396,7 @@ must implement <code>Zend\Db\Sql\Ddl\Constraint\ConstraintInterface</code>.</p>
 <td><code>$column</code>, <code>$name = null</code></td>
 </tr>
 </tbody>
-</table></div>
+</table></div></div>
 <p>Each of the above types can be utilized in any place that accepts a
 <code>Column\ConstraintInterface</code> instance. Currently, this is primarily in
 <code>CreateTable::addConstraint()</code> and <code>AlterTable::addConstraint()</code>.</p>
