@@ -139,11 +139,14 @@ class AbstractTableGatewayTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Zend\Db\TableGateway\AbstractTableGateway::select
-     * @covers Zend\Db\TableGateway\AbstractTableGateway::selectWith
-     * @covers Zend\Db\TableGateway\AbstractTableGateway::executeSelect
+     * @covers       Zend\Db\TableGateway\AbstractTableGateway::select
+     * @covers       Zend\Db\TableGateway\AbstractTableGateway::selectWith
+     * @covers       Zend\Db\TableGateway\AbstractTableGateway::executeSelect
+     * @dataProvider testSelectWithWhereStringDataProvider
+     *
+     * @param null|array $params - params for select with function
      */
-    public function testSelectWithWhereString()
+    public function testSelectWithWhereString($params = null)
     {
         $mockSelect = $this->mockSql->select();
 
@@ -159,7 +162,49 @@ class AbstractTableGatewayTest extends \PHPUnit_Framework_TestCase
             ->method('where')
             ->with($this->equalTo('foo'));
 
-        $this->table->select('foo');
+        // We check if params are null because in common use case user will know if params are defined
+        // He can also pass empty array
+        if ($params == null) {
+            $this->table->select('foo');
+        } else {
+            $this->table->select('foo', $params);
+        }
+    }
+
+    /**
+     * Returns params for selectWith function
+     */
+    public function testSelectWithWhereStringDataProvider()
+    {
+        return [
+            //Array of values
+            [
+                [
+                    'foo'  => 'bar',
+                    'test' => 'test2',
+                ],
+            ],
+            //Empty array
+            [
+                [],
+            ],
+            //empty
+            [
+
+            ],
+            [
+                null,
+            ],
+            //Array with array
+            [
+                [
+                    'foo' => [
+                        'bar',
+                        'test',
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**

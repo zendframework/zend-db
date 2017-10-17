@@ -177,9 +177,11 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * Select
      *
      * @param Where|\Closure|string|array $where
-     * @return ResultSet
+     * @param array                       $params - statement params
+     *
+     * @return \Zend\Db\ResultSet\ResultSet
      */
-    public function select($where = null)
+    public function select($where = NULL, array $params = [])
     {
         if (!$this->isInitialized) {
             $this->initialize();
@@ -193,28 +195,32 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $select->where($where);
         }
 
-        return $this->selectWith($select);
+        return $this->selectWith($select, $params);
     }
 
     /**
      * @param Select $select
+     * @param array  $params - statement params
+     *
      * @return ResultSetInterface
      * @throws \RuntimeException
      */
-    public function selectWith(Select $select)
+    public function selectWith(Select $select, array $params = [])
     {
         if (!$this->isInitialized) {
             $this->initialize();
         }
-        return $this->executeSelect($select);
+
+        return $this->executeSelect($select, $params);
     }
 
     /**
      * @param Select $select
-     * @return ResultSet
-     * @throws Exception\RuntimeException
+     * @param array  $params - statement params
+     *
+     * @return \Zend\Db\ResultSet\ResultSet
      */
-    protected function executeSelect(Select $select)
+    protected function executeSelect(Select $select, array $params = [])
     {
         $selectState = $select->getRawState();
         if ($selectState['table'] != $this->table
@@ -236,7 +242,11 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
         // prepare and execute
         $statement = $this->sql->prepareStatementForSqlObject($select);
-        $result = $statement->execute();
+        if (count($params) > 0) {
+            $result = $statement->execute($params);
+        } else {
+            $result = $statement->execute();
+        }
 
         // build result set
         $resultSet = clone $this->resultSetPrototype;
@@ -518,10 +528,10 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             return $this->featureSet->callMagicCall($method, $arguments);
         }
         throw new Exception\InvalidArgumentException(sprintf(
-            'Invalid method (%s) called, caught by %s::__call()',
-            $method,
-            __CLASS__
-        ));
+                                                         'Invalid method (%s) called, caught by %s::__call()',
+                                                         $method,
+                                                         __CLASS__
+                                                     ));
     }
 
     /**
