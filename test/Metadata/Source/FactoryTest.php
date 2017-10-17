@@ -18,7 +18,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      * @dataProvider validAdapterProvider
      *
      * @param Adapter $adapter
-     * @param string $expectedReturnClass
+     * @param string  $expectedReturnClass
      */
     public function testCreateSourceFromAdapter(Adapter $adapter, $expectedReturnClass)
     {
@@ -30,35 +30,47 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     public function validAdapterProvider()
     {
-        $createAdapterForPlatform = function ($platformName) {
-            $platform = $this->getMock('Zend\Db\Adapter\Platform\PlatformInterface');
-            $platform
-                ->expects($this->any())
-                ->method('getName')
-                ->willReturn($platformName)
-            ;
-
-            $adapter = $this->getMockBuilder('Zend\Db\Adapter\Adapter')
-                ->disableOriginalConstructor()
-                ->getMock()
-            ;
-
-            $adapter
-                ->expects($this->any())
-                ->method('getPlatform')
-                ->willReturn($platform)
-            ;
-
-            return $adapter;
-        };
-
         return [
             // Description => [adapter, expected return class]
-            'MySQL' => [$createAdapterForPlatform('MySQL'), 'Zend\Db\Metadata\Source\MysqlMetadata'],
-            'SQLServer' => [$createAdapterForPlatform('SQLServer'), 'Zend\Db\Metadata\Source\SqlServerMetadata'],
-            'SQLite' => [$createAdapterForPlatform('SQLite'), 'Zend\Db\Metadata\Source\SqliteMetadata'],
-            'PostgreSQL' => [$createAdapterForPlatform('PostgreSQL'), 'Zend\Db\Metadata\Source\PostgresqlMetadata'],
-            'Oracle' => [$createAdapterForPlatform('Oracle'), 'Zend\Db\Metadata\Source\OracleMetadata'],
+            'MySQL' => [$this->createAdapterForPlatform('MySQL'), 'Zend\Db\Metadata\Source\MysqlMetadata'],
+            'SQLServer' => [$this->createAdapterForPlatform('SQLServer'), 'Zend\Db\Metadata\Source\SqlServerMetadata'],
+            'SQLite' => [$this->createAdapterForPlatform('SQLite'), 'Zend\Db\Metadata\Source\SqliteMetadata'],
+            'PostgreSQL' => [$this->createAdapterForPlatform('PostgreSQL'), 'Zend\Db\Metadata\Source\PostgresqlMetadata'],
+            'Oracle' => [$this->createAdapterForPlatform('Oracle'), 'Zend\Db\Metadata\Source\OracleMetadata'],
         ];
+    }
+
+    public function testCreateSourceFromAdapterWhenAdapterIsNotSupportedThrowsException()
+    {
+        $this->setExpectedException('Zend\Db\Metadata\Source\Exception\InvalidArgumentException', "Unknown adapter platform 'unknown-platform'");
+        Factory::createSourceFromAdapter($this->createAdapterForPlatform('unknown-platform'));
+    }
+
+    /**
+     * @param string $platformName
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createAdapterForPlatform($platformName)
+    {
+        $platform = $this->getMock('Zend\Db\Adapter\Platform\PlatformInterface');
+        $platform
+            ->expects($this->any())
+            ->method('getName')
+            ->willReturn($platformName)
+        ;
+
+        $adapter = $this->getMockBuilder('Zend\Db\Adapter\Adapter')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $adapter
+            ->expects($this->any())
+            ->method('getPlatform')
+            ->willReturn($platform)
+        ;
+
+        return $adapter;
     }
 }

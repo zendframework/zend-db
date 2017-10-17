@@ -10,7 +10,6 @@
 namespace Zend\Db\Metadata\Source;
 
 use Zend\Db\Adapter\Adapter;
-use Zend\Db\Exception\InvalidArgumentException;
 use Zend\Db\Metadata\MetadataInterface;
 
 /**
@@ -23,7 +22,7 @@ class Factory
      *
      * @param  Adapter $adapter
      * @return MetadataInterface
-     * @throws InvalidArgumentException If adapter platform name not recognized.
+     * @throws Exception\InvalidArgumentException If adapter platform name not recognized.
      */
     public static function createSourceFromAdapter(Adapter $adapter)
     {
@@ -41,7 +40,7 @@ class Factory
             case 'Oracle':
                 return new OracleMetadata($adapter);
             default:
-                throw new InvalidArgumentException("Unknown adapter platform '{$platformName}'");
+                throw new Exception\InvalidArgumentException("Unknown adapter platform '{$platformName}'");
         }
     }
 }
