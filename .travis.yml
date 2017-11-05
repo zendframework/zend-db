@@ -50,17 +50,8 @@ matrix:
     - php: 7.2
       env:
         - DEPS=latest
-    - php: 7.3
-      env:
-        - DEPS=lowest
-    - php: 7.3
-      env:
-        - DEPS=locked
-    - php: 7.3
-      env:
-        - DEPS=latest
   allow_failures:
-    - php: 7.3
+    - php: 7.2
 
 before_install:
   - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
