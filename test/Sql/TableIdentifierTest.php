@@ -1,16 +1,16 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       http://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
 
 namespace ZendTest\Db\Sql;
 
 use stdClass;
+use Zend\Db\Sql\Select;
 use Zend\Db\Sql\TableIdentifier;
+use ZendTest\Db\TestAsset\TrustingSql92Platform;
 
 /**
  * Tests for {@see \Zend\Db\Sql\TableIdentifier}
@@ -88,6 +88,16 @@ class TableIdentifierTest extends \PHPUnit_Framework_TestCase
         new TableIdentifier('foo', $invalidSchema);
     }
 
+    public function testSchemaPath()
+    {
+        $select = new Select(new TableIdentifier('table', ['db', 'schema']));
+
+        $this->assertEquals(
+            'SELECT "db"."schema"."table".* FROM "db"."schema"."table"',
+            $select->getSqlString(new TrustingSql92Platform())
+        );
+    }
+
     /**
      * Data provider
      *
@@ -111,7 +121,6 @@ class TableIdentifierTest extends \PHPUnit_Framework_TestCase
         return [
             [''],
             [new stdClass()],
-            [[]],
         ];
     }
 }

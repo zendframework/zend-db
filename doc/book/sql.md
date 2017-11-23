@@ -151,6 +151,11 @@ $select->from(['t' => 'table']);
 // Using a Sql\TableIdentifier:
 // (same output as above)
 $select->from(['t' => new TableIdentifier('table')]);
+
+// If your database engine requires full path to get to the table object,
+// for example SQL Server uses database name as part of the table name,
+// pass the schema path to the second parameter
+$select->from(new TableIdentifier('table', ['dbo', 'schema']));
 ```
 
 ### columns()

@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       http://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Db\Sql;
@@ -19,13 +17,13 @@ class TableIdentifier
     protected $table;
 
     /**
-     * @var null|string
+     * @var null|string|array
      */
     protected $schema;
 
     /**
-     * @param string      $table
-     * @param null|string $schema
+     * @param string            $table
+     * @param null|string|array $schema
      */
     public function __construct($table, $schema = null)
     {
@@ -45,14 +43,17 @@ class TableIdentifier
         if (null === $schema) {
             $this->schema = null;
         } else {
-            if (! (is_string($schema) || is_callable([$schema, '__toString']))) {
+            if (! (is_string($schema) || is_array($schema) || is_callable([$schema, '__toString']))) {
                 throw new Exception\InvalidArgumentException(sprintf(
-                    '$schema must be a valid schema name, parameter of type %s given',
+                    '$schema must be a valid schema name or path in form of array, parameter of type %s given',
                     is_object($schema) ? get_class($schema) : gettype($schema)
                 ));
             }
 
-            $this->schema = (string) $schema;
+            if (! is_array($schema)) {
+                $schema = (string) $schema;
+            }
+            $this->schema = $schema;
 
             if ('' === $this->schema) {
                 throw new Exception\InvalidArgumentException(
