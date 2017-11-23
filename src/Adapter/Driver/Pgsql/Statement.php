@@ -110,7 +110,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      */
     public function getResource()
     {
-        // TODO: Implement getResource() method.
+        return $this->resource;
     }
 
     /**
