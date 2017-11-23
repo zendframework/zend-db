@@ -207,6 +207,9 @@ class Connection extends AbstractConnection
                     $value = (array) $value;
                     $options = array_diff_key($options, $value) + $value;
                     break;
+                case 'platform':
+                case 'platform_options':
+                    break;
                 default:
                     $options[$key] = $value;
                     break;
