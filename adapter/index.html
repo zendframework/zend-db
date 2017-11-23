@@ -275,6 +275,39 @@ represents the official abstraction names.</p>
     'database' =&gt; 'path/to/sqlite.db',
 ]);</code></pre>
 
+<p>Another example, of an IBM i DB2 connection via IbmDb2:</p>
+<pre class="codehilite"><code class="language-php">$adapter = new Zend\Db\Adapter\Adapter([
+    'database' =&gt; '*LOCAL', // or name from WRKRDBDIRE, may be serial #
+    'driver' =&gt; 'IbmDb2',
+    'driver_options' =&gt; [
+        'autocommit' =&gt; DB2_AUTOCOMMIT_ON,
+        'i5_naming' =&gt; DB2_I5_NAMING_ON,
+        'i5_libl' =&gt; 'SCHEMA1 SCHEMA2 SCHEMA3',
+    ],
+    'username' =&gt; '__USER__',
+    'password' =&gt; '__PASS__',
+    // 'persistent' =&gt; true,
+    'platform' =&gt; 'IbmDb2',
+    'platform_options' =&gt; ['quote_identifiers' =&gt; false],
+]);</code></pre>
+
+<p>Another example, of an IBM i DB2 connection via PDO:</p>
+<pre class="codehilite"><code class="language-php">$adapter = new Zend\Db\Adapter\Adapter([
+    'dsn' =&gt; 'ibm:DB_NAME', // DB_NAME is from WRKRDBDIRE, may be serial #
+    'driver' =&gt; 'pdo',
+    'driver_options' =&gt; [
+        // PDO::ATTR_PERSISTENT =&gt; true,
+        PDO::ATTR_AUTOCOMMIT =&gt; true,
+        PDO::I5_ATTR_DBC_SYS_NAMING =&gt; true,
+        PDO::I5_ATTR_DBC_CURLIB =&gt; '',
+        PDO::I5_ATTR_DBC_LIBL =&gt; 'SCHEMA1 SCHEMA2 SCHEMA3',
+    ],
+    'username' =&gt; '__USER__',
+    'password' =&gt; '__PASS__',
+    'platform' =&gt; 'IbmDb2',
+    'platform_options' =&gt; ['quote_identifiers' =&gt; false],
+]);</code></pre>
+
 <p>It is important to know that by using this style of adapter creation, the
 <code>Adapter</code> will attempt to create any dependencies that were not explicitly
 provided. A <code>Driver</code> object will be created from the configuration array
