@@ -219,13 +219,17 @@ $table-&gt;addColumn(new Column\Integer('id'));
 $table-&gt;addColumn(new Column\Varchar('name', 255));</code></pre>
 
 <p>Beyond adding columns to a table, you may also add constraints:</p>
-<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Ddl\Constraint;
+<p><pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Ddl\Constraint;
 
 $table-&gt;addConstraint(new Constraint\PrimaryKey('id'));
 $table-&gt;addConstraint(
     new Constraint\UniqueKey(['name', 'foo'], 'my_unique_key')
 );</code></pre>
+You can also use the <code>AUTO_INCREMENT</code> attribute for MySQL:
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Ddl\Column;
 
+$column = new Column\Integer('id');
+$column-&gt;setOption('AUTO_INCREMENT', true);</code></pre></p>
 <h2 id="altering-tables">Altering Tables</h2>
 <p>Similar to <code>CreateTable</code>, you may also use <code>AlterTable</code> instances:</p>
 <pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Ddl;
@@ -294,6 +298,10 @@ implement <code>Zend\Db\Sql\Ddl\Column\ColumnInterface</code>.</p>
 <td><code>$name</code>, <code>$nullable = false</code>, <code>$default = null</code>, <code>array $options = array()</code></td>
 </tr>
 <tr>
+<td>Binary</td>
+<td><code>$name</code>, <code>$length</code>, <code>nullable = false</code>, <code>$default = null</code>, <code>array $options = array()</code></td>
+</tr>
+<tr>
 <td>Blob</td>
 <td><code>$name</code>, <code>$length</code>, <code>nullable = false</code>, <code>$default = null</code>, <code>array $options = array()</code></td>
 </tr>
@@ -311,6 +319,10 @@ implement <code>Zend\Db\Sql\Ddl\Column\ColumnInterface</code>.</p>
 </tr>
 <tr>
 <td>Date</td>
+<td><code>$name</code></td>
+</tr>
+<tr>
+<td>DateTime</td>
 <td><code>$name</code></td>
 </tr>
 <tr>
@@ -336,6 +348,14 @@ implement <code>Zend\Db\Sql\Ddl\Column\ColumnInterface</code>.</p>
 <tr>
 <td>Time</td>
 <td><code>$name</code></td>
+</tr>
+<tr>
+<td>Timestamp</td>
+<td><code>$name</code></td>
+</tr>
+<tr>
+<td>Varbinary</td>
+<td><code>$name</code>, <code>$length</code></td>
 </tr>
 <tr>
 <td>Varchar</td>
