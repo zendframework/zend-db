@@ -1,8 +1,10 @@
 <?php
+
 /**
- * Zend Framework (http://framework.zend.com/)
+ * Zend Framework (http://framework.zend.com/).
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ *
  * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
@@ -10,11 +12,13 @@
 namespace ZendTest\Db\TableGateway\Feature;
 
 use ReflectionClass;
+use Zend\Db\Metadata\Object\ConstraintObject;
+use Zend\Db\TableGateway\Feature\AbstractFeature;
 use Zend\Db\TableGateway\Feature\FeatureSet;
 use Zend\Db\TableGateway\Feature\MasterSlaveFeature;
-use Zend\Db\TableGateway\Feature\SequenceFeature;
 use Zend\Db\TableGateway\Feature\MetadataFeature;
-use Zend\Db\Metadata\Object\ConstraintObject;
+use Zend\Db\TableGateway\Feature\SequenceFeature;
+use ZendTest\Db\TestAsset\TrustingPostgresqlPlatform;
 
 class FeatureSetTest extends \PHPUnit_Framework_TestCase
 {
@@ -49,7 +53,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         //feature doesn't have tableGateway, but FeatureSet has
         $feature = new MasterSlaveFeature($mockSlaveAdapter);
 
-        $featureSet = new FeatureSet;
+        $featureSet = new FeatureSet();
         $featureSet->setTableGateway($tableGatewayMock);
 
         $this->assertInstanceOf('Zend\Db\TableGateway\Feature\FeatureSet', $featureSet->addFeature($feature));
@@ -76,8 +80,60 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         $feature = new MetadataFeature($metadataMock);
         $feature->setTableGateway($tableGatewayMock);
 
-        $featureSet = new FeatureSet;
+        $featureSet = new FeatureSet();
         $this->assertInstanceOf('Zend\Db\TableGateway\Feature\FeatureSet', $featureSet->addFeature($feature));
+    }
+
+    /**
+     * @covers Zend\Db\TableGateway\Feature\FeatureSet::getFeatureByClassName
+     */
+    public function testGetSingleFeatureByClassName()
+    {
+        $featureMock = $this->getMock(AbstractFeature::class);
+
+        $featureSet = new FeatureSet();
+        $featureSet->addFeature($featureMock);
+
+        $this->assertInstanceOf(
+            get_class($featureMock),
+            $featureSet->getFeatureByClassName(get_class($featureMock)),
+            'When only one feature of its type is added to FeatureSet, getFeatureByClassName() should return that single instance'
+        );
+    }
+
+    /**
+     * @covers Zend\Db\TableGateway\Feature\FeatureSet::getFeatureByClassName
+     */
+    public function testGetAllFeaturesOfSameTypeByClassName()
+    {
+        $featureMock1 = $this->getMock(AbstractFeature::class);
+        $featureMock2 = $this->getMock(AbstractFeature::class);
+
+        $featureSet = new FeatureSet();
+        $featureSet->addFeature($featureMock1);
+        $featureSet->addFeature($featureMock2);
+
+        $features = $featureSet->getFeatureByClassName(get_class($featureMock1));
+
+        $this->assertTrue(is_array($features), 'When multiple features of same type are added, they all should be return in array');
+
+        $this->assertInstanceOf(get_class($featureMock1), $features[0]);
+        $this->assertInstanceOf(get_class($featureMock2), $features[1]);
+    }
+
+    /**
+     * @covers Zend\Db\TableGateway\Feature\FeatureSet::getFeatureByClassName
+     */
+    public function testGetFeatureByClassNameReturnsFalseIfNotAdded()
+    {
+        $featureMock = $this->getMock(AbstractFeature::class);
+
+        $featureSet = new FeatureSet();
+
+        $this->assertFalse(
+            $featureSet->getFeatureByClassName(get_class($featureMock)),
+            'Requesting unregistered feature should return false'
+        );
     }
 
     /**
@@ -86,12 +142,12 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
     public function testCanCallMagicCallReturnsTrueForAddedMethodOfAddedFeature()
     {
         $feature = new SequenceFeature('id', 'table_sequence');
-        $featureSet = new FeatureSet;
+        $featureSet = new FeatureSet();
         $featureSet->addFeature($feature);
 
         $this->assertTrue(
             $featureSet->canCallMagicCall('lastSequenceId'),
-            "Should have been able to call lastSequenceId from the Sequence Feature"
+            'Should have been able to call lastSequenceId from the Sequence Feature'
         );
     }
 
@@ -101,12 +157,12 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
     public function testCanCallMagicCallReturnsFalseForAddedMethodOfAddedFeature()
     {
         $feature = new SequenceFeature('id', 'table_sequence');
-        $featureSet = new FeatureSet;
+        $featureSet = new FeatureSet();
         $featureSet->addFeature($feature);
 
         $this->assertFalse(
             $featureSet->canCallMagicCall('postInitialize'),
-            "Should have been able to call postInitialize from the MetaData Feature"
+            'Should have been able to call postInitialize from the MetaData Feature'
         );
     }
 
@@ -115,7 +171,7 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanCallMagicCallReturnsFalseWhenNoFeaturesHaveBeenAdded()
     {
-        $featureSet = new FeatureSet;
+        $featureSet = new FeatureSet();
         $this->assertFalse(
             $featureSet->canCallMagicCall('lastSequenceId')
         );
@@ -126,8 +182,30 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testCallMagicCallSucceedsForValidMethodOfAddedFeature()
     {
-        $sequenceName = 'table_sequence';
+        $featureSet = new FeatureSet();
+        $featureSet->addFeature($this->getMockSequence('table_name', 'sequence_name', 1));
+        $this->assertEquals(1, $featureSet->callMagicCall('lastSequenceId', null));
+    }
 
+    /**
+     * @covers Zend\Db\TableGateway\Feature\FeatureSet::callMagicCall
+     */
+    public function testCallMagicMethodAllSimilarFeaturesUntilNotNull()
+    {
+        $featureSet = new FeatureSet();
+
+        $featureSet->addFeature($this->getMockSequence('col_1', 'seq_1', 1));
+        $featureSet->addFeature($this->getMockSequence('col_2', 'seq_2', 2));
+        $featureSet->addFeature($this->getMockSequence('col_3', 'seq_3', 3));
+
+        $result = $featureSet->callMagicCall('lastSequenceId', 'col_2');
+
+        $this->assertEquals(2, $result);
+    }
+
+    // FeatureSet uses method_exists which does not work on mock objects. Therefore, need a real object.
+    private function getMockSequence($columnName, $sequenceName, $expectedCurrVal)
+    {
         $platformMock = $this->getMock('Zend\Db\Adapter\Platform\Postgresql');
         $platformMock->expects($this->any())
             ->method('getName')->will($this->returnValue('PostgreSQL'));
@@ -135,37 +213,34 @@ class FeatureSetTest extends \PHPUnit_Framework_TestCase
         $resultMock = $this->getMock('Zend\Db\Adapter\Driver\Pgsql\Result');
         $resultMock->expects($this->any())
             ->method('current')
-            ->will($this->returnValue(['currval' => 1]));
+            ->will($this->returnValue(['currval' => $expectedCurrVal]));
 
         $statementMock = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
         $statementMock->expects($this->any())
-            ->method('prepare')
-            ->with('SELECT CURRVAL(\'' . $sequenceName . '\')');
+            ->method('prepare');
         $statementMock->expects($this->any())
             ->method('execute')
             ->will($this->returnValue($resultMock));
 
-        $adapterMock = $this->getMockBuilder('Zend\Db\Adapter\Adapter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $adapterMock = $this->getMock('Zend\Db\Adapter\Adapter', ['getPlatform', 'createStatement'], [], '', false);
+        $adapterMock->expects($this->any())
+            ->method('getPlatform')
+            ->will($this->returnValue(new TrustingPostgresqlPlatform()));
         $adapterMock->expects($this->any())
             ->method('getPlatform')->will($this->returnValue($platformMock));
         $adapterMock->expects($this->any())
             ->method('createStatement')->will($this->returnValue($statementMock));
 
-        $tableGatewayMock = $this->getMockBuilder('Zend\Db\TableGateway\AbstractTableGateway')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $tableGatewayMock = $this->getMockForAbstractClass('Zend\Db\TableGateway\TableGateway', ['table', $adapterMock], '', true);
 
         $reflectionClass = new ReflectionClass('Zend\Db\TableGateway\AbstractTableGateway');
         $reflectionProperty = $reflectionClass->getProperty('adapter');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($tableGatewayMock, $adapterMock);
 
-        $feature = new SequenceFeature('id', 'table_sequence');
+        $feature = new SequenceFeature($columnName, $sequenceName);
         $feature->setTableGateway($tableGatewayMock);
-        $featureSet = new FeatureSet;
-        $featureSet->addFeature($feature);
-        $this->assertEquals(1, $featureSet->callMagicCall('lastSequenceId', null));
+
+        return $feature;
     }
 }

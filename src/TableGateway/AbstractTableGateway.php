@@ -26,7 +26,6 @@ use Zend\Db\TableGateway\Feature\EventFeatureEventsInterface;
  *
  * @property AdapterInterface $adapter
  * @property int $lastInsertValue
- * @property string $table
  */
 abstract class AbstractTableGateway implements TableGatewayInterface
 {
@@ -83,7 +82,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * Initialize
      *
      * @throws Exception\RuntimeException
-     * @return null
      */
     public function initialize()
     {
@@ -122,7 +120,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * Get table name
      *
-     * @return string
+     * @return string|array|TableIdentifier
      */
     public function getTable()
     {

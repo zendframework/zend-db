@@ -19,7 +19,7 @@ class FeatureSet
     protected $tableGateway = null;
 
     /**
-     * @var AbstractFeature[]
+     * @var string[]AbstractFeature[]
      */
     protected $features = [];
 
@@ -42,22 +42,26 @@ class FeatureSet
     public function setTableGateway(AbstractTableGateway $tableGateway)
     {
         $this->tableGateway = $tableGateway;
-        foreach ($this->features as $feature) {
-            $feature->setTableGateway($this->tableGateway);
+        foreach ($this->features as $featureClass => $featureSet) {
+            foreach ($featureSet as $feature) {
+                $feature->setTableGateway($this->tableGateway);
+            }
         }
         return $this;
     }
 
     public function getFeatureByClassName($featureClassName)
     {
-        $feature = false;
-        foreach ($this->features as $potentialFeature) {
-            if ($potentialFeature instanceof $featureClassName) {
-                $feature = $potentialFeature;
-                break;
-            }
+        if (!array_key_exists($featureClassName, $this->features)) {
+            return false;
         }
-        return $feature;
+
+        $featuresByType = $this->features[$featureClassName];
+        if (count($featuresByType) == 1) {
+            return $featuresByType[0];
+        } else {
+            return $featuresByType;
+        }
     }
 
     /**
@@ -81,17 +85,19 @@ class FeatureSet
         if ($this->tableGateway instanceof TableGatewayInterface) {
             $feature->setTableGateway($this->tableGateway);
         }
-        $this->features[] = $feature;
+        $this->features[get_class($feature)][] = $feature;
         return $this;
     }
 
     public function apply($method, $args)
     {
-        foreach ($this->features as $feature) {
-            if (method_exists($feature, $method)) {
-                $return = call_user_func_array([$feature, $method], $args);
-                if ($return === self::APPLY_HALT) {
-                    break;
+        foreach ($this->features as $featureClass => $featureSet) {
+            foreach ($featureSet as $feature) {
+                if (method_exists($feature, $method)) {
+                    $return = call_user_func_array([$feature, $method], $args);
+                    if ($return === self::APPLY_HALT) {
+                        break;
+                    }
                 }
             }
         }
@@ -144,8 +150,8 @@ class FeatureSet
     public function canCallMagicCall($method)
     {
         if (!empty($this->features)) {
-            foreach ($this->features as $feature) {
-                if (method_exists($feature, $method)) {
+            foreach ($this->features as $featureClass => $featuresSet) {
+                if (method_exists($featureClass, $method)) {
                     return true;
                 }
             }
@@ -161,9 +167,19 @@ class FeatureSet
      */
     public function callMagicCall($method, $arguments)
     {
-        foreach ($this->features as $feature) {
-            if (method_exists($feature, $method)) {
-                return $feature->$method($arguments);
+        foreach ($this->features as $featureClass => $featuresSet) {
+            if (method_exists($featureClass, $method)) {
+
+                // iterator management instead of foreach to avoid extra conditions and indentations
+                reset($featuresSet);
+                $featureReturn = null;
+                while ($featureReturn === null) {
+                    $current = current($featuresSet);
+                    $featureReturn = $current->$method($arguments);
+                    next($featuresSet);
+                }
+
+                return $featureReturn;
             }
         }
 
