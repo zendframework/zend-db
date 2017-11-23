@@ -4,36 +4,15 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="zend-db">  
     <link rel="shortcut icon" href="../img/favicon.ico">
 
     <title>SQL Abstraction - zend-db</title>
 
-    <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/font-hack/2.018/css/hack.min.css">
-    <link href="//fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic&subset=latin-ext,latin" rel="stylesheet" type="text/css">
-    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin" rel="stylesheet" type="text/css">
-    <link href="//fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-    <link href="../css/base.css" rel="stylesheet">
-    <link href="../css/zf-web.css" rel="stylesheet">
-    <link href="../css/zf.css" rel="stylesheet">
-    <link href="../css/prism-zf.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-        <![endif]-->
-
-    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
-    <script>
-    WebFont.load({
-        google: {
-            families: ['Open Sans', 'PT Sans']
-        }
-    });
-    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/styles-482aa2add1.css">
 
     
 </head>
@@ -57,8 +36,8 @@
 
             <!-- Main title -->
             <span class="navbar-brand">
-              <a class="logo-link" href="http://framework.zend.com" data-toggle="tooltip" data-placement="bottom" title="Zend Framework"><img src="../img/zf-logo-mark.svg" height="28" alt="Zend Framework" /></a>
-              <a href="..">zend-db</a>
+                <a class="logo-link" href="https://framework.zend.com/" data-toggle="tooltip" data-placement="bottom" title="Go to the ZF homepage"><img src="../img/zf-logo-mark.svg" height="28" alt="Zend Framework" /></a>
+                <a href="..">zend-db</a>
             </span>
         </div>
 
@@ -194,11 +173,11 @@
         <div class="col-md-9" role="main">
 
 <ol class="breadcrumb" role="navigation" aria-label="breadcrumbs navigation">
-  <li><a href="..">zend-db</a> &raquo;</li>
+  <li><a href="..">zend-db</a></li>
   
     
       
-        <li>Reference &raquo;</li>
+        <li>Reference</li>
       
     
   
@@ -221,7 +200,7 @@ interact with in order to build queries in the <code>Zend\Db\Sql</code> namespac
 <p>Since these four tasks are so closely related and generally used together
 within the same application, the <code>Zend\Db\Sql\Sql</code> class helps you create them
 and produce the result you are attempting to achieve.</p>
-<pre class="codehilite"><code class="language-php linenums">use Zend\Db\Sql\Sql;
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Sql;
 
 $sql    = new Sql($adapter);
 $select = $sql-&gt;select(); // returns a Zend\Db\Sql\Select instance
@@ -233,7 +212,7 @@ $delete = $sql-&gt;delete(); // returns a Zend\Db\Sql\Delete instance</code></pr
 sections below, to customize each query. Once they have been populated with
 values, they are ready to either be prepared or executed.</p>
 <p>To prepare (using a Select object):</p>
-<pre class="codehilite"><code class="language-php linenums">use Zend\Db\Sql\Sql;
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Sql;
 
 $sql    = new Sql($adapter);
 $select = $sql-&gt;select();
@@ -244,7 +223,7 @@ $statement = $sql-&gt;prepareStatementForSqlObject($select);
 $results = $statement-&gt;execute();</code></pre>
 
 <p>To execute (using a Select object)</p>
-<pre class="codehilite"><code class="language-php linenums">use Zend\Db\Sql\Sql;
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Sql;
 
 $sql    = new Sql($adapter);
 $select = $sql-&gt;select();
@@ -257,7 +236,7 @@ $results = $adapter-&gt;query($selectString, $adapter::QUERY_MODE_EXECUTE);</cod
 <p><code>Zend\\Db\\Sql\\Sql</code> objects can also be bound to a particular table so that in
 obtaining a <code>Select</code>, <code>Insert</code>, <code>Update</code>, or <code>Delete</code> instance, the object will be
 seeded with the table:</p>
-<pre class="codehilite"><code class="language-php linenums">use Zend\Db\Sql\Sql;
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Sql;
 
 $sql    = new Sql($adapter, 'foo');
 $select = $sql-&gt;select();
@@ -265,7 +244,7 @@ $select-&gt;where(['id' =&gt; 2]); // $select already has from('foo') applied</c
 
 <h2 id="common-interfaces-for-sql-implementations">Common interfaces for SQL implementations</h2>
 <p>Each of these objects implements the following two interfaces:</p>
-<pre class="codehilite"><code class="language-php linenums">interface PreparableSqlInterface
+<pre class="codehilite"><code class="language-php">interface PreparableSqlInterface
 {
      public function prepareStatement(Adapter $adapter, StatementInterface $statement) : void;
 }
@@ -281,7 +260,7 @@ to execute.</p>
 <p><code>Zend\Db\Sql\Select</code> presents a unified API for building platform-specific SQL
 SELECT queries. Instances may be created and consumed without
 <code>Zend\Db\Sql\Sql</code>:</p>
-<pre class="codehilite"><code class="language-php linenums">use Zend\Db\Sql\Select;
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Select;
 
 $select = new Select();
 // or, to produce a $select bound to a specific table
@@ -291,7 +270,7 @@ $select = new Select('foo');</code></pre>
 later to change the name of the table.</p>
 <p>Once you have a valid <code>Select</code> object, the following API can be used to further
 specify various select statement parts:</p>
-<pre class="codehilite"><code class="language-php linenums">class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
+<pre class="codehilite"><code class="language-php">class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
 {
     const JOIN_INNER = 'inner';
     const JOIN_OUTER = 'outer';
@@ -316,7 +295,7 @@ specify various select statement parts:</p>
 }</code></pre>
 
 <h3 id="from">from()</h3>
-<pre class="codehilite"><code class="language-php linenums">// As a string:
+<pre class="codehilite"><code class="language-php">// As a string:
 $select-&gt;from('foo');
 
 // As an array to specify an alias
@@ -328,7 +307,7 @@ $select-&gt;from(['t' =&gt; 'table']);
 $select-&gt;from(['t' =&gt; new TableIdentifier('table')]);</code></pre>
 
 <h3 id="columns">columns()</h3>
-<pre class="codehilite"><code class="language-php linenums">// As an array of names
+<pre class="codehilite"><code class="language-php">// As an array of names
 $select-&gt;columns(['foo', 'bar']);
 
 // As an associative array with aliases as the keys
@@ -336,7 +315,7 @@ $select-&gt;columns(['foo', 'bar']);
 $select-&gt;columns(['foo' =&gt; 'bar', 'baz' =&gt; 'bax']);</code></pre>
 
 <h3 id="join">join()</h3>
-<pre class="codehilite"><code class="language-php linenums">$select-&gt;join(
+<pre class="codehilite"><code class="language-php">$select-&gt;join(
     'foo',              // table name
     'id = bar.id',      // expression to join on (will be quoted by platform object before insertion),
     ['bar', 'baz'],     // (optional) list of columns, same requirements as columns() above
@@ -354,7 +333,7 @@ $select
 <p><code>Zend\Db\Sql\Select</code> provides bit of flexibility as it regards to what kind of
 parameters are acceptable when calling <code>where()</code> or <code>having()</code>. The method
 signature is listed as:</p>
-<pre class="codehilite"><code class="language-php linenums">/**
+<pre class="codehilite"><code class="language-php">/**
  * Create where clause
  *
  * @param  Where|callable|string|array $predicate
@@ -370,14 +349,14 @@ be iterated to produce the WHERE or HAVING section of the SELECT statement.</p>
 <p>If you provide a PHP callable to <code>where()</code> or <code>having()</code>, this function will be
 called with the <code>Select</code>'s <code>Where</code>/<code>Having</code> instance as the only parameter.
 This enables code like the following:</p>
-<pre class="codehilite"><code class="language-php linenums">$select-&gt;where(function (Where $where) {
+<pre class="codehilite"><code class="language-php">$select-&gt;where(function (Where $where) {
     $where-&gt;like('username', 'ralph%');
 });</code></pre>
 
 <p>If you provide a <em>string</em>, this string will be used to create a
 <code>Zend\Db\Sql\Predicate\Expression</code> instance, and its contents will be applied
 as-is, with no quoting:</p>
-<pre class="codehilite"><code class="language-php linenums">// SELECT &quot;foo&quot;.* FROM &quot;foo&quot; WHERE x = 5
+<pre class="codehilite"><code class="language-php">// SELECT &quot;foo&quot;.* FROM &quot;foo&quot; WHERE x = 5
 $select-&gt;from('foo')-&gt;where('x = 5');</code></pre>
 
 <p>If you provide an array with integer indices, the value can be one of:</p>
@@ -388,12 +367,12 @@ $select-&gt;from('foo')-&gt;where('x = 5');</code></pre>
 <p>In either case, the instances are pushed onto the <code>Where</code> stack with the
 <code>$combination</code> provided (defaulting to <code>AND</code>).</p>
 <p>As an example:</p>
-<pre class="codehilite"><code class="language-php linenums">// SELECT &quot;foo&quot;.* FROM &quot;foo&quot; WHERE x = 5 AND y = z
+<pre class="codehilite"><code class="language-php">// SELECT &quot;foo&quot;.* FROM &quot;foo&quot; WHERE x = 5 AND y = z
 $select-&gt;from('foo')-&gt;where(['x = 5', 'y = z']);</code></pre>
 
 <p>If you provide an associative array with string keys, any value with a string
 key will be cast as follows:</p>
-<div class="table-responsive"><div class="table-responsive"><table>
+<div class="table-responsive"><table>
 <thead>
 <tr>
 <th>PHP value</th>
@@ -414,9 +393,9 @@ key will be cast as follows:</p>
 <td><code>Predicate\Operator</code>, where the key is the identifier.</td>
 </tr>
 </tbody>
-</table></div></div>
+</table></div>
 <p>As an example:</p>
-<pre class="codehilite"><code class="language-php linenums">// SELECT &quot;foo&quot;.* FROM &quot;foo&quot; WHERE &quot;c1&quot; IS NULL AND &quot;c2&quot; IN (?, ?, ?) AND &quot;c3&quot; IS NOT NULL
+<pre class="codehilite"><code class="language-php">// SELECT &quot;foo&quot;.* FROM &quot;foo&quot; WHERE &quot;c1&quot; IS NULL AND &quot;c2&quot; IN (?, ?, ?) AND &quot;c3&quot; IS NOT NULL
 $select-&gt;from('foo')-&gt;where([
     'c1' =&gt; null,
     'c2' =&gt; [1, 2, 3],
@@ -424,10 +403,10 @@ $select-&gt;from('foo')-&gt;where([
 ]);</code></pre>
 
 <p>As another example of complex queries with nested conditions e.g.</p>
-<pre class="codehilite"><code class="language-sql linenums">SELECT * WHERE (column1 is null or column1 = 2) AND (column2 = 3)</code></pre>
+<pre class="codehilite"><code class="language-sql">SELECT * WHERE (column1 is null or column1 = 2) AND (column2 = 3)</code></pre>
 
 <p>you need to use the <code>nest()</code> and <code>unnest()</code> methods, as follows:</p>
-<pre class="codehilite"><code class="language-php linenums">$select-&gt;where-&gt;nest() // bracket opened
+<pre class="codehilite"><code class="language-php">$select-&gt;where-&gt;nest() // bracket opened
     -&gt;isNull('column1')
     -&gt;or
     -&gt;equalTo('column1', '2')
@@ -435,7 +414,7 @@ $select-&gt;from('foo')-&gt;where([
     -&gt;equalTo('column2', '3');</code></pre>
 
 <h3 id="order">order()</h3>
-<pre class="codehilite"><code class="language-php linenums">$select = new Select;
+<pre class="codehilite"><code class="language-php">$select = new Select;
 $select-&gt;order('id DESC'); // produces 'id' DESC
 
 $select = new Select;
@@ -447,13 +426,13 @@ $select = new Select;
 $select-&gt;order(['name ASC', 'age DESC']); // produces 'name' ASC, 'age' DESC</code></pre>
 
 <h3 id="limit-and-offset">limit() and offset()</h3>
-<pre class="codehilite"><code class="language-php linenums">$select = new Select;
+<pre class="codehilite"><code class="language-php">$select = new Select;
 $select-&gt;limit(5);   // always takes an integer/numeric
 $select-&gt;offset(10); // similarly takes an integer/numeric</code></pre>
 
 <h2 id="insert">Insert</h2>
 <p>The Insert API:</p>
-<pre class="codehilite"><code class="language-php linenums">class Insert implements SqlInterface, PreparableSqlInterface
+<pre class="codehilite"><code class="language-php">class Insert implements SqlInterface, PreparableSqlInterface
 {
     const VALUES_MERGE = 'merge';
     const VALUES_SET   = 'set';
@@ -467,21 +446,21 @@ $select-&gt;offset(10); // similarly takes an integer/numeric</code></pre>
 <p>As with <code>Select</code>, the table may be provided during instantiation or via the
 <code>into()</code> method.</p>
 <h3 id="columns_1">columns()</h3>
-<pre class="codehilite"><code class="language-php linenums">$insert-&gt;columns(['foo', 'bar']); // set the valid columns</code></pre>
+<pre class="codehilite"><code class="language-php">$insert-&gt;columns(['foo', 'bar']); // set the valid columns</code></pre>
 
 <h3 id="values">values()</h3>
-<pre class="codehilite"><code class="language-php linenums">// The default behavior of values is to set the values;
+<pre class="codehilite"><code class="language-php">// The default behavior of values is to set the values;
 // successive calls will not preserve values from previous calls.
 $insert-&gt;values([
     'col_1' =&gt; 'value1',
     'col_2' =&gt; 'value2',
 ]);</code></pre>
 
-<pre class="codehilite"><code class="language-php linenums">// To merge values with previous calls, provide the appropriate flag:
+<pre class="codehilite"><code class="language-php">// To merge values with previous calls, provide the appropriate flag:
 $insert-&gt;values(['col_2' =&gt; 'value2'], $insert::VALUES_MERGE);</code></pre>
 
 <h2 id="update">Update</h2>
-<pre class="codehilite"><code class="language-php linenums">class Update
+<pre class="codehilite"><code class="language-php">class Update
 {
     const VALUES_MERGE = 'merge';
     const VALUES_SET   = 'set';
@@ -494,12 +473,12 @@ $insert-&gt;values(['col_2' =&gt; 'value2'], $insert::VALUES_MERGE);</code></pre
 }</code></pre>
 
 <h3 id="set">set()</h3>
-<pre class="codehilite"><code class="language-php linenums">$update-&gt;set(['foo' =&gt; 'bar', 'baz' =&gt; 'bax']);</code></pre>
+<pre class="codehilite"><code class="language-php">$update-&gt;set(['foo' =&gt; 'bar', 'baz' =&gt; 'bax']);</code></pre>
 
 <h3 id="where">where()</h3>
 <p>See the <a href="#where-and-having">section on Where and Having</a>.</p>
 <h2 id="delete">Delete</h2>
-<pre class="codehilite"><code class="language-php linenums">class Delete
+<pre class="codehilite"><code class="language-php">class Delete
 {
     public $where; // @param Where $where
 
@@ -540,7 +519,7 @@ interpolating. In cases where there are parameters in an <code>Expression</code>
 have parameters, use <code>Literal</code> objects.</p>
 </blockquote>
 <p>The <code>Where</code> and <code>Having</code> API is that of <code>Predicate</code> and <code>PredicateSet</code>:</p>
-<pre class="codehilite"><code class="language-php linenums">// Where &amp; Having extend Predicate:
+<pre class="codehilite"><code class="language-php">// Where &amp; Having extend Predicate:
 class Predicate extends PredicateSet
 {
     public $and;
@@ -622,7 +601,7 @@ class Predicate extends PredicateSet
 <p>Each method in the API will produce a corresponding <code>Predicate</code> object of a similarly named
 type, as described below.</p>
 <h3 id="equalto-lessthan-greaterthan-lessthanorequalto-greaterthanorequalto">equalTo(), lessThan(), greaterThan(), lessThanOrEqualTo(), greaterThanOrEqualTo()</h3>
-<pre class="codehilite"><code class="language-php linenums">$where-&gt;equalTo('id', 5);
+<pre class="codehilite"><code class="language-php">$where-&gt;equalTo('id', 5);
 
 // The above is equivalent to:
 $where-&gt;addPredicate(
@@ -630,7 +609,7 @@ $where-&gt;addPredicate(
 );</code></pre>
 
 <p>Operators use the following API:</p>
-<pre class="codehilite"><code class="language-php linenums">class Operator implements PredicateInterface
+<pre class="codehilite"><code class="language-php">class Operator implements PredicateInterface
 {
     const OPERATOR_EQUAL_TO                  = '=';
     const OP_EQ                              = '=';
@@ -666,7 +645,7 @@ $where-&gt;addPredicate(
 }</code></pre>
 
 <h3 id="likeidentifier-like-notlikeidentifier-notlike">like($identifier, $like), notLike($identifier, $notLike)</h3>
-<pre class="codehilite"><code class="language-php linenums">$where-&gt;like($identifier, $like):
+<pre class="codehilite"><code class="language-php">$where-&gt;like($identifier, $like):
 
 // The above is equivalent to:
 $where-&gt;addPredicate(
@@ -674,7 +653,7 @@ $where-&gt;addPredicate(
 );</code></pre>
 
 <p>The following is the <code>Like</code> API:</p>
-<pre class="codehilite"><code class="language-php linenums">class Like implements PredicateInterface
+<pre class="codehilite"><code class="language-php">class Like implements PredicateInterface
 {
     public function __construct(string $identifier = null, string $like = null);
     public function setIdentifier(string $identifier) : self;
@@ -684,7 +663,7 @@ $where-&gt;addPredicate(
 }</code></pre>
 
 <h3 id="literalliteral">literal($literal)</h3>
-<pre class="codehilite"><code class="language-php linenums">$where-&gt;literal($literal);
+<pre class="codehilite"><code class="language-php">$where-&gt;literal($literal);
 
 // The above is equivalent to:
 $where-&gt;addPredicate(
@@ -692,7 +671,7 @@ $where-&gt;addPredicate(
 );</code></pre>
 
 <p>The following is the <code>Literal</code> API:</p>
-<pre class="codehilite"><code class="language-php linenums">class Literal implements ExpressionInterface, PredicateInterface
+<pre class="codehilite"><code class="language-php">class Literal implements ExpressionInterface, PredicateInterface
 {
     const PLACEHOLDER = '?';
     public function __construct(string $literal = '');
@@ -701,7 +680,7 @@ $where-&gt;addPredicate(
 }</code></pre>
 
 <h3 id="expressionexpression-parameter">expression($expression, $parameter)</h3>
-<pre class="codehilite"><code class="language-php linenums">$where-&gt;expression($expression, $parameter);
+<pre class="codehilite"><code class="language-php">$where-&gt;expression($expression, $parameter);
 
 // The above is equivalent to:
 $where-&gt;addPredicate(
@@ -709,7 +688,7 @@ $where-&gt;addPredicate(
 );</code></pre>
 
 <p>The following is the <code>Expression</code> API:</p>
-<pre class="codehilite"><code class="language-php linenums">class Expression implements ExpressionInterface, PredicateInterface
+<pre class="codehilite"><code class="language-php">class Expression implements ExpressionInterface, PredicateInterface
 {
     const PLACEHOLDER = '?';
 
@@ -725,7 +704,7 @@ $where-&gt;addPredicate(
 }</code></pre>
 
 <h3 id="isnullidentifier">isNull($identifier)</h3>
-<pre class="codehilite"><code class="language-php linenums">$where-&gt;isNull($identifier);
+<pre class="codehilite"><code class="language-php">$where-&gt;isNull($identifier);
 
 // The above is equivalent to:
 $where-&gt;addPredicate(
@@ -733,7 +712,7 @@ $where-&gt;addPredicate(
 );</code></pre>
 
 <p>The following is the <code>IsNull</code> API:</p>
-<pre class="codehilite"><code class="language-php linenums">class IsNull implements PredicateInterface
+<pre class="codehilite"><code class="language-php">class IsNull implements PredicateInterface
 {
     public function __construct(string $identifier = null);
     public function setIdentifier(string $identifier) : self;
@@ -741,7 +720,7 @@ $where-&gt;addPredicate(
 }</code></pre>
 
 <h3 id="isnotnullidentifier">isNotNull($identifier)</h3>
-<pre class="codehilite"><code class="language-php linenums">$where-&gt;isNotNull($identifier);
+<pre class="codehilite"><code class="language-php">$where-&gt;isNotNull($identifier);
 
 // The above is equivalent to:
 $where-&gt;addPredicate(
@@ -749,7 +728,7 @@ $where-&gt;addPredicate(
 );</code></pre>
 
 <p>The following is the <code>IsNotNull</code> API:</p>
-<pre class="codehilite"><code class="language-php linenums">class IsNotNull implements PredicateInterface
+<pre class="codehilite"><code class="language-php">class IsNotNull implements PredicateInterface
 {
     public function __construct(string $identifier = null);
     public function setIdentifier(string $identifier) : self;
@@ -757,7 +736,7 @@ $where-&gt;addPredicate(
 }</code></pre>
 
 <h3 id="inidentifier-valueset-notinidentifier-valueset">in($identifier, $valueSet), notIn($identifier, $valueSet)</h3>
-<pre class="codehilite"><code class="language-php linenums">$where-&gt;in($identifier, $valueSet);
+<pre class="codehilite"><code class="language-php">$where-&gt;in($identifier, $valueSet);
 
 // The above is equivalent to:
 $where-&gt;addPredicate(
@@ -765,7 +744,7 @@ $where-&gt;addPredicate(
 );</code></pre>
 
 <p>The following is the <code>In</code> API:</p>
-<pre class="codehilite"><code class="language-php linenums">class In implements PredicateInterface
+<pre class="codehilite"><code class="language-php">class In implements PredicateInterface
 {
     public function __construct(
         string|array $identifier = null,
@@ -778,7 +757,7 @@ $where-&gt;addPredicate(
 }</code></pre>
 
 <h3 id="betweenidentifier-minvalue-maxvalue-notbetweenidentifier-minvalue-maxvalue">between($identifier, $minValue, $maxValue), notBetween($identifier, $minValue, $maxValue)</h3>
-<pre class="codehilite"><code class="language-php linenums">$where-&gt;between($identifier, $minValue, $maxValue);
+<pre class="codehilite"><code class="language-php">$where-&gt;between($identifier, $minValue, $maxValue);
 
 // The above is equivalent to:
 $where-&gt;addPredicate(
@@ -786,7 +765,7 @@ $where-&gt;addPredicate(
 );</code></pre>
 
 <p>The following is the <code>Between</code> API:</p>
-<pre class="codehilite"><code class="language-php linenums">class Between implements PredicateInterface
+<pre class="codehilite"><code class="language-php">class Between implements PredicateInterface
 {
     public function __construct(
         string $identifier = null,
@@ -826,7 +805,7 @@ $where-&gt;addPredicate(
             <div class="col-lg-3">
               <p>
                 <strong>Zend Framework</strong><br />
-                <a href="http://framework.zend.com/">framework.zend.com</a><br />
+                <a href="https://framework.zend.com/">framework.zend.com</a><br />
                 <a href="https://docs.zendframework.com">docs.zendframework.com</a><br />
                 <a href="https://packages.zendframework.com">packages.zendframework.com</a><br />
                 <a href="https://apigility.org">apigility.org</a><br />
@@ -847,14 +826,15 @@ $where-&gt;addPredicate(
                 <h4>Copyright</h4>
                 <div class="hline-w"></div>
 
-                <p>&copy; 2006-2016 by <a href="http://www.zend.com">Zend</a>, a <a href="http://www.roguewave.com/">Rogue Wave Company</a>.</p>
+                <p>&copy; 2006-2017 by <a href="https://www.zend.com/">Zend</a>, a <a href="https://www.roguewave.com/">Rogue Wave Company</a>.</p>
             </div>
 
             <div class="col-lg-4">
                 <h4>Contacts</h4>
                 <div class="hline-w"></div>
                 <p>
-                    <a href="irc://irc.freenode.net/zftalk" class="btn-social btn-outline" alt="IRC" title="IRC"><i class="fa fa-comment"></i></a>
+                    <a href="https://discourse.zendframework.com" class="btn-social btn-outline" alt="Forum" title="Forum"><i class="fa fa-comments"></i></a>
+                    <a href="https://zendframework-slack.herokuapp.com" class="btn-social btn-outline" alt="Slack" title="Slack"><i class="fa fa-slack"></i></a>
                     <a href="https://github.com/zendframework" class="btn-social btn-outline" alt="Github" title="Github"><i class="fa fa-github"></i></a>
                     <a href="https://twitter.com/zfdevteam" class="btn-social btn-outline" alt="Twitter" title="Twitter"><i class="fa fa-twitter"></i></a>
                 </p>
@@ -863,14 +843,11 @@ $where-&gt;addPredicate(
     </div>
 </div>
 
-
-    <script src="../js/jquery-1.10.2.min.js"></script>
-    <script src="../js/bootstrap-3.0.3.min.js"></script>
-    <script src="../js/prism-zf.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
     <script>var base_url = '..';</script>
+    <script src="../js/scripts-0b6185f4a5.js"></script>
     <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
-    <script src="../js/base.js"></script>
 
     <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
         <div class="modal-dialog">
@@ -902,7 +879,7 @@ $where-&gt;addPredicate(
     <div class="zf-components">
   <div class="zf-components-grid">
     <div class="zf-logo">
-      <a href="http://framework.zend.com" data-toggle="tooltip" data-placement="bottom" title="Go to the ZF homepage"><img src="../img/zf-logo-mark.svg" alt="Zend Framework" width="250" /></a>
+      <a href="https://framework.zend.com" data-toggle="tooltip" data-placement="bottom" title="Go to the ZF homepage"><img src="../img/zf-logo-mark.svg" alt="Zend Framework" width="250" /></a>
     </div>
 
     <div class="component-list"></div>
@@ -911,112 +888,6 @@ $where-&gt;addPredicate(
   </div>
 </div>
 
-    <script>
-  // Prepare the component list dropdown for display
-  $(function () {
-    var components = $(".zf-components"),
-        componentList = components.find(".component-list"),
-        sidebar = $(".bs-sidebar.affix"),
-        sidebarInitialPos = sidebar.css("position"),
-        hidden,
-        componentToggle = $(".component-toggle"),
-        navbar = $(".navbar-fixed-top"),
-        rollUpLink = $(".zf-components-rollup a");
-
-    // Initial setup on document load
-    components.insertBefore(navbar);
-    $(".zf-logo a").tooltip();
-    componentToggle.tooltip();
-    rollUpLink.attr({ href: "#", alt: "Hide component list" });
-
-    // Cast initial sidebar position value
-    if (undefined === sidebarInitialPos) {
-      sidebarInitialPos = "fixed";
-    }
-
-    // Setup onclick events to toggle list
-    componentToggle.click(toggleComponentList);
-    rollUpLink.click(toggleComponentList);
-
-    // Toggle the component list display
-    function toggleComponentList(event) {
-      event.preventDefault();
-
-      if (hidden === undefined) {
-        // Not loaded yet; load and display.
-        loadComponentList();
-        return;
-      }
-
-      if (hidden) {
-        // Hidden; display.
-        showComponentList();
-        return;
-      }
-
-      // Currently visible; hide
-      hideComponentList();
-    }
-
-    // Show the component list
-    function showComponentList() {
-      navbar.css({position: "relative"});
-      sidebar.css({position: "relative"});
-      components
-        .css({"margin-top": "-" + components.outerHeight() + "px"})
-        .show()
-        .animate({"margin-top": 0}, {
-          complete: function () {
-            componentToggle
-              .data("placement", "top")
-              .attr("data-original-title", "Hide component list");
-            hidden = false;
-          },
-          queue: false
-        });
-    }
-
-    // Hide the component list
-    function hideComponentList() {
-      components.animate({"margin-top": "-" + components.outerHeight() + "px"}, {
-        complete: function () {
-          navbar.css({position: "fixed"});
-          sidebar.css({position: sidebarInitialPos});
-          componentToggle
-            .data("placement", "bottom")
-            .attr("data-original-title", "Show component list");
-          components.hide();
-          hidden = true;
-        },
-        queue: false
-      });
-      sidebar.animate({ top: sidebarInitialTop + "px" }, { queue: false});
-    }
-
-    // Inject a component into the componet list DOM.
-    function injectComponent(index, component) {
-      componentList.append('<div class="component"><h4><a href="' + component.url + '">' + component.name + '</a></h4><p>' + component.description + '</p></div>');
-    }
-
-    // Parse the component list, build the DOM, and display it.
-    function parseComponentList(components) {
-      $.each(components, injectComponent);
-      showComponentList();
-    }
-
-    // Fetch the component list and display it.
-    function loadComponentList () {
-      $.ajax({
-        url: "//docs.zendframework.com/zf-mkdoc-theme/scripts/zf-component-list.json",
-        dataType: "text json",
-        success: parseComponentList,
-        error: function (e) {
-          console.log("Error occurred with XHR call", e);
-        }
-      });
-    }
-  });
-</script>
-    </body>
+</body>
 
 </html>
