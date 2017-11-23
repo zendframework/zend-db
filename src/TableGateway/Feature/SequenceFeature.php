@@ -21,7 +21,7 @@ class SequenceFeature extends AbstractFeature
     protected $primaryKeyField;
 
     /**
-     * @var string
+     * @var string|array
      */
     protected $sequenceName;
 
@@ -89,7 +89,7 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT ' . $platform->quoteIdentifier($this->sequenceName) . '.NEXTVAL as "nextval" FROM dual';
                 break;
             case 'PostgreSQL':
-                $sql = 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')';
+                $sql = 'SELECT NEXTVAL(\'' . $platform->quoteIdentifierChain($this->sequenceName) . '\')';
                 break;
             default :
                 return;
@@ -117,7 +117,7 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT ' . $platform->quoteIdentifier($this->sequenceName) . '.CURRVAL as "currval" FROM dual';
                 break;
             case 'PostgreSQL':
-                $sql = 'SELECT CURRVAL(\'' . $this->sequenceName . '\')';
+                $sql = 'SELECT CURRVAL(\'' . $platform->quoteIdentifierChain($this->sequenceName) . '\')';
                 break;
             default :
                 return;

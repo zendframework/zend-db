@@ -10,39 +10,26 @@
 namespace ZendTest\Db\TableGateway\Feature;
 
 use PHPUnit_Framework_TestCase;
+use Zend\Db\Adapter\Platform\PlatformInterface;
+use ZendTest\Db\TestAsset;
 use Zend\Db\TableGateway\Feature\SequenceFeature;
 
 class SequenceFeatureTest extends PHPUnit_Framework_TestCase
 {
-    /** @var SequenceFeature */
-    protected $feature = null;
-
     /** @var \Zend\Db\TableGateway\TableGateway */
     protected $tableGateway = null;
 
     /**  @var string primary key name */
     protected $primaryKeyField = 'id';
 
-    /** @var string  sequence name */
-    protected $sequenceName = 'table_sequence';
-
-    public function setup()
-    {
-        $this->feature = new SequenceFeature($this->primaryKeyField, $this->sequenceName);
-    }
-
     /**
      * @dataProvider nextSequenceIdProvider
      */
-    public function testNextSequenceId($platformName, $statementSql)
+    public function testNextSequenceId($platformName, $sequenceName, $statementSql)
     {
-        $platform = $this->getMockForAbstractClass('Zend\Db\Adapter\Platform\PlatformInterface', ['getName']);
-        $platform->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue($platformName));
-        $platform->expects($this->any())
-            ->method('quoteIdentifier')
-            ->will($this->returnValue($this->sequenceName));
+        $feature = new SequenceFeature($this->primaryKeyField, $sequenceName);
+
+        $platform = $this->getPlatformStub($platformName);
         $adapter = $this->getMock('Zend\Db\Adapter\Adapter', ['getPlatform', 'createStatement'], [], '', false);
         $adapter->expects($this->any())
             ->method('getPlatform')
@@ -62,13 +49,36 @@ class SequenceFeatureTest extends PHPUnit_Framework_TestCase
             ->method('createStatement')
             ->will($this->returnValue($statement));
         $this->tableGateway = $this->getMockForAbstractClass('Zend\Db\TableGateway\TableGateway', ['table', $adapter], '', true);
-        $this->feature->setTableGateway($this->tableGateway);
-        $this->feature->nextSequenceId();
+        $feature->setTableGateway($this->tableGateway);
+        $feature->nextSequenceId();
     }
 
     public function nextSequenceIdProvider()
     {
-        return [['PostgreSQL', 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')'],
-            ['Oracle', 'SELECT ' . $this->sequenceName . '.NEXTVAL as "nextval" FROM dual']];
+        return [
+            //@TODO MS SQL SERVER 2016 now supports sequences too
+            ['PostgreSQL', 'table_sequence',            'SELECT NEXTVAL(\'"table_sequence"\')'],
+            ['PostgreSQL', ['schema','table_sequence'], 'SELECT NEXTVAL(\'"schema"."table_sequence"\')'],
+            ['Oracle',     'table_sequence',            'SELECT "table_sequence".NEXTVAL as "nextval" FROM dual']
+        ];
+    }
+
+    /**
+     * Data provider
+     * @TODO this method is replicated in a several tests. Seems common enough to put in common utility, trait or abstract test class
+     *
+     * @param string $platform
+     *
+     * @return PlatformInterface
+     */
+    protected function getPlatformStub($platform)
+    {
+        switch ($platform) {
+            case 'Oracle'     : $platform = new TestAsset\TrustingOraclePlatform();    break;
+            case 'PostgreSQL' : $platform = new TestAsset\TrustingPostgresqlPlatform(); break;
+            default : $platform = null;
+        }
+
+        return $platform;
     }
 }
