@@ -317,7 +317,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      *
      * @return array
      */
-    public function getNamedArray()
+    public function &getNamedArray()
     {
         return $this->data;
     }
