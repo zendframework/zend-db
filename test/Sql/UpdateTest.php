@@ -15,6 +15,7 @@ use Zend\Db\Sql\Where;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\TableIdentifier;
 use ZendTest\Db\TestAsset\TrustingSql92Platform;
+use ZendTest\Db\TestAsset\WhereInvokable;
 
 class UpdateTest extends \PHPUnit_Framework_TestCase
 {
@@ -166,6 +167,25 @@ class UpdateTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $this->update->getRawState('emptyWhereProtection'));
         $this->assertEquals(['bar' => 'baz'], $this->update->getRawState('set'));
         $this->assertInstanceOf('Zend\Db\Sql\Where', $this->update->getRawState('where'));
+    }
+
+    /**
+     * @testdox unit test: test where will accept invokable classes
+     * @covers Zend\Db\Sql\Update::where
+     */
+    public function testWhereArgumentCanBeInvokable()
+    {
+        $select = new Update;
+        $select->where(new WhereInvokable('bar'));
+
+        /** @var Where $where */
+        $where = $select->getRawState('where');
+        $predicates = $where->getPredicates();
+        $expressionData = $predicates[0][1]->getExpressionData();
+
+        $this->assertEquals(1, count($predicates));
+        $this->assertEquals('foo', $expressionData[0][1][0]);
+        $this->assertEquals('bar', $expressionData[0][1][1]);
     }
 
     /**

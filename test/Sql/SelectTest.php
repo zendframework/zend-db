@@ -19,6 +19,7 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Sql\Where;
 use ZendTest\Db\TestAsset\TrustingSql92Platform;
+use ZendTest\Db\TestAsset\WhereInvokable;
 
 class SelectTest extends \PHPUnit_Framework_TestCase
 {
@@ -346,6 +347,25 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         $select->where(function ($what) use ($where) {
             $this->assertSame($where, $what);
         });
+    }
+
+    /**
+     * @testdox unit test: test where will accept invokable classes
+     * @covers Zend\Db\Sql\Select::where
+     */
+    public function testWhereArgumentCanBeInvokable()
+    {
+        $select = new Select;
+        $select->where(new WhereInvokable('bar'));
+
+        /** @var Where $where */
+        $where = $select->getRawState('where');
+        $predicates = $where->getPredicates();
+        $expressionData = $predicates[0][1]->getExpressionData();
+
+        $this->assertEquals(1, count($predicates));
+        $this->assertEquals('foo', $expressionData[0][1][0]);
+        $this->assertEquals('bar', $expressionData[0][1][1]);
     }
 
     /**
