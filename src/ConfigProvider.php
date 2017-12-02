@@ -17,6 +17,7 @@ class ConfigProvider
     public function __invoke()
     {
         return [
+            'db'           => $this->getDefaultDbConfig(),
             'dependencies' => $this->getDependencyConfig(),
         ];
     }
@@ -38,6 +39,14 @@ class ConfigProvider
             'aliases' => [
                 Adapter\Adapter::class => Adapter\AdapterInterface::class,
             ],
+        ];
+    }
+
+    public function getDefaultDbConfig()
+    {
+        return [
+            'driver' => 'Pdo',
+            'dsn'    => 'sqlite::memory:',
         ];
     }
 }

@@ -18,6 +18,7 @@ class Module
     {
         $provider = new ConfigProvider();
         return [
+            'db'              => $provider->getDefaultDbConfig(),
             'service_manager' => $provider->getDependencyConfig(),
         ];
     }
