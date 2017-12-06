@@ -312,7 +312,16 @@ $select-&gt;columns(['foo', 'bar']);
 
 // As an associative array with aliases as the keys
 // (produces 'bar' AS 'foo', 'bax' AS 'baz')
-$select-&gt;columns(['foo' =&gt; 'bar', 'baz' =&gt; 'bax']);</code></pre>
+$select-&gt;columns([
+    'foo' =&gt; 'bar', 
+    'baz' =&gt; 'bax'
+]);
+
+// Sql function call on the column
+// (produces CONCAT_WS('/', 'bar', 'bax') AS 'foo')
+$select-&gt;columns([
+    'foo' =&gt; new \Zend\Db\Sql\Expression(&quot;CONCAT_WS('/', 'bar', 'bax')&quot;)
+]);</code></pre>
 
 <h3 id="join">join()</h3>
 <pre class="codehilite"><code class="language-php">$select-&gt;join(
