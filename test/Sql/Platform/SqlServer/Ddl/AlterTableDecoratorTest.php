@@ -7,7 +7,7 @@
 
 namespace ZendTest\Db\Sql\Platform\SqlServer\Ddl;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Zend\Db\Sql\Ddl\AlterTable;
 use Zend\Db\Sql\Ddl\Column\Column;
 use Zend\Db\Sql\Ddl\Column\Varbinary;
@@ -20,7 +20,7 @@ use ZendTest\Db\TestAsset\TrustingSqlServerPlatform;
 class AlterTableDecoratorTest extends TestCase
 {
     /**
-     * @covers Zend\Db\Sql\Platform\SqlServer\Ddl\AlterTableDecorator::getSqlString
+     * @covers \Zend\Db\Sql\Platform\SqlServer\Ddl\AlterTableDecorator::getSqlString
      */
     public function testGetSqlString()
     {
@@ -46,23 +46,23 @@ class AlterTableDecoratorTest extends TestCase
         $alterTable->addColumn($primaryKey);
 
         //SQL Server needs separate ALTER command per operation
-        $this->assertEquals(
-              "ALTER TABLE [altered]\n"
-            .    " ADD [id] INTEGER FILESTREAM COLLATE Cyrillic_General_CI_AS IDENTITY (1, 1) NOT NULL "
-            .       "ROWGUIDCOL SPARSE ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = key_name) "
-            .       "MASKED WITH (FUNCTION = ' mask_function ') PRIMARY KEY;\n"
-            . "ALTER TABLE [altered]\n"
-            .    " ADD [named_pk] INTEGER NOT NULL "
-            .       "CONSTRAINT [specified_pk] PRIMARY KEY;",
+        self::assertEquals(
+            "ALTER TABLE [altered]\n" .
+            " ADD [id] INTEGER FILESTREAM COLLATE Cyrillic_General_CI_AS IDENTITY (1, 1) NOT NULL " .
+                "ROWGUIDCOL SPARSE ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = key_name) " .
+                "MASKED WITH (FUNCTION = ' mask_function ') PRIMARY KEY;\n" .
+            "ALTER TABLE [altered]\n" .
+            " ADD [named_pk] INTEGER NOT NULL " .
+                "CONSTRAINT [specified_pk] PRIMARY KEY;",
             $alterDecorator->setSubject($alterTable)->getSqlString($platform)
         );
 
         // add table constraint without column definition
         $alterTable = new AlterTable('constrained');
         $alterTable->addConstraint(new PrimaryKey(['u_id', 'g_id'], 'UserGroup_PK'));
-        $this->assertEquals(
-              "ALTER TABLE [constrained]\n"
-            .   " ADD CONSTRAINT [UserGroup_PK] PRIMARY KEY ([u_id], [g_id]);",
+        self::assertEquals(
+            "ALTER TABLE [constrained]\n" .
+            " ADD CONSTRAINT [UserGroup_PK] PRIMARY KEY ([u_id], [g_id]);",
             trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
         );
 
@@ -71,9 +71,9 @@ class AlterTableDecoratorTest extends TestCase
         $changedColumn = new Varchar('changed', 10);
         $changedColumn->setOption('COLLATE', 'Cyrillic_General_CI_AS');
         $alterTable->changeColumn('changed', $changedColumn);
-        $this->assertEquals(
-              "ALTER TABLE [altered]\n"
-            . " ALTER COLUMN [changed] VARCHAR(10) COLLATE Cyrillic_General_CI_AS NOT NULL;",
+        self::assertEquals(
+            "ALTER TABLE [altered]\n" .
+            " ALTER COLUMN [changed] VARCHAR(10) COLLATE Cyrillic_General_CI_AS NOT NULL;",
             trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
         );
 
@@ -84,34 +84,34 @@ class AlterTableDecoratorTest extends TestCase
 
         // Cannot reliably detect if any other options for column have changed besides name.
         // Therefore, have to run at least most basic ALTER TABLE command that performs a benign change.
-        $this->assertEquals(
-              "sp_rename 'altered.old_name', 'new_name', 'COLUMN';\n"
-            . " ALTER TABLE [altered]\n"
-            . " ALTER COLUMN [new_name] VARCHAR(10) NOT NULL;",
+        self::assertEquals(
+            "sp_rename 'altered.old_name', 'new_name', 'COLUMN';\n" .
+            " ALTER TABLE [altered]\n" .
+            " ALTER COLUMN [new_name] VARCHAR(10) NOT NULL;",
             trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
         );
 
         // drop columns
         $alterTable = new AlterTable('altered');
         $alterTable->dropColumn('drop_this');
-        $this->assertEquals(
-              "ALTER TABLE [altered]\n"
-            . " DROP COLUMN [drop_this];",
+        self::assertEquals(
+            "ALTER TABLE [altered]\n" .
+            " DROP COLUMN [drop_this];",
             trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
         );
 
         // drop constraint
         $alterTable = new AlterTable('altered');
         $alterTable->dropConstraint('drop_this');
-        $this->assertEquals(
-              "ALTER TABLE [altered]\n"
-            . " DROP CONSTRAINT [drop_this];",
+        self::assertEquals(
+            "ALTER TABLE [altered]\n" .
+            " DROP CONSTRAINT [drop_this];",
             trim($alterDecorator->setSubject($alterTable)->getSqlString($platform))
         );
     }
 
     /**
-     * @covers Zend\Db\Sql\Platform\SqlServer\Ddl\AlterTableDecorator::getSqlString
+     * @covers \Zend\Db\Sql\Platform\SqlServer\Ddl\AlterTableDecorator::getSqlString
      */
     public function testIdentityBooleanConvertsToDefaultParams()
     {
@@ -123,15 +123,15 @@ class AlterTableDecoratorTest extends TestCase
         $id->setOption('identity', true);
         $alterTable->addColumn($id);
 
-        $this->assertEquals(
-              "ALTER TABLE [identifiable]\n"
-            .   " ADD [id] INTEGER IDENTITY (1, 1) NOT NULL;",
+        self::assertEquals(
+            "ALTER TABLE [identifiable]\n" .
+            " ADD [id] INTEGER IDENTITY (1, 1) NOT NULL;",
             $alterDecorator->setSubject($alterTable)->getSqlString($platform)
         );
     }
 
     /**
-     * @covers Zend\Db\Sql\Platform\SqlServer\Ddl\AlterTableDecorator::getSqlString
+     * @covers \Zend\Db\Sql\Platform\SqlServer\Ddl\AlterTableDecorator::getSqlString
      */
     public function testIdentityInvalidFormatThrowsException()
     {
@@ -144,12 +144,12 @@ class AlterTableDecoratorTest extends TestCase
         $id->setOption('identity', '1');
         $alterTable->addColumn($id);
 
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $alterDecorator->setSubject($alterTable)->getSqlString($platform);
     }
 
     /**
-     * @covers Zend\Db\Sql\Platform\SqlServer\Ddl\AlterTableDecorator::getSqlString
+     * @covers \Zend\Db\Sql\Platform\SqlServer\Ddl\AlterTableDecorator::getSqlString
      */
     public function testVarbinarySyntaxCorrected()
     {
@@ -159,9 +159,9 @@ class AlterTableDecoratorTest extends TestCase
         $alterTable = new AlterTable('hasbinarydata');
 
         $alterTable->addColumn(new Varbinary('binary'));
-        $this->assertEquals(
-              "ALTER TABLE [hasbinarydata]\n"
-            .   " ADD [binary] VARBINARY (max) NOT NULL;",
+        self::assertEquals(
+            "ALTER TABLE [hasbinarydata]\n" .
+            " ADD [binary] VARBINARY (max) NOT NULL;",
             $alterDecorator->setSubject($alterTable)->getSqlString($platform)
         );
     }

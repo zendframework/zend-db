@@ -108,14 +108,14 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
             if ($insertAt !== false) {
                 switch ($option) {
                     case 'REFERENCES':
-                        $insertStart[2] = !isset($insertStart[2]) ? $insertAt : $insertStart[2];
+                        $insertStart[2] = ! isset($insertStart[2]) ? $insertAt : $insertStart[2];
                     // no break
                     case 'PRIMARY':
                     case 'UNIQUE':
-                        $insertStart[1] = !isset($insertStart[1]) ? $insertAt : $insertStart[1];
+                        $insertStart[1] = ! isset($insertStart[1]) ? $insertAt : $insertStart[1];
                     // no break
                     default:
-                        $insertStart[0] = !isset($insertStart[0]) ? $insertAt : $insertStart[0];
+                        $insertStart[0] = ! isset($insertStart[0]) ? $insertAt : $insertStart[0];
                 }
             }
         }
@@ -147,7 +147,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
             foreach ($columnOptions as $optionName => $optionValue) {
                 $insert = '';
 
-                if (!$optionValue) {
+                if (! $optionValue) {
                     continue;
                 }
 
@@ -227,7 +227,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
             foreach ($columnOptions as $optionName => $optionValue) {
                 $insert = '';
 
-                if (!$optionValue) {
+                if (! $optionValue) {
                     continue;
                 }
 
@@ -383,7 +383,13 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         ParameterContainer $parameterContainer = null,
         $namedParameterPrefix = null
     ) {
-        $sql = $this->subject->processExpression($expression, $platform, $driver, $parameterContainer, $namedParameterPrefix);
+        $sql = $this->subject->processExpression(
+            $expression,
+            $platform,
+            $driver,
+            $parameterContainer,
+            $namedParameterPrefix
+        );
 
         // alternatively add column decorators
         // varbinary data type without length parameter
@@ -413,7 +419,9 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
         // end result should be (seed, increment)
         if (preg_match('/\([1-9]+\,(\s)*[1-9]+\)/', $optionValue) === 0) {
-            throw new InvalidArgumentException('Identity format should be: (seed, increment). ' . $optionValue . ' is given instead.');
+            throw new InvalidArgumentException(
+                'Identity format should be: (seed, increment). ' . $optionValue . ' is given instead.'
+            );
         }
 
         return $optionValue;
