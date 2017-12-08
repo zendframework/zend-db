@@ -38,7 +38,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
 
     /**
      * @param CreateTable $subject
-     * @return self
+     * @return self Provides a fluent interface
      */
     public function setSubject($subject)
     {
@@ -218,8 +218,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
      */
     protected function processTable(PlatformInterface $adapterPlatform = null)
     {
-        $table = ($this->isTemporary ? '#' : '').ltrim($this->table, '#');
-
+        $table = ($this->isTemporary ? '#' : '') . ltrim($this->table, '#');
         return [
             '',
             $adapterPlatform->quoteIdentifier($table),
