@@ -38,7 +38,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
 
     /**
      * @param CreateTable $subject
-     * @return self
+     * @return self Provides a fluent interface
      */
     public function setSubject($subject)
     {
@@ -62,14 +62,14 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
             if ($insertAt !== false) {
                 switch ($option) {
                     case 'REFERENCES':
-                        $insertStart[2] = !isset($insertStart[2]) ? $insertAt : $insertStart[2];
+                        $insertStart[2] = ! isset($insertStart[2]) ? $insertAt : $insertStart[2];
                     // no break
                     case 'PRIMARY':
                     case 'UNIQUE':
-                        $insertStart[1] = !isset($insertStart[1]) ? $insertAt : $insertStart[1];
+                        $insertStart[1] = ! isset($insertStart[1]) ? $insertAt : $insertStart[1];
                     // no break
                     default:
-                        $insertStart[0] = !isset($insertStart[0]) ? $insertAt : $insertStart[0];
+                        $insertStart[0] = ! isset($insertStart[0]) ? $insertAt : $insertStart[0];
                 }
             }
         }
@@ -101,7 +101,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
             foreach ($columnOptions as $optionName => $optionValue) {
                 $insert = '';
 
-                if (!$optionValue) {
+                if (! $optionValue) {
                     continue;
                 }
 
@@ -218,8 +218,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
      */
     protected function processTable(PlatformInterface $adapterPlatform = null)
     {
-        $table = ($this->isTemporary ? '#' : '').ltrim($this->table, '#');
-
+        $table = ($this->isTemporary ? '#' : '') . ltrim($this->table, '#');
         return [
             '',
             $adapterPlatform->quoteIdentifier($table),
