@@ -45,6 +45,12 @@ class AlterTableDecoratorTest extends TestCase
         $primaryKey->addConstraint(new PrimaryKey(null, 'specified_pk'));
         $alterTable->addColumn($primaryKey);
 
+        // change type from english-only to national
+        $nonLatinColumn = new Varchar('russian_text', 20);
+        $nonLatinColumn->setNullable(true);
+        $nonLatinColumn->enableMultibyte();
+        $alterTable->changeColumn($nonLatinColumn->getName(), $nonLatinColumn);
+
         //SQL Server needs separate ALTER command per operation
         self::assertEquals(
             "ALTER TABLE [altered]\n" .
@@ -53,7 +59,9 @@ class AlterTableDecoratorTest extends TestCase
                 "MASKED WITH (FUNCTION = ' mask_function ') PRIMARY KEY;\n" .
             "ALTER TABLE [altered]\n" .
             " ADD [named_pk] INTEGER NOT NULL " .
-                "CONSTRAINT [specified_pk] PRIMARY KEY;",
+                "CONSTRAINT [specified_pk] PRIMARY KEY;\n" .
+            "  ALTER TABLE [altered]\n" .
+            " ALTER COLUMN [russian_text] NVARCHAR(20);",
             $alterDecorator->setSubject($alterTable)->getSqlString($platform)
         );
 

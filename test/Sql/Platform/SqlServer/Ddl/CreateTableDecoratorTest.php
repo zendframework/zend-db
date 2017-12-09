@@ -7,9 +7,10 @@
 
 namespace ZendTest\Db\Sql\Platform\SqlServer\Ddl;
 
-use Zend\Db\Sql\Ddl\Column\Column;
-use Zend\Db\Sql\Ddl\Constraint\PrimaryKey;
 use PHPUnit\Framework\TestCase;
+use Zend\Db\Sql\Ddl\Column\Column;
+use Zend\Db\Sql\Ddl\Column\Varchar;
+use Zend\Db\Sql\Ddl\Constraint\PrimaryKey;
 use Zend\Db\Sql\Ddl\CreateTable;
 use Zend\Db\Sql\Platform\SqlServer\Ddl\CreateTableDecorator;
 use ZendTest\Db\TestAsset\TrustingSqlServerPlatform;
@@ -68,13 +69,20 @@ class CreateTableDecoratorTest extends TestCase
         $primaryKey->addConstraint(new PrimaryKey(null, 'specified_primary_key_name'));
         $createTable->addColumn($primaryKey);
 
+        $nonLatinColumn = new Varchar('russian_text', 20);
+        $nonLatinColumn->setNullable(true);
+        $nonLatinColumn->enableMultibyte();
+        $createTable->addColumn($nonLatinColumn);
+
+
         self::assertEquals(
             "CREATE TABLE [opinionated] ( \n" .
             "    [id] INTEGER FILESTREAM COLLATE Cyrillic_General_CI_AS IDENTITY (1, 1) NOT NULL " .
                     "ROWGUIDCOL SPARSE ENCRYPTED WITH (COLUMN_ENCRYPTION_KEY = key_name) " .
                     "MASKED WITH (FUNCTION = ' mask_function ') " .
                     "PRIMARY KEY,\n" .
-            "    [named_key] INTEGER NOT NULL CONSTRAINT [specified_primary_key_name] PRIMARY KEY \n" .
+            "    [named_key] INTEGER NOT NULL CONSTRAINT [specified_primary_key_name] PRIMARY KEY,\n" .
+            "    [russian_text] NVARCHAR(20) \n" .
             ")",
             $createDecorator->setSubject($createTable)->getSqlString($platform)
         );

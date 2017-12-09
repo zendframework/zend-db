@@ -9,12 +9,14 @@
 
 namespace Zend\Db\Sql\Ddl\Column;
 
-abstract class AbstractLengthColumn extends Column
+abstract class AbstractLengthColumn extends Column implements AbstractLengthColumnInterface
 {
     /**
      * @var int
      */
     protected $length;
+
+    protected $isMultibyte = false;
 
     /**
      * {@inheritDoc}
@@ -32,9 +34,9 @@ abstract class AbstractLengthColumn extends Column
      * @param  int $length
      * @return self Provides a fluent interface
      */
-    public function setLength($length)
+    public function setLength(?int $length) : self
     {
-        $this->length = (int) $length;
+        $this->length = $length;
 
         return $this;
     }
@@ -42,7 +44,7 @@ abstract class AbstractLengthColumn extends Column
     /**
      * @return int
      */
-    public function getLength()
+    public function getLength() : ?int
     {
         return $this->length;
     }
@@ -50,9 +52,37 @@ abstract class AbstractLengthColumn extends Column
     /**
      * @return string
      */
-    protected function getLengthExpression()
+    protected function getLengthExpression() : string
     {
         return (string) $this->length;
+    }
+
+    /**
+     * @return AbstractLengthColumn
+     */
+    public function enableMultibyte(): self
+    {
+        $this->isMultibyte = true;
+
+        return $this;
+    }
+
+    /**
+     * @return AbstractLengthColumn
+     */
+    public function disableMultibyte(): self
+    {
+        $this->isMultibyte = false;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMultibyte(): bool
+    {
+        return $this->isMultibyte;
     }
 
     /**

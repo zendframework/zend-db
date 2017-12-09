@@ -93,6 +93,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
          */
         foreach ($this->columns as $column) {
             $sql           = $this->processExpression($column, $adapterPlatform);
+            $sql           = $this->substituteMultibyteType($column, $sql);
             $optionOffsets = $this->getSqlInsertOffsets($sql);
             $columnOptions = $column->getOptions();
 

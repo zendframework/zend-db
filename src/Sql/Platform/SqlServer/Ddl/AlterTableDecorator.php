@@ -34,32 +34,32 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     protected $specifications = [
         self::ADD_COLUMNS  => [
             "%1\$s" => [
-                [2 => "ALTER TABLE %1\$s\n ADD %2\$s;", 'combinedby' => "\n"],
+                [2 => "ALTER TABLE %1\$s\n ADD %2\$s;\n", 'combinedby' => ""],
             ],
         ],
         self::RENAME_COLUMNS => [
             "%1\$s" => [
-                [2 => "sp_rename '%1\$s', '%2\$s', 'COLUMN';\n", 'combinedby' => "\n"],
+                [2 => "sp_rename '%1\$s', '%2\$s', 'COLUMN';\n", 'combinedby' => ""],
             ]
         ],
         self::CHANGE_COLUMNS  => [
             "%1\$s" => [
-                [2 => "ALTER TABLE %1\$s\n ALTER COLUMN %2\$s;", 'combinedby' => "\n"],
+                [2 => "ALTER TABLE %1\$s\n ALTER COLUMN %2\$s;\n", 'combinedby' => ""],
             ],
         ],
         self::DROP_COLUMNS  => [
             "%1\$s" => [
-                [2 => "ALTER TABLE %1\$s\n DROP COLUMN %2\$s;", 'combinedby' => "\n"],
+                [2 => "ALTER TABLE %1\$s\n DROP COLUMN %2\$s;\n", 'combinedby' => ""],
             ],
         ],
         self::ADD_CONSTRAINTS  => [
             "%1\$s" => [
-                [2 => "ALTER TABLE %1\$s\n ADD %2\$s;", 'combinedby' => "\n"],
+                [2 => "ALTER TABLE %1\$s\n ADD %2\$s;\n", 'combinedby' => ""],
             ],
         ],
         self::DROP_CONSTRAINTS  => [
             "%1\$s" => [
-                [2 => "ALTER TABLE %1\$s\n DROP CONSTRAINT %2\$s;\n", 'combinedby' => "\n"],
+                [2 => "ALTER TABLE %1\$s\n DROP CONSTRAINT %2\$s;\n", 'combinedby' => ""],
             ],
         ],
     ];
@@ -139,6 +139,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
          */
         foreach ($this->addColumns as $column) {
             $sql           = $this->processExpression($column, $adapterPlatform);
+            $sql           = $this->substituteMultibyteType($column, $sql);
             $optionOffsets = $this->getSqlInsertOffsets($sql);
             $columnOptions = $column->getOptions();
 
@@ -219,6 +220,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
          */
         foreach ($this->changeColumns as $name => $column) {
             $sql           = $this->processExpression($column, $adapterPlatform);
+            $sql           = $this->substituteMultibyteType($column, $sql);
             $optionOffsets = $this->getSqlInsertOffsets($sql);
             $columnOptions = $column->getOptions();
 
