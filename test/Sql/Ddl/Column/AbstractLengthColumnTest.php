@@ -10,6 +10,7 @@
 namespace ZendTest\Db\Sql\Ddl\Column;
 
 use PHPUnit\Framework\TestCase;
+use Zend\Db\Sql\Ddl\Column\AbstractLengthColumnInterface;
 
 class AbstractLengthColumnTest extends TestCase
 {
@@ -44,5 +45,24 @@ class AbstractLengthColumnTest extends TestCase
             [['%s %s NOT NULL', ['foo', 'INTEGER(4)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
             $column->getExpressionData()
         );
+    }
+
+    /**
+     * @covers \Zend\Db\Sql\Ddl\Column\AbstractLengthColumn::enableMultibyte
+     * @covers \Zend\Db\Sql\Ddl\Column\AbstractLengthColumn::disableMultibyte
+     * @covers \Zend\Db\Sql\Ddl\Column\AbstractLengthColumn::isMultibyte
+     */
+    public function testToggleMultibyteOption()
+    {
+        /** @var AbstractLengthColumnInterface $column */
+        $column = $this->getMockForAbstractClass(
+            'Zend\Db\Sql\Ddl\Column\AbstractLengthColumn',
+            ['foo', 4]
+        );
+        self::assertFalse($column->isMultibyte());
+        $column->enableMultibyte();
+        self::assertTrue($column->isMultibyte());
+        $column->disableMultibyte();
+        self::assertFalse($column->isMultibyte());
     }
 }

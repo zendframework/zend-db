@@ -42,7 +42,9 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
      */
     public function setDigits($digits)
     {
-        return $this->setLength($digits);
+        $this->setLength($digits);
+
+        return $this;
     }
 
     /**
@@ -75,7 +77,7 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     /**
      * {@inheritDoc}
      */
-    protected function getLengthExpression()
+    protected function getLengthExpression() : string
     {
         if ($this->decimal !== null) {
             return $this->length . ',' . $this->decimal;

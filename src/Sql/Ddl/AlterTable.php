@@ -11,6 +11,7 @@ namespace Zend\Db\Sql\Ddl;
 
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\AbstractSql;
+use Zend\Db\Sql\Ddl\Column\AbstractLengthColumnInterface;
 
 class AlterTable extends AbstractSql implements SqlInterface
 {
@@ -233,5 +234,27 @@ class AlterTable extends AbstractSql implements SqlInterface
         }
 
         return [$sqls];
+    }
+
+    protected function substituteMultibyteType(
+        Column\ColumnInterface $column,
+        string $sql
+    ) : string {
+
+        if (! ($column instanceof AbstractLengthColumnInterface)) {
+            return $sql;
+        }
+
+        if (! $column->isMultibyte()) {
+            return $sql;
+        }
+
+        $sql = str_replace(
+            [' CHAR(',  ' VARCHAR(',  ' TEXT '],
+            [' NCHAR(', ' NVARCHAR(', ' NTEXT '],
+            $sql
+        );
+
+        return $sql;
     }
 }

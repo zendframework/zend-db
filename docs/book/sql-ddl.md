@@ -167,6 +167,10 @@ Each of the above types can be utilized in any place that accepts a `Column\Colu
 instance. Currently, this is primarily in `CreateTable::addColumn()` and `AlterTable`'s
 `addColumn()` and `changeColumn()` methods.
 
+Column which need to store non latin-based characters for other languages (varchar, char, and text)
+have option to enable multibyte support with `$charColumn->enableMultibyte()`. This will modify the type to 
+corresponding ISO national name equivalent based on the platform used.
+
 ## Currently Supported Constraint Types
 
 These types exist in the `Zend\Db\Sql\Ddl\Constraint` namespace. Data types
