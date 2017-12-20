@@ -95,4 +95,45 @@ class SequenceFeatureTest extends TestCase
         return [['PostgreSQL', 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')'],
             ['Oracle', 'SELECT ' . $this->sequenceName . '.NEXTVAL as "nextval" FROM dual']];
     }
+
+    /**
+     * @dataProvider lastSequenceIdProvider
+     */
+    public function testLastSequenceId($platformName, $statementSql)
+    {
+        $platform = $this->getMockForAbstractClass('Zend\Db\Adapter\Platform\PlatformInterface', ['getName']);
+        $platform->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue($platformName));
+        $platform->expects($this->any())
+            ->method('quoteIdentifier')
+            ->will($this->returnValue($this->sequenceName));
+        $adapter = $this->getMock('Zend\Db\Adapter\Adapter', ['getPlatform', 'createStatement'], [], '', false);
+        $adapter->expects($this->any())
+            ->method('getPlatform')
+            ->will($this->returnValue($platform));
+        $result = $this->getMockForAbstractClass('Zend\Db\Adapter\Driver\ResultInterface', [], '', false, true, true, ['current']);
+        $result->expects($this->any())
+            ->method('current')
+            ->will($this->returnValue(['currval' => 1]));
+        $statement = $this->getMockForAbstractClass('Zend\Db\Adapter\Driver\StatementInterface', [], '', false, true, true, ['prepare', 'execute']);
+        $statement->expects($this->any())
+            ->method('execute')
+            ->will($this->returnValue($result));
+        $statement->expects($this->any())
+            ->method('prepare')
+            ->with($statementSql);
+        $adapter->expects($this->once())
+            ->method('createStatement')
+            ->will($this->returnValue($statement));
+        $this->tableGateway = $this->getMockForAbstractClass('Zend\Db\TableGateway\TableGateway', ['table', $adapter], '', true);
+        $this->feature->setTableGateway($this->tableGateway);
+        $this->feature->lastSequenceId();
+    }
+
+    public function lastSequenceIdProvider()
+    {
+        return [['PostgreSQL', 'SELECT CURRVAL(\'"' . $this->sequenceName . '"\')'],
+            ['Oracle', 'SELECT ' . $this->sequenceName . '.CURRVAL as "currval" FROM dual']];
+    }
 }

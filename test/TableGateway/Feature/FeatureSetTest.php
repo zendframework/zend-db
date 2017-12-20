@@ -145,7 +145,7 @@ class FeatureSetTest extends TestCase
         $statementMock = $this->getMockBuilder('Zend\Db\Adapter\Driver\StatementInterface')->getMock();
         $statementMock->expects($this->any())
             ->method('prepare')
-            ->with('SELECT CURRVAL(\'' . $sequenceName . '\')');
+            ->with('SELECT CURRVAL(\'"' . $sequenceName . '"\')');
         $statementMock->expects($this->any())
             ->method('execute')
             ->will($this->returnValue($resultMock));
