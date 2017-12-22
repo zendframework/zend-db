@@ -47,7 +47,7 @@ class ResultTest extends TestCase
         $result = new Result();
 
         $this->expectException('\Zend\Db\Adapter\Exception\InvalidArgumentException');
-        $result->setFetchMode(11);
+        $result->setFetchMode(13);
     }
 
     /**
