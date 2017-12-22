@@ -69,4 +69,24 @@ class ResultTest extends TestCase
         self::assertEquals(5, $result->getFetchMode());
         self::assertInstanceOf('stdClass', $result->current());
     }
+
+    /**
+     * Tests whether the fetch mode has a broader range
+     */
+    public function testFetchModeRange()
+    {
+        $stub = $this->getMockBuilder('PDOStatement')->getMock();
+        $stub->expects($this->any())
+            ->method('fetch')
+            ->will($this->returnCallback(function () {
+                return new stdClass;
+            }));
+
+        $result = new Result();
+        $result->initialize($stub, null);
+        $result->setFetchMode(\PDO::FETCH_NAMED);
+
+        self::assertEquals(11, $result->getFetchMode());
+        self::assertInstanceOf('stdClass', $result->current());
+    }
 }
