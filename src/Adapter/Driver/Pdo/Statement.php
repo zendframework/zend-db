@@ -208,12 +208,12 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      */
     public function execute($parameters = null)
     {
-        if (!$this->isPrepared) {
+        if (! $this->isPrepared) {
             $this->prepare();
         }
 
         /** START Standard ParameterContainer Merging Block */
-        if (!$this->parameterContainer instanceof ParameterContainer) {
+        if (! $this->parameterContainer instanceof ParameterContainer) {
             if ($parameters instanceof ParameterContainer) {
                 $this->parameterContainer = $parameters;
                 $parameters = null;
@@ -289,7 +289,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
             }
 
             // parameter is named or positional, value is reference
-            $parameter = is_int($name) ? ($name + 1) : $name;
+            $parameter = is_int($name) ? ($name + 1) : $this->driver->formatParameterName($name);
             $this->resource->bindParam($parameter, $value, $type);
         }
     }

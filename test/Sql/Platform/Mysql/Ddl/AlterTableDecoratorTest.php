@@ -9,6 +9,7 @@
 
 namespace ZendTest\Db\Sql\Platform\Mysql\Ddl;
 
+use PHPUnit\Framework\TestCase;
 use Zend\Db\Adapter\Platform\Mysql;
 use Zend\Db\Metadata\Object\ConstraintObject;
 use Zend\Db\Sql\Ddl\AlterTable;
@@ -17,7 +18,7 @@ use Zend\Db\Sql\Ddl\Constraint\PrimaryKey;
 use Zend\Db\Sql\Ddl\Constraint\UniqueKey;
 use Zend\Db\Sql\Platform\Mysql\Ddl\AlterTableDecorator;
 
-class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase
+class AlterTableDecoratorTest extends TestCase
 {
     /**
      * @covers Zend\Db\Sql\Platform\Mysql\Ddl\AlterTableDecorator::setSubject
@@ -26,7 +27,7 @@ class AlterTableDecoratorTest extends \PHPUnit_Framework_TestCase
     {
         $ctd = new AlterTableDecorator();
         $ct = new AlterTable;
-        $this->assertSame($ctd, $ctd->setSubject($ct));
+        self::assertSame($ctd, $ctd->setSubject($ct));
     }
 
     /**
