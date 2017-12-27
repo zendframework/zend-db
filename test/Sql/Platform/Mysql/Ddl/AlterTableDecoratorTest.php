@@ -55,7 +55,8 @@ class AlterTableDecoratorTest extends TestCase
         $ct->dropConstraint(new UniqueKey(null, 'my_unique_index'));
 
         $this->assertEquals(
-            "ALTER TABLE `foo`\n ADD COLUMN `bar` INTEGER UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'baz' AFTER `bar`,\n"
+            "ALTER TABLE `foo`\n"
+            ." ADD COLUMN `bar` INTEGER UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'baz' AFTER `bar`,\n"
             ."    DROP FOREIGN KEY `my_fk`,\n"
             ." DROP KEY `my_unique_index`",
             @$ctd->getSqlString(new Mysql())
