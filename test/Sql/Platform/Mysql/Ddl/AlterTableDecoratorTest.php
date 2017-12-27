@@ -56,7 +56,8 @@ class AlterTableDecoratorTest extends TestCase
 
         $this->assertEquals(
             "ALTER TABLE `foo`\n"
-            ." ADD COLUMN `bar` INTEGER UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'baz' AFTER `bar`,\n"
+            ." ADD COLUMN `bar` INTEGER UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'baz'"
+            ." AFTER `bar`,\n"
             ."    DROP FOREIGN KEY `my_fk`,\n"
             ." DROP KEY `my_unique_index`",
             @$ctd->getSqlString(new Mysql())
