@@ -33,7 +33,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
     protected $count = null;
 
     /**
-     * @var Iterator|IteratorAggregate|ResultInterface
+     * @var Iterator|IteratorAggregate|ResultInterface|ArrayIterator
      */
     protected $dataSource = null;
 
@@ -110,6 +110,9 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function isBuffered()
     {
         if ($this->buffer === -1 || is_array($this->buffer)) {

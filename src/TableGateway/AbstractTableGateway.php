@@ -83,7 +83,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * Initialize
      *
      * @throws Exception\RuntimeException
-     * @return null
      */
     public function initialize()
     {
@@ -158,7 +157,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * Get select result prototype
      *
-     * @return ResultSet
+     * @return ResultSetInterface
      */
     public function getResultSetPrototype()
     {
@@ -177,7 +176,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * Select
      *
      * @param Where|\Closure|string|array $where
-     * @return ResultSet
+     * @return ResultSetInterface
      */
     public function select($where = null)
     {
@@ -211,7 +210,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     /**
      * @param Select $select
-     * @return ResultSet
+     * @return ResultSetInterface
      * @throws Exception\RuntimeException
      */
     protected function executeSelect(Select $select)
@@ -350,7 +349,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     }
 
     /**
-     * @param \Zend\Db\Sql\Update $update
+     * @param Update $update
      * @return int
      */
     public function updateWith(Update $update)
