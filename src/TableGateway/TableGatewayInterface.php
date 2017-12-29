@@ -15,41 +15,42 @@ use Zend\Db\Sql\Where;
 interface TableGatewayInterface
 {
     /**
+     * Return the table name
+     *
      * @return string
      */
     public function getTable();
 
     /**
-     * Select
+     * Select values by conditions
      *
-     * @param  Where|\Closure|string|array $where
+     * @param  Where|\Closure|string|array|null $where
      * @return ResultSetInterface
      */
     public function select($where = null);
 
     /**
-     * Insert
+     * Insert values given by array
      *
      * @param  array $set
-     * @return int
+     * @return int number of affected rows
      */
     public function insert($set);
 
     /**
-     * Update
+     * Update values by condition
      *
      * @param  array $set
-     * @param  string|array|\Closure $where
-     *
-     * @return int
+     * @param  string|array|\Closure|null $where
+     * @return int number of affected rows
      */
     public function update($set, $where = null);
 
     /**
-     * Delete
+     * Delete values by condition
      *
      * @param  Where|\Closure|string|array $where
-     * @return int
+     * @return int number of affected rows
      */
     public function delete($where);
 }

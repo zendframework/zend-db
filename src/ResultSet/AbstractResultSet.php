@@ -33,7 +33,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
     protected $count = null;
 
     /**
-     * @var Iterator|IteratorAggregate|ResultInterface|ArrayIterator
+     * @var Iterator|IteratorAggregate|ResultInterface
      */
     protected $dataSource = null;
 
