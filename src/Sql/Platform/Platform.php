@@ -32,17 +32,19 @@ class Platform extends AbstractPlatform
     {
         $this->defaultPlatform = $adapter->getPlatform();
 
-        $mySqlPlatform     = new Mysql\Mysql();
-        $sqlServerPlatform = new SqlServer\SqlServer();
-        $oraclePlatform    = new Oracle\Oracle();
-        $ibmDb2Platform    = new IbmDb2\IbmDb2();
-        $sqlitePlatform    = new Sqlite\Sqlite();
+        $mySqlPlatform      = new Mysql\Mysql();
+        $sqlServerPlatform  = new SqlServer\SqlServer();
+        $oraclePlatform     = new Oracle\Oracle();
+        $ibmDb2Platform     = new IbmDb2\IbmDb2();
+        $sqlitePlatform     = new Sqlite\Sqlite();
+        $postgresqlPlatform = new Postgresql\Postgresql();
 
-        $this->decorators['mysql']     = $mySqlPlatform->getDecorators();
-        $this->decorators['sqlserver'] = $sqlServerPlatform->getDecorators();
-        $this->decorators['oracle']    = $oraclePlatform->getDecorators();
-        $this->decorators['ibmdb2']    = $ibmDb2Platform->getDecorators();
-        $this->decorators['sqlite']    = $sqlitePlatform->getDecorators();
+        $this->decorators['mysql']      = $mySqlPlatform->getDecorators();
+        $this->decorators['sqlserver']  = $sqlServerPlatform->getDecorators();
+        $this->decorators['oracle']     = $oraclePlatform->getDecorators();
+        $this->decorators['ibmdb2']     = $ibmDb2Platform->getDecorators();
+        $this->decorators['sqlite']     = $sqlitePlatform->getDecorators();
+        $this->decorators['postgresql'] = $postgresqlPlatform->getDecorators();
     }
 
     /**
