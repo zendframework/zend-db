@@ -198,7 +198,7 @@ class InsertTest extends TestCase
             $mockStatement->getSql()
         );
         $parameters = $mockStatement->getParameterContainer()->getNamedArray();
-        self::assertSame(['subselect1where1' => 5], $parameters);
+        self::assertSame(['ss1where1' => 5], $parameters);
     }
 
     /**
