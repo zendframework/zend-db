@@ -177,7 +177,7 @@ abstract class AbstractSql implements SqlInterface
                         $platform,
                         $driver,
                         $parameterContainer,
-                        $namedParameterPrefix . $vIndex . 'subpart'
+                        $namedParameterPrefix . $vIndex . 'sp'
                     );
                 } elseif ($type == ExpressionInterface::TYPE_IDENTIFIER) {
                     $values[$vIndex] = $platform->quoteIdentifierInFragment($value);
@@ -297,7 +297,7 @@ abstract class AbstractSql implements SqlInterface
             $processInfoContext = ($decorator instanceof PlatformDecoratorInterface) ? $subselect : $decorator;
             $this->processInfo['subselectCount']++;
             $processInfoContext->processInfo['subselectCount'] = $this->processInfo['subselectCount'];
-            $processInfoContext->processInfo['paramPrefix'] = 'subselect'
+            $processInfoContext->processInfo['paramPrefix'] = 'ss'
                 . $processInfoContext->processInfo['subselectCount'];
 
             $sql = $decorator->buildSqlString($platform, $driver, $parameterContainer);
