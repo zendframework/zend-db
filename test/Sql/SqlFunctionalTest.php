@@ -150,22 +150,22 @@ class SqlFunctionalTest extends TestCase
                     'sql92' => [
                         'string'     => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = \'10\') AS "b" ON "d"="e" WHERE "x" = \'20\'',
                         'prepare'    => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = ?) AS "b" ON "d"="e" WHERE "x" = ?',
-                        'parameters' => ['subselect1where1' => 10, 'where1' => 20],
+                        'parameters' => ['ss1where1' => 10, 'where1' => 20],
                     ],
                     'MySql' => [
                         'string'     => 'SELECT `a`.*, `b`.* FROM `a` INNER JOIN (SELECT `c`.* FROM `c` WHERE `cc` = \'10\') AS `b` ON `d`=`e` WHERE `x` = \'20\'',
                         'prepare'    => 'SELECT `a`.*, `b`.* FROM `a` INNER JOIN (SELECT `c`.* FROM `c` WHERE `cc` = ?) AS `b` ON `d`=`e` WHERE `x` = ?',
-                        'parameters' => ['subselect2where1' => 10, 'where2' => 20],
+                        'parameters' => ['ss2where1' => 10, 'where2' => 20],
                     ],
                     'Oracle' => [
                         'string'     => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = \'10\') "b" ON "d"="e" WHERE "x" = \'20\'',
                         'prepare'    => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = ?) "b" ON "d"="e" WHERE "x" = ?',
-                        'parameters' => ['subselect2where1' => 10, 'where2' => 20],
+                        'parameters' => ['ss2where1' => 10, 'where2' => 20],
                     ],
                     'SqlServer' => [
                         'string'     => 'SELECT [a].*, [b].* FROM [a] INNER JOIN (SELECT [c].* FROM [c] WHERE [cc] = \'10\') AS [b] ON [d]=[e] WHERE [x] = \'20\'',
                         'prepare'    => 'SELECT [a].*, [b].* FROM [a] INNER JOIN (SELECT [c].* FROM [c] WHERE [cc] = ?) AS [b] ON [d]=[e] WHERE [x] = ?',
-                        'parameters' => ['subselect2where1' => 10, 'where2' => 20],
+                        'parameters' => ['ss2where1' => 10, 'where2' => 20],
                     ],
                     // @codingStandardsIgnoreEnd
                 ],
@@ -207,22 +207,22 @@ class SqlFunctionalTest extends TestCase
                     'sql92' => [
                         'string'     => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = \'CC\') AS "b" WHERE "bb" = \'BB\') AS "a" WHERE "aa" = \'AA\'',
                         'prepare'    => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = ?) AS "b" WHERE "bb" = ?) AS "a" WHERE "aa" = ?',
-                        'parameters' => ['subselect2where1' => 'CC', 'subselect1where1' => 'BB', 'where1' => 'AA'],
+                        'parameters' => ['ss2where1' => 'CC', 'ss1where1' => 'BB', 'where1' => 'AA'],
                     ],
                     'MySql' => [
                         'string'     => 'SELECT `a`.* FROM (SELECT `b`.* FROM (SELECT `c`.* FROM `c` WHERE `cc` = \'CC\') AS `b` WHERE `bb` = \'BB\') AS `a` WHERE `aa` = \'AA\'',
                         'prepare'    => 'SELECT `a`.* FROM (SELECT `b`.* FROM (SELECT `c`.* FROM `c` WHERE `cc` = ?) AS `b` WHERE `bb` = ?) AS `a` WHERE `aa` = ?',
-                        'parameters' => ['subselect4where1' => 'CC', 'subselect3where1' => 'BB', 'where2' => 'AA'],
+                        'parameters' => ['ss4where1' => 'CC', 'ss3where1' => 'BB', 'where2' => 'AA'],
                     ],
                     'Oracle' => [
                         'string'     => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = \'CC\') "b" WHERE "bb" = \'BB\') "a" WHERE "aa" = \'AA\'',
                         'prepare'    => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = ?) "b" WHERE "bb" = ?) "a" WHERE "aa" = ?',
-                        'parameters' => ['subselect4where1' => 'CC', 'subselect3where1' => 'BB', 'where2' => 'AA'],
+                        'parameters' => ['ss4where1' => 'CC', 'ss3where1' => 'BB', 'where2' => 'AA'],
                     ],
                     'SqlServer' => [
                         'string'     => 'SELECT [a].* FROM (SELECT [b].* FROM (SELECT [c].* FROM [c] WHERE [cc] = \'CC\') AS [b] WHERE [bb] = \'BB\') AS [a] WHERE [aa] = \'AA\'',
                         'prepare'    => 'SELECT [a].* FROM (SELECT [b].* FROM (SELECT [c].* FROM [c] WHERE [cc] = ?) AS [b] WHERE [bb] = ?) AS [a] WHERE [aa] = ?',
-                        'parameters' => ['subselect4where1' => 'CC', 'subselect3where1' => 'BB', 'where2' => 'AA'],
+                        'parameters' => ['ss4where1' => 'CC', 'ss3where1' => 'BB', 'where2' => 'AA'],
                     ],
                     // @codingStandardsIgnoreEnd
                 ],
@@ -233,22 +233,22 @@ class SqlFunctionalTest extends TestCase
                     'sql92'     => [
                         'string'     => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
                         'prepare'    => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
-                        'parameters' => ['subselect1where1' => 'y'],
+                        'parameters' => ['ss1where1' => 'y'],
                     ],
                     'MySql'     => [
                         'string'     => 'DELETE FROM `foo` WHERE `x` = (SELECT `foo`.* FROM `foo` WHERE `x` = \'y\')',
                         'prepare'    => 'DELETE FROM `foo` WHERE `x` = (SELECT `foo`.* FROM `foo` WHERE `x` = ?)',
-                        'parameters' => ['subselect2where1' => 'y'],
+                        'parameters' => ['ss2where1' => 'y'],
                     ],
                     'Oracle'    => [
                         'string'     => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
                         'prepare'    => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
-                        'parameters' => ['subselect3where1' => 'y'],
+                        'parameters' => ['ss3where1' => 'y'],
                     ],
                     'SqlServer' => [
                         'string'     => 'DELETE FROM [foo] WHERE [x] = (SELECT [foo].* FROM [foo] WHERE [x] = \'y\')',
                         'prepare'    => 'DELETE FROM [foo] WHERE [x] = (SELECT [foo].* FROM [foo] WHERE [x] = ?)',
-                        'parameters' => ['subselect4where1' => 'y'],
+                        'parameters' => ['ss4where1' => 'y'],
                     ],
                 ],
             ],
@@ -267,22 +267,22 @@ class SqlFunctionalTest extends TestCase
                     'sql92'     => [
                         'string'     => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = \'y\'',
                         'prepare'    => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = ?',
-                        'parameters' => ['subselect1where1' => 'y'],
+                        'parameters' => ['ss1where1' => 'y'],
                     ],
                     'MySql'     => [
                         'string'     => 'INSERT INTO `foo`  SELECT `foo`.* FROM `foo` WHERE `x` = \'y\'',
                         'prepare'    => 'INSERT INTO `foo`  SELECT `foo`.* FROM `foo` WHERE `x` = ?',
-                        'parameters' => ['subselect2where1' => 'y'],
+                        'parameters' => ['ss2where1' => 'y'],
                     ],
                     'Oracle'    => [
                         'string'     => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = \'y\'',
                         'prepare'    => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = ?',
-                        'parameters' => ['subselect3where1' => 'y'],
+                        'parameters' => ['ss3where1' => 'y'],
                     ],
                     'SqlServer' => [
                         'string'     => 'INSERT INTO [foo]  SELECT [foo].* FROM [foo] WHERE [x] = \'y\'',
                         'prepare'    => 'INSERT INTO [foo]  SELECT [foo].* FROM [foo] WHERE [x] = ?',
-                        'parameters' => ['subselect4where1' => 'y'],
+                        'parameters' => ['ss4where1' => 'y'],
                     ],
                 ],
             ],
@@ -294,22 +294,22 @@ class SqlFunctionalTest extends TestCase
                     'sql92'     => [
                         'string'     => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
                         'prepare'    => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
-                        'parameters' => ['subselect1where1' => 'y'],
+                        'parameters' => ['ss1where1' => 'y'],
                     ],
                     'MySql'     => [
                         'string'     => 'UPDATE `foo` SET `x` = (SELECT `foo`.* FROM `foo` WHERE `x` = \'y\')',
                         'prepare'    => 'UPDATE `foo` SET `x` = (SELECT `foo`.* FROM `foo` WHERE `x` = ?)',
-                        'parameters' => ['subselect2where1' => 'y'],
+                        'parameters' => ['ss2where1' => 'y'],
                     ],
                     'Oracle'    => [
                         'string'     => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
                         'prepare'    => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
-                        'parameters' => ['subselect3where1' => 'y'],
+                        'parameters' => ['ss3where1' => 'y'],
                     ],
                     'SqlServer' => [
                         'string'     => 'UPDATE [foo] SET [x] = (SELECT [foo].* FROM [foo] WHERE [x] = \'y\')',
                         'prepare'    => 'UPDATE [foo] SET [x] = (SELECT [foo].* FROM [foo] WHERE [x] = ?)',
-                        'parameters' => ['subselect4where1' => 'y'],
+                        'parameters' => ['ss4where1' => 'y'],
                     ],
                 ],
             ],
