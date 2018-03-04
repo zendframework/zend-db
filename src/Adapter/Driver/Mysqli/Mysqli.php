@@ -287,16 +287,14 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
                     ->getResource();
 
                 if ($mysqli->ping()) {
-                    if( $statement instanceof Statement) {
+                    if ($statement instanceof Statement) {
                         $statement->initialize($mysqli);
                     }
 
                     return $this;
                 }
-
             }
         }
         return $this;
     }
-
 }
