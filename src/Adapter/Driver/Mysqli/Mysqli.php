@@ -296,7 +296,6 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
 
             }
         }
-        
         return $this;
     }
 
