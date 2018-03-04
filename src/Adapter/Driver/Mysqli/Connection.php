@@ -191,6 +191,8 @@ class Connection extends AbstractConnection
             $this->resource->close();
         }
         $this->resource = null;
+
+        return $this;
     }
 
     /**
