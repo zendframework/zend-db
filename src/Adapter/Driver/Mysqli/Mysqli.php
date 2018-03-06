@@ -280,20 +280,18 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
         $mysqli = $this->connection->getResource();
 
         for ($i = 0; $i < $reconnectTries; ++$i) {
-            if (! $mysqli->ping()) {
-                $mysqli = $this->connection
-                    ->disconnect()
-                    ->connect()
-                    ->getResource();
-
-                if ($mysqli->ping()) {
-                    if ($statement instanceof Statement) {
-                        $statement->initialize($mysqli);
-                    }
-
-                    return $this;
+            if ($mysqli->ping()) {
+                if ($statement instanceof Statement) {
+                    $statement->initialize($mysqli);
                 }
+
+                return $this;
             }
+
+            $mysqli = $this->connection
+                ->disconnect()
+                ->connect()
+                ->getResource();
         }
         return $this;
     }
