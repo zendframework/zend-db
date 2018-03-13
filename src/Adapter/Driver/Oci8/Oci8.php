@@ -10,7 +10,6 @@
 namespace Zend\Db\Adapter\Driver\Oci8;
 
 use Zend\Db\Adapter\Driver\DriverInterface;
-use Zend\Db\Adapter\Driver\Mysqli\Statement;
 use Zend\Db\Adapter\Driver\StatementInterface;
 use Zend\Db\Adapter\Exception;
 use Zend\Db\Adapter\Profiler;
