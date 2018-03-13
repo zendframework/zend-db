@@ -218,7 +218,8 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param StatementInterface|null $statement
      * @return $this
      */
-    public function checkConnection(StatementInterface $statement = null) {
+    public function checkConnection(StatementInterface $statement = null)
+    {
         return $this;
     }
 }
