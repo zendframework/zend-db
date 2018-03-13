@@ -10,6 +10,7 @@
 namespace Zend\Db\Adapter\Driver\Oci8;
 
 use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Adapter\Driver\Mysqli\Statement;
 use Zend\Db\Adapter\Exception;
 use Zend\Db\Adapter\Profiler;
 use Zend\Db\Adapter\Driver\Feature\AbstractFeature;
@@ -298,5 +299,14 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
     public function getLastGeneratedValue()
     {
         return $this->getConnection()->getLastGeneratedValue();
+    }
+
+    /**
+     * @inheritdoc
+     * @param Statement|null $statement
+     * @return $this
+     */
+    public function checkConnection(Statement $statement = null) {
+        return $this;
     }
 }

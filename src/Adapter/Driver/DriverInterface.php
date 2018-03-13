@@ -9,6 +9,8 @@
 
 namespace Zend\Db\Adapter\Driver;
 
+use Zend\Db\Adapter\Driver\Mysqli\Statement;
+
 interface DriverInterface
 {
     const PARAMETERIZATION_POSITIONAL = 'positional';
@@ -65,7 +67,7 @@ interface DriverInterface
      * Format parameter name
      *
      * @param string $name
-     * @param mixed  $type
+     * @param mixed $type
      * @return string
      */
     public function formatParameterName($name, $type = null);
@@ -76,4 +78,13 @@ interface DriverInterface
      * @return mixed
      */
     public function getLastGeneratedValue();
+
+    /**
+     * Check current connection to DB.
+     * If connection lost try reconnect.
+     *
+     * @param Statement|null $statement
+     * @return $this
+     */
+    public function checkConnection(Statement $statement = null);
 }

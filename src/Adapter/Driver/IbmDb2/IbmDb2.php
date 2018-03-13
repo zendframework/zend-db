@@ -10,6 +10,7 @@
 namespace Zend\Db\Adapter\Driver\IbmDb2;
 
 use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Adapter\Driver\Mysqli\Statement;
 use Zend\Db\Adapter\Exception;
 use Zend\Db\Adapter\Profiler;
 
@@ -210,5 +211,14 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
     public function getLastGeneratedValue()
     {
         return $this->connection->getLastGeneratedValue();
+    }
+
+    /**
+     * @inheritdoc
+     * @param Statement|null $statement
+     * @return $this
+     */
+    public function checkConnection(Statement $statement = null) {
+        return $this;
     }
 }

@@ -10,6 +10,7 @@
 namespace Zend\Db\Adapter\Driver\Pgsql;
 
 use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Adapter\Driver\Mysqli\Statement;
 use Zend\Db\Adapter\Exception;
 use Zend\Db\Adapter\Profiler;
 
@@ -233,5 +234,14 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
     public function getLastGeneratedValue($name = null)
     {
         return $this->connection->getLastGeneratedValue($name);
+    }
+
+    /**
+     * @inheritdoc
+     * @param Statement|null $statement
+     * @return $this
+     */
+    public function checkConnection(Statement $statement = null) {
+        return $this;
     }
 }
