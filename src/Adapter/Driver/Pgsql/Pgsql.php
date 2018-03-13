@@ -11,6 +11,7 @@ namespace Zend\Db\Adapter\Driver\Pgsql;
 
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\Driver\Mysqli\Statement;
+use Zend\Db\Adapter\Driver\StatementInterface;
 use Zend\Db\Adapter\Exception;
 use Zend\Db\Adapter\Profiler;
 
@@ -238,10 +239,10 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
 
     /**
      * @inheritdoc
-     * @param Statement|null $statement
+     * @param StatementInterface|null $statement
      * @return $this
      */
-    public function checkConnection(Statement $statement = null) {
+    public function checkConnection(StatementInterface $statement = null) {
         return $this;
     }
 }

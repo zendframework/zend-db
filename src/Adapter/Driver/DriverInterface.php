@@ -83,8 +83,8 @@ interface DriverInterface
      * Check current connection to DB.
      * If connection lost try reconnect.
      *
-     * @param Statement|null $statement
+     * @param StatementInterface|null $statement
      * @return $this
      */
-    public function checkConnection(Statement $statement = null);
+    public function checkConnection(StatementInterface $statement = null);
 }

@@ -11,6 +11,7 @@ namespace Zend\Db\Adapter\Driver\Mysqli;
 
 use mysqli_stmt;
 use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Adapter\Driver\StatementInterface;
 use Zend\Db\Adapter\Exception;
 use Zend\Db\Adapter\Profiler;
 
@@ -265,10 +266,10 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
      * Check connection if not exists -> try to reconnect.
      * Depends on configuration value `reconnect_tries`
      *
-     * @param Statement|null $statement
+     * @param StatementInterface|null $statement
      * @return $this
      */
-    public function checkConnection(Statement $statement = null)
+    public function checkConnection(StatementInterface $statement = null)
     {
 
         $reconnectTries = array_key_exists('reconnect_tries', $this->options)
