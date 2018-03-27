@@ -68,6 +68,6 @@
         "test": "phpunit --colors=always --testsuite \"unit test\"",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "test-integration" : "phpunit --colors=always --testsuite \"integration test\"",
-        "upload-coverage": "coveralls -v"
+        "upload-coverage": "vendor/bin/php-coveralls -v"
     }
 }
