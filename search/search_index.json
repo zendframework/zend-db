@@ -3,7 +3,7 @@
         {
             "location": "/",
             "text": "zend-db\n\n\n\n\n\n\nZend\\Db\n is a component that abstract the access to a Database using an object\noriented API to build the queries. \nZend\\Db\n consumes different storage adapters\nto access different database vendors such as MySQL, PostgreSQL, Oracle, IBM DB2,\nMicrosoft Sql Server, PDO, etc.\n\n\n\n\nFile issues at https://github.com/zendframework/zend-db/issues\n\n\nDocumentation is at https://docs.zendframework.com/zend-db/",
-            "title": "Home"
+            "title": "zend-db"
         },
         {
             "location": "/#zend-db",
