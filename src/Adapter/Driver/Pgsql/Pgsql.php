@@ -61,6 +61,7 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
             $connection = new Connection($connection);
         }
 
+        $this->options = array_merge($this->options, $options);
         $this->registerConnection($connection);
         $this->registerStatementPrototype(($statementPrototype) ?: new Statement());
         $this->registerResultPrototype(($resultPrototype) ?: new Result());
@@ -243,6 +244,30 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
      */
     public function checkConnection(StatementInterface $statement = null)
     {
+
+        $reconnectTries = array_key_exists('reconnect_tries', $this->options)
+            ? $this->options['reconnect_tries'] : 0;
+
+        $pg_sql = $this->connection->getResource();
+
+        for ($i = 0; $i < $reconnectTries; ++$i) {
+            if (pg_connection_status($pg_sql) == PGSQL_CONNECTION_OK) {
+                if ($statement instanceof Statement) {
+                    $statement->initialize($pg_sql);
+                }
+
+                return $this;
+            }
+
+            try {
+                $pg_sql = $this->connection
+                    ->disconnect()
+                    ->connect()
+                    ->getResource();
+            } catch (Exception\RuntimeException $e) {
+                print $e->getMessage();
+            }
+        }
         return $this;
     }
 }

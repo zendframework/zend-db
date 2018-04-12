@@ -202,6 +202,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         if (! $this->isPrepared()) {
             $this->prepare();
         }
+        $this->driver->checkConnection($this);
 
         /** START Standard ParameterContainer Merging Block */
         if (! $this->parameterContainer instanceof ParameterContainer) {
