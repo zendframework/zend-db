@@ -208,7 +208,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
         if (is_array($this->buffer)) {
             $this->buffer[$this->position] = $data;
         }
-        return is_array($data) ? $data : null;
+        return is_array($data) && ! empty($data) ? $data : null;
     }
 
     /**

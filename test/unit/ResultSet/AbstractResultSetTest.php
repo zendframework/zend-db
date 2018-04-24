@@ -172,6 +172,16 @@ class AbstractResultSetTest extends TestCase
     }
 
     /**
+     * @covers \Zend\Db\ResultSet\AbstractResultSet::current
+     */
+    public function testCurrentWithEmptyArrayDataInitialized()
+    {
+        $resultSet = $this->getMockForAbstractClass('Zend\Db\ResultSet\AbstractResultSet');
+        $resultSet->initialize([]);
+        $this->assertNull($resultSet->current());
+    }
+
+    /**
      * @covers \Zend\Db\ResultSet\AbstractResultSet::valid
      */
     public function testValid()
