@@ -88,7 +88,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * Initialize
      *
      * @param  resource $pgsql
-     * @return void
+     * @return $this
      * @throws Exception\RuntimeException for invalid or missing postgresql connection
      */
     public function initialize($pgsql)
@@ -101,6 +101,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
             ));
         }
         $this->pgsql = $pgsql;
+        return $this;
     }
 
     /**

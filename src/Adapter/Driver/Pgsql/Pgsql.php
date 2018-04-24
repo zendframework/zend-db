@@ -253,7 +253,9 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
         for ($i = 0; $i < $reconnectTries; ++$i) {
             if (pg_connection_status($pg_sql) == PGSQL_CONNECTION_OK) {
                 if ($statement instanceof Statement) {
-                    $statement->initialize($pg_sql);
+                    $statement
+                        ->initialize($pg_sql)
+                        ->prepare();
                 }
 
                 return $this;
