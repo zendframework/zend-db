@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#313](https://github.com/zendframework/zend-db/pull/313) Fix AbstractResultSet::current() to return null on empty array.
 
 ## 2.9.3 - 2018-04-09
 
