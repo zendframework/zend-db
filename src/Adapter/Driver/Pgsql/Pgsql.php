@@ -61,7 +61,9 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
             $connection = new Connection($connection);
         }
 
-        $this->options = array_merge($this->options, $options);
+        if (is_array($options)) {
+            $this->options = array_merge($this->options, $options);
+        }
         $this->registerConnection($connection);
         $this->registerStatementPrototype(($statementPrototype) ?: new Statement());
         $this->registerResultPrototype(($resultPrototype) ?: new Result());
