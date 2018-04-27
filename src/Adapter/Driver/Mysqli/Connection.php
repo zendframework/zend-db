@@ -148,6 +148,9 @@ class Connection extends AbstractConnection
             }
         }
 
+        if (isset($p['driver_options']['flags'])) {
+            $flags |= $p['driver_options']['flags'];
+        }
 
         try {
             $this->resource->real_connect($hostname, $username, $password, $database, $port, $socket, $flags);
