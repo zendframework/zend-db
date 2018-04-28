@@ -19,7 +19,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * @var string
      */
-    protected $quoteIdentifierTo = '""';
+    protected $quoteIdentifierTo = '\'';
 
     /**
      * @var bool

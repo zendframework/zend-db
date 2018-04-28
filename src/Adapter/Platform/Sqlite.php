@@ -16,6 +16,16 @@ use Zend\Db\Adapter\Exception;
 class Sqlite extends AbstractPlatform
 {
     /**
+     * {@inheritDoc}
+     */
+    protected $quoteIdentifier = ['"','"'];
+
+    /**
+     * {@inheritDoc}
+     */
+    protected $quoteIdentifierTo = '\'';
+
+    /**
      * @var \PDO
      */
     protected $resource = null;
