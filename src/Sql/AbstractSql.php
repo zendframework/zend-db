@@ -118,7 +118,7 @@ abstract class AbstractSql implements SqlInterface
         // static counter for the number of times this method was invoked across the PHP runtime
         static $runtimeExpressionPrefix = 0;
 
-        if ($parameterContainer && ((!is_string($namedParameterPrefix) || $namedParameterPrefix == ''))) {
+        if ($parameterContainer && ((! is_string($namedParameterPrefix) || $namedParameterPrefix == ''))) {
             $namedParameterPrefix = sprintf('expr%04dParam', ++$runtimeExpressionPrefix);
         } else {
             $namedParameterPrefix = preg_replace('/\s/', '__', $namedParameterPrefix);
@@ -161,7 +161,7 @@ abstract class AbstractSql implements SqlInterface
             $values = $part[1];
             $types = isset($part[2]) ? $part[2] : [];
             foreach ($values as $vIndex => $value) {
-                if (!isset($types[$vIndex])) {
+                if (! isset($types[$vIndex])) {
                     continue;
                 }
                 $type = $types[$vIndex];
@@ -232,7 +232,7 @@ abstract class AbstractSql implements SqlInterface
             unset($specificationString, $paramSpecs);
         }
 
-        if (!isset($specificationString)) {
+        if (! isset($specificationString)) {
             throw new Exception\RuntimeException(
                 'A number of parameters was found that is not supported by this specification'
             );
@@ -243,8 +243,13 @@ abstract class AbstractSql implements SqlInterface
             if (isset($paramSpecs[$position]['combinedby'])) {
                 $multiParamValues = [];
                 foreach ($paramsForPosition as $multiParamsForPosition) {
-                    $ppCount = count($multiParamsForPosition);
-                    if (!isset($paramSpecs[$position][$ppCount])) {
+                    if (is_array($multiParamsForPosition)) {
+                        $ppCount = count($multiParamsForPosition);
+                    } else {
+                        $ppCount = 1;
+                    }
+
+                    if (! isset($paramSpecs[$position][$ppCount])) {
                         throw new Exception\RuntimeException(sprintf(
                             'A number of parameters (%d) was found that is not supported by this specification',
                             $ppCount
@@ -255,7 +260,7 @@ abstract class AbstractSql implements SqlInterface
                 $topParameters[] = implode($paramSpecs[$position]['combinedby'], $multiParamValues);
             } elseif ($paramSpecs[$position] !== null) {
                 $ppCount = count($paramsForPosition);
-                if (!isset($paramSpecs[$position][$ppCount])) {
+                if (! isset($paramSpecs[$position][$ppCount])) {
                     throw new Exception\RuntimeException(sprintf(
                         'A number of parameters (%d) was found that is not supported by this specification',
                         $ppCount
@@ -344,13 +349,18 @@ abstract class AbstractSql implements SqlInterface
                 $joinName = $joinName->getExpression();
             } elseif ($joinName instanceof TableIdentifier) {
                 $joinName = $joinName->getTableAndSchema();
-                $joinName = ($joinName[1] ? $platform->quoteIdentifier($joinName[1]) . $platform->getIdentifierSeparator() : '') . $platform->quoteIdentifier($joinName[0]);
+                $joinName = ($joinName[1]
+                        ? $platform->quoteIdentifier($joinName[1]) . $platform->getIdentifierSeparator()
+                        : '') . $platform->quoteIdentifier($joinName[0]);
             } elseif ($joinName instanceof Select) {
                 $joinName = '(' . $this->processSubSelect($joinName, $platform, $driver, $parameterContainer) . ')';
             } elseif (is_string($joinName) || (is_object($joinName) && is_callable([$joinName, '__toString']))) {
                 $joinName = $platform->quoteIdentifier($joinName);
             } else {
-                throw new Exception\InvalidArgumentException(sprintf('Join name expected to be Expression|TableIdentifier|Select|string, "%s" given', gettype($joinName)));
+                throw new Exception\InvalidArgumentException(sprintf(
+                    'Join name expected to be Expression|TableIdentifier|Select|string, "%s" given',
+                    gettype($joinName)
+                ));
             }
 
             $joinSpecArgArray[$j] = [
@@ -359,10 +369,23 @@ abstract class AbstractSql implements SqlInterface
             ];
 
             // on expression
-            // note: for Expression objects, pass them to processExpression with a prefix specific to each join (used for named parameters)
-            $joinSpecArgArray[$j][] = ($join['on'] instanceof ExpressionInterface)
-                ? $this->processExpression($join['on'], $platform, $driver, $parameterContainer, 'join' . ($j+1) . 'part')
-                : $platform->quoteIdentifierInFragment($join['on'], ['=', 'AND', 'OR', '(', ')', 'BETWEEN', '<', '>']); // on
+            // note: for Expression objects, pass them to processExpression with a prefix specific to each join
+            // (used for named parameters)
+            if (($join['on'] instanceof ExpressionInterface)) {
+                $joinSpecArgArray[$j][] = $this->processExpression(
+                    $join['on'],
+                    $platform,
+                    $driver,
+                    $parameterContainer,
+                    'join' . ($j + 1) . 'part'
+                );
+            } else {
+                // on
+                $joinSpecArgArray[$j][] = $platform->quoteIdentifierInFragment(
+                    $join['on'],
+                    ['=', 'AND', 'OR', '(', ')', 'BETWEEN', '<', '>']
+                );
+            }
         }
 
         return [$joinSpecArgArray];

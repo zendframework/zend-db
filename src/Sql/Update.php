@@ -12,6 +12,7 @@ namespace Zend\Db\Sql;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Adapter\Driver\Pdo\Pdo;
 use Zend\Stdlib\PriorityList;
 
 /**
@@ -115,7 +116,7 @@ class Update extends AbstractPreparableSql
         }
         $priority = is_numeric($flag) ? $flag : 0;
         foreach ($values as $k => $v) {
-            if (!is_string($k)) {
+            if (! is_string($k)) {
                 throw new Exception\InvalidArgumentException('set() expects a string for the value key');
             }
             $this->set->insert($k, $v, $priority);
@@ -169,20 +170,43 @@ class Update extends AbstractPreparableSql
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
-    protected function processUpdate(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
+    protected function processUpdate(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
+    ) {
         return sprintf(
             $this->specifications[static::SPECIFICATION_UPDATE],
             $this->resolveTable($this->table, $platform, $driver, $parameterContainer)
         );
     }
 
-    protected function processSet(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
+    protected function processSet(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
+    ) {
         $setSql = [];
+        $i      = 0;
         foreach ($this->set as $column => $value) {
-            $prefix = $platform->quoteIdentifier($column) . ' = ';
+            $prefix = $this->resolveColumnValue(
+                [
+                    'column'       => $column,
+                    'fromTable'    => '',
+                    'isIdentifier' => true,
+                ],
+                $platform,
+                $driver,
+                $parameterContainer,
+                'column'
+            );
+            $prefix .= ' = ';
             if (is_scalar($value) && $parameterContainer) {
+                // use incremental value instead of column name for PDO
+                // @see https://github.com/zendframework/zend-db/issues/35
+                if ($driver instanceof Pdo) {
+                    $column = 'c_' . $i++;
+                }
                 $setSql[] = $prefix . $driver->formatParameterName($column);
                 $parameterContainer->offsetSet($column, $value);
             } else {
@@ -201,8 +225,11 @@ class Update extends AbstractPreparableSql
         );
     }
 
-    protected function processWhere(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
+    protected function processWhere(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
+    ) {
         if ($this->where->count() == 0) {
             return;
         }
@@ -212,8 +239,11 @@ class Update extends AbstractPreparableSql
         );
     }
 
-    protected function processJoins(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
+    protected function processJoins(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
+    ) {
         return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
     }
 

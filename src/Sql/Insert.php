@@ -10,12 +10,13 @@
 namespace Zend\Db\Sql;
 
 use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Adapter\Driver\Pdo\Pdo;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 
 class Insert extends AbstractPreparableSql
 {
-    /**#@+
+    /**
      * Constants
      *
      * @const
@@ -101,7 +102,7 @@ class Insert extends AbstractPreparableSql
             return $this;
         }
 
-        if (!is_array($values)) {
+        if (! is_array($values)) {
             throw new Exception\InvalidArgumentException(
                 'values() expects an array of values or Zend\Db\Sql\Select instance'
             );
@@ -109,7 +110,8 @@ class Insert extends AbstractPreparableSql
 
         if ($this->select && $flag == self::VALUES_MERGE) {
             throw new Exception\InvalidArgumentException(
-                'An array of values cannot be provided with the merge flag when a Zend\Db\Sql\Select instance already exists as the value source'
+                'An array of values cannot be provided with the merge flag when a Zend\Db\Sql\Select instance already '
+                . 'exists as the value source'
             );
         }
 
@@ -165,21 +167,30 @@ class Insert extends AbstractPreparableSql
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
-    protected function processInsert(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
+    protected function processInsert(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
+    ) {
         if ($this->select) {
             return;
         }
-        if (!$this->columns) {
+        if (! $this->columns) {
             throw new Exception\InvalidArgumentException('values or select should be present');
         }
 
         $columns = [];
         $values  = [];
+        $i       = 0;
 
         foreach ($this->columns as $column => $value) {
             $columns[] = $platform->quoteIdentifier($column);
             if (is_scalar($value) && $parameterContainer) {
+                // use incremental value instead of column name for PDO
+                // @see https://github.com/zendframework/zend-db/issues/35
+                if ($driver instanceof Pdo) {
+                    $column = 'c_' . $i++;
+                }
                 $values[] = $driver->formatParameterName($column);
                 $parameterContainer->offsetSet($column, $value);
             } else {
@@ -199,9 +210,12 @@ class Insert extends AbstractPreparableSql
         );
     }
 
-    protected function processSelect(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
-        if (!$this->select) {
+    protected function processSelect(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
+    ) {
+        if (! $this->select) {
             return;
         }
         $selectSql = $this->processSubSelect($this->select, $platform, $driver, $parameterContainer);
@@ -243,8 +257,10 @@ class Insert extends AbstractPreparableSql
      */
     public function __unset($name)
     {
-        if (!array_key_exists($name, $this->columns)) {
-            throw new Exception\InvalidArgumentException('The key ' . $name . ' was not found in this objects column list');
+        if (! array_key_exists($name, $this->columns)) {
+            throw new Exception\InvalidArgumentException(
+                'The key ' . $name . ' was not found in this objects column list'
+            );
         }
 
         unset($this->columns[$name]);
@@ -274,8 +290,10 @@ class Insert extends AbstractPreparableSql
      */
     public function __get($name)
     {
-        if (!array_key_exists($name, $this->columns)) {
-            throw new Exception\InvalidArgumentException('The key ' . $name . ' was not found in this objects column list');
+        if (! array_key_exists($name, $this->columns)) {
+            throw new Exception\InvalidArgumentException(
+                'The key ' . $name . ' was not found in this objects column list'
+            );
         }
         return $this->columns[$name];
     }
