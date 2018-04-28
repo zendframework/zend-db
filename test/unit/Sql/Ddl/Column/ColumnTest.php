@@ -109,13 +109,13 @@ class ColumnTest extends TestCase
         $column = new Column;
         $column->setName('foo');
         self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'INTEGER'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
+            [['%s %s NOT NULL', ['foo', 'INTEGER'], [$column::TYPE_IDENTIFIER_ATOMIC, $column::TYPE_LITERAL]]],
             $column->getExpressionData()
         );
 
         $column->setNullable(true);
         self::assertEquals(
-            [['%s %s', ['foo', 'INTEGER'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
+            [['%s %s', ['foo', 'INTEGER'], [$column::TYPE_IDENTIFIER_ATOMIC, $column::TYPE_LITERAL]]],
             $column->getExpressionData()
         );
 
@@ -124,7 +124,7 @@ class ColumnTest extends TestCase
             [[
                 '%s %s DEFAULT %s',
                 ['foo', 'INTEGER', 'bar'],
-                [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL, $column::TYPE_VALUE],
+                [$column::TYPE_IDENTIFIER_ATOMIC, $column::TYPE_LITERAL, $column::TYPE_VALUE],
             ]],
             $column->getExpressionData()
         );

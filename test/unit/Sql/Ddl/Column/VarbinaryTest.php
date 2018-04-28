@@ -21,7 +21,7 @@ class VarbinaryTest extends TestCase
     {
         $column = new Varbinary('foo', 20);
         self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'VARBINARY(20)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
+            [['%s %s NOT NULL', ['foo', 'VARBINARY(20)'], [$column::TYPE_IDENTIFIER_ATOMIC, $column::TYPE_LITERAL]]],
             $column->getExpressionData()
         );
     }

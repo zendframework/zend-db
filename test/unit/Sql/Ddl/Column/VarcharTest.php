@@ -21,7 +21,7 @@ class VarcharTest extends TestCase
     {
         $column = new Varchar('foo', 20);
         self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'VARCHAR(20)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
+            [['%s %s NOT NULL', ['foo', 'VARCHAR(20)'], [$column::TYPE_IDENTIFIER_ATOMIC, $column::TYPE_LITERAL]]],
             $column->getExpressionData()
         );
 
@@ -30,7 +30,7 @@ class VarcharTest extends TestCase
             [[
                 '%s %s NOT NULL DEFAULT %s',
                 ['foo', 'VARCHAR(20)', 'bar'],
-                [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL, $column::TYPE_VALUE],
+                [$column::TYPE_IDENTIFIER_ATOMIC, $column::TYPE_LITERAL, $column::TYPE_VALUE],
             ]],
             $column->getExpressionData()
         );

@@ -120,8 +120,8 @@ class ForeignKeyTest extends TestCase
                 'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) ON DELETE %s ON UPDATE %s',
                 ['foo', 'bar', 'baz', 'bam', 'CASCADE', 'SET NULL'],
                 [
-                    $fk::TYPE_IDENTIFIER,
-                    $fk::TYPE_IDENTIFIER,
+                    $fk::TYPE_IDENTIFIER_ATOMIC,
+                    $fk::TYPE_IDENTIFIER_ATOMIC,
                     $fk::TYPE_IDENTIFIER,
                     $fk::TYPE_IDENTIFIER,
                     $fk::TYPE_LITERAL,

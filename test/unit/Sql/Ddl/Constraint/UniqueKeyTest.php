@@ -24,7 +24,7 @@ class UniqueKeyTest extends TestCase
             [[
                 'CONSTRAINT %s UNIQUE (%s)',
                 ['my_uk', 'foo'],
-                [$uk::TYPE_IDENTIFIER, $uk::TYPE_IDENTIFIER],
+                [$uk::TYPE_IDENTIFIER_ATOMIC, $uk::TYPE_IDENTIFIER_ATOMIC],
             ]],
             $uk->getExpressionData()
         );

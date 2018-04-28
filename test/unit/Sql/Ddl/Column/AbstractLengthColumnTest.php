@@ -41,7 +41,7 @@ class AbstractLengthColumnTest extends TestCase
         $column = $this->getMockForAbstractClass('Zend\Db\Sql\Ddl\Column\AbstractLengthColumn', ['foo', 4]);
 
         self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'INTEGER(4)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
+            [['%s %s NOT NULL', ['foo', 'INTEGER(4)'], [$column::TYPE_IDENTIFIER_ATOMIC, $column::TYPE_LITERAL]]],
             $column->getExpressionData()
         );
     }
