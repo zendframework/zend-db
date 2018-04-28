@@ -184,7 +184,7 @@ class CreateTableTest extends TestCase
         self::assertEquals(
             "CREATE TABLE \"t'e\"\"s`t\" ( \n    \"t'e\"\"s`tCol\" INTEGER NOT NULL,\n    \"t'e\"\"s`tCol2\" INTEGER NOT NULL , \n    PRIMARY KEY (\"t'e\"\"s`tCol\"),\n    INDEX \"t'e\"\"s`tIndex\"(\"t'e\"\"s`tCol2\") \n)",
             $ct->getSqlString(new Platform\Postgresql())
-            );
+        );
         self::assertEquals(
             "CREATE TABLE \"t'e\"\"s`t\" ( \n    \"t'e\"\"s`tCol\" INTEGER NOT NULL,\n    \"t'e\"\"s`tCol2\" INTEGER NOT NULL , \n    PRIMARY KEY (\"t'e\"\"s`tCol\"),\n    INDEX \"t'e\"\"s`tIndex\"(\"t'e\"\"s`tCol2\") \n)",
             $ct->getSqlString(new Platform\Sqlite())
