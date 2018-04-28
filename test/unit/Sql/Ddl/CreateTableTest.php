@@ -174,19 +174,27 @@ class CreateTableTest extends TestCase
         $ct->addConstraint(new Constraint\PrimaryKey('t\'e"s`tCol'));
         $ct->addConstraint(new Index('t\'e"s`tCol2', 't\'e"s`tIndex'));
         self::assertEquals(
-            "CREATE TABLE \"t'e\"\"s`t\" ( \n    \"t'e\"\"s`tCol\" INTEGER NOT NULL,\n    \"t'e\"\"s`tCol2\" INTEGER NOT NULL , \n    PRIMARY KEY (\"t'e\"\"s`tCol\"),\n    INDEX \"t'e\"\"s`tIndex\"(\"t'e\"\"s`tCol2\") \n)",
+            "CREATE TABLE \"t'e\"\"s`t\" ( \n    \"t'e\"\"s`tCol\" INTEGER NOT NULL,\n" .
+            "    \"t'e\"\"s`tCol2\" INTEGER NOT NULL , \n    PRIMARY KEY (\"t'e\"\"s`tCol\"),\n" .
+            "    INDEX \"t'e\"\"s`tIndex\"(\"t'e\"\"s`tCol2\") \n)",
             $ct->getSqlString()
         );
         self::assertEquals(
-            "CREATE TABLE `t'e\"s``t` ( \n    `t'e\"s``tCol` INTEGER NOT NULL,\n    `t'e\"s``tCol2` INTEGER NOT NULL , \n    PRIMARY KEY (`t'e\"s``tCol`),\n    INDEX `t'e\"s``tIndex`(`t'e\"s``tCol2`) \n)",
+            "CREATE TABLE `t'e\"s``t` ( \n    `t'e\"s``tCol` INTEGER NOT NULL,\n" .
+            "    `t'e\"s``tCol2` INTEGER NOT NULL , \n    PRIMARY KEY (`t'e\"s``tCol`),\n" .
+            "    INDEX `t'e\"s``tIndex`(`t'e\"s``tCol2`) \n)",
             $ct->getSqlString(new Platform\Mysql())
         );
         self::assertEquals(
-            "CREATE TABLE \"t'e\"\"s`t\" ( \n    \"t'e\"\"s`tCol\" INTEGER NOT NULL,\n    \"t'e\"\"s`tCol2\" INTEGER NOT NULL , \n    PRIMARY KEY (\"t'e\"\"s`tCol\"),\n    INDEX \"t'e\"\"s`tIndex\"(\"t'e\"\"s`tCol2\") \n)",
+            "CREATE TABLE \"t'e\"\"s`t\" ( \n    \"t'e\"\"s`tCol\" INTEGER NOT NULL,\n" .
+            "    \"t'e\"\"s`tCol2\" INTEGER NOT NULL , \n    PRIMARY KEY (\"t'e\"\"s`tCol\"),\n" .
+            "    INDEX \"t'e\"\"s`tIndex\"(\"t'e\"\"s`tCol2\") \n)",
             $ct->getSqlString(new Platform\Postgresql())
         );
         self::assertEquals(
-            "CREATE TABLE \"t'e\"\"s`t\" ( \n    \"t'e\"\"s`tCol\" INTEGER NOT NULL,\n    \"t'e\"\"s`tCol2\" INTEGER NOT NULL , \n    PRIMARY KEY (\"t'e\"\"s`tCol\"),\n    INDEX \"t'e\"\"s`tIndex\"(\"t'e\"\"s`tCol2\") \n)",
+            "CREATE TABLE \"t'e\"\"s`t\" ( \n    \"t'e\"\"s`tCol\" INTEGER NOT NULL,\n" .
+            "    \"t'e\"\"s`tCol2\" INTEGER NOT NULL , \n    PRIMARY KEY (\"t'e\"\"s`tCol\"),\n" .
+            "    INDEX \"t'e\"\"s`tIndex\"(\"t'e\"\"s`tCol2\") \n)",
             $ct->getSqlString(new Platform\Sqlite())
         );
     }
