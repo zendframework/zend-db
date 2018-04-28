@@ -12,6 +12,13 @@ namespace Zend\Db\Adapter\Platform;
 class Sql92 extends AbstractPlatform
 {
     /**
+     * Overrides value from AbstractPlatform to use proper escaping for SQL92
+     *
+     * @var string
+     */
+    protected $quoteIdentifierTo = '""';
+
+    /**
      * {@inheritDoc}
      */
     public function getName()

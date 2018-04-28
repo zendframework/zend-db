@@ -10,7 +10,9 @@
 namespace ZendTest\Db\Sql\Ddl;
 
 use PHPUnit\Framework\TestCase;
+use Zend\Db\Adapter\Platform;
 use Zend\Db\Sql\Ddl\Column\Column;
+use Zend\Db\Sql\Ddl\Index\Index;
 use Zend\Db\Sql\Ddl\Constraint;
 use Zend\Db\Sql\Ddl\CreateTable;
 
@@ -161,6 +163,31 @@ class CreateTableTest extends TestCase
         self::assertEquals(
             "CREATE TABLE \"foo\" ( \n    PRIMARY KEY (\"bar\"),\n    PRIMARY KEY (\"bat\") \n)",
             $ct->getSqlString()
+        );
+
+        /**
+         * @link https://github.com/zendframework/zend-db/issues/266
+         */
+        $ct = new CreateTable('t\'e"s`t');
+        $ct->addColumn(new Column('t\'e"s`tCol'));
+        $ct->addColumn(new Column('t\'e"s`tCol2'));
+        $ct->addConstraint(new Constraint\PrimaryKey('t\'e"s`tCol'));
+        $ct->addConstraint(new Index('t\'e"s`tCol2', 't\'e"s`tIndex'));
+        self::assertEquals(
+            "CREATE TABLE \"t'e\"\"s`t\" ( \n    \"t'e\"\"s`tCol\" INTEGER NOT NULL,\n    \"t'e\"\"s`tCol2\" INTEGER NOT NULL , \n    PRIMARY KEY (\"t'e\"\"s`tCol\"),\n    INDEX \"t'e\"\"s`tIndex\"(\"t'e\"\"s`tCol2\") \n)",
+            $ct->getSqlString()
+        );
+        self::assertEquals(
+            "CREATE TABLE `t'e\"s``t` ( \n    `t'e\"s``tCol` INTEGER NOT NULL,\n    `t'e\"s``tCol2` INTEGER NOT NULL , \n    PRIMARY KEY (`t'e\"s``tCol`),\n    INDEX `t'e\"s``tIndex`(`t'e\"s``tCol2`) \n)",
+            $ct->getSqlString(new Platform\Mysql())
+        );
+        self::assertEquals(
+            "CREATE TABLE \"t'e\"\"s`t\" ( \n    \"t'e\"\"s`tCol\" INTEGER NOT NULL,\n    \"t'e\"\"s`tCol2\" INTEGER NOT NULL , \n    PRIMARY KEY (\"t'e\"\"s`tCol\"),\n    INDEX \"t'e\"\"s`tIndex\"(\"t'e\"\"s`tCol2\") \n)",
+            $ct->getSqlString(new Platform\Postgresql())
+            );
+        self::assertEquals(
+            "CREATE TABLE \"t'e\"\"s`t\" ( \n    \"t'e\"\"s`tCol\" INTEGER NOT NULL,\n    \"t'e\"\"s`tCol2\" INTEGER NOT NULL , \n    PRIMARY KEY (\"t'e\"\"s`tCol\"),\n    INDEX \"t'e\"\"s`tIndex\"(\"t'e\"\"s`tCol2\") \n)",
+            $ct->getSqlString(new Platform\Sqlite())
         );
     }
 }
