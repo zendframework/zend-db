@@ -252,6 +252,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
                     break;
             }
         }
+        return $functions;
     }
 
     /**
