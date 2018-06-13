@@ -47,37 +47,29 @@ class PostgresqlMetadata extends AbstractSource
 
         $p = $this->adapter->getPlatform();
 
-        $isColumns = [
-            ['t', 'table_name'],
-            ['t', 'table_type'],
-            ['v', 'view_definition'],
-            ['v', 'check_option'],
-            ['v', 'is_updatable'],
-        ];
-
-        array_walk($isColumns, function (&$c) use ($p) {
-            $c = $p->quoteIdentifierChain($c);
-        });
-
-        $sql = 'SELECT ' . implode(', ', $isColumns)
-            . ' FROM ' . $p->quoteIdentifierChain(['information_schema', 'tables']) . ' t'
-
-            . ' LEFT JOIN ' . $p->quoteIdentifierChain(['information_schema', 'views']) . ' v'
-            . ' ON ' . $p->quoteIdentifierChain(['t', 'table_schema'])
-            . '  = ' . $p->quoteIdentifierChain(['v', 'table_schema'])
-            . ' AND ' . $p->quoteIdentifierChain(['t', 'table_name'])
-            . '  = ' . $p->quoteIdentifierChain(['v', 'table_name'])
-
-            . ' WHERE ' . $p->quoteIdentifierChain(['t', 'table_type'])
-            . ' IN (\'BASE TABLE\', \'VIEW\')';
-
-        if ($schema != self::DEFAULT_SCHEMA) {
-            $sql .= ' AND ' . $p->quoteIdentifierChain(['t', 'table_schema'])
-                . ' = ' . $p->quoteTrustedValue($schema);
-        } else {
-            $sql .= ' AND ' . $p->quoteIdentifierChain(['t', 'table_schema'])
-                . ' != \'information_schema\'';
-        }
+        $sql = "
+          SELECT
+            c.relname as table_name,
+            CASE
+              WHEN c.oid = pg_my_temp_schema() THEN 'LOCAL TEMPORARY'
+              WHEN c.relkind = 'r' THEN 'BASE TABLE'
+              WHEN c.relkind = 'v' THEN 'VIEW'
+              WHEN c.relkind = 'f' THEN 'FOREIGN TABLE'
+            END AS table_type,
+            CASE
+              WHEN c.relkind = 'v' THEN (select pg_get_viewdef(c.relname, true))
+            END as view_definition,
+            CASE
+              WHEN c.relkind = 'v' THEN 'NONE'
+            END as check_option,
+            CASE
+              WHEN c.relkind = 'v' THEN 'NO'
+            END as is_updatable
+          FROM pg_class c
+            JOIN pg_namespace n
+              ON n.oid = c.relnamespace
+          WHERE n.nspname = " . $p->quoteTrustedValue($schema) . "
+                        AND (c.relkind = 'r' OR c.relkind = 'v')";
 
         $results = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
 
