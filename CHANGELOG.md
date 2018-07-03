@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#325](https://github.com/zendframework/zend-db/pull/325) change `HydratingResultSet::current()` to returns null on no data.
 
 ### Deprecated
 
