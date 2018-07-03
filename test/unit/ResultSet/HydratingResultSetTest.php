@@ -56,7 +56,7 @@ class HydratingResultSetTest extends TestCase
     /**
      * @covers \Zend\Db\ResultSet\HydratingResultSet::current
      */
-    public function testCurrent()
+    public function testCurrentHasData()
     {
         $hydratingRs = new HydratingResultSet;
         $hydratingRs->initialize([
@@ -64,6 +64,17 @@ class HydratingResultSetTest extends TestCase
         ]);
         $obj = $hydratingRs->current();
         self::assertInstanceOf('ArrayObject', $obj);
+    }
+
+    /**
+     * @covers \Zend\Db\ResultSet\HydratingResultSet::current
+     */
+    public function testCurrentDoesnotHasData()
+    {
+        $hydratingRs = new HydratingResultSet;
+        $hydratingRs->initialize([]);
+        $result = $hydratingRs->current();
+        self::assertNull($result);
     }
 
     /**
