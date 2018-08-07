@@ -10,6 +10,7 @@
 namespace Zend\Db\TableGateway;
 
 use Zend\Db\Adapter\AdapterInterface;
+use Zend\Db\ResultSet\AbstractResultSet;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\ResultSet\ResultSetInterface;
 use Zend\Db\Sql\Delete;
@@ -56,7 +57,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     protected $featureSet = null;
 
     /**
-     * @var ResultSetInterface
+     * @var ResultSetInterface|AbstractResultSet
      */
     protected $resultSetPrototype = null;
 
@@ -177,7 +178,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * Select
      *
      * @param Where|\Closure|string|array $where
-     * @return ResultSet
+     * @return AbstractResultSet
      */
     public function select($where = null)
     {
@@ -198,8 +199,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     /**
      * @param Select $select
-     * @return ResultSetInterface
-     * @throws \RuntimeException
+     * @return AbstractResultSet
      */
     public function selectWith(Select $select)
     {
@@ -211,7 +211,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     /**
      * @param Select $select
-     * @return ResultSet
+     * @return AbstractResultSet
      * @throws Exception\RuntimeException
      */
     protected function executeSelect(Select $select)
