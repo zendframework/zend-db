@@ -146,10 +146,14 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function disconnect()
+    public function disconnect($isPersistent = false)
     {
         if ($this->resource) {
-            db2_close($this->resource);
+            if ($isPersistent = false) {
+                db2_close($this->resource);
+            } else {
+                db2_pclose($this->resource);
+            }
             $this->resource = null;
         }
 
