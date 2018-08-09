@@ -156,6 +156,21 @@ class Connection extends AbstractConnection
         return $this;
     }
 
+     /**
+     * Disconnect a persistent resource
+     *
+     * @return ConnectionInterface
+     */
+    public function disconnectPersistent()
+    {
+        if ($this->resource) {
+            db2_pclose($this->resource);
+            $this->resource = null;
+        }
+
+        return $this;
+    }
+    
     /**
      * {@inheritDoc}
      */
