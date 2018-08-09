@@ -170,7 +170,7 @@ class Connection extends AbstractConnection
 
         return $this;
     }
-    
+
     /**
      * {@inheritDoc}
      */
