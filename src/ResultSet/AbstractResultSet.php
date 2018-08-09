@@ -194,11 +194,6 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      */
     public function current()
     {
-        if (-1 === $this->buffer) {
-            // datasource was an array when the resultset was initialized
-            return $this->dataSource->current();
-        }
-
         if ($this->buffer === null) {
             $this->buffer = -2; // implicitly disable buffering from here on
         } elseif (is_array($this->buffer) && isset($this->buffer[$this->position])) {
@@ -208,7 +203,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
         if (is_array($this->buffer)) {
             $this->buffer[$this->position] = $data;
         }
-        return is_array($data) ? $data : null;
+        return (is_array($data) || $data instanceof Countable) ? $data : null;
     }
 
     /**
