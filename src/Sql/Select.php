@@ -263,7 +263,7 @@ class Select extends AbstractPreparableSql
      * Create join clause
      *
      * @param  string|array|TableIdentifier $name
-     * @param  string $on
+     * @param  string|Predicate\Expression $on
      * @param  string|array $columns
      * @param  string $type one of the JOIN_* constants
      * @return self Provides a fluent interface
@@ -714,7 +714,8 @@ class Select extends AbstractPreparableSql
             return;
         }
         if ($parameterContainer) {
-            $parameterContainer->offsetSet('limit', $this->limit, ParameterContainer::TYPE_INTEGER);
+            $paramPrefix = $this->processInfo['paramPrefix'];
+            $parameterContainer->offsetSet($paramPrefix . 'limit', $this->limit, ParameterContainer::TYPE_INTEGER);
             return [$driver->formatParameterName('limit')];
         }
         return [$platform->quoteValue($this->limit)];
@@ -729,7 +730,8 @@ class Select extends AbstractPreparableSql
             return;
         }
         if ($parameterContainer) {
-            $parameterContainer->offsetSet('offset', $this->offset, ParameterContainer::TYPE_INTEGER);
+            $paramPrefix = $this->processInfo['paramPrefix'];
+            $parameterContainer->offsetSet($paramPrefix . 'offset', $this->offset, ParameterContainer::TYPE_INTEGER);
             return [$driver->formatParameterName('offset')];
         }
 
