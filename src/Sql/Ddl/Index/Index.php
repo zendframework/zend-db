@@ -55,7 +55,7 @@ class Index extends AbstractIndex
         $colCount     = count($this->columns);
         $values       = [];
         $values[]     = $this->name ?: '';
-        $newSpecTypes = [self::TYPE_IDENTIFIER];
+        $newSpecTypes = [self::TYPE_IDENTIFIER_ATOMIC];
         $newSpecParts = [];
 
         for ($i = 0; $i < $colCount; $i++) {
@@ -66,7 +66,7 @@ class Index extends AbstractIndex
             }
 
             $newSpecParts[] = $specPart;
-            $newSpecTypes[] = self::TYPE_IDENTIFIER;
+            $newSpecTypes[] = self::TYPE_IDENTIFIER_ATOMIC;
         }
 
         $newSpec = str_replace('...', implode(', ', $newSpecParts), $this->specification);

@@ -21,7 +21,7 @@ class TextTest extends TestCase
     {
         $column = new Text('foo');
         self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'TEXT'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
+            [['%s %s NOT NULL', ['foo', 'TEXT'], [$column::TYPE_IDENTIFIER_ATOMIC, $column::TYPE_LITERAL]]],
             $column->getExpressionData()
         );
     }

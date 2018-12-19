@@ -12,6 +12,7 @@ namespace Zend\Db\Sql;
 interface ExpressionInterface
 {
     const TYPE_IDENTIFIER = 'identifier';
+    const TYPE_IDENTIFIER_ATOMIC = 'identifier_atomic';
     const TYPE_VALUE = 'value';
     const TYPE_LITERAL = 'literal';
     const TYPE_SELECT = 'select';

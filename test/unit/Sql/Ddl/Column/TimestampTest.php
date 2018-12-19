@@ -21,7 +21,7 @@ class TimestampTest extends TestCase
     {
         $column = new Timestamp('foo');
         self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'TIMESTAMP'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
+            [['%s %s NOT NULL', ['foo', 'TIMESTAMP'], [$column::TYPE_IDENTIFIER_ATOMIC, $column::TYPE_LITERAL]]],
             $column->getExpressionData()
         );
     }

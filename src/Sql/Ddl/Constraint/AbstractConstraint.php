@@ -109,7 +109,7 @@ abstract class AbstractConstraint implements ConstraintInterface
         if ($this->name) {
             $newSpec .= $this->namedSpecification;
             $values[] = $this->name;
-            $newSpecTypes[] = self::TYPE_IDENTIFIER;
+            $newSpecTypes[] = self::TYPE_IDENTIFIER_ATOMIC;
         }
 
         $newSpec .= $this->specification;
@@ -117,7 +117,7 @@ abstract class AbstractConstraint implements ConstraintInterface
         if ($colCount) {
             $values = array_merge($values, $this->columns);
             $newSpecParts = array_fill(0, $colCount, '%s');
-            $newSpecTypes = array_merge($newSpecTypes, array_fill(0, $colCount, self::TYPE_IDENTIFIER));
+            $newSpecTypes = array_merge($newSpecTypes, array_fill(0, $colCount, self::TYPE_IDENTIFIER_ATOMIC));
             $newSpec .= sprintf($this->columnSpecification, implode(', ', $newSpecParts));
         }
 

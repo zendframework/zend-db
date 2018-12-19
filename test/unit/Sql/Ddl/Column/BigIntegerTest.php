@@ -30,7 +30,7 @@ class BigIntegerTest extends TestCase
     {
         $column = new BigInteger('foo');
         self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'BIGINT'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
+            [['%s %s NOT NULL', ['foo', 'BIGINT'], [$column::TYPE_IDENTIFIER_ATOMIC, $column::TYPE_LITERAL]]],
             $column->getExpressionData()
         );
     }

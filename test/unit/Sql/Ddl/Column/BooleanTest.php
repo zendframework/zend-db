@@ -21,7 +21,7 @@ class BooleanTest extends TestCase
     {
         $column = new Boolean('foo');
         self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'BOOLEAN'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
+            [['%s %s NOT NULL', ['foo', 'BOOLEAN'], [$column::TYPE_IDENTIFIER_ATOMIC, $column::TYPE_LITERAL]]],
             $column->getExpressionData()
         );
     }
