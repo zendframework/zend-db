@@ -251,7 +251,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * Insert
      *
      * @param  array $set
-     * @return int
+     * @return int Number of rows added to table
      */
     public function insert($set)
     {
