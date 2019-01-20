@@ -70,8 +70,8 @@ class Predicate extends PredicateSet
      *
      * Utilizes Operator predicate
      *
-     * @param  int|float|bool|string $left
-     * @param  int|float|bool|string $right
+     * @param  int|float|bool|string|Expression $left
+     * @param  int|float|bool|string|Expression $right
      * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
      * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      * @return self Provides a fluent interface
@@ -92,8 +92,8 @@ class Predicate extends PredicateSet
      *
      * Utilizes Operator predicate
      *
-     * @param  int|float|bool|string $left
-     * @param  int|float|bool|string $right
+     * @param  int|float|bool|string|Expression $left
+     * @param  int|float|bool|string|Expression $right
      * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
      * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      * @return self Provides a fluent interface
@@ -114,8 +114,8 @@ class Predicate extends PredicateSet
      *
      * Utilizes Operator predicate
      *
-     * @param  int|float|bool|string $left
-     * @param  int|float|bool|string $right
+     * @param  int|float|bool|string|Expression $left
+     * @param  int|float|bool|string|Expression $right
      * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
      * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      * @return self Provides a fluent interface
@@ -136,8 +136,8 @@ class Predicate extends PredicateSet
      *
      * Utilizes Operator predicate
      *
-     * @param  int|float|bool|string $left
-     * @param  int|float|bool|string $right
+     * @param  int|float|bool|string|Expression $left
+     * @param  int|float|bool|string|Expression $right
      * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
      * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      * @return self Provides a fluent interface
@@ -158,8 +158,8 @@ class Predicate extends PredicateSet
      *
      * Utilizes Operator predicate
      *
-     * @param  int|float|bool|string $left
-     * @param  int|float|bool|string $right
+     * @param  int|float|bool|string|Expression $left
+     * @param  int|float|bool|string|Expression $right
      * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
      * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      * @return self Provides a fluent interface
@@ -180,8 +180,8 @@ class Predicate extends PredicateSet
      *
      * Utilizes Operator predicate
      *
-     * @param  int|float|bool|string $left
-     * @param  int|float|bool|string $right
+     * @param  int|float|bool|string|Expression $left
+     * @param  int|float|bool|string|Expression $right
      * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
      * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      * @return self Provides a fluent interface
