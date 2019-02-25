@@ -264,11 +264,15 @@ example, <code>CREATE TABLE</code> is modeled by the <code>CreateTable</code> cl
 the same for <code>ALTER TABLE</code> (as <code>AlterTable</code>), and <code>DROP TABLE</code> (as
 <code>DropTable</code>). You can create instances using a number of approaches:</p>
 <pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Ddl;
+use Zend\Db\Sql\TableIdentifier;
 
 $table = new Ddl\CreateTable();
 
 // With a table name:
 $table = new Ddl\CreateTable('bar');
+
+// With a schema name &quot;foo&quot;:
+$table = new Ddl\CreateTable(new TableIdentifier('bar', 'foo'));
 
 // Optionally, as a temporary table:
 $table = new Ddl\CreateTable('bar', true);</code></pre>
@@ -298,11 +302,15 @@ $column-&gt;setOption('AUTO_INCREMENT', true);</code></pre></p>
 <h2 id="altering-tables">Altering Tables</h2>
 <p>Similar to <code>CreateTable</code>, you may also use <code>AlterTable</code> instances:</p>
 <pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Ddl;
+use Zend\Db\Sql\TableIdentifier;
 
 $table = new Ddl\AlterTable();
 
 // With a table name:
 $table = new Ddl\AlterTable('bar');
+
+// With a schema name &quot;foo&quot;:
+$table = new Ddl\AlterTable(new TableIdentifier('bar', 'foo'));
 
 // Optionally, as a temporary table:
 $table = new Ddl\AlterTable('bar', true);</code></pre>
@@ -321,7 +329,14 @@ $table-&gt;dropConstraint('my_index');</code></pre>
 
 <h2 id="dropping-tables">Dropping Tables</h2>
 <p>To drop a table, create a <code>DropTable</code> instance:</p>
-<pre class="codehilite"><code class="language-php">$drop = new Ddl\DropTable('bar');</code></pre>
+<pre class="codehilite"><code class="language-php">use Zend\Db\Sql\Ddl;
+use Zend\Db\Sql\TableIdentifier;
+
+// With a table name:
+$drop = new Ddl\DropTable('bar');
+
+// With a schema name &quot;foo&quot;:
+$drop = new Ddl\DropTable(new TableIdentifier('bar', 'foo'));</code></pre>
 
 <h2 id="executing-ddl-statements">Executing DDL Statements</h2>
 <p>After a DDL statement object has been created and configured, at some point you
