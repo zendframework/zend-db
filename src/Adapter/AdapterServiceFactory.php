@@ -10,6 +10,8 @@
 namespace Zend\Db\Adapter;
 
 use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -22,6 +24,8 @@ class AdapterServiceFactory implements FactoryInterface
      * @param string $requestedName
      * @param array $options
      * @return Adapter
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {

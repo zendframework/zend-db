@@ -14,15 +14,15 @@ interface StatementContainerInterface
     /**
      * Set sql
      *
-     * @param $sql
-     * @return mixed
+     * @param string $sql
+     * @return self
      */
     public function setSql($sql);
 
     /**
      * Get sql
      *
-     * @return mixed
+     * @return string
      */
     public function getSql();
 
@@ -30,14 +30,14 @@ interface StatementContainerInterface
      * Set parameter container
      *
      * @param ParameterContainer $parameterContainer
-     * @return mixed
+     * @return self
      */
     public function setParameterContainer(ParameterContainer $parameterContainer);
 
     /**
      * Get parameter container
      *
-     * @return mixed
+     * @return ParameterContainer
      */
     public function getParameterContainer();
 }

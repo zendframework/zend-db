@@ -83,7 +83,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * Initialize
      *
      * @throws Exception\RuntimeException
-     * @return null
      */
     public function initialize()
     {
@@ -349,7 +348,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     }
 
     /**
-     * @param \Zend\Db\Sql\Update $update
+     * @param Update $update
      * @return int
      */
     public function updateWith(Update $update)
