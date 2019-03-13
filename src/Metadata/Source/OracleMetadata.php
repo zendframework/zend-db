@@ -19,7 +19,7 @@ class OracleMetadata extends AbstractSource
     /**
      * @var array
      */
-    protected $constraintTypeMap = [
+    protected static $constraintTypeMap = [
         'C' => 'CHECK',
         'P' => 'PRIMARY KEY',
         'R' => 'FOREIGN_KEY'
