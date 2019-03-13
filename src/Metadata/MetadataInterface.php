@@ -9,6 +9,13 @@
 
 namespace Zend\Db\Metadata;
 
+use Zend\Db\Metadata\Object\ColumnObject;
+use Zend\Db\Metadata\Object\ConstraintKeyObject;
+use Zend\Db\Metadata\Object\ConstraintObject;
+use Zend\Db\Metadata\Object\TableObject;
+use Zend\Db\Metadata\Object\TriggerObject;
+use Zend\Db\Metadata\Object\ViewObject;
+
 interface MetadataInterface
 {
     /**
@@ -16,7 +23,7 @@ interface MetadataInterface
      *
      * @return string[]
      */
-    public function getSchemas();
+    public function getSchemas() : array;
 
     /**
      * Get table names.
@@ -25,25 +32,25 @@ interface MetadataInterface
      * @param bool $includeViews
      * @return string[]
      */
-    public function getTableNames($schema = null, $includeViews = false);
+    public function getTableNames($schema = null, $includeViews = false) : array;
 
     /**
      * Get tables.
      *
      * @param null|string $schema
      * @param bool $includeViews
-     * @return Object\TableObject[]
+     * @return TableObject[]
      */
-    public function getTables($schema = null, $includeViews = false);
+    public function getTables($schema = null, $includeViews = false) : array;
 
     /**
      * Get table
      *
      * @param string $tableName
      * @param null|string $schema
-     * @return Object\TableObject
+     * @return TableObject
      */
-    public function getTable($tableName, $schema = null);
+    public function getTable($tableName, $schema = null) : TableObject;
 
     /**
      * Get view names
@@ -51,24 +58,24 @@ interface MetadataInterface
      * @param null|string $schema
      * @return string[]
      */
-    public function getViewNames($schema = null);
+    public function getViewNames($schema = null) : array;
 
     /**
      * Get views
      *
      * @param null|string $schema
-     * @return Object\ViewObject[]
+     * @return ViewObject[]
      */
-    public function getViews($schema = null);
+    public function getViews($schema = null) : array;
 
     /**
      * Get view
      *
      * @param string $viewName
      * @param null|string $schema
-     * @return Object\ViewObject
+     * @return ViewObject
      */
-    public function getView($viewName, $schema = null);
+    public function getView($viewName, $schema = null) : ViewObject;
 
     /**
      * Get column names
@@ -77,16 +84,16 @@ interface MetadataInterface
      * @param null|string $schema
      * @return string[]
      */
-    public function getColumnNames($table, $schema = null);
+    public function getColumnNames($table, $schema = null) : array;
 
     /**
      * Get columns
      *
      * @param string $table
      * @param null|string $schema
-     * @return Object\ColumnObject[]
+     * @return ColumnObject[]
      */
-    public function getColumns($table, $schema = null);
+    public function getColumns($table, $schema = null) : array;
 
     /**
      * Get column
@@ -94,18 +101,18 @@ interface MetadataInterface
      * @param string $columnName
      * @param string $table
      * @param null|string $schema
-     * @return Object\ColumnObject
+     * @return ColumnObject
      */
-    public function getColumn($columnName, $table, $schema = null);
+    public function getColumn($columnName, $table, $schema = null) : ColumnObject;
 
     /**
      * Get constraints
      *
      * @param string $table
      * @param null|string $schema
-     * @return Object\ConstraintObject[]
+     * @return ConstraintObject[]
      */
-    public function getConstraints($table, $schema = null);
+    public function getConstraints($table, $schema = null) : array;
 
     /**
      * Get constraint
@@ -113,9 +120,9 @@ interface MetadataInterface
      * @param string $constraintName
      * @param string $table
      * @param null|string $schema
-     * @return Object\ConstraintObject
+     * @return ConstraintObject
      */
-    public function getConstraint($constraintName, $table, $schema = null);
+    public function getConstraint($constraintName, $table, $schema = null) : ConstraintObject;
 
     /**
      * Get constraint keys
@@ -123,9 +130,9 @@ interface MetadataInterface
      * @param string $constraint
      * @param string $table
      * @param null|string $schema
-     * @return Object\ConstraintKeyObject[]
+     * @return ConstraintKeyObject[]
      */
-    public function getConstraintKeys($constraint, $table, $schema = null);
+    public function getConstraintKeys($constraint, $table, $schema = null) : array;
 
     /**
      * Get trigger names
@@ -133,22 +140,22 @@ interface MetadataInterface
      * @param null|string $schema
      * @return string[]
      */
-    public function getTriggerNames($schema = null);
+    public function getTriggerNames($schema = null) : array;
 
     /**
      * Get triggers
      *
      * @param null|string $schema
-     * @return Object\TriggerObject[]
+     * @return TriggerObject[]
      */
-    public function getTriggers($schema = null);
+    public function getTriggers($schema = null) : array;
 
     /**
      * Get trigger
      *
      * @param string $triggerName
      * @param null|string $schema
-     * @return Object\TriggerObject
+     * @return TriggerObject
      */
-    public function getTrigger($triggerName, $schema = null);
+    public function getTrigger($triggerName, $schema = null) : TriggerObject;
 }

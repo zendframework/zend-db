@@ -13,7 +13,7 @@ use Zend\Db\Adapter\Adapter;
 
 class PostgresqlMetadata extends AbstractSource
 {
-    protected function loadSchemaData()
+    protected function loadSchemaData() : void
     {
         if (isset($this->data['schemas'])) {
             return;
@@ -38,7 +38,7 @@ class PostgresqlMetadata extends AbstractSource
         $this->data['schemas'] = $schemas;
     }
 
-    protected function loadTableNameData($schema)
+    protected function loadTableNameData($schema) : void
     {
         if (isset($this->data['table_names'][$schema])) {
             return;
@@ -94,7 +94,7 @@ class PostgresqlMetadata extends AbstractSource
         $this->data['table_names'][$schema] = $tables;
     }
 
-    protected function loadColumnData($table, $schema)
+    protected function loadColumnData($table, $schema) : void
     {
         if (isset($this->data['columns'][$schema][$table])) {
             return;
@@ -154,7 +154,7 @@ class PostgresqlMetadata extends AbstractSource
         $this->data['columns'][$schema][$table] = $columns;
     }
 
-    protected function loadConstraintData($table, $schema)
+    protected function loadConstraintData($table, $schema) : void
     {
         if (isset($this->data['constraints'][$schema][$table])) {
             return;
@@ -281,7 +281,7 @@ class PostgresqlMetadata extends AbstractSource
         $this->data['constraints'][$schema][$table] = $constraints;
     }
 
-    protected function loadTriggerData($schema)
+    protected function loadTriggerData($schema) : void
     {
         if (isset($this->data['triggers'][$schema])) {
             return;
