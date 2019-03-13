@@ -12,19 +12,16 @@ namespace Zend\Db\Metadata\Object;
 class ConstraintObject
 {
     /**
-     *
      * @var string
      */
     protected $name = '';
 
     /**
-     *
      * @var string
      */
     protected $tableName = '';
 
     /**
-     *
      * @var string
      */
     protected $schemaName = '';
@@ -37,57 +34,41 @@ class ConstraintObject
     protected $type = '';
 
     /**
-     *
-     *
      * @var string[]
      */
     protected $columns = [];
 
     /**
-     *
-     *
      * @var string
      */
     protected $referencedTableSchema = '';
 
     /**
-     *
-     *
      * @var string
      */
     protected $referencedTableName = '';
 
     /**
-     *
-     *
      * @var string[]
      */
     protected $referencedColumns = [];
 
     /**
-     *
-     *
      * @var string
      */
     protected $matchOption = '';
 
     /**
-     *
-     *
      * @var string
      */
     protected $updateRule = '';
 
     /**
-     *
-     *
      * @var string
      */
     protected $deleteRule = '';
 
     /**
-     *
-     *
      * @var string
      */
     protected $checkClause = '';

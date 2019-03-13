@@ -12,25 +12,21 @@ namespace Zend\Db\Metadata\Object;
 abstract class AbstractTableObject
 {
     /**
-     *
      * @var string
      */
     protected $name = '';
 
     /**
-     *
      * @var string
      */
     protected $type = '';
 
     /**
-     *
      * @var array
      */
     protected $columns = [];
 
     /**
-     *
      * @var array
      */
     protected $constraints = [];

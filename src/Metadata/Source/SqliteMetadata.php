@@ -14,6 +14,9 @@ use Zend\Db\ResultSet\ResultSetInterface;
 
 class SqliteMetadata extends AbstractSource
 {
+    /**
+     * @inheritdoc
+     */
     protected function loadSchemaData() : void
     {
         if (isset($this->data['schemas'])) {
@@ -28,6 +31,9 @@ class SqliteMetadata extends AbstractSource
         $this->data['schemas'] = $schemas;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function loadTableNameData(string $schema) : void
     {
         if (isset($this->data['table_names'][$schema])) {
@@ -70,6 +76,9 @@ class SqliteMetadata extends AbstractSource
         $this->data['table_names'][$schema] = $tables;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function loadColumnData(string $table, string $schema) : void
     {
         if (isset($this->data['columns'][$schema][$table])) {
@@ -103,6 +112,9 @@ class SqliteMetadata extends AbstractSource
         $this->data['sqlite_columns'][$schema][$table] = $results;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function loadConstraintData(string $table, string $schema) : void
     {
         if (isset($this->data['constraints'][$schema][$table])) {
@@ -186,6 +198,9 @@ class SqliteMetadata extends AbstractSource
         $this->data['constraints'][$schema][$table] = $constraints;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function loadTriggerData(string $schema) : void
     {
         if (isset($this->data['triggers'][$schema])) {
@@ -231,7 +246,15 @@ class SqliteMetadata extends AbstractSource
         $this->data['triggers'][$schema] = $triggers;
     }
 
-    protected function fetchPragma(string $name, ?string $value = null, ?string $schema = null)
+    /**
+     * Fetch pragma
+     *
+     * @param string $name
+     * @param string|null $value
+     * @param string|null $schema
+     * @return array
+     */
+    protected function fetchPragma(string $name, ?string $value = null, ?string $schema = null) : array
     {
         $p = $this->adapter->getPlatform();
 
@@ -253,7 +276,13 @@ class SqliteMetadata extends AbstractSource
         return [];
     }
 
-    protected function parseView(string $sql)
+    /**
+     * Parse view
+     *
+     * @param string $sql
+     * @return array|void
+     */
+    protected function parseView(string $sql) : ?array
     {
         static $re = null;
         if (null === $re) {
@@ -271,13 +300,19 @@ class SqliteMetadata extends AbstractSource
         }
 
         if (! preg_match($re, $sql, $matches)) {
-            return;
+            return null;
         }
         return [
             'view_definition' => $matches['view_definition'],
         ];
     }
 
+    /**
+     * Parse trigger
+     *
+     * @param string $sql
+     * @return array|null
+     */
     protected function parseTrigger(string $sql) : ?array
     {
         static $re = null;
@@ -336,6 +371,10 @@ class SqliteMetadata extends AbstractSource
         return $data;
     }
 
+    /**
+     * @param array $re
+     * @return string|null
+     */
     protected function buildRegularExpression(array $re) : ?string
     {
         foreach ($re as &$value) {
@@ -350,6 +389,9 @@ class SqliteMetadata extends AbstractSource
         return $re;
     }
 
+    /**
+     * @return string|null
+     */
     protected function getIdentifierRegularExpression() : ?string
     {
         static $re = null;
@@ -365,6 +407,9 @@ class SqliteMetadata extends AbstractSource
         return $re;
     }
 
+    /**
+     * @return string|null
+     */
     protected function getIdentifierChainRegularExpression() : ?string
     {
         static $re = null;
@@ -375,6 +420,9 @@ class SqliteMetadata extends AbstractSource
         return $re;
     }
 
+    /**
+     * @return string|null
+     */
     protected function getIdentifierListRegularExpression() : ?string
     {
         static $re = null;

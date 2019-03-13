@@ -18,49 +18,41 @@ class ConstraintKeyObject
     public const FK_SET_DEFAULT = 'SET DEFAULT';
 
     /**
-     *
      * @var string
      */
     protected $columnName = '';
 
     /**
-     *
      * @var int|null
      */
     protected $ordinalPosition;
 
     /**
-     *
      * @var bool
      */
     protected $positionInUniqueConstraint = false;
 
     /**
-     *
      * @var string
      */
     protected $referencedTableSchema = '';
 
     /**
-     *
      * @var string
      */
     protected $referencedTableName = '';
 
     /**
-     *
      * @var string
      */
     protected $referencedColumnName = '';
 
     /**
-     *
      * @var string
      */
     protected $foreignKeyUpdateRule = '';
 
     /**
-     *
      * @var string
      */
     protected $foreignKeyDeleteRule = '';
