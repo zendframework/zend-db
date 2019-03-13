@@ -15,26 +15,26 @@ class ConstraintObject
      *
      * @var string
      */
-    protected $name = null;
+    protected $name = '';
 
     /**
      *
      * @var string
      */
-    protected $tableName = null;
+    protected $tableName = '';
 
     /**
      *
      * @var string
      */
-    protected $schemaName = null;
+    protected $schemaName = '';
 
     /**
      * One of "PRIMARY KEY", "UNIQUE", "FOREIGN KEY", or "CHECK"
      *
      * @var string
      */
-    protected $type = null;
+    protected $type = '';
 
     /**
      *
@@ -48,49 +48,49 @@ class ConstraintObject
      *
      * @var string
      */
-    protected $referencedTableSchema;
+    protected $referencedTableSchema = '';
 
     /**
      *
      *
      * @var string
      */
-    protected $referencedTableName;
+    protected $referencedTableName = '';
 
     /**
      *
      *
      * @var string[]
      */
-    protected $referencedColumns;
+    protected $referencedColumns = [];
 
     /**
      *
      *
      * @var string
      */
-    protected $matchOption;
+    protected $matchOption = '';
 
     /**
      *
      *
      * @var string
      */
-    protected $updateRule;
+    protected $updateRule = '';
 
     /**
      *
      *
      * @var string
      */
-    protected $deleteRule;
+    protected $deleteRule = '';
 
     /**
      *
      *
      * @var string
      */
-    protected $checkClause;
+    protected $checkClause = '';
 
     /**
      * Constructor
@@ -99,7 +99,7 @@ class ConstraintObject
      * @param string $tableName
      * @param string $schemaName
      */
-    public function __construct($name, $tableName, $schemaName = null)
+    public function __construct(string $name, string $tableName, string $schemaName = '')
     {
         $this->setName($name);
         $this->setTableName($tableName);
@@ -111,7 +111,7 @@ class ConstraintObject
      *
      * @param string $name
      */
-    public function setName($name)
+    public function setName(string $name) : void
     {
         $this->name = $name;
     }
@@ -121,7 +121,7 @@ class ConstraintObject
      *
      * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
@@ -131,7 +131,7 @@ class ConstraintObject
      *
      * @param string $schemaName
      */
-    public function setSchemaName($schemaName)
+    public function setSchemaName($schemaName) : void
     {
         $this->schemaName = $schemaName;
     }
@@ -141,7 +141,7 @@ class ConstraintObject
      *
      * @return string
      */
-    public function getSchemaName()
+    public function getSchemaName() : string
     {
         return $this->schemaName;
     }
@@ -151,7 +151,7 @@ class ConstraintObject
      *
      * @return string
      */
-    public function getTableName()
+    public function getTableName() : string
     {
         return $this->tableName;
     }
@@ -162,7 +162,7 @@ class ConstraintObject
      * @param  string $tableName
      * @return self Provides a fluent interface
      */
-    public function setTableName($tableName)
+    public function setTableName($tableName) : self
     {
         $this->tableName = $tableName;
         return $this;
@@ -173,7 +173,7 @@ class ConstraintObject
      *
      * @param string $type
      */
-    public function setType($type)
+    public function setType($type) : void
     {
         $this->type = $type;
     }
@@ -183,12 +183,12 @@ class ConstraintObject
      *
      * @return string
      */
-    public function getType()
+    public function getType() : string
     {
         return $this->type;
     }
 
-    public function hasColumns()
+    public function hasColumns() : bool
     {
         return (! empty($this->columns));
     }
@@ -198,7 +198,7 @@ class ConstraintObject
      *
      * @return string[]
      */
-    public function getColumns()
+    public function getColumns() : array
     {
         return $this->columns;
     }
@@ -209,7 +209,7 @@ class ConstraintObject
      * @param string[] $columns
      * @return self Provides a fluent interface
      */
-    public function setColumns(array $columns)
+    public function setColumns(array $columns) : self
     {
         $this->columns = $columns;
         return $this;
@@ -220,7 +220,7 @@ class ConstraintObject
      *
      * @return string
      */
-    public function getReferencedTableSchema()
+    public function getReferencedTableSchema() : string
     {
         return $this->referencedTableSchema;
     }
@@ -231,7 +231,7 @@ class ConstraintObject
      * @param string $referencedTableSchema
      * @return self Provides a fluent interface
      */
-    public function setReferencedTableSchema($referencedTableSchema)
+    public function setReferencedTableSchema($referencedTableSchema) : self
     {
         $this->referencedTableSchema = $referencedTableSchema;
         return $this;
@@ -242,7 +242,7 @@ class ConstraintObject
      *
      * @return string
      */
-    public function getReferencedTableName()
+    public function getReferencedTableName() : string
     {
         return $this->referencedTableName;
     }
@@ -253,7 +253,7 @@ class ConstraintObject
      * @param string $referencedTableName
      * @return self Provides a fluent interface
      */
-    public function setReferencedTableName($referencedTableName)
+    public function setReferencedTableName($referencedTableName) : self
     {
         $this->referencedTableName = $referencedTableName;
         return $this;
@@ -264,7 +264,7 @@ class ConstraintObject
      *
      * @return string[]
      */
-    public function getReferencedColumns()
+    public function getReferencedColumns() : array
     {
         return $this->referencedColumns;
     }
@@ -275,7 +275,7 @@ class ConstraintObject
      * @param string[] $referencedColumns
      * @return self Provides a fluent interface
      */
-    public function setReferencedColumns(array $referencedColumns)
+    public function setReferencedColumns(array $referencedColumns) : self
     {
         $this->referencedColumns = $referencedColumns;
         return $this;
@@ -286,7 +286,7 @@ class ConstraintObject
      *
      * @return string
      */
-    public function getMatchOption()
+    public function getMatchOption() : string
     {
         return $this->matchOption;
     }
@@ -297,7 +297,7 @@ class ConstraintObject
      * @param string $matchOption
      * @return self Provides a fluent interface
      */
-    public function setMatchOption($matchOption)
+    public function setMatchOption($matchOption) : self
     {
         $this->matchOption = $matchOption;
         return $this;
@@ -308,7 +308,7 @@ class ConstraintObject
      *
      * @return string
      */
-    public function getUpdateRule()
+    public function getUpdateRule() : string
     {
         return $this->updateRule;
     }
@@ -319,7 +319,7 @@ class ConstraintObject
      * @param string $updateRule
      * @return self Provides a fluent interface
      */
-    public function setUpdateRule($updateRule)
+    public function setUpdateRule($updateRule) : self
     {
         $this->updateRule = $updateRule;
         return $this;
@@ -330,7 +330,7 @@ class ConstraintObject
      *
      * @return string
      */
-    public function getDeleteRule()
+    public function getDeleteRule() : string
     {
         return $this->deleteRule;
     }
@@ -341,7 +341,7 @@ class ConstraintObject
      * @param string $deleteRule
      * @return self Provides a fluent interface
      */
-    public function setDeleteRule($deleteRule)
+    public function setDeleteRule($deleteRule) : self
     {
         $this->deleteRule = $deleteRule;
         return $this;
@@ -352,7 +352,7 @@ class ConstraintObject
      *
      * @return string
      */
-    public function getCheckClause()
+    public function getCheckClause() : string
     {
         return $this->checkClause;
     }
@@ -363,7 +363,7 @@ class ConstraintObject
      * @param string $checkClause
      * @return self Provides a fluent interface
      */
-    public function setCheckClause($checkClause)
+    public function setCheckClause($checkClause) : self
     {
         $this->checkClause = $checkClause;
         return $this;
@@ -374,7 +374,7 @@ class ConstraintObject
      *
      * @return bool
      */
-    public function isPrimaryKey()
+    public function isPrimaryKey() : bool
     {
         return ('PRIMARY KEY' == $this->type);
     }
@@ -384,7 +384,7 @@ class ConstraintObject
      *
      * @return bool
      */
-    public function isUnique()
+    public function isUnique() : bool
     {
         return ('UNIQUE' == $this->type);
     }
@@ -394,7 +394,7 @@ class ConstraintObject
      *
      * @return bool
      */
-    public function isForeignKey()
+    public function isForeignKey() : bool
     {
         return ('FOREIGN KEY' == $this->type);
     }
@@ -404,7 +404,7 @@ class ConstraintObject
      *
      * @return bool
      */
-    public function isCheck()
+    public function isCheck() : bool
     {
         return ('CHECK' == $this->type);
     }

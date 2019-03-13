@@ -32,7 +32,7 @@ interface MetadataInterface
      * @param bool $includeViews
      * @return string[]
      */
-    public function getTableNames($schema = null, $includeViews = false) : array;
+    public function getTableNames(?string $schema = null, bool $includeViews = false) : array;
 
     /**
      * Get tables.
@@ -41,7 +41,7 @@ interface MetadataInterface
      * @param bool $includeViews
      * @return TableObject[]
      */
-    public function getTables($schema = null, $includeViews = false) : array;
+    public function getTables(?string $schema = null, bool $includeViews = false) : array;
 
     /**
      * Get table
@@ -50,7 +50,7 @@ interface MetadataInterface
      * @param null|string $schema
      * @return TableObject
      */
-    public function getTable($tableName, $schema = null) : TableObject;
+    public function getTable(string $tableName, ?string $schema = null) : TableObject;
 
     /**
      * Get view names
@@ -58,7 +58,7 @@ interface MetadataInterface
      * @param null|string $schema
      * @return string[]
      */
-    public function getViewNames($schema = null) : array;
+    public function getViewNames(?string $schema = null) : array;
 
     /**
      * Get views
@@ -66,7 +66,7 @@ interface MetadataInterface
      * @param null|string $schema
      * @return ViewObject[]
      */
-    public function getViews($schema = null) : array;
+    public function getViews(?string $schema = null) : array;
 
     /**
      * Get view
@@ -75,7 +75,7 @@ interface MetadataInterface
      * @param null|string $schema
      * @return ViewObject
      */
-    public function getView($viewName, $schema = null) : ViewObject;
+    public function getView(string $viewName, ?string $schema = null) : ViewObject;
 
     /**
      * Get column names
@@ -84,7 +84,7 @@ interface MetadataInterface
      * @param null|string $schema
      * @return string[]
      */
-    public function getColumnNames($table, $schema = null) : array;
+    public function getColumnNames(string $table, ?string $schema = null) : array;
 
     /**
      * Get columns
@@ -93,7 +93,7 @@ interface MetadataInterface
      * @param null|string $schema
      * @return ColumnObject[]
      */
-    public function getColumns($table, $schema = null) : array;
+    public function getColumns(string $table, ?string $schema = null) : array;
 
     /**
      * Get column
@@ -103,7 +103,7 @@ interface MetadataInterface
      * @param null|string $schema
      * @return ColumnObject
      */
-    public function getColumn($columnName, $table, $schema = null) : ColumnObject;
+    public function getColumn(string $columnName, string $table, ?string $schema = null) : ColumnObject;
 
     /**
      * Get constraints
@@ -112,7 +112,7 @@ interface MetadataInterface
      * @param null|string $schema
      * @return ConstraintObject[]
      */
-    public function getConstraints($table, $schema = null) : array;
+    public function getConstraints(string $table, ?string $schema = null) : array;
 
     /**
      * Get constraint
@@ -122,7 +122,7 @@ interface MetadataInterface
      * @param null|string $schema
      * @return ConstraintObject
      */
-    public function getConstraint($constraintName, $table, $schema = null) : ConstraintObject;
+    public function getConstraint(string $constraintName, string $table, ?string $schema = null) : ConstraintObject;
 
     /**
      * Get constraint keys
@@ -132,7 +132,7 @@ interface MetadataInterface
      * @param null|string $schema
      * @return ConstraintKeyObject[]
      */
-    public function getConstraintKeys($constraint, $table, $schema = null) : array;
+    public function getConstraintKeys(string $constraint, string $table, ?string $schema = null) : array;
 
     /**
      * Get trigger names
@@ -140,7 +140,7 @@ interface MetadataInterface
      * @param null|string $schema
      * @return string[]
      */
-    public function getTriggerNames($schema = null) : array;
+    public function getTriggerNames(?string $schema = null) : array;
 
     /**
      * Get triggers
@@ -148,7 +148,7 @@ interface MetadataInterface
      * @param null|string $schema
      * @return TriggerObject[]
      */
-    public function getTriggers($schema = null) : array;
+    public function getTriggers(?string $schema = null) : array;
 
     /**
      * Get trigger
@@ -157,5 +157,5 @@ interface MetadataInterface
      * @param null|string $schema
      * @return TriggerObject
      */
-    public function getTrigger($triggerName, $schema = null) : TriggerObject;
+    public function getTrigger(string $triggerName, ?string $schema = null) : TriggerObject;
 }

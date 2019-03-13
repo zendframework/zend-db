@@ -28,7 +28,7 @@ class SqliteMetadata extends AbstractSource
         $this->data['schemas'] = $schemas;
     }
 
-    protected function loadTableNameData($schema) : void
+    protected function loadTableNameData(string $schema) : void
     {
         if (isset($this->data['table_names'][$schema])) {
             return;
@@ -70,7 +70,7 @@ class SqliteMetadata extends AbstractSource
         $this->data['table_names'][$schema] = $tables;
     }
 
-    protected function loadColumnData($table, $schema) : void
+    protected function loadColumnData(string $table, string $schema) : void
     {
         if (isset($this->data['columns'][$schema][$table])) {
             return;
@@ -103,7 +103,7 @@ class SqliteMetadata extends AbstractSource
         $this->data['sqlite_columns'][$schema][$table] = $results;
     }
 
-    protected function loadConstraintData($table, $schema) : void
+    protected function loadConstraintData(string $table, string $schema) : void
     {
         if (isset($this->data['constraints'][$schema][$table])) {
             return;
@@ -186,7 +186,7 @@ class SqliteMetadata extends AbstractSource
         $this->data['constraints'][$schema][$table] = $constraints;
     }
 
-    protected function loadTriggerData($schema) : void
+    protected function loadTriggerData(string $schema) : void
     {
         if (isset($this->data['triggers'][$schema])) {
             return;
@@ -231,7 +231,7 @@ class SqliteMetadata extends AbstractSource
         $this->data['triggers'][$schema] = $triggers;
     }
 
-    protected function fetchPragma(string $name, string $value = null, string $schema = null)
+    protected function fetchPragma(string $name, ?string $value = null, ?string $schema = null)
     {
         $p = $this->adapter->getPlatform();
 
@@ -253,7 +253,7 @@ class SqliteMetadata extends AbstractSource
         return [];
     }
 
-    protected function parseView($sql)
+    protected function parseView(string $sql)
     {
         static $re = null;
         if (null === $re) {
@@ -278,7 +278,7 @@ class SqliteMetadata extends AbstractSource
         ];
     }
 
-    protected function parseTrigger($sql) : ?array
+    protected function parseTrigger(string $sql) : ?array
     {
         static $re = null;
         if (null === $re) {
@@ -336,7 +336,7 @@ class SqliteMetadata extends AbstractSource
         return $data;
     }
 
-    protected function buildRegularExpression(array $re)
+    protected function buildRegularExpression(array $re) : ?string
     {
         foreach ($re as &$value) {
             if (is_array($value)) {
@@ -350,7 +350,7 @@ class SqliteMetadata extends AbstractSource
         return $re;
     }
 
-    protected function getIdentifierRegularExpression()
+    protected function getIdentifierRegularExpression() : ?string
     {
         static $re = null;
         if (null === $re) {
@@ -365,7 +365,7 @@ class SqliteMetadata extends AbstractSource
         return $re;
     }
 
-    protected function getIdentifierChainRegularExpression()
+    protected function getIdentifierChainRegularExpression() : ?string
     {
         static $re = null;
         if (null === $re) {
@@ -375,7 +375,7 @@ class SqliteMetadata extends AbstractSource
         return $re;
     }
 
-    protected function getIdentifierListRegularExpression()
+    protected function getIdentifierListRegularExpression() : ?string
     {
         static $re = null;
         if (null === $re) {

@@ -25,7 +25,7 @@ class Factory
      * @return MetadataInterface
      * @throws InvalidArgumentException If adapter platform name not recognized.
      */
-    public static function createSourceFromAdapter(Adapter $adapter)
+    public static function createSourceFromAdapter(Adapter $adapter) : MetadataInterface
     {
         $platformName = $adapter->getPlatform()->getName();
 

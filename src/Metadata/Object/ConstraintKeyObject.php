@@ -21,56 +21,56 @@ class ConstraintKeyObject
      *
      * @var string
      */
-    protected $columnName = null;
+    protected $columnName = '';
 
     /**
      *
-     * @var int
+     * @var int|null
      */
-    protected $ordinalPosition = null;
+    protected $ordinalPosition;
 
     /**
      *
      * @var bool
      */
-    protected $positionInUniqueConstraint = null;
+    protected $positionInUniqueConstraint = false;
 
     /**
      *
      * @var string
      */
-    protected $referencedTableSchema = null;
+    protected $referencedTableSchema = '';
 
     /**
      *
      * @var string
      */
-    protected $referencedTableName = null;
+    protected $referencedTableName = '';
 
     /**
      *
      * @var string
      */
-    protected $referencedColumnName = null;
+    protected $referencedColumnName = '';
 
     /**
      *
      * @var string
      */
-    protected $foreignKeyUpdateRule = null;
+    protected $foreignKeyUpdateRule = '';
 
     /**
      *
      * @var string
      */
-    protected $foreignKeyDeleteRule = null;
+    protected $foreignKeyDeleteRule = '';
 
     /**
      * Constructor
      *
      * @param string $column
      */
-    public function __construct($column)
+    public function __construct(string $column)
     {
         $this->setColumnName($column);
     }
@@ -80,7 +80,7 @@ class ConstraintKeyObject
      *
      * @return string
      */
-    public function getColumnName()
+    public function getColumnName() : string
     {
         return $this->columnName;
     }
@@ -91,7 +91,7 @@ class ConstraintKeyObject
      * @param  string $columnName
      * @return self Provides a fluent interface
      */
-    public function setColumnName($columnName)
+    public function setColumnName(string $columnName) : self
     {
         $this->columnName = $columnName;
         return $this;
@@ -100,9 +100,9 @@ class ConstraintKeyObject
     /**
      * Get ordinal position
      *
-     * @return int
+     * @return int|null
      */
-    public function getOrdinalPosition()
+    public function getOrdinalPosition() : ?int
     {
         return $this->ordinalPosition;
     }
@@ -113,7 +113,7 @@ class ConstraintKeyObject
      * @param  int $ordinalPosition
      * @return self Provides a fluent interface
      */
-    public function setOrdinalPosition($ordinalPosition)
+    public function setOrdinalPosition($ordinalPosition) : self
     {
         $this->ordinalPosition = $ordinalPosition;
         return $this;
@@ -124,7 +124,7 @@ class ConstraintKeyObject
      *
      * @return bool
      */
-    public function getPositionInUniqueConstraint()
+    public function getPositionInUniqueConstraint() : bool
     {
         return $this->positionInUniqueConstraint;
     }
@@ -135,18 +135,18 @@ class ConstraintKeyObject
      * @param  bool $positionInUniqueConstraint
      * @return self Provides a fluent interface
      */
-    public function setPositionInUniqueConstraint($positionInUniqueConstraint)
+    public function setPositionInUniqueConstraint(bool $positionInUniqueConstraint) : self
     {
         $this->positionInUniqueConstraint = $positionInUniqueConstraint;
         return $this;
     }
 
     /**
-     * Get referencred table schema
+     * Get referenced table schema
      *
      * @return string
      */
-    public function getReferencedTableSchema()
+    public function getReferencedTableSchema() : string
     {
         return $this->referencedTableSchema;
     }
@@ -157,7 +157,7 @@ class ConstraintKeyObject
      * @param string $referencedTableSchema
      * @return self Provides a fluent interface
      */
-    public function setReferencedTableSchema($referencedTableSchema)
+    public function setReferencedTableSchema($referencedTableSchema) : self
     {
         $this->referencedTableSchema = $referencedTableSchema;
         return $this;
@@ -168,7 +168,7 @@ class ConstraintKeyObject
      *
      * @return string
      */
-    public function getReferencedTableName()
+    public function getReferencedTableName() : string
     {
         return $this->referencedTableName;
     }
@@ -179,7 +179,7 @@ class ConstraintKeyObject
      * @param  string $referencedTableName
      * @return self Provides a fluent interface
      */
-    public function setReferencedTableName($referencedTableName)
+    public function setReferencedTableName(string $referencedTableName) : self
     {
         $this->referencedTableName = $referencedTableName;
         return $this;
@@ -190,7 +190,7 @@ class ConstraintKeyObject
      *
      * @return string
      */
-    public function getReferencedColumnName()
+    public function getReferencedColumnName() : string
     {
         return $this->referencedColumnName;
     }
@@ -201,7 +201,7 @@ class ConstraintKeyObject
      * @param  string $referencedColumnName
      * @return self Provides a fluent interface
      */
-    public function setReferencedColumnName($referencedColumnName)
+    public function setReferencedColumnName(string $referencedColumnName) : self
     {
         $this->referencedColumnName = $referencedColumnName;
         return $this;
@@ -212,7 +212,7 @@ class ConstraintKeyObject
      *
      * @param string $foreignKeyUpdateRule
      */
-    public function setForeignKeyUpdateRule($foreignKeyUpdateRule)
+    public function setForeignKeyUpdateRule($foreignKeyUpdateRule) : void
     {
         $this->foreignKeyUpdateRule = $foreignKeyUpdateRule;
     }
@@ -222,7 +222,7 @@ class ConstraintKeyObject
      *
      * @return string
      */
-    public function getForeignKeyUpdateRule()
+    public function getForeignKeyUpdateRule() : string
     {
         return $this->foreignKeyUpdateRule;
     }
@@ -232,7 +232,7 @@ class ConstraintKeyObject
      *
      * @param string $foreignKeyDeleteRule
      */
-    public function setForeignKeyDeleteRule($foreignKeyDeleteRule)
+    public function setForeignKeyDeleteRule($foreignKeyDeleteRule) : void
     {
         $this->foreignKeyDeleteRule = $foreignKeyDeleteRule;
     }
@@ -242,7 +242,7 @@ class ConstraintKeyObject
      *
      * @return string
      */
-    public function getForeignKeyDeleteRule()
+    public function getForeignKeyDeleteRule() : string
     {
         return $this->foreignKeyDeleteRule;
     }

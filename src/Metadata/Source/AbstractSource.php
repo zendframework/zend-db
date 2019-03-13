@@ -26,13 +26,13 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @var Adapter
      */
-    protected $adapter = null;
+    protected $adapter;
 
     /**
      *
      * @var string
      */
-    protected $defaultSchema = null;
+    protected $defaultSchema = '';
 
     /**
      *
@@ -52,8 +52,7 @@ abstract class AbstractSource implements MetadataInterface
     }
 
     /**
-     * Get schemas
-     *
+     * @inheritdoc
      */
     public function getSchemas() : array
     {
@@ -65,7 +64,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getTableNames($schema = null, $includeViews = false) : array
+    public function getTableNames(?string $schema = null, bool $includeViews = false) : array
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -89,7 +88,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getTables($schema = null, $includeViews = false) : array
+    public function getTables(?string $schema = null, bool $includeViews = false) : array
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -105,7 +104,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getTable($tableName, $schema = null) : TableObject
+    public function getTable(string $tableName, ?string $schema = null) : TableObject
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -141,7 +140,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getViewNames($schema = null) : array
+    public function getViewNames(?string $schema = null) : array
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -161,7 +160,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getViews($schema = null) : array
+    public function getViews(?string $schema = null) : array
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -177,7 +176,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getView($viewName, $schema = null) : ViewObject
+    public function getView(string $viewName, ?string $schema = null) : ViewObject
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -195,7 +194,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getColumnNames($table, $schema = null) : array
+    public function getColumnNames(string $table, ?string $schema = null) : array
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -213,7 +212,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getColumns($table, $schema = null) : array
+    public function getColumns(string $table, ?string $schema = null) : array
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -231,7 +230,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getColumn($columnName, $table, $schema = null) : ColumnObject
+    public function getColumn(string $columnName, string $table, ?string $schema = null) : ColumnObject
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -275,7 +274,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getConstraints($table, $schema = null) : array
+    public function getConstraints(string $table, ?string $schema = null) : array
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -294,7 +293,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getConstraint($constraintName, $table, $schema = null) : ConstraintObject
+    public function getConstraint(string $constraintName, string $table, ?string $schema = null) : ConstraintObject
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -331,7 +330,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getConstraintKeys($constraint, $table, $schema = null) : array
+    public function getConstraintKeys(string $constraint, string $table, ?string $schema = null) : array
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -371,7 +370,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getTriggerNames($schema = null) : array
+    public function getTriggerNames(?string $schema = null) : array
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -385,7 +384,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getTriggers($schema = null) : array
+    public function getTriggers(?string $schema = null) : array
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -401,7 +400,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getTrigger($triggerName, $schema = null) : TriggerObject
+    public function getTrigger(string $triggerName, ?string $schema = null) : TriggerObject
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -442,7 +441,7 @@ abstract class AbstractSource implements MetadataInterface
      * @param string $type
      * @param string $key ...
      */
-    protected function prepareDataHierarchy($type) : void
+    protected function prepareDataHierarchy(string $type) : void
     {
         $data = &$this->data;
         foreach (func_get_args() as $key) {
@@ -465,7 +464,7 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @param string $schema
      */
-    protected function loadTableNameData($schema) : void
+    protected function loadTableNameData(string $schema) : void
     {
         if (isset($this->data['table_names'][$schema])) {
             return;
@@ -480,7 +479,7 @@ abstract class AbstractSource implements MetadataInterface
      * @param string $table
      * @param string $schema
      */
-    protected function loadColumnData($table, $schema) : void
+    protected function loadColumnData(string $table, string $schema) : void
     {
         if (isset($this->data['columns'][$schema][$table])) {
             return;
@@ -495,7 +494,7 @@ abstract class AbstractSource implements MetadataInterface
      * @param string $table
      * @param string $schema
      */
-    protected function loadConstraintData($table, $schema) : void
+    protected function loadConstraintData(string $table, string $schema) : void
     {
         if (isset($this->data['constraints'][$schema])) {
             return;
@@ -509,7 +508,7 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @param string $schema
      */
-    protected function loadConstraintDataKeys($schema) : void
+    protected function loadConstraintDataKeys(string $schema) : void
     {
         if (isset($this->data['constraint_keys'][$schema])) {
             return;
@@ -524,7 +523,7 @@ abstract class AbstractSource implements MetadataInterface
      * @param string $table
      * @param string $schema
      */
-    protected function loadConstraintReferences($table, $schema) : void
+    protected function loadConstraintReferences(string $table, string $schema) : void
     {
         if (isset($this->data['constraint_references'][$schema])) {
             return;
@@ -538,7 +537,7 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @param string $schema
      */
-    protected function loadTriggerData($schema) : void
+    protected function loadTriggerData(string $schema) : void
     {
         if (isset($this->data['triggers'][$schema])) {
             return;

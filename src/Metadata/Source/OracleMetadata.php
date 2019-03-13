@@ -29,7 +29,7 @@ class OracleMetadata extends AbstractSource
      * {@inheritdoc}
      * @see \Zend\Db\Metadata\Source\AbstractSource::loadColumnData()
      */
-    protected function loadColumnData($table, $schema) : void
+    protected function loadColumnData(string $table, string $schema) : void
     {
         if (isset($this->data['columns'][$schema][$table])) {
             return;
@@ -83,7 +83,7 @@ class OracleMetadata extends AbstractSource
      * @param string $type
      * @return string
      */
-    protected function getConstraintType($type) : string
+    protected function getConstraintType(string $type) : string
     {
         if (isset($this->constraintTypeMap[$type])) {
             return $this->constraintTypeMap[$type];
@@ -96,7 +96,7 @@ class OracleMetadata extends AbstractSource
      * {@inheritdoc}
      * @see \Zend\Db\Metadata\Source\AbstractSource::loadConstraintData()
      */
-    protected function loadConstraintData($table, $schema) : void
+    protected function loadConstraintData(string $table, string $schema) : void
     {
         if (isset($this->data['constraints'][$schema][$table])) {
             return;
@@ -198,7 +198,7 @@ class OracleMetadata extends AbstractSource
      * {@inheritdoc}
      * @see \Zend\Db\Metadata\Source\AbstractSource::loadTableNameData()
      */
-    protected function loadTableNameData($schema) : void
+    protected function loadTableNameData(string $schema) : void
     {
         if (isset($this->data['table_names'][$schema])) {
             return;
@@ -241,7 +241,7 @@ class OracleMetadata extends AbstractSource
      *
      * @see \Zend\Db\Metadata\Source\AbstractSource::loadTriggerData()
      */
-    protected function loadTriggerData($schema) : void
+    protected function loadTriggerData(string $schema) : void
     {
         if (isset($this->data['triggers'][$schema])) {
             return;

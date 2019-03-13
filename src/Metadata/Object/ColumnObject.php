@@ -15,73 +15,73 @@ class ColumnObject
      *
      * @var string
      */
-    protected $name = null;
+    protected $name = '';
 
     /**
      *
      * @var string
      */
-    protected $tableName = null;
+    protected $tableName = '';
 
     /**
      *
      * @var string
      */
-    protected $schemaName = null;
+    protected $schemaName = '';
 
     /**
      *
-     * @var
+     * @var int|null
      */
-    protected $ordinalPosition = null;
+    protected $ordinalPosition;
 
     /**
      *
      * @var string
      */
-    protected $columnDefault = null;
+    protected $columnDefault = '';
 
     /**
      *
      * @var bool
      */
-    protected $isNullable = null;
+    protected $isNullable = false;
 
     /**
      *
      * @var string
      */
-    protected $dataType = null;
+    protected $dataType = '';
 
     /**
      *
-     * @var int
+     * @var int|null
      */
-    protected $characterMaximumLength = null;
+    protected $characterMaximumLength;
 
     /**
      *
-     * @var int
+     * @var int|null
      */
-    protected $characterOctetLength = null;
+    protected $characterOctetLength;
 
     /**
      *
-     * @var int
+     * @var int|null
      */
-    protected $numericPrecision = null;
+    protected $numericPrecision;
 
     /**
      *
-     * @var int
+     * @var int|null
      */
-    protected $numericScale = null;
+    protected $numericScale;
 
     /**
      *
      * @var bool
      */
-    protected $numericUnsigned = null;
+    protected $numericUnsigned = false;
 
     /**
      *
@@ -96,7 +96,7 @@ class ColumnObject
      * @param string $tableName
      * @param string $schemaName
      */
-    public function __construct($name, $tableName, $schemaName = null)
+    public function __construct(string $name, string $tableName, string $schemaName = '')
     {
         $this->setName($name);
         $this->setTableName($tableName);
@@ -108,7 +108,7 @@ class ColumnObject
      *
      * @param string $name
      */
-    public function setName($name)
+    public function setName(string $name) : void
     {
         $this->name = $name;
     }
@@ -118,7 +118,7 @@ class ColumnObject
      *
      * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
@@ -128,7 +128,7 @@ class ColumnObject
      *
      * @return string
      */
-    public function getTableName()
+    public function getTableName() : string
     {
         return $this->tableName;
     }
@@ -139,7 +139,7 @@ class ColumnObject
      * @param string $tableName
      * @return self Provides a fluent interface
      */
-    public function setTableName($tableName)
+    public function setTableName(string $tableName) : self
     {
         $this->tableName = $tableName;
         return $this;
@@ -150,7 +150,7 @@ class ColumnObject
      *
      * @param string $schemaName
      */
-    public function setSchemaName($schemaName)
+    public function setSchemaName(string $schemaName) : void
     {
         $this->schemaName = $schemaName;
     }
@@ -160,7 +160,7 @@ class ColumnObject
      *
      * @return string
      */
-    public function getSchemaName()
+    public function getSchemaName() : string
     {
         return $this->schemaName;
     }
@@ -168,7 +168,7 @@ class ColumnObject
     /**
      * @return int $ordinalPosition
      */
-    public function getOrdinalPosition()
+    public function getOrdinalPosition() : ?int
     {
         return $this->ordinalPosition;
     }
@@ -177,7 +177,7 @@ class ColumnObject
      * @param int $ordinalPosition to set
      * @return self Provides a fluent interface
      */
-    public function setOrdinalPosition($ordinalPosition)
+    public function setOrdinalPosition(?int $ordinalPosition) : self
     {
         $this->ordinalPosition = $ordinalPosition;
         return $this;
@@ -186,16 +186,16 @@ class ColumnObject
     /**
      * @return null|string the $columnDefault
      */
-    public function getColumnDefault()
+    public function getColumnDefault() : ?string
     {
         return $this->columnDefault;
     }
 
     /**
-     * @param mixed $columnDefault to set
+     * @param string $columnDefault to set
      * @return self Provides a fluent interface
      */
-    public function setColumnDefault($columnDefault)
+    public function setColumnDefault(string $columnDefault) : self
     {
         $this->columnDefault = $columnDefault;
         return $this;
@@ -204,7 +204,7 @@ class ColumnObject
     /**
      * @return bool $isNullable
      */
-    public function getIsNullable()
+    public function getIsNullable() : bool
     {
         return $this->isNullable;
     }
@@ -213,7 +213,7 @@ class ColumnObject
      * @param bool $isNullable to set
      * @return self Provides a fluent interface
      */
-    public function setIsNullable($isNullable)
+    public function setIsNullable(bool $isNullable) : self
     {
         $this->isNullable = $isNullable;
         return $this;
@@ -222,7 +222,7 @@ class ColumnObject
     /**
      * @return bool $isNullable
      */
-    public function isNullable()
+    public function isNullable() : bool
     {
         return $this->isNullable;
     }
@@ -230,7 +230,7 @@ class ColumnObject
     /**
      * @return null|string the $dataType
      */
-    public function getDataType()
+    public function getDataType() : ?string
     {
         return $this->dataType;
     }
@@ -239,7 +239,7 @@ class ColumnObject
      * @param string $dataType the $dataType to set
      * @return self Provides a fluent interface
      */
-    public function setDataType($dataType)
+    public function setDataType(string $dataType) : self
     {
         $this->dataType = $dataType;
         return $this;
@@ -248,16 +248,16 @@ class ColumnObject
     /**
      * @return int|null the $characterMaximumLength
      */
-    public function getCharacterMaximumLength()
+    public function getCharacterMaximumLength() : ?int
     {
         return $this->characterMaximumLength;
     }
 
     /**
-     * @param int $characterMaximumLength the $characterMaximumLength to set
+     * @param int|null $characterMaximumLength the $characterMaximumLength to set
      * @return self Provides a fluent interface
      */
-    public function setCharacterMaximumLength($characterMaximumLength)
+    public function setCharacterMaximumLength(?int $characterMaximumLength) : self
     {
         $this->characterMaximumLength = $characterMaximumLength;
         return $this;
@@ -266,16 +266,16 @@ class ColumnObject
     /**
      * @return int|null the $characterOctetLength
      */
-    public function getCharacterOctetLength()
+    public function getCharacterOctetLength() : ?int
     {
         return $this->characterOctetLength;
     }
 
     /**
-     * @param int $characterOctetLength the $characterOctetLength to set
+     * @param int|null $characterOctetLength the $characterOctetLength to set
      * @return self Provides a fluent interface
      */
-    public function setCharacterOctetLength($characterOctetLength)
+    public function setCharacterOctetLength(?int $characterOctetLength) : self
     {
         $this->characterOctetLength = $characterOctetLength;
         return $this;
@@ -284,16 +284,16 @@ class ColumnObject
     /**
      * @return int the $numericPrecision
      */
-    public function getNumericPrecision()
+    public function getNumericPrecision() : ?int
     {
         return $this->numericPrecision;
     }
 
     /**
-     * @param int $numericPrecision the $numericPrevision to set
+     * @param int|null $numericPrecision the $numericPrevision to set
      * @return self Provides a fluent interface
      */
-    public function setNumericPrecision($numericPrecision)
+    public function setNumericPrecision(?int $numericPrecision) : self
     {
         $this->numericPrecision = $numericPrecision;
         return $this;
@@ -302,7 +302,7 @@ class ColumnObject
     /**
      * @return int the $numericScale
      */
-    public function getNumericScale()
+    public function getNumericScale() : ?int
     {
         return $this->numericScale;
     }
@@ -311,7 +311,7 @@ class ColumnObject
      * @param int $numericScale the $numericScale to set
      * @return self Provides a fluent interface
      */
-    public function setNumericScale($numericScale)
+    public function setNumericScale(?int $numericScale) : self
     {
         $this->numericScale = $numericScale;
         return $this;
@@ -320,7 +320,7 @@ class ColumnObject
     /**
      * @return bool
      */
-    public function getNumericUnsigned()
+    public function getNumericUnsigned() : bool
     {
         return $this->numericUnsigned;
     }
@@ -329,7 +329,7 @@ class ColumnObject
      * @param  bool $numericUnsigned
      * @return self Provides a fluent interface
      */
-    public function setNumericUnsigned($numericUnsigned)
+    public function setNumericUnsigned(bool $numericUnsigned) : self
     {
         $this->numericUnsigned = $numericUnsigned;
         return $this;
@@ -338,7 +338,7 @@ class ColumnObject
     /**
      * @return bool
      */
-    public function isNumericUnsigned()
+    public function isNumericUnsigned() : bool
     {
         return $this->numericUnsigned;
     }
@@ -346,7 +346,7 @@ class ColumnObject
     /**
      * @return array the $errata
      */
-    public function getErratas()
+    public function getErratas() : array
     {
         return $this->errata;
     }
@@ -355,7 +355,7 @@ class ColumnObject
      * @param array $erratas
      * @return self Provides a fluent interface
      */
-    public function setErratas(array $erratas)
+    public function setErratas(array $erratas) : self
     {
         foreach ($erratas as $name => $value) {
             $this->setErrata($name, $value);
@@ -367,12 +367,11 @@ class ColumnObject
      * @param string $errataName
      * @return mixed
      */
-    public function getErrata($errataName)
+    public function getErrata(string $errataName)
     {
         if (array_key_exists($errataName, $this->errata)) {
             return $this->errata[$errataName];
         }
-        return;
     }
 
     /**
@@ -380,7 +379,7 @@ class ColumnObject
      * @param mixed $errataValue
      * @return self Provides a fluent interface
      */
-    public function setErrata($errataName, $errataValue)
+    public function setErrata(string $errataName, $errataValue) : self
     {
         $this->errata[$errataName] = $errataValue;
         return $this;
