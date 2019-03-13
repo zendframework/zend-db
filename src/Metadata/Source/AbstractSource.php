@@ -20,7 +20,7 @@ use Zend\Db\Metadata\Object\TriggerObject;
 
 abstract class AbstractSource implements MetadataInterface
 {
-    const DEFAULT_SCHEMA = '__DEFAULT_SCHEMA__';
+    public const DEFAULT_SCHEMA = '__DEFAULT_SCHEMA__';
 
     /**
      *

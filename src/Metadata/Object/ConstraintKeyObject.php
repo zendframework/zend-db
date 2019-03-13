@@ -11,11 +11,11 @@ namespace Zend\Db\Metadata\Object;
 
 class ConstraintKeyObject
 {
-    const FK_CASCADE = 'CASCADE';
-    const FK_SET_NULL = 'SET NULL';
-    const FK_NO_ACTION = 'NO ACTION';
-    const FK_RESTRICT = 'RESTRICT';
-    const FK_SET_DEFAULT = 'SET DEFAULT';
+    public const FK_CASCADE = 'CASCADE';
+    public const FK_SET_NULL = 'SET NULL';
+    public const FK_NO_ACTION = 'NO ACTION';
+    public const FK_RESTRICT = 'RESTRICT';
+    public const FK_SET_DEFAULT = 'SET DEFAULT';
 
     /**
      *
