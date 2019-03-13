@@ -11,69 +11,43 @@ namespace Zend\Db\Metadata\Object;
 
 class ColumnObject
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $name = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $tableName = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $schemaName = '';
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $ordinalPosition;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $columnDefault = '';
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $isNullable = false;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $dataType = '';
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $characterMaximumLength;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $characterOctetLength;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $numericPrecision;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $numericScale;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $numericUnsigned = false;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $errata = [];
 
     /**

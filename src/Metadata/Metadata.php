@@ -21,9 +21,7 @@ use Zend\Db\Metadata\Object\ViewObject;
  */
 class Metadata implements MetadataInterface
 {
-    /**
-     * @var MetadataInterface
-     */
+    /** @var MetadataInterface */
     protected $source;
 
     /**

@@ -17,44 +17,28 @@ class ConstraintKeyObject
     public const FK_RESTRICT = 'RESTRICT';
     public const FK_SET_DEFAULT = 'SET DEFAULT';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $columnName = '';
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $ordinalPosition;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $positionInUniqueConstraint = false;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $referencedTableSchema = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $referencedTableName = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $referencedColumnName = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $foreignKeyUpdateRule = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $foreignKeyDeleteRule = '';
 
     /**

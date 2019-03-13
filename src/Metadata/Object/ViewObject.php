@@ -11,19 +11,13 @@ namespace Zend\Db\Metadata\Object;
 
 class ViewObject extends AbstractTableObject
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $viewDefinition = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $checkOption = '';
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $isUpdatable = false;
 
     /**

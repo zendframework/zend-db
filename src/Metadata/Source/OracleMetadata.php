@@ -16,9 +16,7 @@ use Zend\Db\Adapter\Adapter;
  */
 class OracleMetadata extends AbstractSource
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected static $constraintTypeMap = [
         'C' => 'CHECK',
         'P' => 'PRIMARY KEY',

@@ -22,19 +22,13 @@ abstract class AbstractSource implements MetadataInterface
 {
     public const DEFAULT_SCHEMA = '__DEFAULT_SCHEMA__';
 
-    /**
-     * @var Adapter
-     */
+    /** @var Adapter */
     protected $adapter;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $defaultSchema = '';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $data = [];
 
     /**
