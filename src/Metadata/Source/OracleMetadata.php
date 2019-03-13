@@ -63,7 +63,7 @@ class OracleMetadata extends AbstractSource
             $columns[$row['COLUMN_NAME']] = [
                 'ordinal_position'          => $row['COLUMN_ID'],
                 'column_default'            => $row['DATA_DEFAULT'],
-                'is_nullable'               => ('Y' == $row['NULLABLE']),
+                'is_nullable'               => 'Y' == $row['NULLABLE'],
                 'data_type'                 => $row['DATA_TYPE'],
                 'character_maximum_length'  => $row['DATA_LENGTH'],
                 'character_octet_length'    => null,

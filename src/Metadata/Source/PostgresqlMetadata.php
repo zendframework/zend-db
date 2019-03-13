@@ -87,7 +87,7 @@ class PostgresqlMetadata extends AbstractSource
                 'table_type' => $row['table_type'],
                 'view_definition' => $row['view_definition'],
                 'check_option' => $row['check_option'],
-                'is_updatable' => ('YES' == $row['is_updatable']),
+                'is_updatable' => 'YES' == $row['is_updatable'],
             ];
         }
 
@@ -140,7 +140,7 @@ class PostgresqlMetadata extends AbstractSource
             $columns[$row['column_name']] = [
                 'ordinal_position'          => $row['ordinal_position'],
                 'column_default'            => $row['column_default'],
-                'is_nullable'               => ('YES' == $row['is_nullable']),
+                'is_nullable'               => 'YES' == $row['is_nullable'],
                 'data_type'                 => $row['data_type'],
                 'character_maximum_length'  => $row['character_maximum_length'],
                 'character_octet_length'    => $row['character_octet_length'],
