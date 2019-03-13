@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Metadata\Source;
 
@@ -13,7 +13,10 @@ use Zend\Db\Adapter\Adapter;
 
 class SqlServerMetadata extends AbstractSource
 {
-    protected function loadSchemaData()
+    /**
+     * @inheritdoc
+     */
+    protected function loadSchemaData() : void
     {
         if (isset($this->data['schemas'])) {
             return;
@@ -37,7 +40,10 @@ class SqlServerMetadata extends AbstractSource
         $this->data['schemas'] = $schemas;
     }
 
-    protected function loadTableNameData($schema)
+    /**
+     * @inheritdoc
+     */
+    protected function loadTableNameData(string $schema) : void
     {
         if (isset($this->data['table_names'][$schema])) {
             return;
@@ -70,7 +76,7 @@ class SqlServerMetadata extends AbstractSource
             . ' WHERE ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
             . ' IN (\'BASE TABLE\', \'VIEW\')';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
                 . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -86,14 +92,17 @@ class SqlServerMetadata extends AbstractSource
                 'table_type' => $row['TABLE_TYPE'],
                 'view_definition' => $row['VIEW_DEFINITION'],
                 'check_option' => $row['CHECK_OPTION'],
-                'is_updatable' => ('YES' == $row['IS_UPDATABLE']),
+                'is_updatable' => 'YES' === $row['IS_UPDATABLE'],
             ];
         }
 
         $this->data['table_names'][$schema] = $tables;
     }
 
-    protected function loadColumnData($table, $schema)
+    /**
+     * @inheritdoc
+     */
+    protected function loadColumnData(string $table, string $schema) : void
     {
         if (isset($this->data['columns'][$schema][$table])) {
             return;
@@ -129,7 +138,7 @@ class SqlServerMetadata extends AbstractSource
             . ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_NAME'])
             . '  = ' . $p->quoteTrustedValue($table);
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
                 . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -143,7 +152,7 @@ class SqlServerMetadata extends AbstractSource
             $columns[$row['COLUMN_NAME']] = [
                 'ordinal_position'          => $row['ORDINAL_POSITION'],
                 'column_default'            => $row['COLUMN_DEFAULT'],
-                'is_nullable'               => ('YES' == $row['IS_NULLABLE']),
+                'is_nullable'               => 'YES' === $row['IS_NULLABLE'],
                 'data_type'                 => $row['DATA_TYPE'],
                 'character_maximum_length'  => $row['CHARACTER_MAXIMUM_LENGTH'],
                 'character_octet_length'    => $row['CHARACTER_OCTET_LENGTH'],
@@ -157,7 +166,10 @@ class SqlServerMetadata extends AbstractSource
         $this->data['columns'][$schema][$table] = $columns;
     }
 
-    protected function loadConstraintData($table, $schema)
+    /**
+     * @inheritdoc
+     */
+    protected function loadConstraintData(string $table, string $schema) : void
     {
         if (isset($this->data['constraints'][$schema][$table])) {
             return;
@@ -231,7 +243,7 @@ class SqlServerMetadata extends AbstractSource
              . ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
              . ' IN (\'BASE TABLE\', \'VIEW\')';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
             . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -261,12 +273,12 @@ class SqlServerMetadata extends AbstractSource
                     'constraint_type' => $row['CONSTRAINT_TYPE'],
                     'table_name'      => $row['TABLE_NAME'],
                 ];
-                if ('CHECK' == $row['CONSTRAINT_TYPE']) {
+                if ('CHECK' === $row['CONSTRAINT_TYPE']) {
                     $constraints[$name]['check_clause'] = $row['CHECK_CLAUSE'];
                     continue;
                 }
                 $constraints[$name]['columns'] = [];
-                $isFK = ('FOREIGN KEY' == $row['CONSTRAINT_TYPE']);
+                $isFK = ('FOREIGN KEY' === $row['CONSTRAINT_TYPE']);
                 if ($isFK) {
                     $constraints[$name]['referenced_table_schema'] = $row['REFERENCED_TABLE_SCHEMA'];
                     $constraints[$name]['referenced_table_name']   = $row['REFERENCED_TABLE_NAME'];
@@ -285,7 +297,10 @@ class SqlServerMetadata extends AbstractSource
         $this->data['constraints'][$schema][$table] = $constraints;
     }
 
-    protected function loadTriggerData($schema)
+    /**
+     * @inheritdoc
+     */
+    protected function loadTriggerData(string $schema) : void
     {
         if (isset($this->data['triggers'][$schema])) {
             return;
@@ -321,7 +336,7 @@ class SqlServerMetadata extends AbstractSource
             . ' FROM ' . $p->quoteIdentifierChain(['INFORMATION_SCHEMA', 'TRIGGERS'])
             . ' WHERE ';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= $p->quoteIdentifier('TRIGGER_SCHEMA')
                 . ' = ' . $p->quoteTrustedValue($schema);
         } else {

@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Metadata\Source;
 
@@ -16,20 +16,14 @@ use Zend\Db\Adapter\Adapter;
  */
 class OracleMetadata extends AbstractSource
 {
-    /**
-     * @var array
-     */
-    protected $constraintTypeMap = [
+    /** @var array */
+    protected static $constraintTypeMap = [
         'C' => 'CHECK',
         'P' => 'PRIMARY KEY',
         'R' => 'FOREIGN_KEY'
     ];
 
-    /**
-     * {@inheritdoc}
-     * @see \Zend\Db\Metadata\Source\AbstractSource::loadColumnData()
-     */
-    protected function loadColumnData($table, $schema)
+    protected function loadColumnData(string $table, string $schema) : void
     {
         if (isset($this->data['columns'][$schema][$table])) {
             return;
@@ -63,7 +57,7 @@ class OracleMetadata extends AbstractSource
             $columns[$row['COLUMN_NAME']] = [
                 'ordinal_position'          => $row['COLUMN_ID'],
                 'column_default'            => $row['DATA_DEFAULT'],
-                'is_nullable'               => ('Y' == $row['NULLABLE']),
+                'is_nullable'               => 'Y' === $row['NULLABLE'],
                 'data_type'                 => $row['DATA_TYPE'],
                 'character_maximum_length'  => $row['DATA_LENGTH'],
                 'character_octet_length'    => null,
@@ -75,16 +69,9 @@ class OracleMetadata extends AbstractSource
         }
 
         $this->data['columns'][$schema][$table] = $columns;
-        return $this;
     }
 
-    /**
-     * Constraint type
-     *
-     * @param string $type
-     * @return string
-     */
-    protected function getConstraintType($type)
+    protected function getConstraintType(string $type) : string
     {
         if (isset($this->constraintTypeMap[$type])) {
             return $this->constraintTypeMap[$type];
@@ -93,11 +80,7 @@ class OracleMetadata extends AbstractSource
         return $type;
     }
 
-    /**
-     * {@inheritdoc}
-     * @see \Zend\Db\Metadata\Source\AbstractSource::loadConstraintData()
-     */
-    protected function loadConstraintData($table, $schema)
+    protected function loadConstraintData(string $table, string $schema) : void
     {
         if (isset($this->data['constraints'][$schema][$table])) {
             return;
@@ -148,14 +131,14 @@ class OracleMetadata extends AbstractSource
                     'table_name'      => $row['TABLE_NAME'],
                 ];
 
-                if ('C' == $row['CONSTRAINT_TYPE']) {
+                if ('C' === $row['CONSTRAINT_TYPE']) {
                     $constraints[$name]['CHECK_CLAUSE'] = $row['CHECK_CLAUSE'];
                     continue;
                 }
 
                 $constraints[$name]['columns'] = [];
 
-                $isFK = ('R' == $row['CONSTRAINT_TYPE']);
+                $isFK = ('R' === $row['CONSTRAINT_TYPE']);
                 if ($isFK) {
                     $constraints[$name]['referenced_table_schema'] = $row['REF_OWNER'];
                     $constraints[$name]['referenced_table_name']   = $row['REF_TABLE'];
@@ -171,15 +154,9 @@ class OracleMetadata extends AbstractSource
                 $constraints[$name]['referenced_columns'][] = $row['REF_COLUMN'];
             }
         }
-
-        return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     * @see \Zend\Db\Metadata\Source\AbstractSource::loadSchemaData()
-     */
-    protected function loadSchemaData()
+    protected function loadSchemaData() : void
     {
         if (isset($this->data['schemas'])) {
             return;
@@ -197,14 +174,10 @@ class OracleMetadata extends AbstractSource
         $this->data['schemas'] = $schemas;
     }
 
-    /**
-     * {@inheritdoc}
-     * @see \Zend\Db\Metadata\Source\AbstractSource::loadTableNameData()
-     */
-    protected function loadTableNameData($schema)
+    protected function loadTableNameData(string $schema) : void
     {
         if (isset($this->data['table_names'][$schema])) {
-            return $this;
+            return;
         }
 
         $this->prepareDataHierarchy('table_names', $schema);
@@ -235,17 +208,12 @@ class OracleMetadata extends AbstractSource
         }
 
         $this->data['table_names'][$schema] = $tables;
-        return $this;
     }
 
     /**
      * FIXME: load trigger data
-     *
-     * {@inheritdoc}
-     *
-     * @see \Zend\Db\Metadata\Source\AbstractSource::loadTriggerData()
      */
-    protected function loadTriggerData($schema)
+    protected function loadTriggerData(string $schema) : void
     {
         if (isset($this->data['triggers'][$schema])) {
             return;

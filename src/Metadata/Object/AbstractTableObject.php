@@ -1,113 +1,59 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Metadata\Object;
 
 abstract class AbstractTableObject
 {
-    /*
-    protected $catalogName = null;
-    protected $schemaName = null;
-    */
+    /** @var string */
+    protected $name = '';
 
-    /**
-     *
-     * @var string
-     */
-    protected $name = null;
+    /**  @var string */
+    protected $type = '';
 
-    /**
-     *
-     * @var string
-     */
-    protected $type = null;
+    /** @var array */
+    protected $columns = [];
 
-    /**
-     *
-     * @var array
-     */
-    protected $columns = null;
+    /**  @var array */
+    protected $constraints = [];
 
-    /**
-     *
-     * @var array
-     */
-    protected $constraints = null;
-
-    /**
-     * Constructor
-     *
-     * @param string $name
-     */
-    public function __construct($name)
+    public function __construct(string $name = '')
     {
-        if ($name) {
-            $this->setName($name);
-        }
+        $this->setName($name);
     }
 
-    /**
-     * Set columns
-     *
-     * @param array $columns
-     */
-    public function setColumns(array $columns)
+    public function setColumns(array $columns) : void
     {
         $this->columns = $columns;
     }
 
-    /**
-     * Get columns
-     *
-     * @return array
-     */
-    public function getColumns()
+    public function getColumns() : array
     {
         return $this->columns;
     }
 
-    /**
-     * Set constraints
-     *
-     * @param array $constraints
-     */
-    public function setConstraints($constraints)
+    public function setConstraints(array $constraints) : void
     {
         $this->constraints = $constraints;
     }
 
-    /**
-     * Get constraints
-     *
-     * @return array
-     */
-    public function getConstraints()
+    public function getConstraints() : array
     {
         return $this->constraints;
     }
 
-    /**
-     * Set name
-     *
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name) : void
     {
         $this->name = $name;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }

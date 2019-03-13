@@ -263,7 +263,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function getLastGeneratedValue($name = null): string
+    public function getLastGeneratedValue(string $name = null): string
     {
         if ($name === null) {
             return '';

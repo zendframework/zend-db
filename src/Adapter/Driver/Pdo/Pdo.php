@@ -171,10 +171,10 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
     /**
      * Get feature
      *
-     * @param $name
+     * @param string $name
      * @return AbstractFeature|false
      */
-    public function getFeature($name)
+    public function getFeature(string $name)
     {
         if (isset($this->features[$name])) {
             return $this->features[$name];

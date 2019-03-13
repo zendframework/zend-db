@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Metadata\Source;
 
@@ -13,7 +13,10 @@ use Zend\Db\Adapter\Adapter;
 
 class MysqlMetadata extends AbstractSource
 {
-    protected function loadSchemaData()
+    /**
+     * @inheritdoc
+     */
+    protected function loadSchemaData() : void
     {
         if (isset($this->data['schemas'])) {
             return;
@@ -37,7 +40,10 @@ class MysqlMetadata extends AbstractSource
         $this->data['schemas'] = $schemas;
     }
 
-    protected function loadTableNameData($schema)
+    /**
+     * @inheritdoc
+     */
+    protected function loadTableNameData(string $schema) : void
     {
         if (isset($this->data['table_names'][$schema])) {
             return;
@@ -70,7 +76,7 @@ class MysqlMetadata extends AbstractSource
              . ' WHERE ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
              . ' IN (\'BASE TABLE\', \'VIEW\')';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
                   . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -86,14 +92,17 @@ class MysqlMetadata extends AbstractSource
                 'table_type' => $row['TABLE_TYPE'],
                 'view_definition' => $row['VIEW_DEFINITION'],
                 'check_option' => $row['CHECK_OPTION'],
-                'is_updatable' => ('YES' == $row['IS_UPDATABLE']),
+                'is_updatable' => 'YES' === $row['IS_UPDATABLE'],
             ];
         }
 
         $this->data['table_names'][$schema] = $tables;
     }
 
-    protected function loadColumnData($table, $schema)
+    /**
+     * @inheritdoc
+     */
+    protected function loadColumnData(string $table, string $schema) : void
     {
         if (isset($this->data['columns'][$schema][$table])) {
             return;
@@ -130,7 +139,7 @@ class MysqlMetadata extends AbstractSource
              . ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_NAME'])
              . '  = ' . $p->quoteTrustedValue($table);
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
                   . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -161,13 +170,13 @@ class MysqlMetadata extends AbstractSource
             $columns[$row['COLUMN_NAME']] = [
                 'ordinal_position'          => $row['ORDINAL_POSITION'],
                 'column_default'            => $row['COLUMN_DEFAULT'],
-                'is_nullable'               => ('YES' == $row['IS_NULLABLE']),
+                'is_nullable'               => 'YES' === $row['IS_NULLABLE'],
                 'data_type'                 => $row['DATA_TYPE'],
                 'character_maximum_length'  => $row['CHARACTER_MAXIMUM_LENGTH'],
                 'character_octet_length'    => $row['CHARACTER_OCTET_LENGTH'],
                 'numeric_precision'         => $row['NUMERIC_PRECISION'],
                 'numeric_scale'             => $row['NUMERIC_SCALE'],
-                'numeric_unsigned'          => (false !== strpos($row['COLUMN_TYPE'], 'unsigned')),
+                'numeric_unsigned'          => false !== strpos($row['COLUMN_TYPE'], 'unsigned'),
                 'erratas'                   => $erratas,
             ];
         }
@@ -175,7 +184,10 @@ class MysqlMetadata extends AbstractSource
         $this->data['columns'][$schema][$table] = $columns;
     }
 
-    protected function loadConstraintData($table, $schema)
+    /**
+     * @inheritdoc
+     */
+    protected function loadConstraintData(string $table, string $schema) : void
     {
         if (isset($this->data['constraints'][$schema][$table])) {
             return;
@@ -230,7 +242,7 @@ class MysqlMetadata extends AbstractSource
              . ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
              . ' IN (\'BASE TABLE\', \'VIEW\')';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
             . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -254,7 +266,7 @@ class MysqlMetadata extends AbstractSource
         foreach ($results->toArray() as $row) {
             if ($row['CONSTRAINT_NAME'] !== $realName) {
                 $realName = $row['CONSTRAINT_NAME'];
-                $isFK = ('FOREIGN KEY' == $row['CONSTRAINT_TYPE']);
+                $isFK = ('FOREIGN KEY' === $row['CONSTRAINT_TYPE']);
                 if ($isFK) {
                     $name = $realName;
                 } else {
@@ -284,7 +296,7 @@ class MysqlMetadata extends AbstractSource
         $this->data['constraints'][$schema][$table] = $constraints;
     }
 
-    protected function loadConstraintDataNames($schema)
+    protected function loadConstraintDataNames(string $schema) : void
     {
         if (isset($this->data['constraint_names'][$schema])) {
             return;
@@ -314,7 +326,7 @@ class MysqlMetadata extends AbstractSource
         . ' WHERE ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
         . ' IN (\'BASE TABLE\', \'VIEW\')';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
             . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -332,7 +344,10 @@ class MysqlMetadata extends AbstractSource
         $this->data['constraint_names'][$schema] = $data;
     }
 
-    protected function loadConstraintDataKeys($schema)
+    /**
+     * @inheritdoc
+     */
+    protected function loadConstraintDataKeys(string $schema) : void
     {
         if (isset($this->data['constraint_keys'][$schema])) {
             return;
@@ -365,7 +380,7 @@ class MysqlMetadata extends AbstractSource
         . ' WHERE ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
         . ' IN (\'BASE TABLE\', \'VIEW\')';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
             . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -383,7 +398,10 @@ class MysqlMetadata extends AbstractSource
         $this->data['constraint_keys'][$schema] = $data;
     }
 
-    protected function loadConstraintReferences($table, $schema)
+    /**
+     * @inheritdoc
+     */
+    protected function loadConstraintReferences(string $table, string $schema) : void
     {
         parent::loadConstraintReferences($table, $schema);
 
@@ -423,7 +441,7 @@ class MysqlMetadata extends AbstractSource
         . 'WHERE ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
         . ' IN (\'BASE TABLE\', \'VIEW\')';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
             . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -441,7 +459,10 @@ class MysqlMetadata extends AbstractSource
         $this->data['constraint_references'][$schema] = $data;
     }
 
-    protected function loadTriggerData($schema)
+    /**
+     * @inheritdoc
+     */
+    protected function loadTriggerData(string $schema) : void
     {
         if (isset($this->data['triggers'][$schema])) {
             return;
@@ -479,7 +500,7 @@ class MysqlMetadata extends AbstractSource
         . ' FROM ' . $p->quoteIdentifierChain(['INFORMATION_SCHEMA', 'TRIGGERS'])
         . ' WHERE ';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= $p->quoteIdentifier('TRIGGER_SCHEMA')
             . ' = ' . $p->quoteTrustedValue($schema);
         } else {

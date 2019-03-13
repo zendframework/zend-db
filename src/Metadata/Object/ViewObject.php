@@ -1,75 +1,59 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Metadata\Object;
 
 class ViewObject extends AbstractTableObject
 {
-    protected $viewDefinition;
-    protected $checkOption;
-    protected $isUpdatable;
+    /** @var string */
+    protected $viewDefinition = '';
 
-    /**
-     * @return string $viewDefinition
-     */
-    public function getViewDefinition()
+    /** @var string */
+    protected $checkOption = '';
+
+    /** @var bool */
+    protected $isUpdatable = false;
+
+    public function getViewDefinition() : string
     {
         return $this->viewDefinition;
     }
 
-    /**
-     * @param string $viewDefinition to set
-     * @return self Provides a fluent interface
-     */
-    public function setViewDefinition($viewDefinition)
+    public function setViewDefinition(string $viewDefinition) : self
     {
         $this->viewDefinition = $viewDefinition;
         return $this;
     }
 
-    /**
-     * @return string $checkOption
-     */
-    public function getCheckOption()
+    public function getCheckOption() : string
     {
         return $this->checkOption;
     }
 
-    /**
-     * @param string $checkOption to set
-     * @return self Provides a fluent interface
-     */
-    public function setCheckOption($checkOption)
+    public function setCheckOption(string $checkOption) : self
     {
         $this->checkOption = $checkOption;
         return $this;
     }
 
-    /**
-     * @return bool $isUpdatable
-     */
-    public function getIsUpdatable()
+    public function getIsUpdatable() : bool
     {
         return $this->isUpdatable;
     }
 
-    /**
-     * @param bool $isUpdatable to set
-     * @return self Provides a fluent interface
-     */
-    public function setIsUpdatable($isUpdatable)
+    public function setIsUpdatable(bool $isUpdatable) : self
     {
         $this->isUpdatable = $isUpdatable;
         return $this;
     }
 
-    public function isUpdatable()
+    public function isUpdatable() : bool
     {
         return $this->isUpdatable;
     }
