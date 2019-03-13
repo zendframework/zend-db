@@ -70,7 +70,7 @@ class MysqlMetadata extends AbstractSource
              . ' WHERE ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
              . ' IN (\'BASE TABLE\', \'VIEW\')';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
                   . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -86,7 +86,7 @@ class MysqlMetadata extends AbstractSource
                 'table_type' => $row['TABLE_TYPE'],
                 'view_definition' => $row['VIEW_DEFINITION'],
                 'check_option' => $row['CHECK_OPTION'],
-                'is_updatable' => 'YES' == $row['IS_UPDATABLE'],
+                'is_updatable' => 'YES' === $row['IS_UPDATABLE'],
             ];
         }
 
@@ -130,7 +130,7 @@ class MysqlMetadata extends AbstractSource
              . ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_NAME'])
              . '  = ' . $p->quoteTrustedValue($table);
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
                   . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -161,7 +161,7 @@ class MysqlMetadata extends AbstractSource
             $columns[$row['COLUMN_NAME']] = [
                 'ordinal_position'          => $row['ORDINAL_POSITION'],
                 'column_default'            => $row['COLUMN_DEFAULT'],
-                'is_nullable'               => 'YES' == $row['IS_NULLABLE'],
+                'is_nullable'               => 'YES' === $row['IS_NULLABLE'],
                 'data_type'                 => $row['DATA_TYPE'],
                 'character_maximum_length'  => $row['CHARACTER_MAXIMUM_LENGTH'],
                 'character_octet_length'    => $row['CHARACTER_OCTET_LENGTH'],
@@ -230,7 +230,7 @@ class MysqlMetadata extends AbstractSource
              . ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
              . ' IN (\'BASE TABLE\', \'VIEW\')';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
             . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -254,7 +254,7 @@ class MysqlMetadata extends AbstractSource
         foreach ($results->toArray() as $row) {
             if ($row['CONSTRAINT_NAME'] !== $realName) {
                 $realName = $row['CONSTRAINT_NAME'];
-                $isFK = ('FOREIGN KEY' == $row['CONSTRAINT_TYPE']);
+                $isFK = ('FOREIGN KEY' === $row['CONSTRAINT_TYPE']);
                 if ($isFK) {
                     $name = $realName;
                 } else {
@@ -314,7 +314,7 @@ class MysqlMetadata extends AbstractSource
         . ' WHERE ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
         . ' IN (\'BASE TABLE\', \'VIEW\')';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
             . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -365,7 +365,7 @@ class MysqlMetadata extends AbstractSource
         . ' WHERE ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
         . ' IN (\'BASE TABLE\', \'VIEW\')';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
             . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -423,7 +423,7 @@ class MysqlMetadata extends AbstractSource
         . 'WHERE ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
         . ' IN (\'BASE TABLE\', \'VIEW\')';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
             . ' = ' . $p->quoteTrustedValue($schema);
         } else {
@@ -479,7 +479,7 @@ class MysqlMetadata extends AbstractSource
         . ' FROM ' . $p->quoteIdentifierChain(['INFORMATION_SCHEMA', 'TRIGGERS'])
         . ' WHERE ';
 
-        if ($schema != self::DEFAULT_SCHEMA) {
+        if ($schema !== self::DEFAULT_SCHEMA) {
             $sql .= $p->quoteIdentifier('TRIGGER_SCHEMA')
             . ' = ' . $p->quoteTrustedValue($schema);
         } else {

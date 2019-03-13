@@ -376,7 +376,7 @@ class ConstraintObject
      */
     public function isPrimaryKey() : bool
     {
-        return ('PRIMARY KEY' == $this->type);
+        return ('PRIMARY KEY' === $this->type);
     }
 
     /**
@@ -386,7 +386,7 @@ class ConstraintObject
      */
     public function isUnique() : bool
     {
-        return ('UNIQUE' == $this->type);
+        return ('UNIQUE' === $this->type);
     }
 
     /**
@@ -396,7 +396,7 @@ class ConstraintObject
      */
     public function isForeignKey() : bool
     {
-        return ('FOREIGN KEY' == $this->type);
+        return ('FOREIGN KEY' === $this->type);
     }
 
     /**
@@ -406,6 +406,6 @@ class ConstraintObject
      */
     public function isCheck() : bool
     {
-        return ('CHECK' == $this->type);
+        return ('CHECK' === $this->type);
     }
 }

@@ -45,7 +45,7 @@ class SqliteMetadata extends AbstractSource
         $results = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
         $tables = [];
         foreach ($results->toArray() as $row) {
-            if ('table' == $row['type']) {
+            if ('table' === $row['type']) {
                 $table = [
                     'table_type' => 'BASE TABLE',
                     'view_definition' => null, // VIEW only
@@ -324,7 +324,7 @@ class SqliteMetadata extends AbstractSource
         }
         if (! empty($data['action_timing'])) {
             $data['action_timing'] = strtoupper($data['action_timing']);
-            if ('I' == $data['action_timing'][0]) {
+            if ('I' === $data['action_timing'][0]) {
                 // normalize the white-space between the two words
                 $data['action_timing'] = 'INSTEAD OF';
             }

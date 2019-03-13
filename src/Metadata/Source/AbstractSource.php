@@ -78,7 +78,7 @@ abstract class AbstractSource implements MetadataInterface
 
         $tableNames = [];
         foreach ($this->data['table_names'][$schema] as $tableName => $data) {
-            if ('BASE TABLE' == $data['table_type']) {
+            if ('BASE TABLE' === $data['table_type']) {
                 $tableNames[] = $tableName;
             }
         }
@@ -150,7 +150,7 @@ abstract class AbstractSource implements MetadataInterface
 
         $viewNames = [];
         foreach ($this->data['table_names'][$schema] as $tableName => $data) {
-            if ('VIEW' == $data['table_type']) {
+            if ('VIEW' === $data['table_type']) {
                 $viewNames[] = $tableName;
             }
         }
@@ -185,7 +185,7 @@ abstract class AbstractSource implements MetadataInterface
         $this->loadTableNameData($schema);
 
         $tableNames = $this->data['table_names'][$schema];
-        if (isset($tableNames[$viewName]) && 'VIEW' == $tableNames[$viewName]['table_type']) {
+        if (isset($tableNames[$viewName]) && 'VIEW' === $tableNames[$viewName]['table_type']) {
             return $this->getTable($viewName, $schema);
         }
         throw new \Exception('View "' . $viewName . '" does not exist');
@@ -341,7 +341,7 @@ abstract class AbstractSource implements MetadataInterface
         // organize references first
         $references = [];
         foreach ($this->data['constraint_references'][$schema] as $refKeyInfo) {
-            if ($refKeyInfo['constraint_name'] == $constraint) {
+            if ($refKeyInfo['constraint_name'] === $constraint) {
                 $references[$refKeyInfo['constraint_name']] = $refKeyInfo;
             }
         }
@@ -350,7 +350,7 @@ abstract class AbstractSource implements MetadataInterface
 
         $keys = [];
         foreach ($this->data['constraint_keys'][$schema] as $constraintKeyInfo) {
-            if ($constraintKeyInfo['table_name'] == $table && $constraintKeyInfo['constraint_name'] === $constraint) {
+            if ($constraintKeyInfo['table_name'] === $table && $constraintKeyInfo['constraint_name'] === $constraint) {
                 $keys[] = $key = new ConstraintKeyObject($constraintKeyInfo['column_name']);
                 $key->setOrdinalPosition($constraintKeyInfo['ordinal_position']);
                 if (isset($references[$constraint])) {

@@ -63,7 +63,7 @@ class OracleMetadata extends AbstractSource
             $columns[$row['COLUMN_NAME']] = [
                 'ordinal_position'          => $row['COLUMN_ID'],
                 'column_default'            => $row['DATA_DEFAULT'],
-                'is_nullable'               => 'Y' == $row['NULLABLE'],
+                'is_nullable'               => 'Y' === $row['NULLABLE'],
                 'data_type'                 => $row['DATA_TYPE'],
                 'character_maximum_length'  => $row['DATA_LENGTH'],
                 'character_octet_length'    => null,
@@ -147,14 +147,14 @@ class OracleMetadata extends AbstractSource
                     'table_name'      => $row['TABLE_NAME'],
                 ];
 
-                if ('C' == $row['CONSTRAINT_TYPE']) {
+                if ('C' === $row['CONSTRAINT_TYPE']) {
                     $constraints[$name]['CHECK_CLAUSE'] = $row['CHECK_CLAUSE'];
                     continue;
                 }
 
                 $constraints[$name]['columns'] = [];
 
-                $isFK = ('R' == $row['CONSTRAINT_TYPE']);
+                $isFK = ('R' === $row['CONSTRAINT_TYPE']);
                 if ($isFK) {
                     $constraints[$name]['referenced_table_schema'] = $row['REF_OWNER'];
                     $constraints[$name]['referenced_table_name']   = $row['REF_TABLE'];
