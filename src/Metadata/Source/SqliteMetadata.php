@@ -231,7 +231,7 @@ class SqliteMetadata extends AbstractSource
         $this->data['triggers'][$schema] = $triggers;
     }
 
-    protected function fetchPragma($name, $value = null, $schema = null)
+    protected function fetchPragma(string $name, string $value = null, string $schema = null)
     {
         $p = $this->adapter->getPlatform();
 
