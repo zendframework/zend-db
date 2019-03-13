@@ -246,14 +246,6 @@ class SqliteMetadata extends AbstractSource
         $this->data['triggers'][$schema] = $triggers;
     }
 
-    /**
-     * Fetch pragma
-     *
-     * @param string $name
-     * @param string|null $value
-     * @param string|null $schema
-     * @return array
-     */
     protected function fetchPragma(string $name, ?string $value = null, ?string $schema = null) : array
     {
         $p = $this->adapter->getPlatform();
@@ -276,12 +268,6 @@ class SqliteMetadata extends AbstractSource
         return [];
     }
 
-    /**
-     * Parse view
-     *
-     * @param string $sql
-     * @return array|void
-     */
     protected function parseView(string $sql) : ?array
     {
         static $re = null;
@@ -307,12 +293,6 @@ class SqliteMetadata extends AbstractSource
         ];
     }
 
-    /**
-     * Parse trigger
-     *
-     * @param string $sql
-     * @return array|null
-     */
     protected function parseTrigger(string $sql) : ?array
     {
         static $re = null;
@@ -371,10 +351,6 @@ class SqliteMetadata extends AbstractSource
         return $data;
     }
 
-    /**
-     * @param array $re
-     * @return string|null
-     */
     protected function buildRegularExpression(array $re) : ?string
     {
         foreach ($re as &$value) {
@@ -389,9 +365,6 @@ class SqliteMetadata extends AbstractSource
         return $re;
     }
 
-    /**
-     * @return string|null
-     */
     protected function getIdentifierRegularExpression() : ?string
     {
         static $re = null;
@@ -407,9 +380,6 @@ class SqliteMetadata extends AbstractSource
         return $re;
     }
 
-    /**
-     * @return string|null
-     */
     protected function getIdentifierChainRegularExpression() : ?string
     {
         static $re = null;
@@ -420,9 +390,6 @@ class SqliteMetadata extends AbstractSource
         return $re;
     }
 
-    /**
-     * @return string|null
-     */
     protected function getIdentifierListRegularExpression() : ?string
     {
         static $re = null;

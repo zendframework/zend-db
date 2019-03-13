@@ -18,13 +18,6 @@ use Zend\Db\Metadata\MetadataInterface;
  */
 class Factory
 {
-    /**
-     * Create source from adapter
-     *
-     * @param  Adapter $adapter
-     * @return MetadataInterface
-     * @throws InvalidArgumentException If adapter platform name not recognized.
-     */
     public static function createSourceFromAdapter(Adapter $adapter) : MetadataInterface
     {
         $platformName = $adapter->getPlatform()->getName();

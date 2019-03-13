@@ -296,11 +296,6 @@ class MysqlMetadata extends AbstractSource
         $this->data['constraints'][$schema][$table] = $constraints;
     }
 
-    /**
-     * Load constraint data names
-     *
-     * @param string $schema
-     */
     protected function loadConstraintDataNames(string $schema) : void
     {
         if (isset($this->data['constraint_names'][$schema])) {

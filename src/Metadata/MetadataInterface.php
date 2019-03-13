@@ -43,13 +43,6 @@ interface MetadataInterface
      */
     public function getTables(?string $schema = null, bool $includeViews = false) : array;
 
-    /**
-     * Get table
-     *
-     * @param string $tableName
-     * @param null|string $schema
-     * @return TableObject
-     */
     public function getTable(string $tableName, ?string $schema = null) : TableObject;
 
     /**
@@ -68,13 +61,6 @@ interface MetadataInterface
      */
     public function getViews(?string $schema = null) : array;
 
-    /**
-     * Get view
-     *
-     * @param string $viewName
-     * @param null|string $schema
-     * @return ViewObject
-     */
     public function getView(string $viewName, ?string $schema = null) : ViewObject;
 
     /**
@@ -95,14 +81,6 @@ interface MetadataInterface
      */
     public function getColumns(string $table, ?string $schema = null) : array;
 
-    /**
-     * Get column
-     *
-     * @param string $columnName
-     * @param string $table
-     * @param null|string $schema
-     * @return ColumnObject
-     */
     public function getColumn(string $columnName, string $table, ?string $schema = null) : ColumnObject;
 
     /**
@@ -114,14 +92,6 @@ interface MetadataInterface
      */
     public function getConstraints(string $table, ?string $schema = null) : array;
 
-    /**
-     * Get constraint
-     *
-     * @param string $constraintName
-     * @param string $table
-     * @param null|string $schema
-     * @return ConstraintObject
-     */
     public function getConstraint(string $constraintName, string $table, ?string $schema = null) : ConstraintObject;
 
     /**
@@ -150,12 +120,5 @@ interface MetadataInterface
      */
     public function getTriggers(?string $schema = null) : array;
 
-    /**
-     * Get trigger
-     *
-     * @param string $triggerName
-     * @param null|string $schema
-     * @return TriggerObject
-     */
     public function getTrigger(string $triggerName, ?string $schema = null) : TriggerObject;
 }

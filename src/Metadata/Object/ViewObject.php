@@ -20,63 +20,39 @@ class ViewObject extends AbstractTableObject
     /** @var bool */
     protected $isUpdatable = false;
 
-    /**
-     * @return string $viewDefinition
-     */
     public function getViewDefinition() : string
     {
         return $this->viewDefinition;
     }
 
-    /**
-     * @param string $viewDefinition to set
-     * @return self Provides a fluent interface
-     */
     public function setViewDefinition(string $viewDefinition) : self
     {
         $this->viewDefinition = $viewDefinition;
         return $this;
     }
 
-    /**
-     * @return string $checkOption
-     */
     public function getCheckOption() : string
     {
         return $this->checkOption;
     }
 
-    /**
-     * @param string $checkOption to set
-     * @return self Provides a fluent interface
-     */
     public function setCheckOption(string $checkOption) : self
     {
         $this->checkOption = $checkOption;
         return $this;
     }
 
-    /**
-     * @return bool $isUpdatable
-     */
     public function getIsUpdatable() : bool
     {
         return $this->isUpdatable;
     }
 
-    /**
-     * @param bool $isUpdatable to set
-     * @return self Provides a fluent interface
-     */
     public function setIsUpdatable(bool $isUpdatable) : self
     {
         $this->isUpdatable = $isUpdatable;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isUpdatable() : bool
     {
         return $this->isUpdatable;
