@@ -439,7 +439,6 @@ abstract class AbstractSource implements MetadataInterface
      * Prepare data hierarchy
      *
      * @param string $type
-     * @param string $key ...
      */
     protected function prepareDataHierarchy(string $type) : void
     {
