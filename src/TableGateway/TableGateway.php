@@ -66,10 +66,10 @@ class TableGateway extends AbstractTableGateway
         }
 
         // result prototype
-        $this->resultSetPrototype = ($resultSetPrototype) ?: new ResultSet;
+        $this->resultSetPrototype = $resultSetPrototype ?: new ResultSet;
 
         // Sql object (factory for select, insert, update, delete)
-        $this->sql = ($sql) ?: new Sql($this->adapter, $this->table);
+        $this->sql = $sql ?: new Sql($this->adapter, $this->table);
 
         // check sql object bound to same table
         if ($this->sql->getTable() != $this->table) {

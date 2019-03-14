@@ -50,7 +50,7 @@ class EventFeature extends AbstractFeature implements
             'Zend\Db\TableGateway\TableGateway',
         ]);
 
-        $this->event = ($tableGatewayEvent) ?: new EventFeature\TableGatewayEvent();
+        $this->event = $tableGatewayEvent ?: new EventFeature\TableGatewayEvent();
     }
 
     /**
