@@ -15,30 +15,20 @@ use Zend\Db\Adapter\Driver\StatementInterface;
 
 class SequenceFeature extends AbstractFeature
 {
-    /** @var string */
-    protected $primaryKeyField;
+    protected $primaryKeyField = '';
 
-    /** @var string */
-    protected $sequenceName;
+    protected $sequenceName = '';
 
     /** @var int */
     protected $sequenceValue;
 
 
-    /**
-     * @param string $primaryKeyField
-     * @param string $sequenceName
-     */
-    public function __construct($primaryKeyField, $sequenceName)
+    public function __construct(string $primaryKeyField, string $sequenceName)
     {
         $this->primaryKeyField = $primaryKeyField;
         $this->sequenceName    = $sequenceName;
     }
 
-    /**
-     * @param Insert $insert
-     * @return Insert
-     */
     public function preInsert(Insert $insert) : Insert
     {
         $columns = $insert->getRawState('columns');
@@ -58,10 +48,6 @@ class SequenceFeature extends AbstractFeature
         return $insert;
     }
 
-    /**
-     * @param StatementInterface $statement
-     * @param ResultInterface $result
-     */
     public function postInsert(StatementInterface $statement, ResultInterface $result) : void
     {
         if ($this->sequenceValue !== null) {
@@ -71,7 +57,7 @@ class SequenceFeature extends AbstractFeature
 
     /**
      * Generate a new value from the specified sequence in the database, and return it.
-     * @return int
+     * @return int|null
      */
     public function nextSequenceId() : ?int
     {
@@ -99,7 +85,7 @@ class SequenceFeature extends AbstractFeature
 
     /**
      * Return the most recent value from the specified sequence in the database.
-     * @return int
+     * @return int|null
      */
     public function lastSequenceId() : ?int
     {
