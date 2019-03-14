@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\ResultSet;
 
@@ -13,38 +13,25 @@ use ArrayObject;
 
 class ResultSet extends AbstractResultSet
 {
-    const TYPE_ARRAYOBJECT = 'arrayobject';
-    const TYPE_ARRAY  = 'array';
+    public const TYPE_ARRAYOBJECT = 'arrayobject';
+    public const TYPE_ARRAY  = 'array';
 
-    /**
-     * Allowed return types
-     *
-     * @var array
-     */
     protected $allowedReturnTypes = [
         self::TYPE_ARRAYOBJECT,
         self::TYPE_ARRAY,
     ];
 
-    /**
-     * @var ArrayObject
-     */
-    protected $arrayObjectPrototype = null;
+    /** @var ArrayObject */
+    protected $arrayObjectPrototype;
 
     /**
      * Return type to use when returning an object from the set
      *
-     * @var ResultSet::TYPE_ARRAYOBJECT|ResultSet::TYPE_ARRAY
+     * @var string One of the above declared TYPE constants
      */
     protected $returnType = self::TYPE_ARRAYOBJECT;
 
-    /**
-     * Constructor
-     *
-     * @param string           $returnType
-     * @param null|ArrayObject $arrayObjectPrototype
-     */
-    public function __construct($returnType = self::TYPE_ARRAYOBJECT, $arrayObjectPrototype = null)
+    public function __construct(string $returnType = self::TYPE_ARRAYOBJECT, ?ArrayObject $arrayObjectPrototype = null)
     {
         if (in_array($returnType, [self::TYPE_ARRAY, self::TYPE_ARRAYOBJECT])) {
             $this->returnType = $returnType;
@@ -52,24 +39,14 @@ class ResultSet extends AbstractResultSet
             $this->returnType = self::TYPE_ARRAYOBJECT;
         }
         if ($this->returnType === self::TYPE_ARRAYOBJECT) {
-            $this->setArrayObjectPrototype(($arrayObjectPrototype) ?: new ArrayObject([], ArrayObject::ARRAY_AS_PROPS));
+            $this->setArrayObjectPrototype($arrayObjectPrototype ?: new ArrayObject([], ArrayObject::ARRAY_AS_PROPS));
         }
     }
 
-    /**
-     * Set the row object prototype
-     *
-     * @param  ArrayObject $arrayObjectPrototype
-     * @return self Provides a fluent interface
-     * @throws Exception\InvalidArgumentException
-     */
-    public function setArrayObjectPrototype($arrayObjectPrototype)
+    public function setArrayObjectPrototype(object $arrayObjectPrototype) : self
     {
-        if (! is_object($arrayObjectPrototype)
-            || (
-                ! $arrayObjectPrototype instanceof ArrayObject
-                && ! method_exists($arrayObjectPrototype, 'exchangeArray')
-            )
+        if (! $arrayObjectPrototype instanceof ArrayObject
+            && ! method_exists($arrayObjectPrototype, 'exchangeArray')
         ) {
             throw new Exception\InvalidArgumentException(
                 'Object must be of type ArrayObject, or at least implement exchangeArray'
@@ -79,28 +56,18 @@ class ResultSet extends AbstractResultSet
         return $this;
     }
 
-    /**
-     * Get the row object prototype
-     *
-     * @return ArrayObject
-     */
-    public function getArrayObjectPrototype()
+    public function getArrayObjectPrototype() : ArrayObject
     {
         return $this->arrayObjectPrototype;
     }
 
-    /**
-     * Get the return type to use when returning objects from the set
-     *
-     * @return string
-     */
-    public function getReturnType()
+    public function getReturnType() : string
     {
         return $this->returnType;
     }
 
     /**
-     * @return array|\ArrayObject|null
+     * @return array|ArrayObject|null
      */
     public function current()
     {

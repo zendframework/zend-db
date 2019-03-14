@@ -25,26 +25,18 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      * if array, already buffering
      * @var mixed
      */
-    protected $buffer = null;
+    protected $buffer;
 
-    /**
-     * @var null|int
-     */
-    protected $count = null;
+    /** @var null|int */
+    protected $count;
 
-    /**
-     * @var Iterator|IteratorAggregate|ResultInterface
-     */
-    protected $dataSource = null;
+    /** @var Iterator|IteratorAggregate|ResultInterface */
+    protected $dataSource;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $fieldCount = 0;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $position = 0;
 
     /**
@@ -54,7 +46,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function initialize($dataSource)
+    public function initialize($dataSource) : self
     {
         // reset buffering
         if (is_array($this->buffer)) {
@@ -93,42 +85,33 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
         return $this;
     }
 
-    /**
-     * @return self Provides a fluent interface
-     * @throws Exception\RuntimeException
-     */
-    public function buffer()
+    public function buffer() : self
     {
         if ($this->buffer === -2) {
             throw new Exception\RuntimeException('Buffering must be enabled before iteration is started');
-        } elseif ($this->buffer === null) {
+        }
+
+        if ($this->buffer === null) {
             $this->buffer = [];
             if ($this->dataSource instanceof ResultInterface) {
                 $this->dataSource->rewind();
             }
         }
+
         return $this;
     }
 
-    public function isBuffered()
+    public function isBuffered() : bool
     {
-        if ($this->buffer === -1 || is_array($this->buffer)) {
-            return true;
-        }
-        return false;
+        return $this->buffer === -1 || is_array($this->buffer);
     }
 
-    /**
-     * Get the data source used to create the result set
-     *
-     * @return null|Iterator
-     */
-    public function getDataSource()
+    public function getDataSource() : ?Iterator
     {
         return $this->dataSource;
     }
 
-    public function getFieldCount(): int
+    public function getFieldCount() : int
     {
         if (null !== $this->fieldCount) {
             return $this->fieldCount;
@@ -155,12 +138,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
         return $this->fieldCount;
     }
 
-    /**
-     * Iterator: move pointer to next item
-     *
-     * @return void
-     */
-    public function next()
+    public function next() : void
     {
         if ($this->buffer === null) {
             $this->buffer = -2; // implicitly disable buffering from here on
@@ -171,12 +149,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
         $this->position++;
     }
 
-    /**
-     * Iterator: retrieve current key
-     *
-     * @return mixed
-     */
-    public function key()
+    public function key() : int
     {
         return $this->position;
     }
@@ -205,30 +178,21 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
         return is_array($data) ? $data : null;
     }
 
-    /**
-     * Iterator: is pointer valid?
-     *
-     * @return bool
-     */
-    public function valid()
+    public function valid() : bool
     {
         if (is_array($this->buffer) && isset($this->buffer[$this->position])) {
             return true;
         }
+
         if ($this->dataSource instanceof Iterator) {
             return $this->dataSource->valid();
-        } else {
-            $key = key($this->dataSource);
-            return ($key !== null);
         }
+
+        $key = key($this->dataSource);
+        return ($key !== null);
     }
 
-    /**
-     * Iterator: rewind
-     *
-     * @return void
-     */
-    public function rewind()
+    public function rewind() : void
     {
         if (! is_array($this->buffer)) {
             if ($this->dataSource instanceof Iterator) {
@@ -240,12 +204,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
         $this->position = 0;
     }
 
-    /**
-     * Countable: return count of rows
-     *
-     * @return int
-     */
-    public function count()
+    public function count() : int
     {
         if ($this->count !== null) {
             return $this->count;
@@ -264,7 +223,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      * @return array
      * @throws Exception\RuntimeException if any row is not castable to an array
      */
-    public function toArray()
+    public function toArray() : array
     {
         $return = [];
         foreach ($this as $row) {

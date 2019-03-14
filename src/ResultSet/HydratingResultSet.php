@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\ResultSet;
 
@@ -16,77 +16,39 @@ use Zend\Hydrator\HydratorInterface;
 
 class HydratingResultSet extends AbstractResultSet
 {
-    /**
-     * @var HydratorInterface
-     */
-    protected $hydrator = null;
+    /** @var HydratorInterface */
+    protected $hydrator;
 
-    /**
-     * @var null|object
-     */
-    protected $objectPrototype = null;
+    /** @var null|object */
+    protected $objectPrototype;
 
-    /**
-     * Constructor
-     *
-     * @param  null|HydratorInterface $hydrator
-     * @param  null|object $objectPrototype
-     */
-    public function __construct(HydratorInterface $hydrator = null, $objectPrototype = null)
+    public function __construct(?HydratorInterface $hydrator = null, ?object $objectPrototype = null)
     {
         $defaultHydratorClass = class_exists(ArraySerializableHydrator::class)
             ? ArraySerializableHydrator::class
             : ArraySerializable::class;
         $this->setHydrator($hydrator ?: new $defaultHydratorClass());
-        $this->setObjectPrototype(($objectPrototype) ?: new ArrayObject);
+        $this->setObjectPrototype($objectPrototype ?: new ArrayObject);
     }
 
-    /**
-     * Set the row object prototype
-     *
-     * @param  object $objectPrototype
-     * @return self Provides a fluent interface
-     * @throws Exception\InvalidArgumentException
-     */
-    public function setObjectPrototype($objectPrototype)
+    public function setObjectPrototype(object $objectPrototype) : self
     {
-        if (! is_object($objectPrototype)) {
-            throw new Exception\InvalidArgumentException(
-                'An object must be set as the object prototype, a ' . gettype($objectPrototype) . ' was provided.'
-            );
-        }
         $this->objectPrototype = $objectPrototype;
         return $this;
     }
 
-    /**
-     * Get the row object prototype
-     *
-     * @return object
-     */
-    public function getObjectPrototype()
+    public function getObjectPrototype() : object
     {
         return $this->objectPrototype;
     }
 
-    /**
-     * Set the hydrator to use for each row object
-     *
-     * @param HydratorInterface $hydrator
-     * @return self Provides a fluent interface
-     */
-    public function setHydrator(HydratorInterface $hydrator)
+    public function setHydrator(HydratorInterface $hydrator) : self
     {
         $this->hydrator = $hydrator;
         return $this;
     }
 
-    /**
-     * Get the hydrator to use for each row object
-     *
-     * @return HydratorInterface
-     */
-    public function getHydrator()
+    public function getHydrator() : HydratorInterface
     {
         return $this->hydrator;
     }
@@ -94,7 +56,7 @@ class HydratingResultSet extends AbstractResultSet
     /**
      * Iterator: get current item
      *
-     * @return object
+     * @return null|array|bool
      */
     public function current()
     {
@@ -113,13 +75,7 @@ class HydratingResultSet extends AbstractResultSet
         return $object;
     }
 
-    /**
-     * Cast result set to array of arrays
-     *
-     * @return array
-     * @throws Exception\RuntimeException if any row is not castable to an array
-     */
-    public function toArray()
+    public function toArray() : array
     {
         $return = [];
         foreach ($this as $row) {
