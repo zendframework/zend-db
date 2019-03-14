@@ -14,9 +14,7 @@ use Zend\Db\TableGateway\Exception;
 
 class GlobalAdapterFeature extends AbstractFeature
 {
-    /**
-     * @var Adapter[]
-     */
+    /** @var Adapter[] */
     protected static $staticAdapters = [];
 
     /**

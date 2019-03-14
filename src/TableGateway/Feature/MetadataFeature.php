@@ -16,9 +16,7 @@ use Zend\Db\Metadata\Source\Factory as SourceFactory;
 
 class MetadataFeature extends AbstractFeature
 {
-    /**
-     * @var MetadataInterface
-     */
+    /** @var MetadataInterface */
     protected $metadata = null;
 
     /**

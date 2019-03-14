@@ -18,14 +18,10 @@ class FeatureSet
 
     protected $tableGateway = null;
 
-    /**
-     * @var AbstractFeature[]
-     */
+    /** @var AbstractFeature[] */
     protected $features = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $magicSpecifications = [];
 
     public function __construct(array $features = [])

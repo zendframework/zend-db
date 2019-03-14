@@ -30,45 +30,28 @@ use Zend\Db\TableGateway\Feature\EventFeatureEventsInterface;
  */
 abstract class AbstractTableGateway implements TableGatewayInterface
 {
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $isInitialized = false;
 
-    /**
-     * @var AdapterInterface
-     */
+    /** @var AdapterInterface */
     protected $adapter = null;
 
-    /**
-     * @var string|array|TableIdentifier
-     */
+    /** @var string|array|TableIdentifier */
     protected $table = null;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $columns = [];
 
-    /**
-     * @var Feature\FeatureSet
-     */
+    /** @var Feature\FeatureSet */
     protected $featureSet = null;
 
-    /**
-     * @var ResultSetInterface
-     */
+    /** @var ResultSetInterface */
     protected $resultSetPrototype = null;
 
-    /**
-     * @var Sql
-     */
+    /** @var Sql */
     protected $sql = null;
 
-    /**
-     *
-     * @var int
-     */
+    /** @var int */
     protected $lastInsertValue = null;
 
     /**

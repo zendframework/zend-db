@@ -15,19 +15,13 @@ use Zend\Db\Adapter\Driver\StatementInterface;
 
 class SequenceFeature extends AbstractFeature
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $primaryKeyField;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $sequenceName;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $sequenceValue;
 
 

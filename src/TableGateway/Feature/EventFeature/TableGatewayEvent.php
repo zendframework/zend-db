@@ -14,16 +14,12 @@ use Zend\EventManager\EventInterface;
 
 class TableGatewayEvent implements EventInterface
 {
-    /**
-     * @var null|string|object|AbstractTableGateway
-     */
+    /** @var null|string|object|AbstractTableGateway */
     protected $target;
 
     protected $name = '';
 
-    /**
-     * @var array|\ArrayAccess
-     */
+    /** @var array|\ArrayAccess */
     protected $params = [];
 
     /**

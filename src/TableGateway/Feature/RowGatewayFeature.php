@@ -17,9 +17,7 @@ use Zend\Db\TableGateway\Feature\MetadataFeature;
 
 class RowGatewayFeature extends AbstractFeature
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $constructorArguments = [];
 
     public function __construct()

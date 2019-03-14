@@ -25,14 +25,10 @@ class EventFeature extends AbstractFeature implements
     EventFeatureEventsInterface,
     EventsCapableInterface
 {
-    /**
-     * @var EventManagerInterface
-     */
+    /** @var EventManagerInterface */
     protected $eventManager = null;
 
-    /**
-     * @var null
-     */
+    /** @var null */
     protected $event = null;
 
     /**

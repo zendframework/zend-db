@@ -14,19 +14,13 @@ use Zend\Db\Sql\Sql;
 
 class MasterSlaveFeature extends AbstractFeature
 {
-    /**
-     * @var AdapterInterface
-     */
+    /** @var AdapterInterface */
     protected $slaveAdapter = null;
 
-    /**
-     * @var Sql
-     */
+    /** @var Sql */
     protected $masterSql = null;
 
-    /**
-     * @var Sql
-     */
+    /** @var Sql */
     protected $slaveSql = null;
 
     /**
