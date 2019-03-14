@@ -24,21 +24,12 @@ class FeatureSet
     /** @var array */
     protected $magicSpecifications = [];
 
-    /**
-     * @param array $features
-     */
     public function __construct(array $features = [])
     {
-        if ($features) {
-            $this->addFeatures($features);
-        }
+        $this->addFeatures($features);
     }
 
-    /**
-     * @param AbstractRowGateway $rowGateway
-     * @return self Provides a fluent interface
-     */
-    public function setRowGateway(AbstractRowGateway $rowGateway)
+    public function setRowGateway(AbstractRowGateway $rowGateway) : self
     {
         $this->rowGateway = $rowGateway;
         foreach ($this->features as $feature) {
@@ -47,6 +38,10 @@ class FeatureSet
         return $this;
     }
 
+    /**
+     * @param mixed $featureClassName
+     * @return bool|AbstractFeature
+     */
     public function getFeatureByClassName($featureClassName)
     {
         $feature = false;
@@ -59,11 +54,7 @@ class FeatureSet
         return $feature;
     }
 
-    /**
-     * @param array $features
-     * @return self Provides a fluent interface
-     */
-    public function addFeatures(array $features)
+    public function addFeatures(array $features) : self
     {
         foreach ($features as $feature) {
             $this->addFeature($feature);
@@ -71,18 +62,14 @@ class FeatureSet
         return $this;
     }
 
-    /**
-     * @param AbstractFeature $feature
-     * @return self Provides a fluent interface
-     */
-    public function addFeature(AbstractFeature $feature)
+    public function addFeature(AbstractFeature $feature) : self
     {
         $this->features[] = $feature;
         $feature->setRowGateway($feature);
         return $this;
     }
 
-    public function apply($method, $args)
+    public function apply(string $method, array $args) : void
     {
         foreach ($this->features as $feature) {
             if (method_exists($feature, $method)) {
@@ -94,62 +81,33 @@ class FeatureSet
         }
     }
 
-    /**
-     * @param string $property
-     * @return bool
-     */
-    public function canCallMagicGet($property)
+    public function canCallMagicGet(string $property) : bool
     {
         return false;
     }
 
-    /**
-     * @param string $property
-     * @return mixed
-     */
-    public function callMagicGet($property)
+    public function callMagicGet(string $property) : void
     {
-        $return = null;
-        return $return;
+        return null;
     }
 
-    /**
-     * @param string $property
-     * @return bool
-     */
-    public function canCallMagicSet($property)
+    public function canCallMagicSet(string $property) : bool
     {
         return false;
     }
 
-    /**
-     * @param $property
-     * @param $value
-     * @return mixed
-     */
-    public function callMagicSet($property, $value)
+    public function callMagicSet(string $property, $value) : void
     {
-        $return = null;
-        return $return;
+        return null;
     }
 
-    /**
-     * @param string $method
-     * @return bool
-     */
-    public function canCallMagicCall($method)
+    public function canCallMagicCall(string $method) : bool
     {
         return false;
     }
 
-    /**
-     * @param string $method
-     * @param array $arguments
-     * @return mixed
-     */
-    public function callMagicCall($method, $arguments)
+    public function callMagicCall(string $method, array $arguments) : void
     {
-        $return = null;
-        return $return;
+        return null;
     }
 }

@@ -19,10 +19,10 @@ class RowGateway extends AbstractRowGateway
      *
      * @param string $primaryKeyColumn
      * @param string|\Zend\Db\Sql\TableIdentifier $table
-     * @param Adapter|Sql $adapterOrSql
+     * @param null|Adapter|Sql $adapterOrSql
      * @throws Exception\InvalidArgumentException
      */
-    public function __construct($primaryKeyColumn, $table, $adapterOrSql = null)
+    public function __construct(string $primaryKeyColumn, $table, $adapterOrSql = null)
     {
         // setup primary key
         $this->primaryKeyColumn = empty($primaryKeyColumn) ? null : (array) $primaryKeyColumn;

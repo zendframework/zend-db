@@ -72,14 +72,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         $this->isInitialized = true;
     }
 
-    /**
-     * Populate Data
-     *
-     * @param  array $rowData
-     * @param  bool  $rowExistsInDatabase
-     * @return self Provides a fluent interface
-     */
-    public function populate(array $rowData, $rowExistsInDatabase = false)
+    public function populate(array $rowData, bool $rowExistsInDatabase = false) : self
     {
         $this->initialize();
 
@@ -93,21 +86,12 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         return $this;
     }
 
-    /**
-     * @param mixed $array
-     * @return AbstractRowGateway
-     */
-    public function exchangeArray($array)
+    public function exchangeArray(array $array) : self
     {
         return $this->populate($array, true);
     }
 
-    /**
-     * Save
-     *
-     * @return int
-     */
-    public function save()
+    public function save() : int
     {
         $this->initialize();
 
@@ -178,12 +162,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         return $rowsAffected;
     }
 
-    /**
-     * Delete
-     *
-     * @return int
-     */
-    public function delete()
+    public function delete() : int
     {
         $this->initialize();
 
@@ -213,7 +192,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * @param  string $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset) : bool
     {
         return array_key_exists($offset, $this->data);
     }
@@ -236,7 +215,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * @param  mixed $value
      * @return self Provides a fluent interface
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value) : self
     {
         $this->data[$offset] = $value;
         return $this;
@@ -248,38 +227,23 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * @param  string $offset
      * @return self Provides a fluent interface
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset) : self
     {
         $this->data[$offset] = null;
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count() : int
     {
         return count($this->data);
     }
 
-    /**
-     * To array
-     *
-     * @return array
-     */
-    public function toArray()
+    public function toArray() : array
     {
         return $this->data;
     }
 
-    /**
-     * __get
-     *
-     * @param  string $name
-     * @throws Exception\InvalidArgumentException
-     * @return mixed
-     */
-    public function __get($name)
+    public function __get(string $name)
     {
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
@@ -288,52 +252,27 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         }
     }
 
-    /**
-     * __set
-     *
-     * @param  string $name
-     * @param  mixed $value
-     * @return void
-     */
-    public function __set($name, $value)
+    public function __set(string $name, $value) : void
     {
         $this->offsetSet($name, $value);
     }
 
-    /**
-     * __isset
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function __isset($name)
+    public function __isset(string $name) : bool
     {
         return $this->offsetExists($name);
     }
 
-    /**
-     * __unset
-     *
-     * @param  string $name
-     * @return void
-     */
-    public function __unset($name)
+    public function __unset(string $name) : void
     {
         $this->offsetUnset($name);
     }
 
-    /**
-     * @return bool
-     */
-    public function rowExistsInDatabase()
+    public function rowExistsInDatabase() : bool
     {
         return ($this->primaryKeyData !== null);
     }
 
-    /**
-     * @throws Exception\RuntimeException
-     */
-    protected function processPrimaryKeyData()
+    protected function processPrimaryKeyData() : void
     {
         $this->primaryKeyData = [];
         foreach ($this->primaryKeyColumn as $column) {

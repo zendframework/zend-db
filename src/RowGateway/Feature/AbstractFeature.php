@@ -21,33 +21,24 @@ abstract class AbstractFeature extends AbstractRowGateway
     protected $sharedData = [];
 
     /**
-     * @return string
+     * @return string|bool
      */
     public function getName()
     {
         return get_class($this);
     }
 
-    /**
-     * @param AbstractRowGateway $rowGateway
-     */
-    public function setRowGateway(AbstractRowGateway $rowGateway)
+    public function setRowGateway(AbstractRowGateway $rowGateway) : void
     {
         $this->rowGateway = $rowGateway;
     }
 
-    /**
-     * @throws \Zend\Db\RowGateway\Exception\RuntimeException
-     */
     public function initialize()
     {
         throw new Exception\RuntimeException('This method is not intended to be called on this object.');
     }
 
-    /**
-     * @return array
-     */
-    public function getMagicMethodSpecifications()
+    public function getMagicMethodSpecifications() : array
     {
         return [];
     }
