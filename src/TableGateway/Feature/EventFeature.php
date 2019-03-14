@@ -19,6 +19,7 @@ use Zend\Db\Sql\Update;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventsCapableInterface;
+use Zend\Db\TableGateway\TableGateway;
 
 class EventFeature extends AbstractFeature implements
     EventFeatureEventsInterface,
@@ -47,7 +48,7 @@ class EventFeature extends AbstractFeature implements
                             : new EventManager;
 
         $this->eventManager->addIdentifiers([
-            'Zend\Db\TableGateway\TableGateway',
+            TableGateway::class,
         ]);
 
         $this->event = $tableGatewayEvent ?: new EventFeature\TableGatewayEvent();

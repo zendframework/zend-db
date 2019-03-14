@@ -13,6 +13,7 @@ use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\RowGateway\RowGateway;
 use Zend\Db\RowGateway\RowGatewayInterface;
 use Zend\Db\TableGateway\Exception;
+use Zend\Db\TableGateway\Feature\MetadataFeature;
 
 class RowGatewayFeature extends AbstractFeature
 {
@@ -55,7 +56,7 @@ class RowGatewayFeature extends AbstractFeature
         } else {
             // get from metadata feature
             $metadata = $this->tableGateway->featureSet->getFeatureByClassName(
-                'Zend\Db\TableGateway\Feature\MetadataFeature'
+                MetadataFeature::class
             );
             if ($metadata === false || ! isset($metadata->sharedData['metadata'])) {
                 throw new Exception\RuntimeException(
