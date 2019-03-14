@@ -17,16 +17,11 @@ use Zend\Db\Metadata\Source\Factory as SourceFactory;
 class MetadataFeature extends AbstractFeature
 {
     /** @var MetadataInterface */
-    protected $metadata = null;
+    protected $metadata;
 
-    /**
-     * Constructor
-     *
-     * @param MetadataInterface $metadata
-     */
     public function __construct(?MetadataInterface $metadata = null)
     {
-        if ($metadata) {
+        if ($metadata !== null) {
             $this->metadata = $metadata;
         }
         $this->sharedData['metadata'] = [
