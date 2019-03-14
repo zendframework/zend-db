@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\TableGateway\Feature;
 
@@ -13,23 +13,19 @@ use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\RowGateway\RowGateway;
 use Zend\Db\RowGateway\RowGatewayInterface;
 use Zend\Db\TableGateway\Exception;
+use Zend\Db\TableGateway\Feature\MetadataFeature;
 
 class RowGatewayFeature extends AbstractFeature
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $constructorArguments = [];
 
-    /**
-     * @param null $primaryKey
-     */
     public function __construct()
     {
         $this->constructorArguments = func_get_args();
     }
 
-    public function postInitialize()
+    public function postInitialize() : void
     {
         $args = $this->constructorArguments;
 
@@ -58,7 +54,7 @@ class RowGatewayFeature extends AbstractFeature
         } else {
             // get from metadata feature
             $metadata = $this->tableGateway->featureSet->getFeatureByClassName(
-                'Zend\Db\TableGateway\Feature\MetadataFeature'
+                MetadataFeature::class
             );
             if ($metadata === false || ! isset($metadata->sharedData['metadata'])) {
                 throw new Exception\RuntimeException(

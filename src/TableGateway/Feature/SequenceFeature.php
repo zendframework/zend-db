@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\TableGateway\Feature;
 
@@ -15,37 +15,21 @@ use Zend\Db\Adapter\Driver\StatementInterface;
 
 class SequenceFeature extends AbstractFeature
 {
-    /**
-     * @var string
-     */
-    protected $primaryKeyField;
+    protected $primaryKeyField = '';
 
-    /**
-     * @var string
-     */
-    protected $sequenceName;
+    protected $sequenceName = '';
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $sequenceValue;
 
 
-    /**
-     * @param string $primaryKeyField
-     * @param string $sequenceName
-     */
-    public function __construct($primaryKeyField, $sequenceName)
+    public function __construct(string $primaryKeyField, string $sequenceName)
     {
         $this->primaryKeyField = $primaryKeyField;
         $this->sequenceName    = $sequenceName;
     }
 
-    /**
-     * @param Insert $insert
-     * @return Insert
-     */
-    public function preInsert(Insert $insert)
+    public function preInsert(Insert $insert) : Insert
     {
         $columns = $insert->getRawState('columns');
         $values = $insert->getRawState('values');
@@ -64,11 +48,7 @@ class SequenceFeature extends AbstractFeature
         return $insert;
     }
 
-    /**
-     * @param StatementInterface $statement
-     * @param ResultInterface $result
-     */
-    public function postInsert(StatementInterface $statement, ResultInterface $result)
+    public function postInsert(StatementInterface $statement, ResultInterface $result) : void
     {
         if ($this->sequenceValue !== null) {
             $this->tableGateway->lastInsertValue = $this->sequenceValue;
@@ -77,9 +57,9 @@ class SequenceFeature extends AbstractFeature
 
     /**
      * Generate a new value from the specified sequence in the database, and return it.
-     * @return int
+     * @return int|null
      */
-    public function nextSequenceId()
+    public function nextSequenceId() : ?int
     {
         $platform = $this->tableGateway->adapter->getPlatform();
         $platformName = $platform->getName();
@@ -92,7 +72,7 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')';
                 break;
             default:
-                return;
+                return null;
         }
 
         $statement = $this->tableGateway->adapter->createStatement();
@@ -105,9 +85,9 @@ class SequenceFeature extends AbstractFeature
 
     /**
      * Return the most recent value from the specified sequence in the database.
-     * @return int
+     * @return int|null
      */
-    public function lastSequenceId()
+    public function lastSequenceId() : ?int
     {
         $platform = $this->tableGateway->adapter->getPlatform();
         $platformName = $platform->getName();
@@ -120,7 +100,7 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT CURRVAL(\'' . $this->sequenceName . '\')';
                 break;
             default:
-                return;
+                return null;
         }
 
         $statement = $this->tableGateway->adapter->createStatement();

@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\TableGateway\Feature;
 
@@ -14,28 +14,16 @@ use Zend\Db\Sql\Sql;
 
 class MasterSlaveFeature extends AbstractFeature
 {
-    /**
-     * @var AdapterInterface
-     */
-    protected $slaveAdapter = null;
+    /** @var AdapterInterface */
+    protected $slaveAdapter;
 
-    /**
-     * @var Sql
-     */
-    protected $masterSql = null;
+    /** @var Sql */
+    protected $masterSql;
 
-    /**
-     * @var Sql
-     */
-    protected $slaveSql = null;
+    /** @var Sql */
+    protected $slaveSql;
 
-    /**
-     * Constructor
-     *
-     * @param AdapterInterface $slaveAdapter
-     * @param Sql|null $slaveSql
-     */
-    public function __construct(AdapterInterface $slaveAdapter, Sql $slaveSql = null)
+    public function __construct(AdapterInterface $slaveAdapter, ?Sql $slaveSql = null)
     {
         $this->slaveAdapter = $slaveAdapter;
         if ($slaveSql) {
@@ -43,15 +31,12 @@ class MasterSlaveFeature extends AbstractFeature
         }
     }
 
-    public function getSlaveAdapter()
+    public function getSlaveAdapter() : AdapterInterface
     {
         return $this->slaveAdapter;
     }
 
-    /**
-     * @return Sql
-     */
-    public function getSlaveSql()
+    public function getSlaveSql() : Sql
     {
         return $this->slaveSql;
     }
@@ -59,7 +44,7 @@ class MasterSlaveFeature extends AbstractFeature
     /**
      * after initialization, retrieve the original adapter as "master"
      */
-    public function postInitialize()
+    public function postInitialize() : void
     {
         $this->masterSql = $this->tableGateway->sql;
         if ($this->slaveSql === null) {
@@ -75,7 +60,7 @@ class MasterSlaveFeature extends AbstractFeature
      * preSelect()
      * Replace adapter with slave temporarily
      */
-    public function preSelect()
+    public function preSelect() : void
     {
         $this->tableGateway->sql = $this->slaveSql;
     }
@@ -84,7 +69,7 @@ class MasterSlaveFeature extends AbstractFeature
      * postSelect()
      * Ensure to return to the master adapter
      */
-    public function postSelect()
+    public function postSelect() : void
     {
         $this->tableGateway->sql = $this->masterSql;
     }

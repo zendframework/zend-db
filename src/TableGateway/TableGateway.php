@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\TableGateway;
 
@@ -20,11 +20,11 @@ class TableGateway extends AbstractTableGateway
     /**
      * Constructor
      *
-     * @param string|TableIdentifier|array                                              $table
-     * @param AdapterInterface                                                          $adapter
+     * @param string|TableIdentifier|array $table
+     * @param AdapterInterface $adapter
      * @param Feature\AbstractFeature|Feature\FeatureSet|Feature\AbstractFeature[]|null $features
-     * @param ResultSetInterface|null                                                   $resultSetPrototype
-     * @param Sql|null                                                                  $sql
+     * @param ResultSetInterface|null $resultSetPrototype
+     * @param Sql|null $sql
      *
      * @throws Exception\InvalidArgumentException
      */
@@ -66,10 +66,10 @@ class TableGateway extends AbstractTableGateway
         }
 
         // result prototype
-        $this->resultSetPrototype = ($resultSetPrototype) ?: new ResultSet;
+        $this->resultSetPrototype = $resultSetPrototype ?: new ResultSet;
 
         // Sql object (factory for select, insert, update, delete)
-        $this->sql = ($sql) ?: new Sql($this->adapter, $this->table);
+        $this->sql = $sql ?: new Sql($this->adapter, $this->table);
 
         // check sql object bound to same table
         if ($this->sql->getTable() != $this->table) {

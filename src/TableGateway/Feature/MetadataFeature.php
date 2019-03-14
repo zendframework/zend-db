@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\TableGateway\Feature;
 
@@ -16,19 +16,12 @@ use Zend\Db\Metadata\Source\Factory as SourceFactory;
 
 class MetadataFeature extends AbstractFeature
 {
-    /**
-     * @var MetadataInterface
-     */
-    protected $metadata = null;
+    /** @var MetadataInterface */
+    protected $metadata;
 
-    /**
-     * Constructor
-     *
-     * @param MetadataInterface $metadata
-     */
-    public function __construct(MetadataInterface $metadata = null)
+    public function __construct(?MetadataInterface $metadata = null)
     {
-        if ($metadata) {
+        if ($metadata !== null) {
             $this->metadata = $metadata;
         }
         $this->sharedData['metadata'] = [
@@ -37,7 +30,7 @@ class MetadataFeature extends AbstractFeature
         ];
     }
 
-    public function postInitialize()
+    public function postInitialize() : void
     {
         if ($this->metadata === null) {
             $this->metadata = SourceFactory::createSourceFromAdapter($this->tableGateway->adapter);
@@ -63,7 +56,7 @@ class MetadataFeature extends AbstractFeature
 
         foreach ($m->getConstraints($t->table) as $constraint) {
             /** @var $constraint \Zend\Db\Metadata\Object\ConstraintObject */
-            if ($constraint->getType() == 'PRIMARY KEY') {
+            if ($constraint->getType() === 'PRIMARY KEY') {
                 $pkc = $constraint;
                 break;
             }

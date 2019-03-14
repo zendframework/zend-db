@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\TableGateway\Feature;
 
@@ -14,18 +14,15 @@ use Zend\Db\TableGateway\TableGatewayInterface;
 
 class FeatureSet
 {
-    const APPLY_HALT = 'halt';
+    public const APPLY_HALT = 'halt';
 
-    protected $tableGateway = null;
+    /** @var AbstractTableGateway */
+    protected $tableGateway;
 
-    /**
-     * @var AbstractFeature[]
-     */
+    /** @var AbstractFeature[] */
     protected $features = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $magicSpecifications = [];
 
     public function __construct(array $features = [])
@@ -35,11 +32,7 @@ class FeatureSet
         }
     }
 
-    /**
-     * @param AbstractTableGateway $tableGateway
-     * @return self Provides a fluent interface
-     */
-    public function setTableGateway(AbstractTableGateway $tableGateway)
+    public function setTableGateway(AbstractTableGateway $tableGateway) : self
     {
         $this->tableGateway = $tableGateway;
         foreach ($this->features as $feature) {
@@ -61,10 +54,10 @@ class FeatureSet
     }
 
     /**
-     * @param array $features
+     * @param AbstractFeature[] $features
      * @return self Provides a fluent interface
      */
-    public function addFeatures(array $features)
+    public function addFeatures(array $features) : self
     {
         foreach ($features as $feature) {
             $this->addFeature($feature);
@@ -72,11 +65,7 @@ class FeatureSet
         return $this;
     }
 
-    /**
-     * @param AbstractFeature $feature
-     * @return self Provides a fluent interface
-     */
-    public function addFeature(AbstractFeature $feature)
+    public function addFeature(AbstractFeature $feature) : self
     {
         if ($this->tableGateway instanceof TableGatewayInterface) {
             $feature->setTableGateway($this->tableGateway);
@@ -85,7 +74,7 @@ class FeatureSet
         return $this;
     }
 
-    public function apply($method, $args)
+    public function apply($method, $args) : void
     {
         foreach ($this->features as $feature) {
             if (method_exists($feature, $method)) {
@@ -97,43 +86,22 @@ class FeatureSet
         }
     }
 
-    /**
-     * @param string $property
-     * @return bool
-     */
-    public function canCallMagicGet($property)
+    public function canCallMagicGet(string $property) : bool
     {
         return false;
     }
 
-    /**
-     * @param string $property
-     * @return mixed
-     */
-    public function callMagicGet($property)
+    public function callMagicGet(string $property) : void
     {
-        $return = null;
-        return $return;
     }
 
-    /**
-     * @param string $property
-     * @return bool
-     */
-    public function canCallMagicSet($property)
+    public function canCallMagicSet(string $property) : bool
     {
         return false;
     }
 
-    /**
-     * @param $property
-     * @param $value
-     * @return mixed
-     */
-    public function callMagicSet($property, $value)
+    public function callMagicSet(string $property, $value) : void
     {
-        $return = null;
-        return $return;
     }
 
     /**
@@ -141,7 +109,7 @@ class FeatureSet
      * @param string $method
      * @return bool
      */
-    public function canCallMagicCall($method)
+    public function canCallMagicCall(string $method) : bool
     {
         if (! empty($this->features)) {
             foreach ($this->features as $feature) {
@@ -153,20 +121,12 @@ class FeatureSet
         return false;
     }
 
-    /**
-     * Call method of on added feature as though it were a local method
-     * @param string $method
-     * @param array $arguments
-     * @return mixed
-     */
-    public function callMagicCall($method, $arguments)
+    public function callMagicCall(string $method, array $arguments)
     {
         foreach ($this->features as $feature) {
             if (method_exists($feature, $method)) {
                 return $feature->$method($arguments);
             }
         }
-
-        return;
     }
 }
