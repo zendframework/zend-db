@@ -88,7 +88,6 @@ class FeatureSet
 
     public function callMagicGet(string $property) : void
     {
-        return null;
     }
 
     public function canCallMagicSet(string $property) : bool
@@ -98,7 +97,6 @@ class FeatureSet
 
     public function callMagicSet(string $property, $value) : void
     {
-        return null;
     }
 
     public function canCallMagicCall(string $method) : bool
@@ -108,6 +106,5 @@ class FeatureSet
 
     public function callMagicCall(string $method, array $arguments) : void
     {
-        return null;
     }
 }
