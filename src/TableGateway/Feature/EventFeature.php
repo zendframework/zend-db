@@ -66,7 +66,7 @@ class EventFeature extends AbstractFeature implements
      */
     public function preInitialize() : void
     {
-        if (!$this->tableGateway instanceof TableGateway) {
+        if (! $this->tableGateway instanceof TableGateway) {
             $this->eventManager->addIdentifiers([get_class($this->tableGateway)]);
         }
 
@@ -110,8 +110,11 @@ class EventFeature extends AbstractFeature implements
      * @param ResultSetInterface $resultSet
      * @return void
      */
-    public function postSelect(StatementInterface $statement, ResultInterface $result, ResultSetInterface $resultSet) : void
-    {
+    public function postSelect(
+        StatementInterface $statement,
+        ResultInterface $result,
+        ResultSetInterface $resultSet
+    ) : void {
         $this->event->setName(static::EVENT_POST_SELECT);
         $this->event->setParams([
             'statement' => $statement,
