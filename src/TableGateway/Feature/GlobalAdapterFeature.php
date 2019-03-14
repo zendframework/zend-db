@@ -26,7 +26,7 @@ class GlobalAdapterFeature extends AbstractFeature
      */
     public static function setStaticAdapter(Adapter $adapter)
     {
-        $class = get_called_class();
+        $class = static::class;
 
         static::$staticAdapters[$class] = $adapter;
         if ($class === __CLASS__) {
@@ -42,7 +42,7 @@ class GlobalAdapterFeature extends AbstractFeature
      */
     public static function getStaticAdapter()
     {
-        $class = get_called_class();
+        $class = static::class;
 
         // class specific adapter
         if (isset(static::$staticAdapters[$class])) {
