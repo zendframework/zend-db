@@ -174,10 +174,7 @@ class EventFeature extends AbstractFeature implements
     public function postInsert(StatementInterface $statement, ResultInterface $result)
     {
         $this->event->setName(static::EVENT_POST_INSERT);
-        $this->event->setParams([
-            'statement' => $statement,
-            'result' => $result,
-        ]);
+        $this->event->setParams(compact('statement', 'result'));
         $this->eventManager->triggerEvent($this->event);
     }
 
@@ -211,10 +208,7 @@ class EventFeature extends AbstractFeature implements
     public function postUpdate(StatementInterface $statement, ResultInterface $result)
     {
         $this->event->setName(static::EVENT_POST_UPDATE);
-        $this->event->setParams([
-            'statement' => $statement,
-            'result' => $result,
-        ]);
+        $this->event->setParams(compact('statement', 'result'));
         $this->eventManager->triggerEvent($this->event);
     }
 
@@ -248,10 +242,7 @@ class EventFeature extends AbstractFeature implements
     public function postDelete(StatementInterface $statement, ResultInterface $result)
     {
         $this->event->setName(static::EVENT_POST_DELETE);
-        $this->event->setParams([
-            'statement' => $statement,
-            'result' => $result,
-        ]);
+        $this->event->setParams(compact('statement', 'result'));
         $this->eventManager->triggerEvent($this->event);
     }
 }
