@@ -23,7 +23,6 @@ use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\Feature\EventFeatureEventsInterface;
 
 /**
- *
  * @property AdapterInterface $adapter
  * @property int $lastInsertValue
  * @property string $table
