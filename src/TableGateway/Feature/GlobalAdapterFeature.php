@@ -17,11 +17,6 @@ class GlobalAdapterFeature extends AbstractFeature
     /** @var Adapter[] */
     protected static $staticAdapters = [];
 
-    /**
-     * Set static adapter
-     *
-     * @param Adapter $adapter
-     */
     public static function setStaticAdapter(Adapter $adapter) : void
     {
         $class = static::class;
@@ -32,12 +27,6 @@ class GlobalAdapterFeature extends AbstractFeature
         }
     }
 
-    /**
-     * Get static adapter
-     *
-     * @throws Exception\RuntimeException
-     * @return Adapter
-     */
     public static function getStaticAdapter() : Adapter
     {
         $class = static::class;
