@@ -38,18 +38,4 @@ abstract class AbstractFeature extends AbstractTableGateway
     {
         return [];
     }
-
-
-    /*
-    public function preInitialize();
-    public function postInitialize();
-    public function preSelect(Select $select);
-    public function postSelect(StatementInterface $statement, ResultInterface $result, ResultSetInterface $resultSet);
-    public function preInsert(Insert $insert);
-    public function postInsert(StatementInterface $statement, ResultInterface $result);
-    public function preUpdate(Update $update);
-    public function postUpdate(StatementInterface $statement, ResultInterface $result);
-    public function preDelete(Delete $delete);
-    public function postDelete(StatementInterface $statement, ResultInterface $result);
-    */
 }
