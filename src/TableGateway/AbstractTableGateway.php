@@ -190,7 +190,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * Insert
      *
-     * @param  array $set
+     * @param array $set
      * @return int
      */
     public function insert($set) : int
@@ -251,9 +251,9 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * Update
      *
-     * @param  array $set
-     * @param  string|array|\Closure $where
-     * @param  null|array $joins
+     * @param array $set
+     * @param string|array|\Closure $where
+     * @param null|array $joins
      * @return int
      */
     public function update($set, $where = null, array $joins = null) : int
@@ -323,7 +323,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * Delete
      *
-     * @param  Where|\Closure|string|array $where
+     * @param Where|\Closure|string|array $where
      * @return int
      */
     public function delete($where) : int

@@ -51,8 +51,8 @@ class TableGatewayEvent implements EventInterface
     /**
      * Get a single parameter by name
      *
-     * @param  string $name
-     * @param  mixed $default Default value to return if parameter does not exist
+     * @param string $name
+     * @param mixed $default Default value to return if parameter does not exist
      * @return mixed
      */
     public function getParam($name, $default = null)
@@ -63,7 +63,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set the event name
      *
-     * @param  string $name
+     * @param string $name
      * @return void
      */
     public function setName($name) : void
@@ -85,7 +85,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set event parameters
      *
-     * @param  string $params
+     * @param string $params
      * @return void
      */
     public function setParams($params) : void
@@ -96,8 +96,8 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set a single parameter by key
      *
-     * @param  string $name
-     * @param  mixed $value
+     * @param string $name
+     * @param mixed $value
      * @return void
      */
     public function setParam($name, $value) : void
@@ -108,7 +108,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Indicate whether or not the parent EventManagerInterface should stop propagating events
      *
-     * @param  bool $flag
+     * @param bool $flag
      * @return void
      */
     public function stopPropagation($flag = true) : void

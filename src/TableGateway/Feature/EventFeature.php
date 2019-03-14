@@ -87,7 +87,7 @@ class EventFeature extends AbstractFeature implements
      * Triggers the "preSelect" event mapping the following parameters:
      * - $select as "select"
      *
-     * @param  Select $select
+     * @param Select $select
      * @return void
      */
     public function preSelect(Select $select) : void
@@ -105,9 +105,9 @@ class EventFeature extends AbstractFeature implements
      * - $result as "result"
      * - $resultSet as "result_set"
      *
-     * @param  StatementInterface $statement
-     * @param  ResultInterface $result
-     * @param  ResultSetInterface $resultSet
+     * @param StatementInterface $statement
+     * @param ResultInterface $result
+     * @param ResultSetInterface $resultSet
      * @return void
      */
     public function postSelect(StatementInterface $statement, ResultInterface $result, ResultSetInterface $resultSet) : void
@@ -127,7 +127,7 @@ class EventFeature extends AbstractFeature implements
      * Triggers the "preInsert" event mapping the following parameters:
      * - $insert as "insert"
      *
-     * @param  Insert $insert
+     * @param Insert $insert
      * @return void
      */
     public function preInsert(Insert $insert) : void
@@ -144,8 +144,8 @@ class EventFeature extends AbstractFeature implements
      * - $statement as "statement"
      * - $result as "result"
      *
-     * @param  StatementInterface $statement
-     * @param  ResultInterface $result
+     * @param StatementInterface $statement
+     * @param ResultInterface $result
      * @return void
      */
     public function postInsert(StatementInterface $statement, ResultInterface $result) : void
@@ -161,7 +161,7 @@ class EventFeature extends AbstractFeature implements
      * Triggers the "preUpdate" event mapping the following parameters:
      * - $update as "update"
      *
-     * @param  Update $update
+     * @param Update $update
      * @return void
      */
     public function preUpdate(Update $update) : void
@@ -178,8 +178,8 @@ class EventFeature extends AbstractFeature implements
      * - $statement as "statement"
      * - $result as "result"
      *
-     * @param  StatementInterface $statement
-     * @param  ResultInterface $result
+     * @param StatementInterface $statement
+     * @param ResultInterface $result
      * @return void
      */
     public function postUpdate(StatementInterface $statement, ResultInterface $result) : void
@@ -195,7 +195,7 @@ class EventFeature extends AbstractFeature implements
      * Triggers the "preDelete" event mapping the following parameters:
      * - $delete as "delete"
      *
-     * @param  Delete $delete
+     * @param Delete $delete
      * @return void
      */
     public function preDelete(Delete $delete) : void
@@ -212,8 +212,8 @@ class EventFeature extends AbstractFeature implements
      * - $statement as "statement"
      * - $result as "result"
      *
-     * @param  StatementInterface $statement
-     * @param  ResultInterface $result
+     * @param StatementInterface $statement
+     * @param ResultInterface $result
      * @return void
      */
     public function postDelete(StatementInterface $statement, ResultInterface $result) : void
