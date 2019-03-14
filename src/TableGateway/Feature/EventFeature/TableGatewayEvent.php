@@ -19,10 +19,7 @@ class TableGatewayEvent implements EventInterface
      */
     protected $target = null;
 
-    /**
-     * @var null
-     */
-    protected $name = null;
+    protected $name = '';
 
     /**
      * @var array|\ArrayAccess
