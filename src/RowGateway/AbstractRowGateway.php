@@ -249,9 +249,9 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     {
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
-        } else {
-            throw new Exception\InvalidArgumentException('Not a valid column in this row: ' . $name);
         }
+
+        throw new Exception\InvalidArgumentException('Not a valid column in this row: ' . $name);
     }
 
     public function __set(string $name, $value) : void
