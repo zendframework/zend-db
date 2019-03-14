@@ -45,7 +45,7 @@ class SequenceFeature extends AbstractFeature
      * @param Insert $insert
      * @return Insert
      */
-    public function preInsert(Insert $insert)
+    public function preInsert(Insert $insert) : Insert
     {
         $columns = $insert->getRawState('columns');
         $values = $insert->getRawState('values');
@@ -68,7 +68,7 @@ class SequenceFeature extends AbstractFeature
      * @param StatementInterface $statement
      * @param ResultInterface $result
      */
-    public function postInsert(StatementInterface $statement, ResultInterface $result)
+    public function postInsert(StatementInterface $statement, ResultInterface $result) : void
     {
         if ($this->sequenceValue !== null) {
             $this->tableGateway->lastInsertValue = $this->sequenceValue;
@@ -79,7 +79,7 @@ class SequenceFeature extends AbstractFeature
      * Generate a new value from the specified sequence in the database, and return it.
      * @return int
      */
-    public function nextSequenceId()
+    public function nextSequenceId() : ?int
     {
         $platform = $this->tableGateway->adapter->getPlatform();
         $platformName = $platform->getName();
@@ -92,7 +92,7 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')';
                 break;
             default:
-                return;
+                return null;
         }
 
         $statement = $this->tableGateway->adapter->createStatement();
@@ -107,7 +107,7 @@ class SequenceFeature extends AbstractFeature
      * Return the most recent value from the specified sequence in the database.
      * @return int
      */
-    public function lastSequenceId()
+    public function lastSequenceId() : ?int
     {
         $platform = $this->tableGateway->adapter->getPlatform();
         $platformName = $platform->getName();
@@ -120,7 +120,7 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT CURRVAL(\'' . $this->sequenceName . '\')';
                 break;
             default:
-                return;
+                return null;
         }
 
         $statement = $this->tableGateway->adapter->createStatement();

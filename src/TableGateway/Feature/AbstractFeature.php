@@ -26,17 +26,17 @@ abstract class AbstractFeature extends AbstractTableGateway
         return get_class($this);
     }
 
-    public function setTableGateway(AbstractTableGateway $tableGateway)
+    public function setTableGateway(AbstractTableGateway $tableGateway) : void: void
     {
         $this->tableGateway = $tableGateway;
     }
 
-    public function initialize()
+    public function initialize() : void
     {
         throw new Exception\RuntimeException('This method is not intended to be called on this object.');
     }
 
-    public function getMagicMethodSpecifications()
+    public function getMagicMethodSpecifications() : array: array
     {
         return [];
     }

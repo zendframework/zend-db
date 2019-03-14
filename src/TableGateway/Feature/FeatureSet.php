@@ -39,7 +39,7 @@ class FeatureSet
      * @param AbstractTableGateway $tableGateway
      * @return self Provides a fluent interface
      */
-    public function setTableGateway(AbstractTableGateway $tableGateway)
+    public function setTableGateway(AbstractTableGateway $tableGateway) : self
     {
         $this->tableGateway = $tableGateway;
         foreach ($this->features as $feature) {
@@ -64,7 +64,7 @@ class FeatureSet
      * @param array $features
      * @return self Provides a fluent interface
      */
-    public function addFeatures(array $features)
+    public function addFeatures(array $features) : self
     {
         foreach ($features as $feature) {
             $this->addFeature($feature);
@@ -76,7 +76,7 @@ class FeatureSet
      * @param AbstractFeature $feature
      * @return self Provides a fluent interface
      */
-    public function addFeature(AbstractFeature $feature)
+    public function addFeature(AbstractFeature $feature) : self
     {
         if ($this->tableGateway instanceof TableGatewayInterface) {
             $feature->setTableGateway($this->tableGateway);
@@ -85,7 +85,7 @@ class FeatureSet
         return $this;
     }
 
-    public function apply($method, $args)
+    public function apply($method, $args) : void
     {
         foreach ($this->features as $feature) {
             if (method_exists($feature, $method)) {
@@ -101,7 +101,7 @@ class FeatureSet
      * @param string $property
      * @return bool
      */
-    public function canCallMagicGet($property)
+    public function canCallMagicGet($property) : bool
     {
         return false;
     }
@@ -119,7 +119,7 @@ class FeatureSet
      * @param string $property
      * @return bool
      */
-    public function canCallMagicSet($property)
+    public function canCallMagicSet($property) : bool
     {
         return false;
     }
@@ -139,7 +139,7 @@ class FeatureSet
      * @param string $method
      * @return bool
      */
-    public function canCallMagicCall($method)
+    public function canCallMagicCall($method) : bool
     {
         if (! empty($this->features)) {
             foreach ($this->features as $feature) {

@@ -59,7 +59,7 @@ class EventFeature extends AbstractFeature implements
      *
      * @return EventManagerInterface
      */
-    public function getEventManager()
+    public function getEventManager() : EventManagerInterface
     {
         return $this->eventManager;
     }
@@ -69,7 +69,7 @@ class EventFeature extends AbstractFeature implements
      *
      * @return EventFeature\TableGatewayEvent
      */
-    public function getEvent()
+    public function getEvent() : EventFeature\TableGatewayEvent
     {
         return $this->event;
     }
@@ -83,7 +83,7 @@ class EventFeature extends AbstractFeature implements
      *
      * @return void
      */
-    public function preInitialize()
+    public function preInitialize() : void
     {
         if (get_class($this->tableGateway) != 'Zend\Db\TableGateway\TableGateway') {
             $this->eventManager->addIdentifiers([get_class($this->tableGateway)]);
@@ -99,7 +99,7 @@ class EventFeature extends AbstractFeature implements
      *
      * @return void
      */
-    public function postInitialize()
+    public function postInitialize() : void
     {
         $this->event->setName(static::EVENT_POST_INITIALIZE);
         $this->eventManager->triggerEvent($this->event);
@@ -114,7 +114,7 @@ class EventFeature extends AbstractFeature implements
      * @param  Select $select
      * @return void
      */
-    public function preSelect(Select $select)
+    public function preSelect(Select $select) : void
     {
         $this->event->setName(static::EVENT_PRE_SELECT);
         $this->event->setParams(['select' => $select]);
@@ -134,7 +134,7 @@ class EventFeature extends AbstractFeature implements
      * @param  ResultSetInterface $resultSet
      * @return void
      */
-    public function postSelect(StatementInterface $statement, ResultInterface $result, ResultSetInterface $resultSet)
+    public function postSelect(StatementInterface $statement, ResultInterface $result, ResultSetInterface $resultSet) : void
     {
         $this->event->setName(static::EVENT_POST_SELECT);
         $this->event->setParams([
@@ -154,7 +154,7 @@ class EventFeature extends AbstractFeature implements
      * @param  Insert $insert
      * @return void
      */
-    public function preInsert(Insert $insert)
+    public function preInsert(Insert $insert) : void
     {
         $this->event->setName(static::EVENT_PRE_INSERT);
         $this->event->setParams(['insert' => $insert]);
@@ -172,7 +172,7 @@ class EventFeature extends AbstractFeature implements
      * @param  ResultInterface $result
      * @return void
      */
-    public function postInsert(StatementInterface $statement, ResultInterface $result)
+    public function postInsert(StatementInterface $statement, ResultInterface $result) : void
     {
         $this->event->setName(static::EVENT_POST_INSERT);
         $this->event->setParams(compact('statement', 'result'));
@@ -188,7 +188,7 @@ class EventFeature extends AbstractFeature implements
      * @param  Update $update
      * @return void
      */
-    public function preUpdate(Update $update)
+    public function preUpdate(Update $update) : void
     {
         $this->event->setName(static::EVENT_PRE_UPDATE);
         $this->event->setParams(['update' => $update]);
@@ -206,7 +206,7 @@ class EventFeature extends AbstractFeature implements
      * @param  ResultInterface $result
      * @return void
      */
-    public function postUpdate(StatementInterface $statement, ResultInterface $result)
+    public function postUpdate(StatementInterface $statement, ResultInterface $result) : void
     {
         $this->event->setName(static::EVENT_POST_UPDATE);
         $this->event->setParams(compact('statement', 'result'));
@@ -222,7 +222,7 @@ class EventFeature extends AbstractFeature implements
      * @param  Delete $delete
      * @return void
      */
-    public function preDelete(Delete $delete)
+    public function preDelete(Delete $delete) : void
     {
         $this->event->setName(static::EVENT_PRE_DELETE);
         $this->event->setParams(['delete' => $delete]);
@@ -240,7 +240,7 @@ class EventFeature extends AbstractFeature implements
      * @param  ResultInterface $result
      * @return void
      */
-    public function postDelete(StatementInterface $statement, ResultInterface $result)
+    public function postDelete(StatementInterface $statement, ResultInterface $result) : void
     {
         $this->event->setName(static::EVENT_POST_DELETE);
         $this->event->setParams(compact('statement', 'result'));

@@ -34,7 +34,7 @@ class TableGatewayEvent implements EventInterface
      *
      * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
@@ -77,7 +77,7 @@ class TableGatewayEvent implements EventInterface
      * @param  string $name
      * @return void
      */
-    public function setName($name)
+    public function setName($name) : void
     {
         $this->name = $name;
     }
@@ -88,7 +88,7 @@ class TableGatewayEvent implements EventInterface
      * @param  null|string|object $target
      * @return void
      */
-    public function setTarget($target)
+    public function setTarget($target) : void
     {
         $this->target = $target;
     }
@@ -99,7 +99,7 @@ class TableGatewayEvent implements EventInterface
      * @param  string $params
      * @return void
      */
-    public function setParams($params)
+    public function setParams($params) : void
     {
         $this->params = $params;
     }
@@ -111,7 +111,7 @@ class TableGatewayEvent implements EventInterface
      * @param  mixed $value
      * @return void
      */
-    public function setParam($name, $value)
+    public function setParam($name, $value) : void
     {
         $this->params[$name] = $value;
     }
@@ -122,7 +122,7 @@ class TableGatewayEvent implements EventInterface
      * @param  bool $flag
      * @return void
      */
-    public function stopPropagation($flag = true)
+    public function stopPropagation($flag = true) : void
     {
     }
 
@@ -131,7 +131,7 @@ class TableGatewayEvent implements EventInterface
      *
      * @return bool
      */
-    public function propagationIsStopped()
+    public function propagationIsStopped() : bool
     {
         return false;
     }
