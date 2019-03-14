@@ -124,7 +124,6 @@ class TableGatewayEvent implements EventInterface
      */
     public function stopPropagation($flag = true)
     {
-        return;
     }
 
     /**

@@ -166,7 +166,5 @@ class FeatureSet
                 return $feature->$method($arguments);
             }
         }
-
-        return;
     }
 }
