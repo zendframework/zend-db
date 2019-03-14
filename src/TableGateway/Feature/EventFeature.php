@@ -16,56 +16,41 @@ use Zend\Db\Sql\Delete;
 use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Update;
+use Zend\Db\TableGateway\Feature\EventFeature\TableGatewayEvent;
+use Zend\Db\TableGateway\TableGateway;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventsCapableInterface;
-use Zend\Db\TableGateway\TableGateway;
 
 class EventFeature extends AbstractFeature implements
     EventFeatureEventsInterface,
     EventsCapableInterface
 {
     /** @var EventManagerInterface */
-    protected $eventManager = null;
+    protected $eventManager;
 
-    /** @var null */
-    protected $event = null;
+    /** @var TableGatewayEvent */
+    protected $event;
 
-    /**
-     * @param EventManagerInterface $eventManager
-     * @param EventFeature\TableGatewayEvent $tableGatewayEvent
-     */
     public function __construct(
-        EventManagerInterface $eventManager = null,
-        EventFeature\TableGatewayEvent $tableGatewayEvent = null
+        ?EventManagerInterface $eventManager = null,
+        ?TableGatewayEvent $tableGatewayEvent = null
     ) {
-        $this->eventManager = ($eventManager instanceof EventManagerInterface)
-                            ? $eventManager
-                            : new EventManager;
+        $this->eventManager = $eventManager ?? new EventManager;
 
         $this->eventManager->addIdentifiers([
             TableGateway::class,
         ]);
 
-        $this->event = $tableGatewayEvent ?: new EventFeature\TableGatewayEvent();
+        $this->event = $tableGatewayEvent ?: new TableGatewayEvent();
     }
 
-    /**
-     * Retrieve composed event manager instance
-     *
-     * @return EventManagerInterface
-     */
     public function getEventManager() : EventManagerInterface
     {
         return $this->eventManager;
     }
 
-    /**
-     * Retrieve composed event instance
-     *
-     * @return EventFeature\TableGatewayEvent
-     */
-    public function getEvent() : EventFeature\TableGatewayEvent
+    public function getEvent() : TableGatewayEvent
     {
         return $this->event;
     }
@@ -90,11 +75,6 @@ class EventFeature extends AbstractFeature implements
         $this->eventManager->triggerEvent($this->event);
     }
 
-    /**
-     * Trigger the "postInitialize" event
-     *
-     * @return void
-     */
     public function postInitialize() : void
     {
         $this->event->setName(static::EVENT_POST_INITIALIZE);
