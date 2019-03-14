@@ -14,10 +14,8 @@ use Zend\Db\TableGateway\Exception;
 
 abstract class AbstractFeature extends AbstractTableGateway
 {
-    /**
-     * @var AbstractTableGateway
-     */
-    protected $tableGateway = null;
+    /** @var AbstractTableGateway */
+    protected $tableGateway;
 
     protected $sharedData = [];
 
@@ -26,7 +24,7 @@ abstract class AbstractFeature extends AbstractTableGateway
         return get_class($this);
     }
 
-    public function setTableGateway(AbstractTableGateway $tableGateway) : void: void
+    public function setTableGateway(AbstractTableGateway $tableGateway) : void
     {
         $this->tableGateway = $tableGateway;
     }
@@ -36,7 +34,7 @@ abstract class AbstractFeature extends AbstractTableGateway
         throw new Exception\RuntimeException('This method is not intended to be called on this object.');
     }
 
-    public function getMagicMethodSpecifications() : array: array
+    public function getMagicMethodSpecifications() : array
     {
         return [];
     }
