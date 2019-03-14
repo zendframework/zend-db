@@ -32,10 +32,10 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     protected $data = [];
 
     /** @var Sql */
-    protected $sql = null;
+    protected $sql;
 
     /** @var Feature\FeatureSet */
-    protected $featureSet = null;
+    protected $featureSet;
 
     /**
      * initialize()

@@ -15,7 +15,7 @@ use Zend\Db\RowGateway\Exception;
 abstract class AbstractFeature extends AbstractRowGateway
 {
     /** @var AbstractRowGateway */
-    protected $rowGateway = null;
+    protected $rowGateway;
 
     /** @var array */
     protected $sharedData = [];
