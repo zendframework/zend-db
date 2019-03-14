@@ -16,23 +16,13 @@ use Zend\Hydrator\HydratorInterface;
 
 class HydratingResultSet extends AbstractResultSet
 {
-    /**
-     * @var HydratorInterface
-     */
-    protected $hydrator = null;
+    /** @var HydratorInterface */
+    protected $hydrator;
 
-    /**
-     * @var null|object
-     */
-    protected $objectPrototype = null;
+    /** @var null|object */
+    protected $objectPrototype;
 
-    /**
-     * Constructor
-     *
-     * @param  null|HydratorInterface $hydrator
-     * @param  null|object $objectPrototype
-     */
-    public function __construct(HydratorInterface $hydrator = null, $objectPrototype = null)
+    public function __construct(?HydratorInterface $hydrator = null, ?object $objectPrototype = null)
     {
         $defaultHydratorClass = class_exists(ArraySerializableHydrator::class)
             ? ArraySerializableHydrator::class
@@ -41,13 +31,6 @@ class HydratingResultSet extends AbstractResultSet
         $this->setObjectPrototype(($objectPrototype) ?: new ArrayObject);
     }
 
-    /**
-     * Set the row object prototype
-     *
-     * @param  object $objectPrototype
-     * @return self Provides a fluent interface
-     * @throws Exception\InvalidArgumentException
-     */
     public function setObjectPrototype($objectPrototype) : self
     {
         if (! is_object($objectPrototype)) {
@@ -59,33 +42,17 @@ class HydratingResultSet extends AbstractResultSet
         return $this;
     }
 
-    /**
-     * Get the row object prototype
-     *
-     * @return object
-     */
     public function getObjectPrototype() : object
     {
         return $this->objectPrototype;
     }
 
-    /**
-     * Set the hydrator to use for each row object
-     *
-     * @param HydratorInterface $hydrator
-     * @return self Provides a fluent interface
-     */
     public function setHydrator(HydratorInterface $hydrator) : self
     {
         $this->hydrator = $hydrator;
         return $this;
     }
 
-    /**
-     * Get the hydrator to use for each row object
-     *
-     * @return HydratorInterface
-     */
     public function getHydrator() : HydratorInterface
     {
         return $this->hydrator;
@@ -113,12 +80,6 @@ class HydratingResultSet extends AbstractResultSet
         return $object;
     }
 
-    /**
-     * Cast result set to array of arrays
-     *
-     * @return array
-     * @throws Exception\RuntimeException if any row is not castable to an array
-     */
     public function toArray() : array
     {
         $return = [];
