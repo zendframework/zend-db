@@ -33,25 +33,25 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     protected $isInitialized = false;
 
     /** @var AdapterInterface */
-    protected $adapter = null;
+    protected $adapter;
 
     /** @var string|array|TableIdentifier */
-    protected $table = null;
+    protected $table;
 
     /** @var array */
     protected $columns = [];
 
     /** @var Feature\FeatureSet */
-    protected $featureSet = null;
+    protected $featureSet;
 
     /** @var ResultSetInterface */
-    protected $resultSetPrototype = null;
+    protected $resultSetPrototype;
 
     /** @var Sql */
     protected $sql;
 
     /** @var int */
-    protected $lastInsertValue = null;
+    protected $lastInsertValue;
 
     public function isInitialized() : bool
     {
