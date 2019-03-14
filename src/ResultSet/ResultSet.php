@@ -13,8 +13,8 @@ use ArrayObject;
 
 class ResultSet extends AbstractResultSet
 {
-    const TYPE_ARRAYOBJECT = 'arrayobject';
-    const TYPE_ARRAY  = 'array';
+    public const TYPE_ARRAYOBJECT = 'arrayobject';
+    public const TYPE_ARRAY  = 'array';
 
     protected $allowedReturnTypes = [
         self::TYPE_ARRAYOBJECT,
