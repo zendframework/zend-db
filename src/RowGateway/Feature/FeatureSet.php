@@ -13,7 +13,7 @@ use Zend\Db\RowGateway\AbstractRowGateway;
 
 class FeatureSet
 {
-    const APPLY_HALT = 'halt';
+    public const APPLY_HALT = 'halt';
 
     /** @var AbstractRowGateway */
     protected $rowGateway;
