@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Zend\Db\TableGateway\Feature\EventFeature;
 
+use ArrayAccess;
 use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\EventManager\EventInterface;
 
@@ -19,14 +20,9 @@ class TableGatewayEvent implements EventInterface
 
     protected $name = '';
 
-    /** @var array|\ArrayAccess */
+    /** @var array|ArrayAccess */
     protected $params = [];
 
-    /**
-     * Get event name
-     *
-     * @return string
-     */
     public function getName() : string
     {
         return $this->name;
@@ -45,7 +41,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Get parameters passed to the event
      *
-     * @return array|\ArrayAccess
+     * @return array|ArrayAccess
      */
     public function getParams()
     {
