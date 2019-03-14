@@ -100,10 +100,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
 
     public function isBuffered() : bool
     {
-        if ($this->buffer === -1 || is_array($this->buffer)) {
-            return true;
-        }
-        return false;
+        return $this->buffer === -1 || is_array($this->buffer);
     }
 
     public function getDataSource() : ?Iterator
