@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -9,10 +12,12 @@
 
 namespace Zend\Db\Sql\Ddl\Constraint;
 
+use Zend\Db\Sql\ExpressionInterface;
+
 class Check extends AbstractConstraint
 {
     /**
-     * @var string|\Zend\Db\Sql\ExpressionInterface
+     * @var string|ExpressionInterface
      */
     protected $expression;
 
@@ -22,10 +27,10 @@ class Check extends AbstractConstraint
     protected $specification = 'CHECK (%s)';
 
     /**
-     * @param  string|\Zend\Db\Sql\ExpressionInterface $expression
+     * @param  string|ExpressionInterface $expression
      * @param  null|string $name
      */
-    public function __construct($expression, $name)
+    public function __construct($expression, ?string $name)
     {
         $this->expression = $expression;
         $this->name       = $name;
@@ -34,7 +39,7 @@ class Check extends AbstractConstraint
     /**
      * {@inheritDoc}
      */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         $newSpecTypes = [self::TYPE_LITERAL];
         $values       = [$this->expression];

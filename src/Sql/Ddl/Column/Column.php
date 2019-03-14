@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -54,7 +57,7 @@ class Column implements ColumnInterface
      * @param mixed|null  $default
      * @param mixed[]     $options
      */
-    public function __construct($name = null, $nullable = false, $default = null, array $options = [])
+    public function __construct(?string $name = null, bool $nullable = false, ?$default = null, array $options = [])
     {
         $this->setName($name);
         $this->setNullable($nullable);
@@ -64,18 +67,20 @@ class Column implements ColumnInterface
 
     /**
      * @param  string $name
+     *
      * @return self Provides a fluent interface
      */
-    public function setName($name)
+    public function setName($name) : self
     {
         $this->name = (string) $name;
+
         return $this;
     }
 
     /**
      * @return null|string
      */
-    public function getName()
+    public function getName() : ?string
     {
         return $this->name;
     }
@@ -84,27 +89,30 @@ class Column implements ColumnInterface
      * @param  bool $nullable
      * @return self Provides a fluent interface
      */
-    public function setNullable($nullable)
+    public function setNullable(bool $nullable) : self
     {
         $this->isNullable = (bool) $nullable;
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isNullable()
+    public function isNullable() : bool
     {
         return $this->isNullable;
     }
 
     /**
      * @param  null|string|int $default
+     *
      * @return self Provides a fluent interface
      */
-    public function setDefault($default)
+    public function setDefault(?$default) : self
     {
         $this->default = $default;
+
         return $this;
     }
 
@@ -118,29 +126,33 @@ class Column implements ColumnInterface
 
     /**
      * @param  array $options
+     *
      * @return self Provides a fluent interface
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options) : self
     {
         $this->options = $options;
+
         return $this;
     }
 
     /**
      * @param  string $name
      * @param  string $value
+     *
      * @return self Provides a fluent interface
      */
-    public function setOption($name, $value)
+    public function setOption(string $name, string $value) : self
     {
         $this->options[$name] = $value;
+
         return $this;
     }
 
     /**
      * @return array
      */
-    public function getOptions()
+    public function getOptions() : array
     {
         return $this->options;
     }
@@ -150,7 +162,7 @@ class Column implements ColumnInterface
      *
      * @return self Provides a fluent interface
      */
-    public function addConstraint(ConstraintInterface $constraint)
+    public function addConstraint(ConstraintInterface $constraint) : self
     {
         $this->constraints[] = $constraint;
 
@@ -160,7 +172,7 @@ class Column implements ColumnInterface
     /**
      * @return array
      */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         $spec = $this->specification;
 

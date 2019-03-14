@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -12,6 +15,8 @@ namespace Zend\Db\Sql\Platform\Mysql\Ddl;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Ddl\CreateTable;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
+use function strlen;
+use function strpos;
 
 class CreateTableDecorator extends CreateTable implements PlatformDecoratorInterface
 {
@@ -49,9 +54,10 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
 
     /**
      * @param string $sql
+     *
      * @return array
      */
-    protected function getSqlInsertOffsets($sql)
+    protected function getSqlInsertOffsets(string $sql) : array
     {
         $sqlLength   = strlen($sql);
         $insertStart = [];
@@ -157,7 +163,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
      *
      * @return string
      */
-    private function normalizeColumnOption($name)
+    private function normalizeColumnOption(string $name) : string
     {
         return strtolower(str_replace(['-', '_', ' '], '', $name));
     }
@@ -169,7 +175,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
      *
      * @return int
      */
-    private function compareColumnOptions($columnA, $columnB)
+    private function compareColumnOptions(string $columnA, string $columnB) : int
     {
         $columnA = $this->normalizeColumnOption($columnA);
         $columnA = isset($this->columnOptionSortOrder[$columnA])

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -9,9 +12,17 @@
 
 namespace Zend\Db\Sql;
 
-use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\ParameterContainer;
+use Zend\Db\Adapter\Platform\PlatformInterface;
+use function array_key_exists;
+use function array_merge;
+use function get_class;
+use function gettype;
+use function is_array;
+use function is_object;
+use function sprintf;
+use function strtoupper;
 
 /**
  * Combine SQL statement - allows combining multiple select statements into one
@@ -41,7 +52,7 @@ class Combine extends AbstractPreparableSql
      * @param string            $type
      * @param string            $modifier
      */
-    public function __construct($select = null, $type = self::COMBINE_UNION, $modifier = '')
+    public function __construct($select = null, ?string $type = self::COMBINE_UNION, ?string $modifier = '')
     {
         if ($select) {
             $this->combine($select, $type, $modifier);
@@ -59,7 +70,7 @@ class Combine extends AbstractPreparableSql
      *
      * @throws Exception\InvalidArgumentException
      */
-    public function combine($select, $type = self::COMBINE_UNION, $modifier = '')
+    public function combine($select, ?string $type = self::COMBINE_UNION, ?string $modifier = '') : self
     {
         if (is_array($select)) {
             foreach ($select as $combine) {
@@ -88,6 +99,7 @@ class Combine extends AbstractPreparableSql
             'type' => $type,
             'modifier' => $modifier
         ];
+
         return $this;
     }
 
@@ -99,7 +111,7 @@ class Combine extends AbstractPreparableSql
      *
      * @return self
      */
-    public function union($select, $modifier = '')
+    public function union($select, ?string $modifier = '') : self
     {
         return $this->combine($select, self::COMBINE_UNION, $modifier);
     }
@@ -112,7 +124,7 @@ class Combine extends AbstractPreparableSql
      *
      * @return self
      */
-    public function except($select, $modifier = '')
+    public function except($select, ?string $modifier = '') : self
     {
         return $this->combine($select, self::COMBINE_EXCEPT, $modifier);
     }
@@ -122,9 +134,10 @@ class Combine extends AbstractPreparableSql
      *
      * @param Select|array $select
      * @param string $modifier
+     *
      * @return self
      */
-    public function intersect($select, $modifier = '')
+    public function intersect($select, ?string $modifier = '') : self
     {
         return $this->combine($select, self::COMBINE_INTERSECT, $modifier);
     }
@@ -136,11 +149,11 @@ class Combine extends AbstractPreparableSql
      * @param DriverInterface    $driver
      * @param ParameterContainer $parameterContainer
      *
-     * @return string
+     * @return string|void
      */
     protected function buildSqlString(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
+        PlatformInterface  $platform,
+        DriverInterface    $driver = null,
         ParameterContainer $parameterContainer = null
     ) {
         if (! $this->combine) {
@@ -148,6 +161,7 @@ class Combine extends AbstractPreparableSql
         }
 
         $sql = '';
+
         foreach ($this->combine as $i => $combine) {
             $type = $i == 0
                     ? ''
@@ -159,13 +173,14 @@ class Combine extends AbstractPreparableSql
                 $select
             );
         }
+
         return trim($sql, ' ');
     }
 
     /**
      * @return self Provides a fluent interface
      */
-    public function alignColumns()
+    public function alignColumns() : self
     {
         if (! $this->combine) {
             return $this;
@@ -189,6 +204,7 @@ class Combine extends AbstractPreparableSql
             }
             $combine['select']->columns($aligned, false);
         }
+
         return $this;
     }
 
@@ -199,7 +215,7 @@ class Combine extends AbstractPreparableSql
      *
      * @return array
      */
-    public function getRawState($key = null)
+    public function getRawState(?string $key = null) : array
     {
         $rawState = [
             self::COMBINE => $this->combine,
@@ -207,6 +223,7 @@ class Combine extends AbstractPreparableSql
                                 ? $this->combine[0]['select']->getRawState(self::COLUMNS)
                                 : [],
         ];
+
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 }

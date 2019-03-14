@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -20,5 +23,5 @@ interface SqlInterface
      *
      * @return string
      */
-    public function getSqlString(PlatformInterface $adapterPlatform = null);
+    public function getSqlString(?PlatformInterface $adapterPlatform = null) : string;
 }

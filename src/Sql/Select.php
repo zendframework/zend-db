@@ -798,14 +798,15 @@ class Select extends AbstractPreparableSql
      * @param PlatformInterface $platform
      * @param DriverInterface $driver
      * @param ParameterContainer $parameterContainer
-     * @return string
+     *
+     * @return mixed[]
      */
     protected function resolveTable(
         $table,
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
+        PlatformInterface  $platform,
+        DriverInterface    $driver = null,
         ParameterContainer $parameterContainer = null
-    ) {
+    ) : string {
         $alias = null;
 
         if (is_array($table)) {

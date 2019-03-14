@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -19,15 +22,15 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     /**
      * {@inheritDoc}
      *
-     * @param int|null $decimal
      * @param int      $digits
+     * @param int|null $decimal
      */
     public function __construct(
-        $name,
-        $digits = null,
-        $decimal = null,
-        $nullable = false,
-        $default = null,
+        ?string $name,
+        int $digits = null,
+        ?int $decimal = null,
+        bool $nullable = false,
+        ?$default = null,
         array $options = []
     ) {
         $this->setDecimal($decimal);
@@ -40,7 +43,7 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
      *
      * @return self
      */
-    public function setDigits($digits)
+    public function setDigits(int $digits) : self
     {
         return $this->setLength($digits);
     }
@@ -48,16 +51,17 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     /**
      * @return int
      */
-    public function getDigits()
+    public function getDigits() : int
     {
         return $this->getLength();
     }
 
     /**
      * @param int|null $decimal
+     *
      * @return self Provides a fluent interface
      */
-    public function setDecimal($decimal)
+    public function setDecimal(?int $decimal) : self
     {
         $this->decimal = null === $decimal ? null : (int) $decimal;
 
@@ -67,7 +71,7 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     /**
      * @return int|null
      */
-    public function getDecimal()
+    public function getDecimal() : ?int
     {
         return $this->decimal;
     }
@@ -75,12 +79,12 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     /**
      * {@inheritDoc}
      */
-    protected function getLengthExpression()
+    protected function getLengthExpression() : string
     {
         if ($this->decimal !== null) {
             return $this->length . ',' . $this->decimal;
         }
 
-        return $this->length;
+        return (string) $this->length;
     }
 }

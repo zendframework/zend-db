@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -36,7 +39,7 @@ class Expression extends AbstractExpression
      * @param string|array $parameters
      * @param array $types @deprecated will be dropped in version 3.0.0
      */
-    public function __construct($expression = '', $parameters = null, array $types = [])
+    public function __construct(?string $expression = '', $parameters = null, array $types = [])
     {
         if ($expression !== '') {
             $this->setExpression($expression);
@@ -62,52 +65,62 @@ class Expression extends AbstractExpression
     }
 
     /**
-     * @param $expression
+     * @param string $expression
+     *
      * @return self Provides a fluent interface
+     *
      * @throws Exception\InvalidArgumentException
      */
-    public function setExpression($expression)
+    public function setExpression(string $expression) : self
     {
         if (! is_string($expression) || $expression == '') {
             throw new Exception\InvalidArgumentException('Supplied expression must be a string.');
         }
+
         $this->expression = $expression;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getExpression()
+    public function getExpression() : string
     {
         return $this->expression;
     }
 
     /**
      * @param $parameters
+     *
      * @return self Provides a fluent interface
+     *
      * @throws Exception\InvalidArgumentException
      */
-    public function setParameters($parameters)
+    public function setParameters($parameters) : self
     {
         if (! is_scalar($parameters) && ! is_array($parameters)) {
             throw new Exception\InvalidArgumentException('Expression parameters must be a scalar or array.');
         }
+
         $this->parameters = $parameters;
+
         return $this;
     }
 
     /**
      * @return array
      */
-    public function getParameters()
+    public function getParameters() : array
     {
         return $this->parameters;
     }
 
     /**
      * @deprecated
+     *
      * @param array $types
+     *
      * @return self Provides a fluent interface
      */
     public function setTypes(array $types)
@@ -118,6 +131,7 @@ class Expression extends AbstractExpression
 
     /**
      * @deprecated
+     *
      * @return array
      */
     public function getTypes()
@@ -127,9 +141,10 @@ class Expression extends AbstractExpression
 
     /**
      * @return array
+     *
      * @throws Exception\RuntimeException
      */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         $parameters = (is_scalar($this->parameters)) ? [$this->parameters] : $this->parameters;
         $parametersCount = count($parameters);
@@ -155,6 +170,7 @@ class Expression extends AbstractExpression
         foreach ($parameters as $parameter) {
             list($values[], $types[]) = $this->normalizeArgument($parameter, self::TYPE_VALUE);
         }
+
         return [[
             $expression,
             $values,

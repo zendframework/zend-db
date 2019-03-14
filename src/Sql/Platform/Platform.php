@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -12,9 +15,11 @@ namespace Zend\Db\Sql\Platform;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\StatementContainerInterface;
-use Zend\Db\Sql\Exception;
+use Zend\Db\Sql\Exception\InvalidArgumentException;
 use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\SqlInterface;
+use Zend\Db\Sql\Exception\RuntimeException;
+use function is_a;
 
 class Platform extends AbstractPlatform
 {
@@ -50,8 +55,11 @@ class Platform extends AbstractPlatform
      * @param PlatformDecoratorInterface         $decorator
      * @param AdapterInterface|PlatformInterface $adapterOrPlatform
      */
-    public function setTypeDecorator($type, PlatformDecoratorInterface $decorator, $adapterOrPlatform = null)
-    {
+    public function setTypeDecorator(
+        string                     $type,
+        PlatformDecoratorInterface $decorator,
+        $adapterOrPlatform = null
+    ) : void {
         $platformName = $this->resolvePlatformName($adapterOrPlatform);
         $this->decorators[$platformName][$type] = $decorator;
     }
@@ -59,6 +67,7 @@ class Platform extends AbstractPlatform
     /**
      * @param PreparableSqlInterface|SqlInterface     $subject
      * @param AdapterInterface|PlatformInterface|null $adapterOrPlatform
+     *
      * @return PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface
      */
     public function getTypeDecorator($subject, $adapterOrPlatform = null)
@@ -69,6 +78,7 @@ class Platform extends AbstractPlatform
             foreach ($this->decorators[$platformName] as $type => $decorator) {
                 if ($subject instanceof $type && is_a($decorator, $type, true)) {
                     $decorator->setSubject($subject);
+
                     return $decorator;
                 }
             }
@@ -78,23 +88,24 @@ class Platform extends AbstractPlatform
     }
 
     /**
-     * @return array|PlatformDecoratorInterface[]
+     * @return array|PlatformDecoratorInterface
      */
     public function getDecorators()
     {
         $platformName = $this->resolvePlatformName($this->getDefaultPlatform());
+
         return $this->decorators[$platformName];
     }
 
     /**
      * {@inheritDoc}
      *
-     * @throws Exception\RuntimeException
+     * @throws RuntimeException
      */
     public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
     {
         if (! $this->subject instanceof PreparableSqlInterface) {
-            throw new Exception\RuntimeException(
+            throw new RuntimeException(
                 'The subject does not appear to implement Zend\Db\Sql\PreparableSqlInterface, thus calling '
                 . 'prepareStatement() has no effect'
             );
@@ -108,12 +119,12 @@ class Platform extends AbstractPlatform
     /**
      * {@inheritDoc}
      *
-     * @throws Exception\RuntimeException
+     * @throws RuntimeException
      */
-    public function getSqlString(PlatformInterface $adapterPlatform = null)
+    public function getSqlString(PlatformInterface $adapterPlatform = null) : string
     {
         if (! $this->subject instanceof SqlInterface) {
-            throw new Exception\RuntimeException(
+            throw new RuntimeException(
                 'The subject does not appear to implement Zend\Db\Sql\SqlInterface, thus calling '
                 . 'prepareStatement() has no effect'
             );
@@ -134,7 +145,7 @@ class Platform extends AbstractPlatform
      *
      * @return PlatformInterface
      *
-     * @throws Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function resolvePlatform($adapterOrPlatform)
     {
@@ -150,7 +161,7 @@ class Platform extends AbstractPlatform
             return $adapterOrPlatform;
         }
 
-        throw new Exception\InvalidArgumentException(sprintf(
+        throw new InvalidArgumentException(sprintf(
             '$adapterOrPlatform should be null, %s, or %s',
             'Zend\Db\Adapter\AdapterInterface',
             'Zend\Db\Adapter\Platform\PlatformInterface'
@@ -160,12 +171,12 @@ class Platform extends AbstractPlatform
     /**
      * @return PlatformInterface
      *
-     * @throws Exception\RuntimeException
+     * @throws RuntimeException
      */
     protected function getDefaultPlatform()
     {
         if (! $this->defaultPlatform) {
-            throw new Exception\RuntimeException('$this->defaultPlatform was not set');
+            throw new RuntimeException('$this->defaultPlatform was not set');
         }
 
         return $this->defaultPlatform;

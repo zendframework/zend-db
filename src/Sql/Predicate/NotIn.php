@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -11,5 +14,8 @@ namespace Zend\Db\Sql\Predicate;
 
 class NotIn extends In
 {
+    /**
+     * @var string
+     */
     protected $specification = '%s NOT IN %s';
 }

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -12,6 +15,15 @@ namespace Zend\Db\Sql\Platform\Mysql\Ddl;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Ddl\AlterTable;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
+use function count;
+use function range;
+use function str_replace;
+use function strlen;
+use function strpos;
+use function strtolower;
+use function strtoupper;
+use function substr_replace;
+use function uksort;
 
 class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterface
 {
@@ -38,9 +50,10 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
     /**
      * @param AlterTable $subject
+     *
      * @return self Provides a fluent interface
      */
-    public function setSubject($subject)
+    public function setSubject(AlterTable $subject) : self
     {
         $this->subject = $subject;
 
@@ -49,9 +62,10 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
     /**
      * @param string $sql
+     *
      * @return array
      */
-    protected function getSqlInsertOffsets($sql)
+    protected function getSqlInsertOffsets(string $sql) : array
     {
         $sqlLength   = strlen($sql);
         $insertStart = [];
@@ -83,9 +97,10 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
     /**
      * @param PlatformInterface $adapterPlatform
+     *
      * @return array
      */
-    protected function processAddColumns(PlatformInterface $adapterPlatform = null)
+    protected function processAddColumns(?PlatformInterface $adapterPlatform = null) : array
     {
         $sqls = [];
 
@@ -152,11 +167,13 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
     /**
      * @param PlatformInterface $adapterPlatform
+     *
      * @return array
      */
-    protected function processChangeColumns(PlatformInterface $adapterPlatform = null)
+    protected function processChangeColumns(?PlatformInterface $adapterPlatform = null) : array
     {
         $sqls = [];
+
         foreach ($this->changeColumns as $name => $column) {
             $sql           = $this->processExpression($column, $adapterPlatform);
             $insertStart   = $this->getSqlInsertOffsets($sql);
@@ -210,6 +227,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
                     }
                 }
             }
+
             $sqls[] = [
                 $adapterPlatform->quoteIdentifier($name),
                 $sql
@@ -224,7 +242,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
      *
      * @return string
      */
-    private function normalizeColumnOption($name)
+    private function normalizeColumnOption(string $name) : string
     {
         return strtolower(str_replace(['-', '_', ' '], '', $name));
     }
@@ -236,7 +254,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
      *
      * @return int
      */
-    private function compareColumnOptions($columnA, $columnB)
+    private function compareColumnOptions(string $columnA, string $columnB) : int
     {
         $columnA = $this->normalizeColumnOption($columnA);
         $columnA = isset($this->columnOptionSortOrder[$columnA])

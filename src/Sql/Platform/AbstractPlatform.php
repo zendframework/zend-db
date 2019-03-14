@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -12,7 +15,7 @@ namespace Zend\Db\Sql\Platform;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\StatementContainerInterface;
-use Zend\Db\Sql\Exception;
+use Zend\Db\Sql\Exception\RuntimeException;
 use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\SqlInterface;
 
@@ -44,13 +47,14 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
      *
      * @return void
      */
-    public function setTypeDecorator($type, PlatformDecoratorInterface $decorator)
+    public function setTypeDecorator(string $type, PlatformDecoratorInterface $decorator) : void
     {
         $this->decorators[$type] = $decorator;
     }
 
     /**
      * @param PreparableSqlInterface|SqlInterface $subject
+     *
      * @return PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface
      */
     public function getTypeDecorator($subject)
@@ -67,7 +71,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
     }
 
     /**
-     * @return array|PlatformDecoratorInterface[]
+     * @return array|PlatformDecoratorInterface
      */
     public function getDecorators()
     {
@@ -77,12 +81,12 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
     /**
      * {@inheritDoc}
      *
-     * @throws Exception\RuntimeException
+     * @throws RuntimeException
      */
     public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
     {
         if (! $this->subject instanceof PreparableSqlInterface) {
-            throw new Exception\RuntimeException(
+            throw new RuntimeException(
                 'The subject does not appear to implement Zend\Db\Sql\PreparableSqlInterface, thus calling '
                 . 'prepareStatement() has no effect'
             );
@@ -96,12 +100,12 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
     /**
      * {@inheritDoc}
      *
-     * @throws Exception\RuntimeException
+     * @throws RuntimeException
      */
-    public function getSqlString(PlatformInterface $adapterPlatform = null)
+    public function getSqlString(PlatformInterface $adapterPlatform = null) : string
     {
         if (! $this->subject instanceof SqlInterface) {
-            throw new Exception\RuntimeException(
+            throw new RuntimeException(
                 'The subject does not appear to implement Zend\Db\Sql\SqlInterface, thus calling '
                 . 'prepareStatement() has no effect'
             );

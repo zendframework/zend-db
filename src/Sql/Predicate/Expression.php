@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -10,6 +13,8 @@
 namespace Zend\Db\Sql\Predicate;
 
 use Zend\Db\Sql\Expression as BaseExpression;
+use function array_slice;
+use function func_get_args;
 
 class Expression extends BaseExpression implements PredicateInterface
 {
@@ -19,7 +24,7 @@ class Expression extends BaseExpression implements PredicateInterface
      * @param string $expression
      * @param int|float|bool|string|array $valueParameter
      */
-    public function __construct($expression = null, $valueParameter = null /*[, $valueParameter, ... ]*/)
+    public function __construct($expression = null, $valueParameter = null)
     {
         if ($expression) {
             $this->setExpression($expression);

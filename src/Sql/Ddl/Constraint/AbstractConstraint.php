@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -40,7 +43,7 @@ abstract class AbstractConstraint implements ConstraintInterface
      * @param null|string|array $columns
      * @param null|string $name
      */
-    public function __construct($columns = null, $name = null)
+    public function __construct($columns = null, ?string $name = null)
     {
         if ($columns) {
             $this->setColumns($columns);
@@ -51,27 +54,30 @@ abstract class AbstractConstraint implements ConstraintInterface
 
     /**
      * @param  string $name
+     *
      * @return self Provides a fluent interface
      */
-    public function setName($name)
+    public function setName(string $name) : self
     {
         $this->name = (string) $name;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
 
     /**
      * @param  null|string|array $columns
+     *
      * @return self Provides a fluent interface
      */
-    public function setColumns($columns)
+    public function setColumns(?$columns) : self
     {
         $this->columns = (array) $columns;
 
@@ -80,9 +86,10 @@ abstract class AbstractConstraint implements ConstraintInterface
 
     /**
      * @param  string $column
+     *
      * @return self Provides a fluent interface
      */
-    public function addColumn($column)
+    public function addColumn(string $column) : self
     {
         $this->columns[] = $column;
         return $this;
@@ -99,7 +106,7 @@ abstract class AbstractConstraint implements ConstraintInterface
     /**
      * {@inheritDoc}
      */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         $colCount = count($this->columns);
         $newSpecTypes = [];

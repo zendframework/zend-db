@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -8,6 +11,18 @@
  */
 
 namespace Zend\Db\Sql;
+
+use Zend\Db\Sql\Exception\InvalidArgumentException;
+use function current;
+use function get_class;
+use function gettype;
+use function implode;
+use function in_array;
+use function is_array;
+use function is_integer;
+use function is_object;
+use function is_scalar;
+use function key;
 
 abstract class AbstractExpression implements ExpressionInterface
 {
@@ -31,7 +46,7 @@ abstract class AbstractExpression implements ExpressionInterface
      *
      * @throws Exception\InvalidArgumentException
      */
-    protected function normalizeArgument($argument, $defaultType = self::TYPE_VALUE)
+    protected function normalizeArgument($argument, ?string $defaultType = self::TYPE_VALUE) : array
     {
         if ($argument instanceof ExpressionInterface || $argument instanceof SqlInterface) {
             return $this->buildNormalizedArgument($argument, self::TYPE_VALUE);
@@ -57,7 +72,7 @@ abstract class AbstractExpression implements ExpressionInterface
             return $this->buildNormalizedArgument($key, $value);
         }
 
-        throw new Exception\InvalidArgumentException(sprintf(
+        throw new InvalidArgumentException(sprintf(
             '$argument should be %s or %s or %s or %s or %s, "%s" given',
             'null',
             'scalar',
@@ -72,14 +87,14 @@ abstract class AbstractExpression implements ExpressionInterface
      * @param mixed  $argument
      * @param string $argumentType
      *
-     * @return array
+     * @return mixed[]
      *
      * @throws Exception\InvalidArgumentException
      */
-    private function buildNormalizedArgument($argument, $argumentType)
+    private function buildNormalizedArgument($argument, string $argumentType) : array
     {
         if (! in_array($argumentType, $this->allowedTypes)) {
-            throw new Exception\InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Argument type should be in array(%s)',
                 implode(',', $this->allowedTypes)
             ));

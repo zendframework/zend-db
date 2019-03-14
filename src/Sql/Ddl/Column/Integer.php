@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -14,7 +17,7 @@ class Integer extends Column
     /**
      * @return array
      */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         $data    = parent::getExpressionData();
         $options = $this->getOptions();

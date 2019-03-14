@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -14,6 +17,13 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 use Zend\Db\Sql\Select;
+use function array_push;
+use function array_shift;
+use function array_unshift;
+use function current;
+use function preg_match;
+use function sprintf;
+use function strpos;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
@@ -36,15 +46,15 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
    /**
      * @return bool
      */
-    public function getIsSelectContainDistinct()
+    public function getIsSelectContainDistinct() : bool
     {
         return $this->isSelectContainDistinct;
     }
 
     /**
-     * @param boolean $isSelectContainDistinct
+     * @param bool $isSelectContainDistinct
      */
-    public function setIsSelectContainDistinct($isSelectContainDistinct)
+    public function setIsSelectContainDistinct(bool $isSelectContainDistinct) : void
     {
         $this->isSelectContainDistinct = $isSelectContainDistinct;
     }
@@ -60,7 +70,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     /**
      * @return bool
      */
-    public function getSupportsLimitOffset()
+    public function getSupportsLimitOffset() : bool
     {
         return $this->supportsLimitOffset;
     }
@@ -68,20 +78,20 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     /**
      * @param bool $supportsLimitOffset
      */
-    public function setSupportsLimitOffset($supportsLimitOffset)
+    public function setSupportsLimitOffset(bool $supportsLimitOffset) : void
     {
         $this->supportsLimitOffset = $supportsLimitOffset;
     }
 
     /**
-     * @see Select::renderTable
+     * {@inheritDoc}
      */
-    protected function renderTable($table, $alias = null)
+    protected function renderTable(string $table, ?string $alias = null) : string
     {
         return $table . ' ' . $alias;
     }
 
-    protected function localizeVariables()
+    protected function localizeVariables() : void
     {
         parent::localizeVariables();
         // set specifications
@@ -99,12 +109,12 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      * @param  array              $parameters
      */
     protected function processLimitOffset(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
+        PlatformInterface  $platform,
+        DriverInterface    $driver = null,
         ParameterContainer $parameterContainer = null,
-        &$sqls,
-        &$parameters
-    ) {
+        array              &$sqls,
+        array              &$parameters
+    ) : void {
         if ($this->limit === null && $this->offset === null) {
             return;
         }

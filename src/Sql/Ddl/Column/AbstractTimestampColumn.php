@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -19,7 +22,7 @@ abstract class AbstractTimestampColumn extends Column
     /**
      * @return array
      */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         $spec = $this->specification;
 

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -11,6 +14,8 @@ namespace Zend\Db\Sql\Ddl;
 
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\AbstractSql;
+use Zend\Db\Sql\Ddl\Column\ColumnInterface;
+use Zend\Db\Sql\Ddl\Constraint\ConstraintInterface;
 use Zend\Db\Sql\TableIdentifier;
 
 class CreateTable extends AbstractSql implements SqlInterface
@@ -62,7 +67,7 @@ class CreateTable extends AbstractSql implements SqlInterface
      * @param string|TableIdentifier $table
      * @param bool   $isTemporary
      */
-    public function __construct($table = '', $isTemporary = false)
+    public function __construct($table = '', bool $isTemporary = false)
     {
         $this->table = $table;
         $this->setTemporary($isTemporary);
@@ -70,18 +75,20 @@ class CreateTable extends AbstractSql implements SqlInterface
 
     /**
      * @param  bool $temporary
+     *
      * @return self Provides a fluent interface
      */
-    public function setTemporary($temporary)
+    public function setTemporary(bool $temporary) : self
     {
         $this->isTemporary = (bool) $temporary;
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isTemporary()
+    public function isTemporary() : bool
     {
         return $this->isTemporary;
     }
@@ -90,37 +97,41 @@ class CreateTable extends AbstractSql implements SqlInterface
      * @param  string $name
      * @return self Provides a fluent interface
      */
-    public function setTable($name)
+    public function setTable(string $name) : self
     {
         $this->table = $name;
+
         return $this;
     }
 
     /**
-     * @param  Column\ColumnInterface $column
+     * @param  ColumnInterface $column
      * @return self Provides a fluent interface
      */
-    public function addColumn(Column\ColumnInterface $column)
+    public function addColumn(ColumnInterface $column) : self
     {
         $this->columns[] = $column;
+
         return $this;
     }
 
     /**
-     * @param  Constraint\ConstraintInterface $constraint
+     * @param  ConstraintInterface $constraint
      * @return self Provides a fluent interface
      */
-    public function addConstraint(Constraint\ConstraintInterface $constraint)
+    public function addConstraint(ConstraintInterface $constraint) : self
     {
         $this->constraints[] = $constraint;
+
         return $this;
     }
 
     /**
      * @param  string|null $key
+     *
      * @return array
      */
-    public function getRawState($key = null)
+    public function getRawState(?string $key = null) : array
     {
         $rawState = [
             self::COLUMNS     => $this->columns,
@@ -136,7 +147,7 @@ class CreateTable extends AbstractSql implements SqlInterface
      *
      * @return string[]
      */
-    protected function processTable(PlatformInterface $adapterPlatform = null)
+    protected function processTable(?PlatformInterface $adapterPlatform = null) : array
     {
         return [
             $this->isTemporary ? 'TEMPORARY ' : '',
@@ -147,9 +158,9 @@ class CreateTable extends AbstractSql implements SqlInterface
     /**
      * @param PlatformInterface $adapterPlatform
      *
-     * @return string[][]|null
+     * @return string[][]|void
      */
-    protected function processColumns(PlatformInterface $adapterPlatform = null)
+    protected function processColumns(?PlatformInterface $adapterPlatform = null)
     {
         if (! $this->columns) {
             return;
@@ -167,9 +178,9 @@ class CreateTable extends AbstractSql implements SqlInterface
     /**
      * @param PlatformInterface $adapterPlatform
      *
-     * @return array|string
+     * @return array|string|void
      */
-    protected function processCombinedby(PlatformInterface $adapterPlatform = null)
+    protected function processCombinedby(?PlatformInterface $adapterPlatform = null)
     {
         if ($this->constraints && $this->columns) {
             return $this->specifications['combinedBy'];
@@ -179,9 +190,9 @@ class CreateTable extends AbstractSql implements SqlInterface
     /**
      * @param PlatformInterface $adapterPlatform
      *
-     * @return string[][]|null
+     * @return string[][]|void
      */
-    protected function processConstraints(PlatformInterface $adapterPlatform = null)
+    protected function processConstraints(?PlatformInterface $adapterPlatform = null)
     {
         if (! $this->constraints) {
             return;
@@ -201,7 +212,7 @@ class CreateTable extends AbstractSql implements SqlInterface
      *
      * @return string[]
      */
-    protected function processStatementEnd(PlatformInterface $adapterPlatform = null)
+    protected function processStatementEnd(?PlatformInterface $adapterPlatform = null) : array
     {
         return ["\n)"];
     }

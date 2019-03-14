@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -37,7 +40,7 @@ class DropTable extends AbstractSql implements SqlInterface
         $this->table = $table;
     }
 
-    protected function processTable(PlatformInterface $adapterPlatform = null)
+    protected function processTable(?PlatformInterface $adapterPlatform = null) : array
     {
         return [$this->resolveTable($this->table, $adapterPlatform)];
     }

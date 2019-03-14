@@ -39,7 +39,7 @@ class Sql
     }
 
     /**
-     * @return null|\Zend\Db\Adapter\AdapterInterface
+     * @return null|AdapterInterface
      */
     public function getAdapter()
     {

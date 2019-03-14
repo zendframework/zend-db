@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -32,7 +35,7 @@ abstract class AbstractLengthColumn extends Column
      * @param  int $length
      * @return self Provides a fluent interface
      */
-    public function setLength($length)
+    public function setLength(int $length) : self
     {
         $this->length = (int) $length;
 
@@ -42,7 +45,7 @@ abstract class AbstractLengthColumn extends Column
     /**
      * @return int
      */
-    public function getLength()
+    public function getLength() : int
     {
         return $this->length;
     }
@@ -50,7 +53,7 @@ abstract class AbstractLengthColumn extends Column
     /**
      * @return string
      */
-    protected function getLengthExpression()
+    protected function getLengthExpression() : string
     {
         return (string) $this->length;
     }
@@ -58,7 +61,7 @@ abstract class AbstractLengthColumn extends Column
     /**
      * @return array
      */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         $data = parent::getExpressionData();
 

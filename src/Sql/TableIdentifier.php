@@ -27,7 +27,7 @@ class TableIdentifier
      * @param string      $table
      * @param null|string $schema
      */
-    public function __construct($table, $schema = null)
+    public function __construct(string $table, ?string $schema = null)
     {
         if (! (is_string($table) || is_callable([$table, '__toString']))) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -75,7 +75,7 @@ class TableIdentifier
     /**
      * @return string
      */
-    public function getTable()
+    public function getTable() : string
     {
         return $this->table;
     }
@@ -83,7 +83,7 @@ class TableIdentifier
     /**
      * @return bool
      */
-    public function hasSchema()
+    public function hasSchema() : bool
     {
         return ($this->schema !== null);
     }
@@ -101,12 +101,12 @@ class TableIdentifier
     /**
      * @return null|string
      */
-    public function getSchema()
+    public function getSchema() : ?string
     {
         return $this->schema;
     }
 
-    public function getTableAndSchema()
+    public function getTableAndSchema() : array
     {
         return [$this->table, $this->schema];
     }

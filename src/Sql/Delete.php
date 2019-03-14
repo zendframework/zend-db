@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -71,11 +74,13 @@ class Delete extends AbstractPreparableSql
      * Create from statement
      *
      * @param  string|TableIdentifier $table
+     *
      * @return self Provides a fluent interface
      */
-    public function from($table)
+    public function from($table) : self
     {
         $this->table = $table;
+
         return $this;
     }
 
@@ -92,6 +97,7 @@ class Delete extends AbstractPreparableSql
             'set' => $this->set,
             'where' => $this->where
         ];
+
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
@@ -103,7 +109,7 @@ class Delete extends AbstractPreparableSql
      *
      * @return self Provides a fluent interface
      */
-    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND)
+    public function where($predicate, ?string $combination = Predicate\PredicateSet::OP_AND) : self
     {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
@@ -124,7 +130,7 @@ class Delete extends AbstractPreparableSql
         PlatformInterface $platform,
         DriverInterface $driver = null,
         ParameterContainer $parameterContainer = null
-    ) {
+    ) : string {
         return sprintf(
             $this->specifications[static::SPECIFICATION_DELETE],
             $this->resolveTable($this->table, $platform, $driver, $parameterContainer)
@@ -136,12 +142,12 @@ class Delete extends AbstractPreparableSql
      * @param DriverInterface|null    $driver
      * @param ParameterContainer|null $parameterContainer
      *
-     * @return null|string
+     * @return void|string
      */
     protected function processWhere(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->where->count() == 0) {
             return;

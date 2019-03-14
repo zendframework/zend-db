@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -44,54 +47,60 @@ class Like extends AbstractExpression implements PredicateInterface
 
     /**
      * @param  string $identifier
+     *
      * @return self Provides a fluent interface
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier(string $identifier) : self
     {
         $this->identifier = $identifier;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getIdentifier()
+    public function getIdentifier() : string
     {
         return $this->identifier;
     }
 
     /**
      * @param  string $like
+     *
      * @return self Provides a fluent interface
      */
-    public function setLike($like)
+    public function setLike(string $like) : self
     {
         $this->like = $like;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getLike()
+    public function getLike() : string
     {
         return $this->like;
     }
 
     /**
      * @param  string $specification
+     *
      * @return self Provides a fluent interface
      */
-    public function setSpecification($specification)
+    public function setSpecification(string $specification) : self
     {
         $this->specification = $specification;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getSpecification()
+    public function getSpecification() : string
     {
         return $this->specification;
     }
@@ -99,7 +108,7 @@ class Like extends AbstractExpression implements PredicateInterface
     /**
      * @return array
      */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         list($values[], $types[]) = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
         list($values[], $types[]) = $this->normalizeArgument($this->like, self::TYPE_VALUE);

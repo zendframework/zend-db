@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -26,6 +28,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      * Set Subject
      *
      * @param Select $select
+     *
      * @return self Provides a fluent interface
      */
     public function setSubject($select)
@@ -38,7 +41,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     /**
      * {@inheritDoc}
      */
-    protected function localizeVariables()
+    protected function localizeVariables() : void
     {
         parent::localizeVariables();
         $this->specifications[self::COMBINE] = '%1$s %2$s';
@@ -56,8 +59,8 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     }
 
     protected function processLimit(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
+        PlatformInterface  $platform,
+        DriverInterface    $driver = null,
         ParameterContainer $parameterContainer = null
     ) {
         if ($this->limit === null && $this->offset !== null) {
@@ -76,8 +79,8 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     }
 
     protected function processOffset(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
+        PlatformInterface  $platform,
+        DriverInterface    $driver = null,
         ParameterContainer $parameterContainer = null
     ) {
         if ($this->offset === null) {
@@ -96,8 +99,8 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      * {@inheritDoc}
      */
     protected function processStatementEnd(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
+        PlatformInterface  $platform,
+        DriverInterface    $driver = null,
         ParameterContainer $parameterContainer = null
     ) {
         return '';

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -24,7 +27,7 @@ class Boolean extends Column
     /**
      * {@inheritDoc}
      */
-    public function setNullable($nullable)
+    public function setNullable($nullable) : self
     {
         return parent::setNullable(false);
     }

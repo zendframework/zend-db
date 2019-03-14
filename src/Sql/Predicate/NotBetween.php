@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -11,5 +14,8 @@ namespace Zend\Db\Sql\Predicate;
 
 class NotBetween extends Between
 {
+    /**
+     * @var string
+     */
     protected $specification = '%1$s NOT BETWEEN %2$s AND %3$s';
 }

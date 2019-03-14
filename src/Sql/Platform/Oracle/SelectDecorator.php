@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -14,6 +17,10 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 use Zend\Db\Sql\Select;
+use function array_push;
+use function array_shift;
+use function array_unshift;
+use function strpos;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
@@ -31,14 +38,14 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     }
 
     /**
-     * @see \Zend\Db\Sql\Select::renderTable
+     * @inheritDoc
      */
-    protected function renderTable($table, $alias = null)
+    protected function renderTable(string $table, ?string $alias = null) : string
     {
         return $table . ($alias ? ' ' . $alias : '');
     }
 
-    protected function localizeVariables()
+    protected function localizeVariables() : void
     {
         parent::localizeVariables();
         unset($this->specifications[self::LIMIT]);
@@ -53,15 +60,16 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      * @param ParameterContainer $parameterContainer
      * @param array $sqls
      * @param array $parameters
-     * @return null
+     *
+     * @return void
      */
     protected function processLimitOffset(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
+        PlatformInterface  $platform,
+        DriverInterface    $driver = null,
         ParameterContainer $parameterContainer = null,
-        &$sqls = [],
-        &$parameters = []
-    ) {
+        array              &$sqls = [],
+        array              &$parameters = []
+    ) : void {
         if ($this->limit === null && $this->offset === null) {
             return;
         }

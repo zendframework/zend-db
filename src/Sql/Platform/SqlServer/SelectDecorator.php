@@ -30,7 +30,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->subject = $select;
     }
 
-    protected function localizeVariables()
+    protected function localizeVariables() : void
     {
         parent::localizeVariables();
         // set specifications
@@ -46,6 +46,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      * @param ParameterContainer $parameterContainer
      * @param $sqls
      * @param $parameters
+     *
      * @return null
      */
     protected function processLimitOffset(

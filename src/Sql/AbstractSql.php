@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -12,8 +15,19 @@ namespace Zend\Db\Sql;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 use Zend\Db\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
+use Zend\Db\Sql\Exception\InvalidArgumentException;
+use Zend\Db\Sql\Exception\RuntimeException;
+use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
+use function count;
+use function gettype;
+use function implode;
+use function is_array;
+use function is_string;
+use function preg_replace;
+use function rtrim;
+use function sprintf;
+use function vsprintf;
 
 abstract class AbstractSql implements SqlInterface
 {
@@ -25,7 +39,7 @@ abstract class AbstractSql implements SqlInterface
     protected $specifications = [];
 
     /**
-     * @var string
+     * @var string[]
      */
     protected $processInfo = ['paramPrefix' => '', 'subselectCount' => 0];
 
@@ -37,7 +51,7 @@ abstract class AbstractSql implements SqlInterface
     /**
      * {@inheritDoc}
      */
-    public function getSqlString(PlatformInterface $adapterPlatform = null)
+    public function getSqlString(?PlatformInterface $adapterPlatform = null) : string
     {
         $adapterPlatform = ($adapterPlatform) ?: new DefaultAdapterPlatform;
         return $this->buildSqlString($adapterPlatform);
@@ -47,11 +61,12 @@ abstract class AbstractSql implements SqlInterface
      * @param PlatformInterface $platform
      * @param null|DriverInterface $driver
      * @param null|ParameterContainer $parameterContainer
-     * @return string
+     *
+     * @return string|void
      */
     protected function buildSqlString(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
+        PlatformInterface  $platform,
+        DriverInterface    $driver = null,
         ParameterContainer $parameterContainer = null
     ) {
         $this->localizeVariables();
@@ -87,38 +102,43 @@ abstract class AbstractSql implements SqlInterface
      *
      * @todo move TableIdentifier concatenation here
      * @param string $table
-     * @param string $alias
+     * @param string|null $alias
+     *
      * @return string
      */
-    protected function renderTable($table, $alias = null)
+    protected function renderTable(string $table, ?string $alias = null) : string
     {
         return $table . ($alias ? ' AS ' . $alias : '');
     }
 
     /**
      * @staticvar int $runtimeExpressionPrefix
+     *
      * @param ExpressionInterface $expression
      * @param PlatformInterface $platform
      * @param null|DriverInterface $driver
      * @param null|ParameterContainer $parameterContainer
      * @param null|string $namedParameterPrefix
+     *
      * @return string
+     *
      * @throws Exception\RuntimeException
      */
     protected function processExpression(
         ExpressionInterface $expression,
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null,
-        $namedParameterPrefix = null
-    ) {
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null,
+        ?string             $namedParameterPrefix = null
+    ) : string {
         $namedParameterPrefix = ! $namedParameterPrefix
             ? $namedParameterPrefix
             : $this->processInfo['paramPrefix'] . $namedParameterPrefix;
+
         // static counter for the number of times this method was invoked across the PHP runtime
         static $runtimeExpressionPrefix = 0;
 
-        if ($parameterContainer && ((! is_string($namedParameterPrefix) || $namedParameterPrefix == ''))) {
+        if ($parameterContainer && (! is_string($namedParameterPrefix) || $namedParameterPrefix == '')) {
             $namedParameterPrefix = sprintf('expr%04dParam', ++$runtimeExpressionPrefix);
         } else {
             $namedParameterPrefix = preg_replace('/\s/', '__', $namedParameterPrefix);
@@ -151,7 +171,7 @@ abstract class AbstractSql implements SqlInterface
             }
 
             if (! is_array($part)) {
-                throw new Exception\RuntimeException(
+                throw new RuntimeException(
                     'Elements returned from getExpressionData() array must be a string or array.'
                 );
             }
@@ -159,7 +179,8 @@ abstract class AbstractSql implements SqlInterface
             // Process values and types (the middle and last position of the
             // expression data)
             $values = $part[1];
-            $types = isset($part[2]) ? $part[2] : [];
+            $types  = isset($part[2]) ? $part[2] : [];
+
             foreach ($values as $vIndex => $value) {
                 if (! isset($types[$vIndex])) {
                     continue;
@@ -214,7 +235,7 @@ abstract class AbstractSql implements SqlInterface
      *
      * @throws Exception\RuntimeException
      */
-    protected function createSqlFromSpecificationAndParameters($specifications, $parameters)
+    protected function createSqlFromSpecificationAndParameters($specifications, array $parameters) : string
     {
         if (is_string($specifications)) {
             return vsprintf($specifications, $parameters);
@@ -231,7 +252,7 @@ abstract class AbstractSql implements SqlInterface
         }
 
         if (! isset($specificationString)) {
-            throw new Exception\RuntimeException(
+            throw new RuntimeException(
                 'A number of parameters was found that is not supported by this specification'
             );
         }
@@ -248,7 +269,7 @@ abstract class AbstractSql implements SqlInterface
                     }
 
                     if (! isset($paramSpecs[$position][$ppCount])) {
-                        throw new Exception\RuntimeException(sprintf(
+                        throw new RuntimeException(sprintf(
                             'A number of parameters (%d) was found that is not supported by this specification',
                             $ppCount
                         ));
@@ -259,7 +280,7 @@ abstract class AbstractSql implements SqlInterface
             } elseif ($paramSpecs[$position] !== null) {
                 $ppCount = count($paramsForPosition);
                 if (! isset($paramSpecs[$position][$ppCount])) {
-                    throw new Exception\RuntimeException(sprintf(
+                    throw new RuntimeException(sprintf(
                         'A number of parameters (%d) was found that is not supported by this specification',
                         $ppCount
                     ));
@@ -269,21 +290,23 @@ abstract class AbstractSql implements SqlInterface
                 $topParameters[] = $paramsForPosition;
             }
         }
+
         return vsprintf($specificationString, $topParameters);
     }
 
     /**
-     * @param Select $subselect
-     * @param PlatformInterface $platform
-     * @param null|DriverInterface $driver
+     * @param Select                  $subselect
+     * @param PlatformInterface       $platform
+     * @param null|DriverInterface    $driver
      * @param null|ParameterContainer $parameterContainer
+     *
      * @return string
      */
     protected function processSubSelect(
-        Select $subselect,
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        Select              $subselect,
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this instanceof PlatformDecoratorInterface) {
             $decorator = clone $this;
@@ -304,6 +327,7 @@ abstract class AbstractSql implements SqlInterface
 
             // copy count
             $this->processInfo['subselectCount'] = $decorator->processInfo['subselectCount'];
+
             return $sql;
         }
 
@@ -311,19 +335,20 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * @param Join[] $joins
+     * @param Join $joins
      * @param PlatformInterface $platform
      * @param null|DriverInterface $driver
      * @param null|ParameterContainer $parameterContainer
-     * @return null|string[] Null if no joins present, array of JOIN statements
+     *
+     * @return string[]|void|null
      *     otherwise
      * @throws Exception\InvalidArgumentException for invalid JOIN table names.
      */
     protected function processJoin(
-        Join $joins,
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        Join               $joins,
+        PlatformInterface  $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if (! $joins->count()) {
             return;
@@ -331,6 +356,7 @@ abstract class AbstractSql implements SqlInterface
 
         // process joins
         $joinSpecArgArray = [];
+
         foreach ($joins->getJoins() as $j => $join) {
             $joinName = null;
             $joinAs = null;
@@ -355,7 +381,7 @@ abstract class AbstractSql implements SqlInterface
             } elseif (is_string($joinName) || (is_object($joinName) && is_callable([$joinName, '__toString']))) {
                 $joinName = $platform->quoteIdentifier($joinName);
             } else {
-                throw new Exception\InvalidArgumentException(sprintf(
+                throw new InvalidArgumentException(sprintf(
                     'Join name expected to be Expression|TableIdentifier|Select|string, "%s" given',
                     gettype($joinName)
                 ));
@@ -391,19 +417,20 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @param null|array|ExpressionInterface|Select $column
-     * @param PlatformInterface $platform
-     * @param null|DriverInterface $driver
-     * @param null|string $namedParameterPrefix
-     * @param null|ParameterContainer $parameterContainer
+     * @param PlatformInterface                     $platform
+     * @param null|DriverInterface                  $driver
+     * @param null|ParameterContainer               $parameterContainer
+     * @param null|string                           $namedParameterPrefix
+     *
      * @return string
      */
     protected function resolveColumnValue(
-        $column,
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null,
-        $namedParameterPrefix = null
-    ) {
+        ?$column,
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null,
+        ?string             $namedParameterPrefix = null
+    ) : string {
         $namedParameterPrefix = ! $namedParameterPrefix
             ? $namedParameterPrefix
             : $this->processInfo['paramPrefix'] . $namedParameterPrefix;
@@ -422,12 +449,16 @@ abstract class AbstractSql implements SqlInterface
         if ($column instanceof ExpressionInterface) {
             return $this->processExpression($column, $platform, $driver, $parameterContainer, $namedParameterPrefix);
         }
+
         if ($column instanceof Select) {
             return '(' . $this->processSubSelect($column, $platform, $driver, $parameterContainer) . ')';
         }
+
         if ($column === null) {
             return 'NULL';
         }
+
+        /** @var string $column */
         return $isIdentifier
                 ? $fromTable . $platform->quoteIdentifierInFragment($column)
                 : $platform->quoteValue($column);
@@ -435,18 +466,20 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @param string|TableIdentifier|Select $table
-     * @param PlatformInterface $platform
-     * @param DriverInterface $driver
-     * @param ParameterContainer $parameterContainer
+     * @param PlatformInterface             $platform
+     * @param DriverInterface               $driver
+     * @param ParameterContainer            $parameterContainer
+     *
      * @return string
      */
     protected function resolveTable(
         $table,
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
+        PlatformInterface  $platform,
+        DriverInterface    $driver = null,
         ParameterContainer $parameterContainer = null
-    ) {
+    ) : string {
         $schema = null;
+
         if ($table instanceof TableIdentifier) {
             list($table, $schema) = $table->getTableAndSchema();
         }
@@ -457,16 +490,17 @@ abstract class AbstractSql implements SqlInterface
             $table = $platform->quoteIdentifier($table);
         }
 
-        if ($schema && $table) {
+        if (is_string($schema) && $table) {
             $table = $platform->quoteIdentifier($schema) . $platform->getIdentifierSeparator() . $table;
         }
+
         return $table;
     }
 
     /**
      * Copy variables from the subject into the local properties
      */
-    protected function localizeVariables()
+    protected function localizeVariables() : void
     {
         if (! $this instanceof PlatformDecoratorInterface) {
             return;
