@@ -20,11 +20,11 @@ class TableGateway extends AbstractTableGateway
     /**
      * Constructor
      *
-     * @param string|TableIdentifier|array                                              $table
-     * @param AdapterInterface                                                          $adapter
+     * @param string|TableIdentifier|array $table
+     * @param AdapterInterface $adapter
      * @param Feature\AbstractFeature|Feature\FeatureSet|Feature\AbstractFeature[]|null $features
-     * @param ResultSetInterface|null                                                   $resultSetPrototype
-     * @param Sql|null                                                                  $sql
+     * @param ResultSetInterface|null $resultSetPrototype
+     * @param Sql|null $sql
      *
      * @throws Exception\InvalidArgumentException
      */
