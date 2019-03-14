@@ -43,13 +43,10 @@ class ResultSet extends AbstractResultSet
         }
     }
 
-    public function setArrayObjectPrototype($arrayObjectPrototype) : self
+    public function setArrayObjectPrototype(object $arrayObjectPrototype) : self
     {
-        if (! is_object($arrayObjectPrototype)
-            || (
-                ! $arrayObjectPrototype instanceof ArrayObject
-                && ! method_exists($arrayObjectPrototype, 'exchangeArray')
-            )
+        if (! $arrayObjectPrototype instanceof ArrayObject
+            && ! method_exists($arrayObjectPrototype, 'exchangeArray')
         ) {
             throw new Exception\InvalidArgumentException(
                 'Object must be of type ArrayObject, or at least implement exchangeArray'
