@@ -15,9 +15,9 @@ use Zend\EventManager\EventInterface;
 class TableGatewayEvent implements EventInterface
 {
     /**
-     * @var AbstractTableGateway
+     * @var null|string|object|AbstractTableGateway
      */
-    protected $target = null;
+    protected $target;
 
     protected $name = '';
 
@@ -39,7 +39,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Get target/context from which event was triggered
      *
-     * @return null|string|object
+     * @return null|string|object|AbstractTableGateway
      */
     public function getTarget()
     {
@@ -82,7 +82,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set the event target/context
      *
-     * @param  null|string|object $target
+     * @param null|string|object|AbstractTableGateway $target
      * @return void
      */
     public function setTarget($target) : void
