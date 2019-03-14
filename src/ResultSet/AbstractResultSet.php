@@ -89,12 +89,15 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
     {
         if ($this->buffer === -2) {
             throw new Exception\RuntimeException('Buffering must be enabled before iteration is started');
-        } elseif ($this->buffer === null) {
+        }
+
+        if ($this->buffer === null) {
             $this->buffer = [];
             if ($this->dataSource instanceof ResultInterface) {
                 $this->dataSource->rewind();
             }
         }
+
         return $this;
     }
 
@@ -180,12 +183,13 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
         if (is_array($this->buffer) && isset($this->buffer[$this->position])) {
             return true;
         }
+
         if ($this->dataSource instanceof Iterator) {
             return $this->dataSource->valid();
-        } else {
-            $key = key($this->dataSource);
-            return ($key !== null);
         }
+
+        $key = key($this->dataSource);
+        return ($key !== null);
     }
 
     public function rewind() : void
