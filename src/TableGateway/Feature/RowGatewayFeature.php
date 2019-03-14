@@ -21,9 +21,6 @@ class RowGatewayFeature extends AbstractFeature
      */
     protected $constructorArguments = [];
 
-    /**
-     * @param null $primaryKey
-     */
     public function __construct()
     {
         $this->constructorArguments = func_get_args();
