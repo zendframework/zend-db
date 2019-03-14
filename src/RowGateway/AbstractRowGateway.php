@@ -20,10 +20,10 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     protected $isInitialized = false;
 
     /** @var string|TableIdentifier */
-    protected $table = null;
+    protected $table;
 
     /** @var array */
-    protected $primaryKeyColumn = null;
+    protected $primaryKeyColumn = [];
 
     /** @var array */
     protected $primaryKeyData = null;
@@ -57,10 +57,12 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
             throw new Exception\RuntimeException('This row object does not have a valid table set.');
         }
 
-        if ($this->primaryKeyColumn === null) {
-            throw new Exception\RuntimeException('This row object does not have a primary key column set.');
-        } elseif (is_string($this->primaryKeyColumn)) {
+        if (is_string($this->primaryKeyColumn)) {
             $this->primaryKeyColumn = (array) $this->primaryKeyColumn;
+        }
+
+        if (count($this->primaryKeyColumn) === 0) {
+            throw new Exception\RuntimeException('This row object does not have a primary key column set.');
         }
 
         if (! $this->sql instanceof Sql) {
