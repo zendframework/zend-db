@@ -26,7 +26,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     protected $primaryKeyColumn = [];
 
     /** @var array */
-    protected $primaryKeyData = null;
+    protected $primaryKeyData = [];
 
     /** @var array */
     protected $data = [];
@@ -82,7 +82,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         if ($rowExistsInDatabase == true) {
             $this->processPrimaryKeyData();
         } else {
-            $this->primaryKeyData = null;
+            $this->primaryKeyData = [];
         }
 
         return $this;
@@ -182,7 +182,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         $affectedRows = $result->getAffectedRows();
         if ($affectedRows == 1) {
             // detach from database
-            $this->primaryKeyData = null;
+            $this->primaryKeyData = [];
         }
 
         return $affectedRows;
@@ -271,7 +271,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
     public function rowExistsInDatabase() : bool
     {
-        return ($this->primaryKeyData !== null);
+        return count($this->primaryKeyData) > 0;
     }
 
     protected function processPrimaryKeyData() : void
