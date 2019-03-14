@@ -14,7 +14,7 @@ use Zend\Db\TableGateway\TableGatewayInterface;
 
 class FeatureSet
 {
-    const APPLY_HALT = 'halt';
+    public const APPLY_HALT = 'halt';
 
     protected $tableGateway = null;
 
