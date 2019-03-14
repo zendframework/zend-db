@@ -15,19 +15,13 @@ class FeatureSet
 {
     const APPLY_HALT = 'halt';
 
-    /**
-     * @var AbstractRowGateway
-     */
+    /** @var AbstractRowGateway */
     protected $rowGateway = null;
 
-    /**
-     * @var AbstractFeature[]
-     */
+    /** @var AbstractFeature[] */
     protected $features = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $magicSpecifications = [];
 
     /**

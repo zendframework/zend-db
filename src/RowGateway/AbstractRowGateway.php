@@ -16,39 +16,25 @@ use Zend\Db\Sql\TableIdentifier;
 
 abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayInterface
 {
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $isInitialized = false;
 
-    /**
-     * @var string|TableIdentifier
-     */
+    /** @var string|TableIdentifier */
     protected $table = null;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $primaryKeyColumn = null;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $primaryKeyData = null;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $data = [];
 
-    /**
-     * @var Sql
-     */
+    /** @var Sql */
     protected $sql = null;
 
-    /**
-     * @var Feature\FeatureSet
-     */
+    /** @var Feature\FeatureSet */
     protected $featureSet = null;
 
     /**

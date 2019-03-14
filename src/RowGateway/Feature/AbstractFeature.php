@@ -14,14 +14,10 @@ use Zend\Db\RowGateway\Exception;
 
 abstract class AbstractFeature extends AbstractRowGateway
 {
-    /**
-     * @var AbstractRowGateway
-     */
+    /** @var AbstractRowGateway */
     protected $rowGateway = null;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $sharedData = [];
 
     /**
