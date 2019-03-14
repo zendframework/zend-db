@@ -66,7 +66,7 @@ class EventFeature extends AbstractFeature implements
      */
     public function preInitialize() : void
     {
-        if (get_class($this->tableGateway) != 'Zend\Db\TableGateway\TableGateway') {
+        if (get_class($this->tableGateway) !== 'Zend\Db\TableGateway\TableGateway') {
             $this->eventManager->addIdentifiers([get_class($this->tableGateway)]);
         }
 

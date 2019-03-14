@@ -56,7 +56,7 @@ class MetadataFeature extends AbstractFeature
 
         foreach ($m->getConstraints($t->table) as $constraint) {
             /** @var $constraint \Zend\Db\Metadata\Object\ConstraintObject */
-            if ($constraint->getType() == 'PRIMARY KEY') {
+            if ($constraint->getType() === 'PRIMARY KEY') {
                 $pkc = $constraint;
                 break;
             }
