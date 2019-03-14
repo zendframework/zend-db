@@ -28,7 +28,7 @@ class HydratingResultSet extends AbstractResultSet
             ? ArraySerializableHydrator::class
             : ArraySerializable::class;
         $this->setHydrator($hydrator ?: new $defaultHydratorClass());
-        $this->setObjectPrototype(($objectPrototype) ?: new ArrayObject);
+        $this->setObjectPrototype($objectPrototype ?: new ArrayObject);
     }
 
     public function setObjectPrototype(object $objectPrototype) : self
