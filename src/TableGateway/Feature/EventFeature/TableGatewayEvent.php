@@ -85,7 +85,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set event parameters
      *
-     * @param string $params
+     * @param array|ArrayAccess $params
      * @return void
      */
     public function setParams($params) : void
