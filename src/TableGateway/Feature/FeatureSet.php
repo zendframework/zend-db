@@ -112,8 +112,7 @@ class FeatureSet
      */
     public function callMagicGet($property)
     {
-        $return = null;
-        return $return;
+        return null;
     }
 
     /**
@@ -132,8 +131,7 @@ class FeatureSet
      */
     public function callMagicSet($property, $value)
     {
-        $return = null;
-        return $return;
+        return null;
     }
 
     /**
