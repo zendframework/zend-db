@@ -15,21 +15,15 @@ use Zend\Db\Sql\Sql;
 class MasterSlaveFeature extends AbstractFeature
 {
     /** @var AdapterInterface */
-    protected $slaveAdapter = null;
+    protected $slaveAdapter;
 
     /** @var Sql */
-    protected $masterSql = null;
+    protected $masterSql;
 
     /** @var Sql */
-    protected $slaveSql = null;
+    protected $slaveSql;
 
-    /**
-     * Constructor
-     *
-     * @param AdapterInterface $slaveAdapter
-     * @param Sql|null $slaveSql
-     */
-    public function __construct(AdapterInterface $slaveAdapter, Sql $slaveSql = null)
+    public function __construct(AdapterInterface $slaveAdapter, ?Sql $slaveSql = null)
     {
         $this->slaveAdapter = $slaveAdapter;
         if ($slaveSql) {
@@ -42,9 +36,6 @@ class MasterSlaveFeature extends AbstractFeature
         return $this->slaveAdapter;
     }
 
-    /**
-     * @return Sql
-     */
     public function getSlaveSql() : Sql
     {
         return $this->slaveSql;

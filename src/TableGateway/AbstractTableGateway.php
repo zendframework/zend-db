@@ -49,7 +49,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     protected $resultSetPrototype = null;
 
     /** @var Sql */
-    protected $sql = null;
+    protected $sql;
 
     /** @var int */
     protected $lastInsertValue = null;
