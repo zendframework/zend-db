@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql;
 
@@ -21,37 +21,31 @@ class Insert extends AbstractPreparableSql
      *
      * @const
      */
-    const SPECIFICATION_INSERT = 'insert';
-    const SPECIFICATION_SELECT = 'select';
-    const VALUES_MERGE = 'merge';
-    const VALUES_SET   = 'set';
+    public const SPECIFICATION_INSERT = 'insert';
+    public const SPECIFICATION_SELECT = 'select';
+    public const VALUES_MERGE = 'merge';
+    public const VALUES_SET   = 'set';
     /**#@-*/
 
-    /**
-     * @var array Specification array
-     */
+    /** @var array Specification array */
     protected $specifications = [
         self::SPECIFICATION_INSERT => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
         self::SPECIFICATION_SELECT => 'INSERT INTO %1$s %2$s %3$s',
     ];
 
-    /**
-     * @var string|TableIdentifier
-     */
-    protected $table            = null;
+    /** @var string|TableIdentifier */
+    protected $table;
     protected $columns          = [];
 
-    /**
-     * @var array|Select
-     */
-    protected $select           = null;
+    /** @var array|Select */
+    protected $select;
 
     /**
      * Constructor
      *
-     * @param  null|string|TableIdentifier $table
+     * @param null|string|TableIdentifier $table
      */
-    public function __construct($table = null)
+    public function __construct(?$table = null)
     {
         if ($table) {
             $this->into($table);
@@ -61,22 +55,16 @@ class Insert extends AbstractPreparableSql
     /**
      * Create INTO clause
      *
-     * @param  string|TableIdentifier $table
-     * @return self Provides a fluent interface
+     * @param string|TableIdentifier $table
+     * @return self
      */
-    public function into($table)
+    public function into($table) : self
     {
         $this->table = $table;
         return $this;
     }
 
-    /**
-     * Specify columns
-     *
-     * @param  array $columns
-     * @return self Provides a fluent interface
-     */
-    public function columns(array $columns)
+    public function columns(array $columns) : self
     {
         $this->columns = array_flip($columns);
         return $this;
@@ -85,15 +73,15 @@ class Insert extends AbstractPreparableSql
     /**
      * Specify values to insert
      *
-     * @param  array|Select $values
-     * @param  string $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
-     * @return self Provides a fluent interface
+     * @param array|Select $values
+     * @param string $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
+     * @return self
      * @throws Exception\InvalidArgumentException
      */
-    public function values($values, $flag = self::VALUES_SET)
+    public function values($values, string $flag = self::VALUES_SET) : self
     {
         if ($values instanceof Select) {
-            if ($flag == self::VALUES_MERGE) {
+            if ($flag === self::VALUES_MERGE) {
                 throw new Exception\InvalidArgumentException(
                     'A Zend\Db\Sql\Select instance cannot be provided with the merge flag'
                 );
@@ -108,15 +96,15 @@ class Insert extends AbstractPreparableSql
             );
         }
 
-        if ($this->select && $flag == self::VALUES_MERGE) {
+        if ($this->select && $flag === self::VALUES_MERGE) {
             throw new Exception\InvalidArgumentException(
                 'An array of values cannot be provided with the merge flag when a Zend\Db\Sql\Select instance already '
                 . 'exists as the value source'
             );
         }
 
-        if ($flag == self::VALUES_SET) {
-            $this->columns = $this->isAssocativeArray($values)
+        if ($flag === self::VALUES_SET) {
+            $this->columns = $this->isAssociativeArray($values)
                 ? $values
                 : array_combine(array_keys($this->columns), array_values($values));
         } else {
@@ -135,29 +123,17 @@ class Insert extends AbstractPreparableSql
      * @param array $array
      * @return bool
      */
-    private function isAssocativeArray(array $array)
+    private function isAssociativeArray(array $array) : bool
     {
         return array_keys($array) !== range(0, count($array) - 1);
     }
 
-    /**
-     * Create INTO SELECT clause
-     *
-     * @param Select $select
-     * @return self
-     */
-    public function select(Select $select)
+    public function select(Select $select) : self
     {
         return $this->values($select);
     }
 
-    /**
-     * Get raw state
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function getRawState($key = null)
+    public function getRawState(?string $key = null)
     {
         $rawState = [
             'table' => $this->table,
@@ -169,8 +145,8 @@ class Insert extends AbstractPreparableSql
 
     protected function processInsert(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->select) {
             return;
@@ -212,8 +188,8 @@ class Insert extends AbstractPreparableSql
 
     protected function processSelect(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if (! $this->select) {
             return;
@@ -226,36 +202,18 @@ class Insert extends AbstractPreparableSql
         return sprintf(
             $this->specifications[static::SPECIFICATION_SELECT],
             $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
-            $columns ? "($columns)" : "",
+            $columns ? "($columns)" : '',
             $selectSql
         );
     }
 
-    /**
-     * Overloading: variable setting
-     *
-     * Proxies to values, using VALUES_MERGE strategy
-     *
-     * @param  string $name
-     * @param  mixed $value
-     * @return self Provides a fluent interface
-     */
-    public function __set($name, $value)
+    public function __set(string $name, $value)
     {
         $this->columns[$name] = $value;
         return $this;
     }
 
-    /**
-     * Overloading: variable unset
-     *
-     * Proxies to values and columns
-     *
-     * @param  string $name
-     * @throws Exception\InvalidArgumentException
-     * @return void
-     */
-    public function __unset($name)
+    public function __unset(string $name)
     {
         if (! array_key_exists($name, $this->columns)) {
             throw new Exception\InvalidArgumentException(
@@ -266,29 +224,12 @@ class Insert extends AbstractPreparableSql
         unset($this->columns[$name]);
     }
 
-    /**
-     * Overloading: variable isset
-     *
-     * Proxies to columns; does a column of that name exist?
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function __isset($name)
+    public function __isset(string $name)
     {
         return array_key_exists($name, $this->columns);
     }
 
-    /**
-     * Overloading: variable retrieval
-     *
-     * Retrieves value by column name
-     *
-     * @param  string $name
-     * @throws Exception\InvalidArgumentException
-     * @return mixed
-     */
-    public function __get($name)
+    public function __get(string $name)
     {
         if (! array_key_exists($name, $this->columns)) {
             throw new Exception\InvalidArgumentException(

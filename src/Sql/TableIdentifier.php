@@ -1,33 +1,23 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql;
 
-/**
- */
 class TableIdentifier
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $table;
 
-    /**
-     * @var null|string
-     */
+    /** @var null|string */
     protected $schema;
 
-    /**
-     * @param string      $table
-     * @param null|string $schema
-     */
-    public function __construct($table, $schema = null)
+    public function __construct(string $table, ?string $schema = null)
     {
         if (! (is_string($table) || is_callable([$table, '__toString']))) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -36,7 +26,7 @@ class TableIdentifier
             ));
         }
 
-        $this->table = (string) $table;
+        $this->table = $table;
 
         if ('' === $this->table) {
             throw new Exception\InvalidArgumentException('$table must be a valid table name, empty string given');
@@ -52,7 +42,7 @@ class TableIdentifier
                 ));
             }
 
-            $this->schema = (string) $schema;
+            $this->schema = $schema;
 
             if ('' === $this->schema) {
                 throw new Exception\InvalidArgumentException(
@@ -64,36 +54,28 @@ class TableIdentifier
 
     /**
      * @param string $table
-     *
      * @deprecated please use the constructor and build a new {@see TableIdentifier} instead
      */
-    public function setTable($table)
+    public function setTable(string $table) : void
     {
         $this->table = $table;
     }
 
-    /**
-     * @return string
-     */
-    public function getTable()
+    public function getTable() : string
     {
         return $this->table;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSchema()
+    public function hasSchema() : bool
     {
         return ($this->schema !== null);
     }
 
     /**
-     * @param $schema
-     *
+     * @param null|string $schema
      * @deprecated please use the constructor and build a new {@see TableIdentifier} instead
      */
-    public function setSchema($schema)
+    public function setSchema(?string $schema) : void
     {
         $this->schema = $schema;
     }
@@ -101,12 +83,12 @@ class TableIdentifier
     /**
      * @return null|string
      */
-    public function getSchema()
+    public function getSchema() : ?string
     {
         return $this->schema;
     }
 
-    public function getTableAndSchema()
+    public function getTableAndSchema() : array
     {
         return [$this->table, $this->schema];
     }

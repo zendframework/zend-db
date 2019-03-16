@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql\Platform\Sqlite;
 
@@ -17,48 +17,38 @@ use Zend\Db\Sql\Select;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
-    /**
-     * @var Select
-     */
-    protected $subject = null;
+    /** @var Select */
+    protected $subject;
 
     /**
-     * Set Subject
-     *
      * @param Select $select
-     * @return self Provides a fluent interface
+     * @return self
      */
-    public function setSubject($select)
+    public function setSubject($select) : self
     {
         $this->subject = $select;
 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function localizeVariables()
+    protected function localizeVariables() : void
     {
         parent::localizeVariables();
         $this->specifications[self::COMBINE] = '%1$s %2$s';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function processStatementStart(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
-    ) {
-        return '';
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ) : array {
+        return [];
     }
 
     protected function processLimit(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        PlatformInterface  $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->limit === null && $this->offset !== null) {
             return [''];
@@ -76,9 +66,9 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     }
 
     protected function processOffset(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        PlatformInterface  $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->offset === null) {
             return;
@@ -92,14 +82,11 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         return [$this->offset];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function processStatementEnd(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
-    ) {
-        return '';
+        PlatformInterface  $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ) : array {
+        return [];
     }
 }

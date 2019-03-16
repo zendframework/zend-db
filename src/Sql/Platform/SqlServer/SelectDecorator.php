@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql\Platform\SqlServer;
 
@@ -17,10 +17,8 @@ use Zend\Db\Sql\Select;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
-    /**
-     * @var Select
-     */
-    protected $subject = null;
+    /** @var Select */
+    protected $subject;
 
     /**
      * @param Select $select
@@ -30,7 +28,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->subject = $select;
     }
 
-    protected function localizeVariables()
+    protected function localizeVariables() : void
     {
         parent::localizeVariables();
         // set specifications
@@ -40,21 +38,13 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->specifications['LIMITOFFSET'] = null;
     }
 
-    /**
-     * @param PlatformInterface $platform
-     * @param DriverInterface $driver
-     * @param ParameterContainer $parameterContainer
-     * @param $sqls
-     * @param $parameters
-     * @return null
-     */
     protected function processLimitOffset(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null,
         &$sqls,
         &$parameters
-    ) {
+    ) : void {
         if ($this->limit === null && $this->offset === null) {
             return;
         }
@@ -96,17 +86,17 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             $offsetParamName = $driver->formatParameterName('offset');
             $offsetForSumParamName = $driver->formatParameterName('offsetForSum');
             // @codingStandardsIgnoreStart
-            array_push($sqls, ') AS [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__ZEND_ROW_NUMBER] BETWEEN '
-                . $offsetParamName . '+1 AND ' . $limitParamName . '+' . $offsetForSumParamName);
+            $sqls[] = ') AS [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__ZEND_ROW_NUMBER] BETWEEN '
+                . $offsetParamName . '+1 AND ' . $limitParamName . '+' . $offsetForSumParamName;
             // @codingStandardsIgnoreEnd
             $parameterContainer->offsetSet('offset', $this->offset);
             $parameterContainer->offsetSet('limit', $this->limit);
             $parameterContainer->offsetSetReference('offsetForSum', 'offset');
         } else {
             // @codingStandardsIgnoreStart
-            array_push($sqls, ') AS [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__ZEND_ROW_NUMBER] BETWEEN '
+            $sqls[] = ') AS [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [ZEND_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__ZEND_ROW_NUMBER] BETWEEN '
                 . (int) $this->offset . '+1 AND '
-                . (int) $this->limit . '+' . (int) $this->offset);
+                . (int) $this->limit . '+' . (int) $this->offset;
             // @codingStandardsIgnoreEnd
         }
 

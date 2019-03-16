@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql;
 
@@ -14,29 +14,23 @@ class Expression extends AbstractExpression
     /**
      * @const
      */
-    const PLACEHOLDER = '?';
+    public const PLACEHOLDER = '?';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $expression = '';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $parameters = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $types = [];
 
     /**
      * @param string $expression
-     * @param string|array $parameters
+     * @param null|string|array $parameters
      * @param array $types @deprecated will be dropped in version 3.0.0
      */
-    public function __construct($expression = '', $parameters = null, array $types = [])
+    public function __construct(string $expression = '', ?$parameters = null, array $types = [])
     {
         if ($expression !== '') {
             $this->setExpression($expression);
@@ -61,46 +55,39 @@ class Expression extends AbstractExpression
         }
     }
 
-    /**
-     * @param $expression
-     * @return self Provides a fluent interface
-     * @throws Exception\InvalidArgumentException
-     */
-    public function setExpression($expression)
+    public function setExpression(string $expression) : self
     {
         if (! is_string($expression) || $expression == '') {
             throw new Exception\InvalidArgumentException('Supplied expression must be a string.');
         }
+
         $this->expression = $expression;
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getExpression()
+    public function getExpression() : string
     {
         return $this->expression;
     }
 
     /**
      * @param $parameters
-     * @return self Provides a fluent interface
+     * @return self
      * @throws Exception\InvalidArgumentException
      */
-    public function setParameters($parameters)
+    public function setParameters($parameters) : self
     {
         if (! is_scalar($parameters) && ! is_array($parameters)) {
             throw new Exception\InvalidArgumentException('Expression parameters must be a scalar or array.');
         }
+
         $this->parameters = $parameters;
+
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getParameters()
+    public function getParameters() : array
     {
         return $this->parameters;
     }
@@ -108,9 +95,9 @@ class Expression extends AbstractExpression
     /**
      * @deprecated
      * @param array $types
-     * @return self Provides a fluent interface
+     * @return self
      */
-    public function setTypes(array $types)
+    public function setTypes(array $types) : self
     {
         $this->types = $types;
         return $this;
@@ -120,18 +107,14 @@ class Expression extends AbstractExpression
      * @deprecated
      * @return array
      */
-    public function getTypes()
+    public function getTypes() : array
     {
         return $this->types;
     }
 
-    /**
-     * @return array
-     * @throws Exception\RuntimeException
-     */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
-        $parameters = (is_scalar($this->parameters)) ? [$this->parameters] : $this->parameters;
+        $parameters = is_scalar($this->parameters) ? [$this->parameters] : $this->parameters;
         $parametersCount = count($parameters);
         $expression = str_replace('%', '%%', $this->expression);
 
@@ -153,8 +136,9 @@ class Expression extends AbstractExpression
         }
 
         foreach ($parameters as $parameter) {
-            list($values[], $types[]) = $this->normalizeArgument($parameter, self::TYPE_VALUE);
+            [$values[], $types[]] = $this->normalizeArgument($parameter, self::TYPE_VALUE);
         }
+
         return [[
             $expression,
             $values,

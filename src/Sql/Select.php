@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql;
 
@@ -14,7 +14,6 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 
 /**
- *
  * @property Where $where
  * @property Having $having
  */
@@ -24,47 +23,45 @@ class Select extends AbstractPreparableSql
      * Constant
      * @const
      */
-    const SELECT = 'select';
-    const QUANTIFIER = 'quantifier';
-    const COLUMNS = 'columns';
-    const TABLE = 'table';
-    const JOINS = 'joins';
-    const WHERE = 'where';
-    const GROUP = 'group';
-    const HAVING = 'having';
-    const ORDER = 'order';
-    const LIMIT = 'limit';
-    const OFFSET = 'offset';
-    const QUANTIFIER_DISTINCT = 'DISTINCT';
-    const QUANTIFIER_ALL = 'ALL';
-    const JOIN_INNER = Join::JOIN_INNER;
-    const JOIN_OUTER = Join::JOIN_OUTER;
-    const JOIN_LEFT = Join::JOIN_LEFT;
-    const JOIN_RIGHT = Join::JOIN_RIGHT;
-    const JOIN_RIGHT_OUTER = Join::JOIN_RIGHT_OUTER;
-    const JOIN_LEFT_OUTER  = Join::JOIN_LEFT_OUTER;
-    const SQL_STAR = '*';
-    const ORDER_ASCENDING = 'ASC';
-    const ORDER_DESCENDING = 'DESC';
-    const COMBINE = 'combine';
-    const COMBINE_UNION = 'union';
-    const COMBINE_EXCEPT = 'except';
-    const COMBINE_INTERSECT = 'intersect';
+    public const SELECT = 'select';
+    public const QUANTIFIER = 'quantifier';
+    public const COLUMNS = 'columns';
+    public const TABLE = 'table';
+    public const JOINS = 'joins';
+    public const WHERE = 'where';
+    public const GROUP = 'group';
+    public const HAVING = 'having';
+    public const ORDER = 'order';
+    public const LIMIT = 'limit';
+    public const OFFSET = 'offset';
+    public const QUANTIFIER_DISTINCT = 'DISTINCT';
+    public const QUANTIFIER_ALL = 'ALL';
+    public const JOIN_INNER = Join::JOIN_INNER;
+    public const JOIN_OUTER = Join::JOIN_OUTER;
+    public const JOIN_LEFT = Join::JOIN_LEFT;
+    public const JOIN_RIGHT = Join::JOIN_RIGHT;
+    public const JOIN_RIGHT_OUTER = Join::JOIN_RIGHT_OUTER;
+    public const JOIN_LEFT_OUTER  = Join::JOIN_LEFT_OUTER;
+    public const SQL_STAR = '*';
+    public const ORDER_ASCENDING = 'ASC';
+    public const ORDER_DESCENDING = 'DESC';
+    public const COMBINE = 'combine';
+    public const COMBINE_UNION = 'union';
+    public const COMBINE_EXCEPT = 'except';
+    public const COMBINE_INTERSECT = 'intersect';
     /**#@-*/
 
     /**
      * @deprecated use JOIN_LEFT_OUTER instead
      */
-    const JOIN_OUTER_LEFT  = 'outer left';
+    public const JOIN_OUTER_LEFT  = 'outer left';
 
     /**
      * @deprecated use JOIN_LEFT_OUTER instead
      */
-    const JOIN_OUTER_RIGHT = 'outer right';
+    public const JOIN_OUTER_RIGHT = 'outer right';
 
-    /**
-     * @var array Specifications
-     */
+    /** @var array Specifications */
     protected $specifications = [
         'statementStart' => '%1$s',
         self::SELECT => [
@@ -104,77 +101,51 @@ class Select extends AbstractPreparableSql
         self::COMBINE => '%1$s ( %2$s )',
     ];
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $tableReadOnly = false;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $prefixColumnsWithTable = true;
 
-    /**
-     * @var string|array|TableIdentifier
-     */
-    protected $table = null;
+    /** @var string|array|TableIdentifier */
+    protected $table;
 
-    /**
-     * @var null|string|Expression
-     */
-    protected $quantifier = null;
+    /** @var null|string|Expression */
+    protected $quantifier;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $columns = [self::SQL_STAR];
 
-    /**
-     * @var null|Join
-     */
-    protected $joins = null;
+    /** @var null|Join */
+    protected $joins;
 
-    /**
-     * @var Where
-     */
-    protected $where = null;
+    /** @var Where */
+    protected $where;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $order = [];
 
-    /**
-     * @var null|array
-     */
-    protected $group = null;
+    /** @var null|array */
+    protected $group;
 
-    /**
-     * @var null|string|array
-     */
-    protected $having = null;
+    /** @var null|string|array */
+    protected $having;
 
-    /**
-     * @var int|null
-     */
-    protected $limit = null;
+    /** @var int|null */
+    protected $limit;
 
-    /**
-     * @var int|null
-     */
-    protected $offset = null;
+    /** @var int|null */
+    protected $offset;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $combine = [];
 
     /**
      * Constructor
      *
-     * @param  null|string|array|TableIdentifier $table
+     * @param null|string|array|TableIdentifier $table
      */
-    public function __construct($table = null)
+    public function __construct(?$table = null)
     {
         if ($table) {
             $this->from($table);
@@ -189,11 +160,11 @@ class Select extends AbstractPreparableSql
     /**
      * Create from clause
      *
-     * @param  string|array|TableIdentifier $table
-     * @return self Provides a fluent interface
+     * @param string|array|TableIdentifier $table
+     * @return self
      * @throws Exception\InvalidArgumentException
      */
-    public function from($table)
+    public function from($table) : self
     {
         if ($this->tableReadOnly) {
             throw new Exception\InvalidArgumentException(
@@ -219,10 +190,10 @@ class Select extends AbstractPreparableSql
 
     /**
      * @param string|Expression $quantifier DISTINCT|ALL
-     * @return self Provides a fluent interface
+     * @return self
      * @throws Exception\InvalidArgumentException
      */
-    public function quantifier($quantifier)
+    public function quantifier($quantifier) : self
     {
         if (! is_string($quantifier) && ! $quantifier instanceof ExpressionInterface) {
             throw new Exception\InvalidArgumentException(
@@ -248,28 +219,28 @@ class Select extends AbstractPreparableSql
      *     key string will be use as alias,
      *     value can be string or Expression objects
      *
-     * @param  array $columns
-     * @param  bool  $prefixColumnsWithTable
-     * @return self Provides a fluent interface
+     * @param array $columns
+     * @param bool  $prefixColumnsWithTable
+     * @return self
      */
-    public function columns(array $columns, $prefixColumnsWithTable = true)
+    public function columns(array $columns, bool $prefixColumnsWithTable = true) : self
     {
         $this->columns = $columns;
-        $this->prefixColumnsWithTable = (bool) $prefixColumnsWithTable;
+        $this->prefixColumnsWithTable = $prefixColumnsWithTable;
         return $this;
     }
 
     /**
      * Create join clause
      *
-     * @param  string|array|TableIdentifier $name
-     * @param  string|Predicate\Expression $on
-     * @param  string|array $columns
-     * @param  string $type one of the JOIN_* constants
-     * @return self Provides a fluent interface
+     * @param string|array|TableIdentifier $name
+     * @param string|Predicate\Expression $on
+     * @param string|array $columns
+     * @param string $type one of the JOIN_* constants
+     * @return self
      * @throws Exception\InvalidArgumentException
      */
-    public function join($name, $on, $columns = self::SQL_STAR, $type = self::JOIN_INNER)
+    public function join($name, $on, $columns = self::SQL_STAR, string $type = self::JOIN_INNER) : self
     {
         $this->joins->join($name, $on, $columns, $type);
 
@@ -279,12 +250,12 @@ class Select extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param  Where|\Closure|string|array|Predicate\PredicateInterface $predicate
-     * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
-     * @return self Provides a fluent interface
+     * @param Where|\Closure|string|array|Predicate\PredicateInterface $predicate
+     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
+     * @return self
      * @throws Exception\InvalidArgumentException
      */
-    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND)
+    public function where($predicate, string $combination = Predicate\PredicateSet::OP_AND) : self
     {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
@@ -296,9 +267,9 @@ class Select extends AbstractPreparableSql
 
     /**
      * @param mixed $group
-     * @return self Provides a fluent interface
+     * @return self
      */
-    public function group($group)
+    public function group($group) : self
     {
         if (is_array($group)) {
             foreach ($group as $o) {
@@ -313,11 +284,11 @@ class Select extends AbstractPreparableSql
     /**
      * Create having clause
      *
-     * @param  Where|\Closure|string|array $predicate
-     * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
-     * @return self Provides a fluent interface
+     * @param Where|\Closure|string|array $predicate
+     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
+     * @return self
      */
-    public function having($predicate, $combination = Predicate\PredicateSet::OP_AND)
+    public function having($predicate, string $combination = Predicate\PredicateSet::OP_AND) : self
     {
         if ($predicate instanceof Having) {
             $this->having = $predicate;
@@ -329,9 +300,9 @@ class Select extends AbstractPreparableSql
 
     /**
      * @param string|array $order
-     * @return self Provides a fluent interface
+     * @return self
      */
-    public function order($order)
+    public function order($order) : self
     {
         if (is_string($order)) {
             if (strpos($order, ',') !== false) {
@@ -352,72 +323,30 @@ class Select extends AbstractPreparableSql
         return $this;
     }
 
-    /**
-     * @param int $limit
-     * @return self Provides a fluent interface
-     * @throws Exception\InvalidArgumentException
-     */
-    public function limit($limit)
+    public function limit(int $limit) : self
     {
-        if (! is_numeric($limit)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                '%s expects parameter to be numeric, "%s" given',
-                __METHOD__,
-                (is_object($limit) ? get_class($limit) : gettype($limit))
-            ));
-        }
-
         $this->limit = $limit;
         return $this;
     }
 
-    /**
-     * @param int $offset
-     * @return self Provides a fluent interface
-     * @throws Exception\InvalidArgumentException
-     */
-    public function offset($offset)
+    public function offset(int $offset) : self
     {
-        if (! is_numeric($offset)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                '%s expects parameter to be numeric, "%s" given',
-                __METHOD__,
-                (is_object($offset) ? get_class($offset) : gettype($offset))
-            ));
-        }
-
         $this->offset = $offset;
         return $this;
     }
 
-    /**
-     * @param Select $select
-     * @param string $type
-     * @param string $modifier
-     * @return self Provides a fluent interface
-     * @throws Exception\InvalidArgumentException
-     */
-    public function combine(Select $select, $type = self::COMBINE_UNION, $modifier = '')
+    public function combine(Select $select, string $type = self::COMBINE_UNION, string $modifier = '') : self
     {
         if ($this->combine !== []) {
             throw new Exception\InvalidArgumentException(
                 'This Select object is already combined and cannot be combined with multiple Selects objects'
             );
         }
-        $this->combine = [
-            'select' => $select,
-            'type' => $type,
-            'modifier' => $modifier
-        ];
+        $this->combine = compact('select', 'type', 'modifier');
         return $this;
     }
 
-    /**
-     * @param string $part
-     * @return self Provides a fluent interface
-     * @throws Exception\InvalidArgumentException
-     */
-    public function reset($part)
+    public function reset(string $part) : self
     {
         switch ($part) {
             case self::TABLE:
@@ -463,11 +392,11 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param $index
-     * @param $specification
-     * @return self Provides a fluent interface
+     * @param string $index
+     * @param array|string $specification
+     * @return self
      */
-    public function setSpecification($index, $specification)
+    public function setSpecification(string $index, $specification) : self
     {
         if (! method_exists($this, 'process' . $index)) {
             throw new Exception\InvalidArgumentException('Not a valid specification name.');
@@ -476,7 +405,7 @@ class Select extends AbstractPreparableSql
         return $this;
     }
 
-    public function getRawState($key = null)
+    public function getRawState(?string $key = null)
     {
         $rawState = [
             self::TABLE      => $this->table,
@@ -494,21 +423,16 @@ class Select extends AbstractPreparableSql
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
-    /**
-     * Returns whether the table is read only or not.
-     *
-     * @return bool
-     */
-    public function isTableReadOnly()
+    public function isTableReadOnly() : bool
     {
         return $this->tableReadOnly;
     }
 
     protected function processStatementStart(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
-    ) {
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ) : ?array {
         if ($this->combine !== []) {
             return ['('];
         }
@@ -516,30 +440,22 @@ class Select extends AbstractPreparableSql
 
     protected function processStatementEnd(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
-    ) {
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ) : ?array {
         if ($this->combine !== []) {
             return [')'];
         }
     }
 
-    /**
-     * Process the select part
-     *
-     * @param PlatformInterface $platform
-     * @param DriverInterface $driver
-     * @param ParameterContainer $parameterContainer
-     * @return null|array
-     */
     protected function processSelect(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
-    ) {
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ) : ?array {
         $expr = 1;
 
-        list($table, $fromTable) = $this->resolveTable($this->table, $platform, $driver, $parameterContainer);
+        [$table, $fromTable] = $this->resolveTable($this->table, $platform, $driver, $parameterContainer);
         // process table columns
         $columns = [];
         foreach ($this->columns as $columnIndexOrAs => $column) {
@@ -563,14 +479,14 @@ class Select extends AbstractPreparableSql
             if (is_string($columnIndexOrAs)) {
                 $columnAs = $platform->quoteIdentifier($columnIndexOrAs);
             } elseif (stripos($columnName, ' as ') === false) {
-                $columnAs = (is_string($column)) ? $platform->quoteIdentifier($column) : 'Expression' . $expr++;
+                $columnAs = is_string($column) ? $platform->quoteIdentifier($column) : 'Expression' . $expr++;
             }
-            $columns[] = (isset($columnAs)) ? [$columnName, $columnAs] : [$columnName];
+            $columns[] = isset($columnAs) ? [$columnName, $columnAs] : [$columnName];
         }
 
         // process join columns
         foreach ($this->joins->getJoins() as $join) {
-            $joinName = (is_array($join['name'])) ? key($join['name']) : $join['name'];
+            $joinName = is_array($join['name']) ? key($join['name']) : $join['name'];
             $joinName = parent::resolveTable($joinName, $platform, $driver, $parameterContainer);
 
             foreach ($join['columns'] as $jKey => $jColumn) {
@@ -606,25 +522,27 @@ class Select extends AbstractPreparableSql
 
         if (! isset($table)) {
             return [$columns];
-        } elseif (isset($quantifier)) {
-            return [$quantifier, $columns, $table];
-        } else {
-            return [$columns, $table];
         }
+
+        if (isset($quantifier)) {
+            return [$quantifier, $columns, $table];
+        }
+
+        return [$columns, $table];
     }
 
     protected function processJoins(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
     }
 
     protected function processWhere(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->where->count() == 0) {
             return;
@@ -636,8 +554,8 @@ class Select extends AbstractPreparableSql
 
     protected function processGroup(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->group === null) {
             return;
@@ -661,8 +579,8 @@ class Select extends AbstractPreparableSql
 
     protected function processHaving(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->having->count() == 0) {
             return;
@@ -674,11 +592,11 @@ class Select extends AbstractPreparableSql
 
     protected function processOrder(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
-    ) {
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ) : ?array {
         if (empty($this->order)) {
-            return;
+            return null;
         }
         $orders = [];
         foreach ($this->order as $k => $v) {
@@ -690,7 +608,7 @@ class Select extends AbstractPreparableSql
             }
             if (is_int($k)) {
                 if (strpos($v, ' ') !== false) {
-                    list($k, $v) = preg_split('# #', $v, 2);
+                    [$k, $v] = preg_split('# #', $v, 2);
                 } else {
                     $k = $v;
                     $v = self::ORDER_ASCENDING;
@@ -707,8 +625,8 @@ class Select extends AbstractPreparableSql
 
     protected function processLimit(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->limit === null) {
             return;
@@ -723,8 +641,8 @@ class Select extends AbstractPreparableSql
 
     protected function processOffset(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->offset === null) {
             return;
@@ -740,8 +658,8 @@ class Select extends AbstractPreparableSql
 
     protected function processCombine(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->combine == []) {
             return;
@@ -758,14 +676,7 @@ class Select extends AbstractPreparableSql
         ];
     }
 
-    /**
-     * Variable overloading
-     *
-     * @param  string $name
-     * @throws Exception\InvalidArgumentException
-     * @return mixed
-     */
-    public function __get($name)
+    public function __get(string $name)
     {
         switch (strtolower($name)) {
             case 'where':
@@ -779,13 +690,6 @@ class Select extends AbstractPreparableSql
         }
     }
 
-    /**
-     * __clone
-     *
-     * Resets the where object each time the Select is cloned.
-     *
-     * @return void
-     */
     public function __clone()
     {
         $this->where  = clone $this->where;
@@ -798,13 +702,13 @@ class Select extends AbstractPreparableSql
      * @param PlatformInterface $platform
      * @param DriverInterface $driver
      * @param ParameterContainer $parameterContainer
-     * @return string
+     * @return array
      */
     protected function resolveTable(
         $table,
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        PlatformInterface  $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         $alias = null;
 

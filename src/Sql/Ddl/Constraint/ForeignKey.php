@@ -1,34 +1,26 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql\Ddl\Constraint;
 
 class ForeignKey extends AbstractConstraint
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $onDeleteRule = 'NO ACTION';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $onUpdateRule = 'NO ACTION';
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $referenceColumn = [];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $referenceTable = '';
 
     /**
@@ -36,29 +28,27 @@ class ForeignKey extends AbstractConstraint
      */
     protected $columnSpecification = 'FOREIGN KEY (%s) ';
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $referenceSpecification = [
         'REFERENCES %s ',
         'ON DELETE %s ON UPDATE %s'
     ];
 
     /**
-     * @param null|string       $name
+     * @param string $name
      * @param null|string|array $columns
-     * @param string            $referenceTable
+     * @param string $referenceTable
      * @param null|string|array $referenceColumn
-     * @param null|string       $onDeleteRule
-     * @param null|string       $onUpdateRule
+     * @param null|string $onDeleteRule
+     * @param null|string $onUpdateRule
      */
     public function __construct(
-        $name,
-        $columns,
-        $referenceTable,
-        $referenceColumn,
-        $onDeleteRule = null,
-        $onUpdateRule = null
+        string $name,
+        ?$columns,
+        string $referenceTable,
+        ?$referenceColumn,
+        ?string $onDeleteRule = null,
+        ?string $onUpdateRule = null
     ) {
         $this->setName($name);
         $this->setColumns($columns);
@@ -74,85 +64,59 @@ class ForeignKey extends AbstractConstraint
         }
     }
 
-    /**
-     * @param  string $referenceTable
-     * @return self Provides a fluent interface
-     */
-    public function setReferenceTable($referenceTable)
+    public function setReferenceTable(string $referenceTable) : self
     {
-        $this->referenceTable = (string) $referenceTable;
+        $this->referenceTable = $referenceTable;
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getReferenceTable()
+    public function getReferenceTable() : string
     {
         return $this->referenceTable;
     }
 
     /**
-     * @param  null|string|array $referenceColumn
-     * @return self Provides a fluent interface
+     * @param null|string|array $referenceColumn
+     * @return self
      */
-    public function setReferenceColumn($referenceColumn)
+    public function setReferenceColumn(?$referenceColumn) : self
     {
         $this->referenceColumn = (array) $referenceColumn;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getReferenceColumn()
+    public function getReferenceColumn() : array
     {
         return $this->referenceColumn;
     }
 
-    /**
-     * @param  string $onDeleteRule
-     * @return self Provides a fluent interface
-     */
-    public function setOnDeleteRule($onDeleteRule)
+    public function setOnDeleteRule(string $onDeleteRule) : self
     {
-        $this->onDeleteRule = (string) $onDeleteRule;
+        $this->onDeleteRule = $onDeleteRule;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getOnDeleteRule()
+    public function getOnDeleteRule() : string
     {
         return $this->onDeleteRule;
     }
 
-    /**
-     * @param  string $onUpdateRule
-     * @return self Provides a fluent interface
-     */
-    public function setOnUpdateRule($onUpdateRule)
+    public function setOnUpdateRule(string $onUpdateRule) : self
     {
-        $this->onUpdateRule = (string) $onUpdateRule;
+        $this->onUpdateRule = $onUpdateRule;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getOnUpdateRule()
+    public function getOnUpdateRule() : string
     {
         return $this->onUpdateRule;
     }
 
-    /**
-     * @return array
-     */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         $data         = parent::getExpressionData();
         $colCount     = count($this->referenceColumn);

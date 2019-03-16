@@ -1,46 +1,36 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql\Ddl\Constraint;
 
 abstract class AbstractConstraint implements ConstraintInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $columnSpecification = ' (%s)';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $namedSpecification = 'CONSTRAINT %s ';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $specification = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $name = '';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $columns = [];
 
     /**
      * @param null|string|array $columns
-     * @param null|string $name
+     * @param string $name
      */
-    public function __construct($columns = null, $name = null)
+    public function __construct(?$columns = null, string $name = '')
     {
         if ($columns) {
             $this->setColumns($columns);
@@ -49,57 +39,41 @@ abstract class AbstractConstraint implements ConstraintInterface
         $this->setName($name);
     }
 
-    /**
-     * @param  string $name
-     * @return self Provides a fluent interface
-     */
-    public function setName($name)
+    public function setName(string $name) : self
     {
-        $this->name = (string) $name;
+        $this->name = $name;
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
 
     /**
-     * @param  null|string|array $columns
-     * @return self Provides a fluent interface
+     * @param null|string|array $columns
+     * @return self
      */
-    public function setColumns($columns)
+    public function setColumns(?$columns) : self
     {
         $this->columns = (array) $columns;
 
         return $this;
     }
 
-    /**
-     * @param  string $column
-     * @return self Provides a fluent interface
-     */
-    public function addColumn($column)
+    public function addColumn(string $column) : self
     {
         $this->columns[] = $column;
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getColumns()
+    public function getColumns() : array
     {
         return $this->columns;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         $colCount = count($this->columns);
         $newSpecTypes = [];

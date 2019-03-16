@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql\Ddl\Column;
 
@@ -13,48 +13,28 @@ use Zend\Db\Sql\Ddl\Constraint\ConstraintInterface;
 
 class Column implements ColumnInterface
 {
-    /**
-     * @var null|string|int
-     */
+    /** @var null|string|int */
     protected $default;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $isNullable = false;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $name = '';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $options = [];
 
-    /**
-     * @var ConstraintInterface[]
-     */
+    /** @var ConstraintInterface[] */
     protected $constraints = [];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $specification = '%s %s';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $type = 'INTEGER';
 
-    /**
-     * @param null|string $name
-     * @param bool        $nullable
-     * @param mixed|null  $default
-     * @param mixed[]     $options
-     */
-    public function __construct($name = null, $nullable = false, $default = null, array $options = [])
+    public function __construct(string $name = '', bool $nullable = false, ?$default = null, array $options = [])
     {
         $this->setName($name);
         $this->setNullable($nullable);
@@ -62,49 +42,38 @@ class Column implements ColumnInterface
         $this->setOptions($options);
     }
 
-    /**
-     * @param  string $name
-     * @return self Provides a fluent interface
-     */
-    public function setName($name)
+    public function setName(string $name) : self
     {
-        $this->name = (string) $name;
+        $this->name = $name;
+
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
 
-    /**
-     * @param  bool $nullable
-     * @return self Provides a fluent interface
-     */
-    public function setNullable($nullable)
+    public function setNullable(bool $nullable) : self
     {
-        $this->isNullable = (bool) $nullable;
+        $this->isNullable = $nullable;
+
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isNullable()
+    public function isNullable() : bool
     {
         return $this->isNullable;
     }
 
     /**
-     * @param  null|string|int $default
-     * @return self Provides a fluent interface
+     * @param null|string|int $default
+     * @return self
      */
-    public function setDefault($default)
+    public function setDefault(?$default) : self
     {
         $this->default = $default;
+
         return $this;
     }
 
@@ -116,51 +85,33 @@ class Column implements ColumnInterface
         return $this->default;
     }
 
-    /**
-     * @param  array $options
-     * @return self Provides a fluent interface
-     */
-    public function setOptions(array $options)
+    public function setOptions(array $options) : self
     {
         $this->options = $options;
+
         return $this;
     }
 
-    /**
-     * @param  string $name
-     * @param  string $value
-     * @return self Provides a fluent interface
-     */
-    public function setOption($name, $value)
+    public function setOption(string $name, string $value) : self
     {
         $this->options[$name] = $value;
+
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getOptions()
+    public function getOptions() : array
     {
         return $this->options;
     }
 
-    /**
-     * @param ConstraintInterface $constraint
-     *
-     * @return self Provides a fluent interface
-     */
-    public function addConstraint(ConstraintInterface $constraint)
+    public function addConstraint(ConstraintInterface $constraint) : self
     {
         $this->constraints[] = $constraint;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         $spec = $this->specification;
 

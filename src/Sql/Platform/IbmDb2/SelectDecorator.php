@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql\Platform\IbmDb2;
 
@@ -14,37 +14,30 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 use Zend\Db\Sql\Select;
+use function array_shift;
+use function array_unshift;
+use function current;
+use function preg_match;
+use function sprintf;
+use function strpos;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $isSelectContainDistinct = false;
 
-    /**
-     * @var Select
-     */
-    protected $subject = null;
+    /** @var Select */
+    protected $subject;
 
-     /**
-     * @var bool
-     */
+     /** @var bool */
     protected $supportsLimitOffset = false;
 
-
-   /**
-     * @return bool
-     */
-    public function getIsSelectContainDistinct()
+    public function getIsSelectContainDistinct() : bool
     {
         return $this->isSelectContainDistinct;
     }
 
-    /**
-     * @param boolean $isSelectContainDistinct
-     */
-    public function setIsSelectContainDistinct($isSelectContainDistinct)
+    public function setIsSelectContainDistinct(bool $isSelectContainDistinct) : void
     {
         $this->isSelectContainDistinct = $isSelectContainDistinct;
     }
@@ -57,31 +50,22 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->subject = $select;
     }
 
-    /**
-     * @return bool
-     */
-    public function getSupportsLimitOffset()
+    public function getSupportsLimitOffset() : bool
     {
         return $this->supportsLimitOffset;
     }
 
-    /**
-     * @param bool $supportsLimitOffset
-     */
-    public function setSupportsLimitOffset($supportsLimitOffset)
+    public function setSupportsLimitOffset(bool $supportsLimitOffset) : void
     {
         $this->supportsLimitOffset = $supportsLimitOffset;
     }
 
-    /**
-     * @see Select::renderTable
-     */
-    protected function renderTable($table, $alias = null)
+    protected function renderTable(string $table, ?string $alias = null) : string
     {
         return $table . ' ' . $alias;
     }
 
-    protected function localizeVariables()
+    protected function localizeVariables() : void
     {
         parent::localizeVariables();
         // set specifications
@@ -91,20 +75,13 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->specifications['LIMITOFFSET'] = null;
     }
 
-    /**
-     * @param  PlatformInterface  $platform
-     * @param  DriverInterface    $driver
-     * @param  ParameterContainer $parameterContainer
-     * @param  array              $sqls
-     * @param  array              $parameters
-     */
     protected function processLimitOffset(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null,
-        &$sqls,
-        &$parameters
-    ) {
+        PlatformInterface  $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null,
+        array              &$sqls,
+        array              &$parameters
+    ) : void {
         if ($this->limit === null && $this->offset === null) {
             return;
         }
@@ -118,11 +95,11 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
             $offset = (int) $this->offset;
             if ($offset) {
-                array_push($sqls, sprintf("LIMIT %s OFFSET %s", $limit, $offset));
+                $sqls[] = sprintf('LIMIT %s OFFSET %s', $limit, $offset);
                 return;
             }
 
-            array_push($sqls, sprintf("LIMIT %s", $limit));
+            $sqls[] = sprintf('LIMIT %s', $limit);
             return;
         }
 
@@ -159,13 +136,13 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             $limitParamName        = $driver->formatParameterName('limit');
             $offsetParamName       = $driver->formatParameterName('offset');
 
-            array_push($sqls, sprintf(
-                // @codingStandardsIgnoreStart
-                ") AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN %s AND %s",
+            $sqls[] = sprintf(
+            // @codingStandardsIgnoreStart
+                ') AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN %s AND %s',
                 // @codingStandardsIgnoreEnd
                 $offsetParamName,
                 $limitParamName
-            ));
+            );
 
             if ((int) $this->offset > 0) {
                 $parameterContainer->offsetSet('offset', (int) $this->offset + 1);
@@ -181,13 +158,13 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
                 $offset = (int) $this->offset;
             }
 
-            array_push($sqls, sprintf(
-                // @codingStandardsIgnoreStart
-                ") AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN %d AND %d",
+            $sqls[] = sprintf(
+            // @codingStandardsIgnoreStart
+                ') AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN %d AND %d',
                 // @codingStandardsIgnoreEnd
                 $offset,
                 (int) $this->limit + (int) $this->offset
-            ));
+            );
         }
 
         if (isset($sqls[self::ORDER])) {
