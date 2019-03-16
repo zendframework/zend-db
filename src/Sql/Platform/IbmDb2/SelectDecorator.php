@@ -186,7 +186,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
                 ') AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN %d AND %d',
                 // @codingStandardsIgnoreEnd
                 $offset,
-                (int)$this->limit + (int)$this->offset
+                (int) $this->limit + (int) $this->offset
             );
         }
 
