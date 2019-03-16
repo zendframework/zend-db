@@ -545,11 +545,13 @@ class Select extends AbstractPreparableSql
 
         if (! isset($table)) {
             return [$columns];
-        } elseif (isset($quantifier)) {
-            return [$quantifier, $columns, $table];
-        } else {
-            return [$columns, $table];
         }
+
+        if (isset($quantifier)) {
+            return [$quantifier, $columns, $table];
+        }
+
+        return [$columns, $table];
     }
 
     protected function processJoins(
