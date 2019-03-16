@@ -66,7 +66,7 @@ class Column implements ColumnInterface
      */
     public function setNullable(bool $nullable) : self
     {
-        $this->isNullable = (bool) $nullable;
+        $this->isNullable = $nullable;
 
         return $this;
     }

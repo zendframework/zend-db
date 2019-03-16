@@ -54,7 +54,7 @@ abstract class AbstractSql implements SqlInterface
         PlatformInterface  $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) : string {
+    ) : ?string {
         $this->localizeVariables();
 
         $sqls       = [];
@@ -445,7 +445,7 @@ abstract class AbstractSql implements SqlInterface
         PlatformInterface  $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) : string {
+    ) {
         $schema = null;
 
         if ($table instanceof TableIdentifier) {

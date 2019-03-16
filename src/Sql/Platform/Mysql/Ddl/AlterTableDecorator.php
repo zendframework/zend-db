@@ -46,7 +46,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
      *
      * @return self Provides a fluent interface
      */
-    public function setSubject(AlterTable $subject) : self
+    public function setSubject($subject) : self
     {
         $this->subject = $subject;
 

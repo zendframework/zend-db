@@ -43,15 +43,12 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->specifications[self::COMBINE] = '%1$s %2$s';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function processStatementStart(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
-        return '';
+    ) : array {
+        return [];
     }
 
     protected function processLimit(
@@ -91,14 +88,11 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         return [$this->offset];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function processStatementEnd(
         PlatformInterface  $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
-        return '';
+    ) : array {
+        return [];
     }
 }
