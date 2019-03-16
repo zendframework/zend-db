@@ -29,8 +29,11 @@ class Sql
      * @param null|string|array|TableIdentifier $table
      * @param null|Platform\AbstractPlatform    $sqlPlatform @deprecated since version 3.0
      */
-    public function __construct(AdapterInterface $adapter, $table = null, Platform\AbstractPlatform $sqlPlatform = null)
-    {
+    public function __construct(
+        AdapterInterface $adapter,
+        ?$table = null,
+        ?Platform\AbstractPlatform $sqlPlatform = null
+    ) {
         $this->adapter = $adapter;
         if ($table) {
             $this->setTable($table);
@@ -82,7 +85,7 @@ class Sql
      * @param null|string|array|TableIdentifier $table
      * @return Select
      */
-    public function select($table = null) : Select
+    public function select(?$table = null) : Select
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -97,7 +100,7 @@ class Sql
      * @param null|string|TableIdentifier $table
      * @return Insert
      */
-    public function insert($table = null) : Insert
+    public function insert(?$table = null) : Insert
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -112,7 +115,7 @@ class Sql
      * @param null|string|TableIdentifier $table
      * @return Update
      */
-    public function update($table = null) : Update
+    public function update(?$table = null) : Update
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -127,7 +130,7 @@ class Sql
      * @param null|string|TableIdentifier $table
      * @return Delete
      */
-    public function delete($table = null) : Delete
+    public function delete(?$table = null) : Delete
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -159,7 +162,7 @@ class Sql
      *
      * @deprecated Deprecated in 2.4. Use buildSqlString() instead
      */
-    public function getSqlStringForSqlObject(SqlInterface $sqlObject, PlatformInterface $platform = null) : string
+    public function getSqlStringForSqlObject(SqlInterface $sqlObject, ?PlatformInterface $platform = null) : string
     {
         $platform = $platform ?: $this->adapter->getPlatform();
         return $this->sqlPlatform->setSubject($sqlObject)->getSqlString($platform);

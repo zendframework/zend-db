@@ -63,7 +63,7 @@ class Update extends AbstractPreparableSql
      *
      * @param null|string|TableIdentifier $table
      */
-    public function __construct($table = null)
+    public function __construct(?$table = null)
     {
         if ($table) {
             $this->table($table);
@@ -147,7 +147,7 @@ class Update extends AbstractPreparableSql
         return $this;
     }
 
-    public function getRawState(string $key = null)
+    public function getRawState(?string $key = null)
     {
         $rawState = [
             'emptyWhereProtection' => $this->emptyWhereProtection,

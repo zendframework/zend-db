@@ -24,7 +24,7 @@ class IsNull extends AbstractExpression implements PredicateInterface
      *
      * @param string $identifier
      */
-    public function __construct(string $identifier = null)
+    public function __construct(?string $identifier = null)
     {
         if ($identifier) {
             $this->setIdentifier($identifier);

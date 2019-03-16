@@ -145,7 +145,7 @@ class Select extends AbstractPreparableSql
      *
      * @param null|string|array|TableIdentifier $table
      */
-    public function __construct($table = null)
+    public function __construct(?$table = null)
     {
         if ($table) {
             $this->from($table);

@@ -25,7 +25,7 @@ class Between extends AbstractExpression implements PredicateInterface
      * @param int|float|string $minValue
      * @param int|float|string $maxValue
      */
-    public function __construct(string $identifier = null, $minValue = null, $maxValue = null)
+    public function __construct(?string $identifier = null, $minValue = null, $maxValue = null)
     {
         if ($identifier) {
             $this->setIdentifier($identifier);

@@ -27,10 +27,10 @@ class Expression extends AbstractExpression
 
     /**
      * @param string $expression
-     * @param string|array $parameters
+     * @param null|string|array $parameters
      * @param array $types @deprecated will be dropped in version 3.0.0
      */
-    public function __construct(string $expression = '', $parameters = null, array $types = [])
+    public function __construct(string $expression = '', ?$parameters = null, array $types = [])
     {
         if ($expression !== '') {
             $this->setExpression($expression);

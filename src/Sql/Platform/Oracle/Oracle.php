@@ -14,7 +14,7 @@ use Zend\Db\Sql\Select;
 
 class Oracle extends AbstractPlatform
 {
-    public function __construct(SelectDecorator $selectDecorator = null)
+    public function __construct(?SelectDecorator $selectDecorator = null)
     {
         $this->setTypeDecorator(Select::class, $selectDecorator ?: new SelectDecorator());
     }

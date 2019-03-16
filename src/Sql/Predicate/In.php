@@ -28,7 +28,7 @@ class In extends AbstractExpression implements PredicateInterface
      * @param null|string|array $identifier
      * @param null|array|Select $valueSet
      */
-    public function __construct($identifier = null, $valueSet = null)
+    public function __construct(?$identifier = null, ?$valueSet = null)
     {
         if ($identifier) {
             $this->setIdentifier($identifier);

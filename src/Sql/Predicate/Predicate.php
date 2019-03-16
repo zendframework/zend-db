@@ -282,7 +282,7 @@ class Predicate extends PredicateSet
      *
      * @return self Provides a fluent interface
      */
-    public function expression($expression, $parameters = null) : self
+    public function expression($expression, ?$parameters = null) : self
     {
         $this->addPredicate(
             new Expression($expression, $parameters),
@@ -374,11 +374,11 @@ class Predicate extends PredicateSet
      * Utilizes In predicate
      *
      * @param string|Expression $identifier
-     * @param array|Select $valueSet
+     * @param array|Select|null $valueSet
      *
      * @return self Provides a fluent interface
      */
-    public function in($identifier, $valueSet = null) : self
+    public function in($identifier, ?$valueSet = null) : self
     {
         $this->addPredicate(
             new In($identifier, $valueSet),
@@ -396,11 +396,11 @@ class Predicate extends PredicateSet
      * Utilizes NotIn predicate
      *
      * @param string|Expression $identifier
-     * @param array|Select $valueSet
+     * @param array|Select|null $valueSet
      *
      * @return self Provides a fluent interface
      */
-    public function notIn($identifier, $valueSet = null) : self
+    public function notIn($identifier, ?$valueSet = null) : self
     {
         $this->addPredicate(
             new NotIn($identifier, $valueSet),

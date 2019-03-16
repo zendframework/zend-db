@@ -63,7 +63,7 @@ class Platform extends AbstractPlatform
      *
      * @return PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface
      */
-    public function getTypeDecorator($subject, $adapterOrPlatform = null)
+    public function getTypeDecorator($subject, ?$adapterOrPlatform = null)
     {
         $platformName = $this->resolvePlatformName($adapterOrPlatform);
 
@@ -114,7 +114,7 @@ class Platform extends AbstractPlatform
      *
      * @throws RuntimeException
      */
-    public function getSqlString(PlatformInterface $adapterPlatform = null) : string
+    public function getSqlString(?PlatformInterface $adapterPlatform = null) : string
     {
         if (! $this->subject instanceof SqlInterface) {
             throw new RuntimeException(

@@ -95,7 +95,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
      *
      * @throws RuntimeException
      */
-    public function getSqlString(PlatformInterface $adapterPlatform = null) : string
+    public function getSqlString(?PlatformInterface $adapterPlatform = null) : string
     {
         if (! $this->subject instanceof SqlInterface) {
             throw new RuntimeException(

@@ -22,11 +22,7 @@ class Like extends AbstractExpression implements PredicateInterface
     /** @var string */
     protected $like = '';
 
-    /**
-     * @param string $identifier
-     * @param string $like
-     */
-    public function __construct($identifier = null, $like = null)
+    public function __construct(?string $identifier = null, ?string $like = null)
     {
         if ($identifier) {
             $this->setIdentifier($identifier);
