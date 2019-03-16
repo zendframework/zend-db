@@ -162,7 +162,6 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     }
 
     /**
-     *
      * @param string $columnA
      * @param string $columnB
      *

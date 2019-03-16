@@ -16,7 +16,6 @@ use Zend\Db\Adapter\Driver\Pdo\Pdo;
 use Zend\Stdlib\PriorityList;
 
 /**
- *
  * @property Where $where
  */
 class Update extends AbstractPreparableSql

@@ -14,7 +14,6 @@ use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\Driver\DriverInterface;
 
 /**
- *
  * @property Where $where
  */
 class Delete extends AbstractPreparableSql

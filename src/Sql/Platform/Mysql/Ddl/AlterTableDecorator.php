@@ -241,7 +241,6 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     }
 
     /**
-     *
      * @param string $columnA
      * @param string $columnB
      *

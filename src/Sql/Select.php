@@ -14,7 +14,6 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 
 /**
- *
  * @property Where $where
  * @property Having $having
  */
