@@ -110,7 +110,7 @@ class Insert extends AbstractPreparableSql
         }
 
         if ($flag === self::VALUES_SET) {
-            $this->columns = $this->isAssocativeArray($values)
+            $this->columns = $this->isAssociativeArray($values)
                 ? $values
                 : array_combine(array_keys($this->columns), array_values($values));
         } else {
@@ -129,7 +129,7 @@ class Insert extends AbstractPreparableSql
      * @param array $array
      * @return bool
      */
-    private function isAssocativeArray(array $array) : bool
+    private function isAssociativeArray(array $array) : bool
     {
         return array_keys($array) !== range(0, count($array) - 1);
     }
