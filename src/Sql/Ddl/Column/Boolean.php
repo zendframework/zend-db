@@ -22,11 +22,6 @@ class Boolean extends Column
     /**
      * {@inheritDoc}
      */
-    protected $isNullable = false;
-
-    /**
-     * {@inheritDoc}
-     */
     public function setNullable($nullable) : self
     {
         return parent::setNullable(false);

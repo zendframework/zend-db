@@ -46,14 +46,6 @@ class Join implements Iterator, Countable
     protected $joins = [];
 
     /**
-     * Initialize iterator position.
-     */
-    public function __construct()
-    {
-        $this->position = 0;
-    }
-
-    /**
      * Rewind iterator.
      */
     public function rewind() : void
