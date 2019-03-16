@@ -126,7 +126,7 @@ class In extends AbstractExpression implements PredicateInterface
             $types[] = self::TYPE_VALUE;
         } else {
             foreach ($values as $argument) {
-                [$replacements[], $types[]] = $this->normalizeArgument($argument, self::TYPE_VALUE);
+                list($replacements[], $types[]) = $this->normalizeArgument($argument, self::TYPE_VALUE);
             }
             $countValues = count($values);
             $valuePlaceholders = $countValues > 0 ? array_fill(0, $countValues, '%s') : [];

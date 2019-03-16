@@ -252,8 +252,8 @@ class Operator extends AbstractExpression implements PredicateInterface
      */
     public function getExpressionData() : array
     {
-        [$values[], $types[]] = $this->normalizeArgument($this->left, $this->leftType);
-        [$values[], $types[]] = $this->normalizeArgument($this->right, $this->rightType);
+        list($values[], $types[]) = $this->normalizeArgument($this->left, $this->leftType);
+        list($values[], $types[]) = $this->normalizeArgument($this->right, $this->rightType);
 
         return [[
             '%s ' . $this->operator . ' %s',
