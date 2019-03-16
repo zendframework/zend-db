@@ -40,7 +40,7 @@ class CreateTable extends AbstractSql implements SqlInterface
                 [1 => '%1$s', 'combinedby' => ",\n    "]
             ]
         ],
-        'combinedBy' => ",",
+        'combinedBy' => ',',
         self::CONSTRAINTS => [
             "\n    %1\$s" => [
                 [1 => '%1$s', 'combinedby' => ",\n    "]

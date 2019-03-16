@@ -119,11 +119,11 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
             $offset = (int) $this->offset;
             if ($offset) {
-                $sqls[] = sprintf("LIMIT %s OFFSET %s", $limit, $offset);
+                $sqls[] = sprintf('LIMIT %s OFFSET %s', $limit, $offset);
                 return;
             }
 
-            $sqls[] = sprintf("LIMIT %s", $limit);
+            $sqls[] = sprintf('LIMIT %s', $limit);
             return;
         }
 
@@ -162,7 +162,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
             $sqls[] = sprintf(
             // @codingStandardsIgnoreStart
-                ") AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN %s AND %s",
+                ') AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN %s AND %s',
                 // @codingStandardsIgnoreEnd
                 $offsetParamName,
                 $limitParamName
@@ -184,7 +184,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
             $sqls[] = sprintf(
             // @codingStandardsIgnoreStart
-                ") AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN %d AND %d",
+                ') AS ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE ZEND_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.ZEND_DB_ROWNUM BETWEEN %d AND %d',
                 // @codingStandardsIgnoreEnd
                 $offset,
                 (int)$this->limit + (int)$this->offset

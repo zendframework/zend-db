@@ -208,7 +208,7 @@ class Insert extends AbstractPreparableSql
         return sprintf(
             $this->specifications[static::SPECIFICATION_SELECT],
             $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
-            $columns ? "($columns)" : "",
+            $columns ? "($columns)" : '',
             $selectSql
         );
     }
