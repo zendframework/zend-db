@@ -98,7 +98,7 @@ abstract class AbstractConstraint implements ConstraintInterface
     /**
      * {@inheritDoc}
      */
-    public function getColumns()
+    public function getColumns() : array
     {
         return $this->columns;
     }

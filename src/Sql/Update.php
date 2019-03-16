@@ -91,7 +91,7 @@ class Update extends AbstractPreparableSql
      * @param  string|TableIdentifier $table
      * @return self Provides a fluent interface
      */
-    public function table($table)
+    public function table($table) : self
     {
         $this->table = $table;
         return $this;
@@ -105,7 +105,7 @@ class Update extends AbstractPreparableSql
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function set(array $values, $flag = self::VALUES_SET)
+    public function set(array $values, $flag = self::VALUES_SET) : self
     {
         if ($values === null) {
             throw new Exception\InvalidArgumentException('set() expects an array of values');
@@ -132,7 +132,7 @@ class Update extends AbstractPreparableSql
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND)
+    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND) : self
     {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
@@ -151,7 +151,7 @@ class Update extends AbstractPreparableSql
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function join($name, $on, $type = Join::JOIN_INNER)
+    public function join($name, $on, $type = Join::JOIN_INNER) : self
     {
         $this->joins->join($name, $on, [], $type);
 

@@ -307,7 +307,7 @@ abstract class AbstractSql implements SqlInterface
         PlatformInterface   $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ) : string {
         if ($this instanceof PlatformDecoratorInterface) {
             $decorator = clone $this;
             $decorator->setSubject($subselect);

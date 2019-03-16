@@ -36,5 +36,5 @@ interface ExpressionInterface
      * )
      *
      */
-    public function getExpressionData();
+    public function getExpressionData() : array;
 }

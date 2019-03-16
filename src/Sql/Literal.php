@@ -28,7 +28,7 @@ class Literal implements ExpressionInterface
      * @param string $literal
      * @return self Provides a fluent interface
      */
-    public function setLiteral($literal)
+    public function setLiteral($literal) : self
     {
         $this->literal = $literal;
         return $this;
@@ -37,7 +37,7 @@ class Literal implements ExpressionInterface
     /**
      * @return string
      */
-    public function getLiteral()
+    public function getLiteral() : string
     {
         return $this->literal;
     }
@@ -45,7 +45,7 @@ class Literal implements ExpressionInterface
     /**
      * @return array
      */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         return [[
             str_replace('%', '%%', $this->literal),

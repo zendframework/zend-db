@@ -67,7 +67,7 @@ class TableIdentifier
      *
      * @deprecated please use the constructor and build a new {@see TableIdentifier} instead
      */
-    public function setTable($table)
+    public function setTable($table) : void
     {
         $this->table = $table;
     }
@@ -93,7 +93,7 @@ class TableIdentifier
      *
      * @deprecated please use the constructor and build a new {@see TableIdentifier} instead
      */
-    public function setSchema($schema)
+    public function setSchema($schema) : void
     {
         $this->schema = $schema;
     }

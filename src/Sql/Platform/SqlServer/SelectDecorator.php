@@ -55,7 +55,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         ParameterContainer $parameterContainer = null,
         &$sqls,
         &$parameters
-    ) {
+    ) : void {
         if ($this->limit === null && $this->offset === null) {
             return;
         }

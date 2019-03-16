@@ -67,7 +67,7 @@ class Insert extends AbstractPreparableSql
      * @param  string|TableIdentifier $table
      * @return self Provides a fluent interface
      */
-    public function into($table)
+    public function into($table) : self
     {
         $this->table = $table;
         return $this;
@@ -79,7 +79,7 @@ class Insert extends AbstractPreparableSql
      * @param  array $columns
      * @return self Provides a fluent interface
      */
-    public function columns(array $columns)
+    public function columns(array $columns) : self
     {
         $this->columns = array_flip($columns);
         return $this;
@@ -93,7 +93,7 @@ class Insert extends AbstractPreparableSql
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function values($values, $flag = self::VALUES_SET)
+    public function values($values, $flag = self::VALUES_SET) : self
     {
         if ($values instanceof Select) {
             if ($flag == self::VALUES_MERGE) {
@@ -138,7 +138,7 @@ class Insert extends AbstractPreparableSql
      * @param array $array
      * @return bool
      */
-    private function isAssocativeArray(array $array)
+    private function isAssocativeArray(array $array) : bool
     {
         return array_keys($array) !== range(0, count($array) - 1);
     }
@@ -149,7 +149,7 @@ class Insert extends AbstractPreparableSql
      * @param Select $select
      * @return self
      */
-    public function select(Select $select)
+    public function select(Select $select) : self
     {
         return $this->values($select);
     }

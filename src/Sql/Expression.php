@@ -123,7 +123,7 @@ class Expression extends AbstractExpression
      *
      * @return self Provides a fluent interface
      */
-    public function setTypes(array $types)
+    public function setTypes(array $types) : self
     {
         $this->types = $types;
         return $this;
@@ -134,7 +134,7 @@ class Expression extends AbstractExpression
      *
      * @return array
      */
-    public function getTypes()
+    public function getTypes() : array
     {
         return $this->types;
     }

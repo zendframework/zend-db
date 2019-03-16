@@ -147,7 +147,7 @@ class Platform extends AbstractPlatform
      *
      * @throws InvalidArgumentException
      */
-    protected function resolvePlatform($adapterOrPlatform)
+    protected function resolvePlatform($adapterOrPlatform) : PlatformInterface
     {
         if (! $adapterOrPlatform) {
             return $this->getDefaultPlatform();
@@ -173,7 +173,7 @@ class Platform extends AbstractPlatform
      *
      * @throws RuntimeException
      */
-    protected function getDefaultPlatform()
+    protected function getDefaultPlatform() : PlatformInterface
     {
         if (! $this->defaultPlatform) {
             throw new RuntimeException('$this->defaultPlatform was not set');

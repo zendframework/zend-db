@@ -177,7 +177,7 @@ class Operator extends AbstractExpression implements PredicateInterface
      * @param  string $operator
      * @return self Provides a fluent interface
      */
-    public function setOperator($operator)
+    public function setOperator($operator) : self
     {
         $this->operator = $operator;
 
@@ -189,7 +189,7 @@ class Operator extends AbstractExpression implements PredicateInterface
      *
      * @return string
      */
-    public function getOperator()
+    public function getOperator() : string
     {
         return $this->operator;
     }

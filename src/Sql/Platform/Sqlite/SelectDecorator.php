@@ -31,7 +31,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      *
      * @return self Provides a fluent interface
      */
-    public function setSubject($select)
+    public function setSubject($select) : self
     {
         $this->subject = $select;
 
