@@ -82,7 +82,8 @@ class Predicate extends PredicateSet
      * @return self Provides a fluent interface
      */
     public function equalTo(
-        $left, $right,
+        $left,
+        $right,
         string $leftType = self::TYPE_IDENTIFIER,
         ?string$rightType = self::TYPE_VALUE
     ) : self {
