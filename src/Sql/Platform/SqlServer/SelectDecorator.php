@@ -43,7 +43,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      * @param $sqls
      * @param $parameters
      *
-     * @return null
+     * @return void
      */
     protected function processLimitOffset(
         PlatformInterface $platform,
