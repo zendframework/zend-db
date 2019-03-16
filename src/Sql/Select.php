@@ -506,14 +506,14 @@ class Select extends AbstractPreparableSql
             if (is_string($columnIndexOrAs)) {
                 $columnAs = $platform->quoteIdentifier($columnIndexOrAs);
             } elseif (stripos($columnName, ' as ') === false) {
-                $columnAs = (is_string($column)) ? $platform->quoteIdentifier($column) : 'Expression' . $expr++;
+                $columnAs = is_string($column) ? $platform->quoteIdentifier($column) : 'Expression' . $expr++;
             }
-            $columns[] = (isset($columnAs)) ? [$columnName, $columnAs] : [$columnName];
+            $columns[] = isset($columnAs) ? [$columnName, $columnAs] : [$columnName];
         }
 
         // process join columns
         foreach ($this->joins->getJoins() as $join) {
-            $joinName = (is_array($join['name'])) ? key($join['name']) : $join['name'];
+            $joinName = is_array($join['name']) ? key($join['name']) : $join['name'];
             $joinName = parent::resolveTable($joinName, $platform, $driver, $parameterContainer);
 
             foreach ($join['columns'] as $jKey => $jColumn) {

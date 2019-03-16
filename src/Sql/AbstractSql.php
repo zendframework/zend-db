@@ -46,7 +46,7 @@ abstract class AbstractSql implements SqlInterface
      */
     public function getSqlString(?PlatformInterface $adapterPlatform = null) : string
     {
-        $adapterPlatform = ($adapterPlatform) ?: new DefaultAdapterPlatform;
+        $adapterPlatform = $adapterPlatform ?: new DefaultAdapterPlatform;
         return $this->buildSqlString($adapterPlatform);
     }
 
@@ -363,7 +363,7 @@ abstract class AbstractSql implements SqlInterface
             // on expression
             // note: for Expression objects, pass them to processExpression with a prefix specific to each join
             // (used for named parameters)
-            if (($join['on'] instanceof ExpressionInterface)) {
+            if ($join['on'] instanceof ExpressionInterface) {
                 $joinSpecArgArray[$j][] = $this->processExpression(
                     $join['on'],
                     $platform,

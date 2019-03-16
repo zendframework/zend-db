@@ -80,7 +80,7 @@ class AlterTable extends AbstractSql implements SqlInterface
      */
     public function __construct($table = '')
     {
-        ($table) ? $this->setTable($table) : null;
+        $table ? $this->setTable($table) : null;
     }
 
     /**

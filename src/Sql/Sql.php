@@ -90,7 +90,7 @@ class Sql
                 $this->table
             ));
         }
-        return new Select(($table) ?: $this->table);
+        return new Select($table ?: $this->table);
     }
 
     /**
@@ -105,7 +105,7 @@ class Sql
                 $this->table
             ));
         }
-        return new Insert(($table) ?: $this->table);
+        return new Insert($table ?: $this->table);
     }
 
     /**
@@ -120,7 +120,7 @@ class Sql
                 $this->table
             ));
         }
-        return new Update(($table) ?: $this->table);
+        return new Update($table ?: $this->table);
     }
 
     /**
@@ -135,7 +135,7 @@ class Sql
                 $this->table
             ));
         }
-        return new Delete(($table) ?: $this->table);
+        return new Delete($table ?: $this->table);
     }
 
     public function prepareStatementForSqlObject(
@@ -161,7 +161,7 @@ class Sql
      */
     public function getSqlStringForSqlObject(SqlInterface $sqlObject, PlatformInterface $platform = null) : string
     {
-        $platform = ($platform) ?: $this->adapter->getPlatform();
+        $platform = $platform ?: $this->adapter->getPlatform();
         return $this->sqlPlatform->setSubject($sqlObject)->getSqlString($platform);
     }
 

@@ -119,7 +119,7 @@ class Expression extends AbstractExpression
 
     public function getExpressionData() : array
     {
-        $parameters = (is_scalar($this->parameters)) ? [$this->parameters] : $this->parameters;
+        $parameters = is_scalar($this->parameters) ? [$this->parameters] : $this->parameters;
         $parametersCount = count($parameters);
         $expression = str_replace('%', '%%', $this->expression);
 
