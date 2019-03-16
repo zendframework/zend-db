@@ -96,7 +96,7 @@ class Join implements Iterator, Countable
             'name'    => $name,
             'on'      => $on,
             'columns' => $columns,
-            'type'    => $type ? $type : Join::JOIN_INNER
+            'type'    => $type ? $type : self::JOIN_INNER
         ];
 
         return $this;

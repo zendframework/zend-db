@@ -30,7 +30,7 @@ class Predicate extends PredicateSet
      */
     public function nest() : Predicate
     {
-        $predicateSet = new Predicate();
+        $predicateSet = new self();
         $predicateSet->setUnnest($this);
         $this->addPredicate($predicateSet, ($this->nextPredicateCombineOperator) ?: $this->defaultCombination);
         $this->nextPredicateCombineOperator = null;

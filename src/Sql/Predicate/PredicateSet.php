@@ -191,13 +191,13 @@ class PredicateSet implements PredicateInterface, Countable
             /** @var $predicate PredicateInterface */
             $predicate = $this->predicates[$i][1];
 
-            if ($predicate instanceof PredicateSet) {
+            if ($predicate instanceof self) {
                 $parts[] = '(';
             }
 
             $parts = array_merge($parts, $predicate->getExpressionData());
 
-            if ($predicate instanceof PredicateSet) {
+            if ($predicate instanceof self) {
                 $parts[] = ')';
             }
 
