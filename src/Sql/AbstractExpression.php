@@ -67,7 +67,7 @@ abstract class AbstractExpression implements ExpressionInterface
 
             $key = key($argument);
 
-            if (is_integer($key) && ! in_array($value, $this->allowedTypes)) {
+            if (is_int($key) && ! in_array($value, $this->allowedTypes)) {
                 return $this->buildNormalizedArgument($value, $defaultType);
             }
 
