@@ -99,7 +99,6 @@ class Column implements ColumnInterface
         return $this;
     }
 
-
     public function getOptions() : array
     {
         return $this->options;
@@ -111,7 +110,6 @@ class Column implements ColumnInterface
 
         return $this;
     }
-
 
     public function getExpressionData() : array
     {

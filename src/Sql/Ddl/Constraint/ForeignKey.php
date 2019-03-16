@@ -87,7 +87,6 @@ class ForeignKey extends AbstractConstraint
         return $this;
     }
 
-
     public function getReferenceColumn() : array
     {
         return $this->referenceColumn;

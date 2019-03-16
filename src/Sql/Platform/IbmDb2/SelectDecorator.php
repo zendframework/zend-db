@@ -50,7 +50,6 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->subject = $select;
     }
 
-
     public function getSupportsLimitOffset() : bool
     {
         return $this->supportsLimitOffset;
