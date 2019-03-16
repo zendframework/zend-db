@@ -37,24 +37,16 @@ class Delete extends AbstractPreparableSql
         self::SPECIFICATION_WHERE => 'WHERE %1$s'
     ];
 
-    /**
-     * @var string|TableIdentifier
-     */
+    /** @var string|TableIdentifier */
     protected $table = '';
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $emptyWhereProtection = true;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $set = [];
 
-    /**
-     * @var null|string|Where
-     */
+    /** @var null|string|Where */
     protected $where;
 
     /**

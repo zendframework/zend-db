@@ -24,9 +24,7 @@ use function strpos;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
-    /**
-     * @var Select
-     */
+    /** @var Select */
     protected $subject;
 
     /**

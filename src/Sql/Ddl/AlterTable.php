@@ -27,29 +27,19 @@ class AlterTable extends AbstractSql implements SqlInterface
     public const DROP_CONSTRAINTS = 'dropConstraints';
     public const TABLE            = 'table';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $addColumns = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $addConstraints = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $changeColumns = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $dropColumns = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $dropConstraints = [];
 
     /**
@@ -85,9 +75,7 @@ class AlterTable extends AbstractSql implements SqlInterface
         ]
     ];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $table = '';
 
     /**

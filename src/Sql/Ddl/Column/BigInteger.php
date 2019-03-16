@@ -14,8 +14,6 @@ namespace Zend\Db\Sql\Ddl\Column;
 
 class BigInteger extends Integer
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $type = 'BIGINT';
 }

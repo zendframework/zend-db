@@ -23,14 +23,10 @@ use function is_a;
 
 class Platform extends AbstractPlatform
 {
-    /**
-     * @var AdapterInterface
-     */
+    /** @var AdapterInterface */
     protected $adapter;
 
-    /**
-     * @var PlatformInterface|null
-     */
+    /** @var PlatformInterface|null */
     protected $defaultPlatform;
 
     public function __construct(AdapterInterface $adapter)

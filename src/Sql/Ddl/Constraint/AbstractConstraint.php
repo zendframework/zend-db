@@ -14,29 +14,19 @@ namespace Zend\Db\Sql\Ddl\Constraint;
 
 abstract class AbstractConstraint implements ConstraintInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $columnSpecification = ' (%s)';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $namedSpecification = 'CONSTRAINT %s ';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $specification = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $name = '';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $columns = [];
 
     /**

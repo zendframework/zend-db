@@ -14,9 +14,7 @@ namespace Zend\Db\Sql\Ddl\Column;
 
 abstract class AbstractLengthColumn extends Column
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $length;
 
     /**

@@ -45,29 +45,19 @@ class Operator extends AbstractExpression implements PredicateInterface
         self::TYPE_VALUE,
     ];
 
-    /**
-     * @var int|float|bool|string
-     */
+    /** @var int|float|bool|string */
     protected $left;
 
-    /**
-     * @var int|float|bool|string
-     */
+    /** @var int|float|bool|string */
     protected $right;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $leftType = self::TYPE_IDENTIFIER;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $rightType = self::TYPE_VALUE;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $operator = self::OPERATOR_EQUAL_TO;
 
     /**

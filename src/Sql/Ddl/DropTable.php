@@ -20,16 +20,12 @@ class DropTable extends AbstractSql implements SqlInterface
 {
     public const TABLE = 'table';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $specifications = [
         self::TABLE => 'DROP TABLE %1$s'
     ];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $table = '';
 
     /**

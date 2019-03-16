@@ -27,14 +27,10 @@ use function uksort;
 
 class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterface
 {
-    /**
-     * @var AlterTable
-     */
+    /** @var AlterTable */
     protected $subject;
 
-    /**
-     * @var int[]
-     */
+    /** @var int[] */
     protected $columnOptionSortOrder = [
         'unsigned'      => 0,
         'zerofill'      => 1,

@@ -14,24 +14,16 @@ namespace Zend\Db\Sql\Ddl\Constraint;
 
 class ForeignKey extends AbstractConstraint
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $onDeleteRule = 'NO ACTION';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $onUpdateRule = 'NO ACTION';
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $referenceColumn = [];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $referenceTable = '';
 
     /**
@@ -39,9 +31,7 @@ class ForeignKey extends AbstractConstraint
      */
     protected $columnSpecification = 'FOREIGN KEY (%s) ';
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $referenceSpecification = [
         'REFERENCES %s ',
         'ON DELETE %s ON UPDATE %s'

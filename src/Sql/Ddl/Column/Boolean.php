@@ -14,9 +14,7 @@ namespace Zend\Db\Sql\Ddl\Column;
 
 class Boolean extends Column
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $type = 'BOOLEAN';
 
     /**

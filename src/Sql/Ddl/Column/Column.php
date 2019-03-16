@@ -16,39 +16,25 @@ use Zend\Db\Sql\Ddl\Constraint\ConstraintInterface;
 
 class Column implements ColumnInterface
 {
-    /**
-     * @var null|string|int
-     */
+    /** @var null|string|int */
     protected $default;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $isNullable = false;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $name = '';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $options = [];
 
-    /**
-     * @var ConstraintInterface[]
-     */
+    /** @var ConstraintInterface[] */
     protected $constraints = [];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $specification = '%s %s';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $type = 'INTEGER';
 
     /**

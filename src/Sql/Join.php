@@ -31,18 +31,10 @@ class Join implements Iterator, Countable
     public const JOIN_RIGHT_OUTER = 'right outer';
     public const JOIN_LEFT_OUTER  = 'left outer';
 
-    /**
-     * Current iterator position.
-     *
-     * @var int
-     */
+    /** @var int */
     private $position = 0;
 
-    /**
-     * JOIN specifications
-     *
-     * @var array
-     */
+    /** @var array */
     protected $joins = [];
 
     /**

@@ -28,9 +28,7 @@ use Zend\Db\Sql\ExpressionInterface;
 
 abstract class AbstractExpression implements ExpressionInterface
 {
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $allowedTypes = [
         self::TYPE_IDENTIFIER,
         self::TYPE_LITERAL,

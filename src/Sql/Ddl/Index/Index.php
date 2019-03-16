@@ -11,14 +11,10 @@ namespace Zend\Db\Sql\Ddl\Index;
 
 class Index extends AbstractIndex
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $specification = 'INDEX %s(...)';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $lengths;
 
     /**

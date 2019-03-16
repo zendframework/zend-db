@@ -20,8 +20,6 @@ namespace Zend\Db\Sql\Ddl\Column;
  */
 class Floating extends AbstractPrecisionColumn
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $type = 'FLOAT';
 }

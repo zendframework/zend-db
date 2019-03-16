@@ -14,8 +14,6 @@ namespace Zend\Db\Sql\Predicate;
 
 class NotLike extends Like
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $specification = '%1$s NOT LIKE %2$s';
 }

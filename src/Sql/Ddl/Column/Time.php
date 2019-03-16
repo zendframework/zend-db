@@ -14,8 +14,6 @@ namespace Zend\Db\Sql\Ddl\Column;
 
 class Time extends Column
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $type = 'TIME';
 }

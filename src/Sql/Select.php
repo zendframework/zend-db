@@ -62,9 +62,7 @@ class Select extends AbstractPreparableSql
      */
     public const JOIN_OUTER_RIGHT = 'outer right';
 
-    /**
-     * @var array Specifications
-     */
+    /** @var array Specifications */
     protected $specifications = [
         'statementStart' => '%1$s',
         self::SELECT => [
@@ -104,69 +102,43 @@ class Select extends AbstractPreparableSql
         self::COMBINE => '%1$s ( %2$s )',
     ];
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $tableReadOnly = false;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $prefixColumnsWithTable = true;
 
-    /**
-     * @var string|array|TableIdentifier
-     */
+    /** @var string|array|TableIdentifier */
     protected $table;
 
-    /**
-     * @var null|string|Expression
-     */
+    /** @var null|string|Expression */
     protected $quantifier;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $columns = [self::SQL_STAR];
 
-    /**
-     * @var null|Join
-     */
+    /** @var null|Join */
     protected $joins;
 
-    /**
-     * @var Where
-     */
+    /** @var Where */
     protected $where;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $order = [];
 
-    /**
-     * @var null|array
-     */
+    /** @var null|array */
     protected $group;
 
-    /**
-     * @var null|string|array
-     */
+    /** @var null|string|array */
     protected $having;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $limit;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $offset;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $combine = [];
 
     /**

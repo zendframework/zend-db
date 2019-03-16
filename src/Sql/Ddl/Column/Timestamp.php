@@ -14,8 +14,6 @@ namespace Zend\Db\Sql\Ddl\Column;
 
 class Timestamp extends AbstractTimestampColumn
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $type = 'TIMESTAMP';
 }

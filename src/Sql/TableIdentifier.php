@@ -13,14 +13,10 @@ namespace Zend\Db\Sql;
  */
 class TableIdentifier
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $table;
 
-    /**
-     * @var null|string
-     */
+    /** @var null|string */
     protected $schema;
 
     /**

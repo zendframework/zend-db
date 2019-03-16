@@ -20,14 +20,10 @@ use function strpos;
 
 class CreateTableDecorator extends CreateTable implements PlatformDecoratorInterface
 {
-    /**
-     * @var CreateTable
-     */
+    /** @var CreateTable */
     protected $subject;
 
-    /**
-     * @var int[]
-     */
+    /** @var int[] */
     protected $columnOptionSortOrder = [
         'unsigned'      => 0,
         'zerofill'      => 1,

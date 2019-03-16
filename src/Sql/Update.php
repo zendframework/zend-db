@@ -44,29 +44,19 @@ class Update extends AbstractPreparableSql
         self::SPECIFICATION_WHERE => 'WHERE %1$s',
     ];
 
-    /**
-     * @var string|TableIdentifier
-     */
+    /** @var string|TableIdentifier */
     protected $table = '';
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $emptyWhereProtection = true;
 
-    /**
-     * @var PriorityList
-     */
+    /** @var PriorityList */
     protected $set;
 
-    /**
-     * @var string|Where
-     */
+    /** @var string|Where */
     protected $where;
 
-    /**
-     * @var null|Join
-     */
+    /** @var null|Join */
     protected $joins;
 
     /**

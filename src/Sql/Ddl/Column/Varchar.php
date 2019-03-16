@@ -14,8 +14,6 @@ namespace Zend\Db\Sql\Ddl\Column;
 
 class Varchar extends AbstractLengthColumn
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $type = 'VARCHAR';
 }

@@ -19,19 +19,13 @@ class Expression extends AbstractExpression
      */
     public const PLACEHOLDER = '?';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $expression = '';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $parameters = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $types = [];
 
     /**

@@ -13,8 +13,6 @@ namespace Zend\Db\Sql\Ddl\Column;
 
 class Char extends AbstractLengthColumn
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $type = 'CHAR';
 }

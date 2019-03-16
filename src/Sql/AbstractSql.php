@@ -38,14 +38,10 @@ abstract class AbstractSql implements SqlInterface
      */
     protected $specifications = [];
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $processInfo = ['paramPrefix' => '', 'subselectCount' => 0];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $instanceParameterIndex = [];
 
     /**

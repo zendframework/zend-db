@@ -16,14 +16,10 @@ use Zend\Db\Sql\AbstractExpression;
 
 class IsNull extends AbstractExpression implements PredicateInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $specification = '%1$s IS NULL';
 
-    /**
-     * @var
-     */
+    /** @var null|string */
     protected $identifier;
 
     /**

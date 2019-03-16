@@ -16,19 +16,13 @@ use Zend\Db\Sql\AbstractExpression;
 
 class Like extends AbstractExpression implements PredicateInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $specification = '%1$s LIKE %2$s';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $identifier = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $like = '';
 
     /**

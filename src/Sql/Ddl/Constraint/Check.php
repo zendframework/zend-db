@@ -16,9 +16,7 @@ use Zend\Db\Sql\ExpressionInterface;
 
 class Check extends AbstractConstraint
 {
-    /**
-     * @var string|ExpressionInterface
-     */
+    /** @var string|ExpressionInterface */
     protected $expression;
 
     /**

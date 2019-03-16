@@ -24,19 +24,13 @@ class CreateTable extends AbstractSql implements SqlInterface
     public const CONSTRAINTS = 'constraints';
     public const TABLE       = 'table';
 
-    /**
-     * @var Column\ColumnInterface[]
-     */
+    /** @var Column\ColumnInterface[] */
     protected $columns = [];
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $constraints = [];
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $isTemporary = false;
 
     /**
@@ -58,9 +52,7 @@ class CreateTable extends AbstractSql implements SqlInterface
         'statementEnd' => '%1$s',
     ];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $table = '';
 
     /**

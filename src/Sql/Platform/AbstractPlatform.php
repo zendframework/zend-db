@@ -21,14 +21,10 @@ use Zend\Db\Sql\SqlInterface;
 
 class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInterface, SqlInterface
 {
-    /**
-     * @var object|null
-     */
+    /** @var object|null */
     protected $subject;
 
-    /**
-     * @var PlatformDecoratorInterface[]
-     */
+    /** @var PlatformDecoratorInterface[] */
     protected $decorators = [];
 
     /**

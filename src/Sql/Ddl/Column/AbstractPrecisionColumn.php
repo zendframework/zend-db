@@ -14,9 +14,7 @@ namespace Zend\Db\Sql\Ddl\Column;
 
 abstract class AbstractPrecisionColumn extends AbstractLengthColumn
 {
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $decimal;
 
     /**

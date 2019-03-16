@@ -35,16 +35,12 @@ class Combine extends AbstractPreparableSql
     public const COMBINE_EXCEPT = 'except';
     public const COMBINE_INTERSECT = 'intersect';
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $specifications = [
         self::COMBINE => '%1$s (%2$s) ',
     ];
 
-    /**
-     * @var Select[][]
-     */
+    /** @var Select[][] */
     private $combine = [];
 
     /**

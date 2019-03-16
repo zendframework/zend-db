@@ -15,9 +15,7 @@ use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 
 class CreateTableDecorator extends CreateTable implements PlatformDecoratorInterface
 {
-    /**
-     * @var CreateTable
-     */
+    /** @var CreateTable */
     protected $subject;
 
     /**

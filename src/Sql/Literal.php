@@ -11,9 +11,7 @@ namespace Zend\Db\Sql;
 
 class Literal implements ExpressionInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $literal = '';
 
     /**

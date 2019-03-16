@@ -27,19 +27,13 @@ use function strpos;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $isSelectContainDistinct = false;
 
-    /**
-     * @var Select
-     */
+    /** @var Select */
     protected $subject;
 
-     /**
-     * @var bool
-     */
+     /** @var bool */
     protected $supportsLimitOffset = false;
 
 
