@@ -5,7 +5,9 @@
  * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
 
-declare(strict_types=1);namespace Zend\Db\Sql\Platform\SqlServer;
+declare(strict_types=1);
+
+namespace Zend\Db\Sql\Platform\SqlServer;
 
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\ParameterContainer;

@@ -5,7 +5,9 @@
  * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
 
-declare(strict_types=1);namespace Zend\Db\Sql\Predicate;
+declare(strict_types=1);
+
+namespace Zend\Db\Sql\Predicate;
 
 use Zend\Db\Sql\Exception\RuntimeException;
 use Zend\Db\Sql\Select;

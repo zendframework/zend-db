@@ -5,7 +5,9 @@
  * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
 
-declare(strict_types=1);namespace Zend\Db\Sql\Ddl\Index;
+declare(strict_types=1);
+
+namespace Zend\Db\Sql\Ddl\Index;
 
 class Index extends AbstractIndex
 {
