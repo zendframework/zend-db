@@ -453,7 +453,7 @@ abstract class AbstractSql implements SqlInterface
         }
 
         if ($table instanceof Select) {
-            $table = '(' . $this->processSubselect($table, $platform, $driver, $parameterContainer) . ')';
+            $table = '(' . $this->processSubSelect($table, $platform, $driver, $parameterContainer) . ')';
         } elseif ($table) {
             $table = $platform->quoteIdentifier($table);
         }
