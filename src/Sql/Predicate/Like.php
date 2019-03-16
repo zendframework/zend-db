@@ -71,8 +71,8 @@ class Like extends AbstractExpression implements PredicateInterface
 
     public function getExpressionData() : array
     {
-        [$values[], $types[]] = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
-        [$values[], $types[]] = $this->normalizeArgument($this->like, self::TYPE_VALUE);
+        list($values[], $types[]) = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
+        list($values[], $types[]) = $this->normalizeArgument($this->like, self::TYPE_VALUE);
         return [
             [
                 $this->specification,
