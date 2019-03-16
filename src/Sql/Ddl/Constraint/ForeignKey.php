@@ -65,7 +65,7 @@ class ForeignKey extends AbstractConstraint
     }
 
     /**
-     * @param  string $referenceTable
+     * @param string $referenceTable
      *
      * @return self Provides a fluent interface
      */
@@ -85,7 +85,7 @@ class ForeignKey extends AbstractConstraint
     }
 
     /**
-     * @param  null|string|array $referenceColumn
+     * @param null|string|array $referenceColumn
      * @return self Provides a fluent interface
      */
     public function setReferenceColumn(?$referenceColumn) : self
@@ -104,7 +104,7 @@ class ForeignKey extends AbstractConstraint
     }
 
     /**
-     * @param  string $onDeleteRule
+     * @param string $onDeleteRule
      * @return self Provides a fluent interface
      */
     public function setOnDeleteRule(string $onDeleteRule) : self
@@ -123,7 +123,7 @@ class ForeignKey extends AbstractConstraint
     }
 
     /**
-     * @param  string $onUpdateRule
+     * @param string $onUpdateRule
      * @return self Provides a fluent interface
      */
     public function setOnUpdateRule(string $onUpdateRule) : self

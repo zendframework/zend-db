@@ -34,7 +34,7 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     }
 
     /**
-     * @param  int $digits
+     * @param int $digits
      *
      * @return self
      */

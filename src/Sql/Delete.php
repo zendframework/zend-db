@@ -48,7 +48,7 @@ class Delete extends AbstractPreparableSql
     /**
      * Constructor
      *
-     * @param  null|string|TableIdentifier $table
+     * @param null|string|TableIdentifier $table
      */
     public function __construct($table = null)
     {
@@ -61,7 +61,7 @@ class Delete extends AbstractPreparableSql
     /**
      * Create from statement
      *
-     * @param  string|TableIdentifier $table
+     * @param string|TableIdentifier $table
      *
      * @return self Provides a fluent interface
      */
@@ -87,8 +87,8 @@ class Delete extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param  Where|\Closure|string|array $predicate
-     * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
+     * @param Where|\Closure|string|array $predicate
+     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      *
      * @return self Provides a fluent interface
      */

@@ -93,11 +93,11 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     }
 
     /**
-     * @param  PlatformInterface  $platform
-     * @param  DriverInterface    $driver
-     * @param  ParameterContainer $parameterContainer
-     * @param  array              $sqls
-     * @param  array              $parameters
+     * @param PlatformInterface  $platform
+     * @param DriverInterface    $driver
+     * @param ParameterContainer $parameterContainer
+     * @param array              $sqls
+     * @param array              $parameters
      */
     protected function processLimitOffset(
         PlatformInterface  $platform,

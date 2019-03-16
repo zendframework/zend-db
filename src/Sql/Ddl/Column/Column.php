@@ -61,7 +61,7 @@ class Column implements ColumnInterface
     }
 
     /**
-     * @param  bool $nullable
+     * @param bool $nullable
      * @return self Provides a fluent interface
      */
     public function setNullable(bool $nullable) : self
@@ -80,7 +80,7 @@ class Column implements ColumnInterface
     }
 
     /**
-     * @param  null|string|int $default
+     * @param null|string|int $default
      *
      * @return self Provides a fluent interface
      */
@@ -100,7 +100,7 @@ class Column implements ColumnInterface
     }
 
     /**
-     * @param  array $options
+     * @param array $options
      *
      * @return self Provides a fluent interface
      */
@@ -112,8 +112,8 @@ class Column implements ColumnInterface
     }
 
     /**
-     * @param  string $name
-     * @param  string $value
+     * @param string $name
+     * @param string $value
      *
      * @return self Provides a fluent interface
      */

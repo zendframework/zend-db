@@ -22,7 +22,7 @@ class IsNull extends AbstractExpression implements PredicateInterface
     /**
      * Constructor
      *
-     * @param  string $identifier
+     * @param string $identifier
      */
     public function __construct(string $identifier = null)
     {
@@ -34,7 +34,7 @@ class IsNull extends AbstractExpression implements PredicateInterface
     /**
      * Set identifier for comparison
      *
-     * @param  string $identifier
+     * @param string $identifier
      *
      * @return self Provides a fluent interface
      */
@@ -58,7 +58,7 @@ class IsNull extends AbstractExpression implements PredicateInterface
     /**
      * Set specification string to use in forming SQL predicate
      *
-     * @param  string $specification
+     * @param string $specification
      *
      * @return self Provides a fluent interface
      */

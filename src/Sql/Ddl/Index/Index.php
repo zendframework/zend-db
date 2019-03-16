@@ -16,8 +16,8 @@ class Index extends AbstractIndex
     protected $lengths;
 
     /**
-     * @param  string|array|null $columns
-     * @param  string $name
+     * @param string|array|null $columns
+     * @param string $name
      * @param array $lengths
      */
     public function __construct($columns, string $name = '', array $lengths = [])

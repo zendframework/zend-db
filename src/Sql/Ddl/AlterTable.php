@@ -84,7 +84,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param  string $name
+     * @param string $name
      *
      * @return self Provides a fluent interface
      */
@@ -96,7 +96,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param  ColumnInterface $column
+     * @param ColumnInterface $column
      *
      * @return self Provides a fluent interface
      */
@@ -108,8 +108,8 @@ class AlterTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param  string $name
-     * @param  ColumnInterface $column
+     * @param string $name
+     * @param ColumnInterface $column
      *
      * @return self Provides a fluent interface
      */
@@ -121,7 +121,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param  string $name
+     * @param string $name
      *
      * @return self Provides a fluent interface
      */
@@ -133,7 +133,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param  string $name
+     * @param string $name
      *
      * @return self Provides a fluent interface
      */
@@ -145,7 +145,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param  ConstraintInterface $constraint
+     * @param ConstraintInterface $constraint
      *
      * @return self Provides a fluent interface
      */
@@ -157,7 +157,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param  string|null $key
+     * @param string|null $key
      * @return array
      */
     public function getRawState(?string $key = null) : array

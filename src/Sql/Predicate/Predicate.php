@@ -40,7 +40,7 @@ class Predicate extends PredicateSet
     /**
      * Indicate what predicate will be unnested
      *
-     * @param  Predicate $predicate
+     * @param Predicate $predicate
      *
      * @return void
      */
@@ -72,10 +72,10 @@ class Predicate extends PredicateSet
      *
      * Utilizes Operator predicate
      *
-     * @param  int|float|bool|string $left
-     * @param  int|float|bool|string $right
-     * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
+     * @param int|float|bool|string $left
+     * @param int|float|bool|string $right
+     * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
+     * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      *
      * @return self Provides a fluent interface
      */
@@ -98,10 +98,10 @@ class Predicate extends PredicateSet
      *
      * Utilizes Operator predicate
      *
-     * @param  int|float|bool|string $left
-     * @param  int|float|bool|string $right
-     * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
+     * @param int|float|bool|string $left
+     * @param int|float|bool|string $right
+     * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
+     * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      *
      * @return self Provides a fluent interface
      */
@@ -125,10 +125,10 @@ class Predicate extends PredicateSet
      *
      * Utilizes Operator predicate
      *
-     * @param  int|float|bool|string $left
-     * @param  int|float|bool|string $right
-     * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
+     * @param int|float|bool|string $left
+     * @param int|float|bool|string $right
+     * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
+     * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      *
      * @return self Provides a fluent interface
      */
@@ -152,10 +152,10 @@ class Predicate extends PredicateSet
      *
      * Utilizes Operator predicate
      *
-     * @param  int|float|bool|string $left
-     * @param  int|float|bool|string $right
-     * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
+     * @param int|float|bool|string $left
+     * @param int|float|bool|string $right
+     * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
+     * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      *
      * @return self Provides a fluent interface
      */
@@ -179,10 +179,10 @@ class Predicate extends PredicateSet
      *
      * Utilizes Operator predicate
      *
-     * @param  int|float|bool|string $left
-     * @param  int|float|bool|string $right
-     * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
+     * @param int|float|bool|string $left
+     * @param int|float|bool|string $right
+     * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
+     * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      *
      * @return self Provides a fluent interface
      */
@@ -206,10 +206,10 @@ class Predicate extends PredicateSet
      *
      * Utilizes Operator predicate
      *
-     * @param  int|float|bool|string $left
-     * @param  int|float|bool|string $right
-     * @param  string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param  string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
+     * @param int|float|bool|string $left
+     * @param int|float|bool|string $right
+     * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
+     * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      *
      * @return self Provides a fluent interface
      */
@@ -233,8 +233,8 @@ class Predicate extends PredicateSet
      *
      * Utilizes Like predicate
      *
-     * @param  string|Expression $identifier
-     * @param  string $like
+     * @param string|Expression $identifier
+     * @param string $like
      *
      * @return self Provides a fluent interface
      */
@@ -254,8 +254,8 @@ class Predicate extends PredicateSet
      *
      * Utilizes In predicate
      *
-     * @param  string|Expression $identifier
-     * @param  string $notLike
+     * @param string|Expression $identifier
+     * @param string $notLike
      *
      * @return self Provides a fluent interface
      */
@@ -296,7 +296,7 @@ class Predicate extends PredicateSet
      *
      * Literal predicate, for parameters, use expression()
      *
-     * @param  string $literal
+     * @param string $literal
      *
      * @return self Provides a fluent interface
      */
@@ -328,7 +328,7 @@ class Predicate extends PredicateSet
      *
      * Utilizes IsNull predicate
      *
-     * @param  string|Expression $identifier
+     * @param string|Expression $identifier
      *
      * @return self Provides a fluent interface
      */
@@ -349,7 +349,7 @@ class Predicate extends PredicateSet
      *
      * Utilizes IsNotNull predicate
      *
-     * @param  string|Expression $identifier
+     * @param string|Expression $identifier
      *
      * @return self Provides a fluent interface
      */
@@ -370,8 +370,8 @@ class Predicate extends PredicateSet
      *
      * Utilizes In predicate
      *
-     * @param  string|Expression $identifier
-     * @param  array|Select $valueSet
+     * @param string|Expression $identifier
+     * @param array|Select $valueSet
      *
      * @return self Provides a fluent interface
      */
@@ -392,8 +392,8 @@ class Predicate extends PredicateSet
      *
      * Utilizes NotIn predicate
      *
-     * @param  string|Expression $identifier
-     * @param  array|Select $valueSet
+     * @param string|Expression $identifier
+     * @param array|Select $valueSet
      *
      * @return self Provides a fluent interface
      */
@@ -413,9 +413,9 @@ class Predicate extends PredicateSet
      *
      * Utilizes Between predicate
      *
-     * @param  string|Expression $identifier
-     * @param  int|float|string $minValue
-     * @param  int|float|string $maxValue
+     * @param string|Expression $identifier
+     * @param int|float|string $minValue
+     * @param int|float|string $maxValue
      *
      * @return self Provides a fluent interface
      */
@@ -436,9 +436,9 @@ class Predicate extends PredicateSet
      *
      * Utilizes NotBetween predicate
      *
-     * @param  string|Expression $identifier
-     * @param  int|float|string $minValue
-     * @param  int|float|string $maxValue
+     * @param string|Expression $identifier
+     * @param int|float|string $minValue
+     * @param int|float|string $maxValue
      *
      * @return self Provides a fluent interface
      */
@@ -461,7 +461,7 @@ class Predicate extends PredicateSet
      * AND / OR combination operator, thus allowing generic predicates to be
      * used fluently within where chains as any other concrete predicate.
      *
-     * @param  PredicateInterface $predicate
+     * @param PredicateInterface $predicate
      *
      * @return self Provides a fluent interface
      */
@@ -481,7 +481,7 @@ class Predicate extends PredicateSet
      *
      * Overloads "or", "and", "nest", and "unnest"
      *
-     * @param  string $name
+     * @param string $name
      *
      * @return self Provides a fluent interface
      */

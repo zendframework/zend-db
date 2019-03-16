@@ -143,7 +143,7 @@ class Select extends AbstractPreparableSql
     /**
      * Constructor
      *
-     * @param  null|string|array|TableIdentifier $table
+     * @param null|string|array|TableIdentifier $table
      */
     public function __construct($table = null)
     {
@@ -160,7 +160,7 @@ class Select extends AbstractPreparableSql
     /**
      * Create from clause
      *
-     * @param  string|array|TableIdentifier $table
+     * @param string|array|TableIdentifier $table
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
@@ -219,8 +219,8 @@ class Select extends AbstractPreparableSql
      *     key string will be use as alias,
      *     value can be string or Expression objects
      *
-     * @param  array $columns
-     * @param  bool  $prefixColumnsWithTable
+     * @param array $columns
+     * @param bool  $prefixColumnsWithTable
      * @return self Provides a fluent interface
      */
     public function columns(array $columns, bool $prefixColumnsWithTable = true) : self
@@ -233,10 +233,10 @@ class Select extends AbstractPreparableSql
     /**
      * Create join clause
      *
-     * @param  string|array|TableIdentifier $name
-     * @param  string|Predicate\Expression $on
-     * @param  string|array $columns
-     * @param  string $type one of the JOIN_* constants
+     * @param string|array|TableIdentifier $name
+     * @param string|Predicate\Expression $on
+     * @param string|array $columns
+     * @param string $type one of the JOIN_* constants
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
@@ -250,8 +250,8 @@ class Select extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param  Where|\Closure|string|array|Predicate\PredicateInterface $predicate
-     * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
+     * @param Where|\Closure|string|array|Predicate\PredicateInterface $predicate
+     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
@@ -284,8 +284,8 @@ class Select extends AbstractPreparableSql
     /**
      * Create having clause
      *
-     * @param  Where|\Closure|string|array $predicate
-     * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
+     * @param Where|\Closure|string|array $predicate
+     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      * @return self Provides a fluent interface
      */
     public function having($predicate, string $combination = Predicate\PredicateSet::OP_AND) : self

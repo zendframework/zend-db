@@ -55,7 +55,7 @@ abstract class AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @param  null|string|array $columns
+     * @param null|string|array $columns
      *
      * @return self Provides a fluent interface
      */
@@ -67,7 +67,7 @@ abstract class AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * @param  string $column
+     * @param string $column
      *
      * @return self Provides a fluent interface
      */

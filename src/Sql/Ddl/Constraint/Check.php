@@ -22,8 +22,8 @@ class Check extends AbstractConstraint
     protected $specification = 'CHECK (%s)';
 
     /**
-     * @param  string|ExpressionInterface $expression
-     * @param  string $name
+     * @param string|ExpressionInterface $expression
+     * @param string $name
      */
     public function __construct($expression, string $name = '')
     {

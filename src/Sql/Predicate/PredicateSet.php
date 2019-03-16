@@ -26,8 +26,8 @@ class PredicateSet implements PredicateInterface, Countable
     /**
      * Constructor
      *
-     * @param  null|array $predicates
-     * @param  string $defaultCombination
+     * @param null|array $predicates
+     * @param string $defaultCombination
      */
     public function __construct(array $predicates = null, string $defaultCombination = self::COMBINED_BY_AND)
     {
@@ -43,8 +43,8 @@ class PredicateSet implements PredicateInterface, Countable
     /**
      * Add predicate to set
      *
-     * @param  PredicateInterface $predicate
-     * @param  string $combination
+     * @param PredicateInterface $predicate
+     * @param string $combination
      *
      * @return self Provides a fluent interface
      */
@@ -154,7 +154,7 @@ class PredicateSet implements PredicateInterface, Countable
     /**
      * Add predicate using OR operator
      *
-     * @param  PredicateInterface $predicate
+     * @param PredicateInterface $predicate
      *
      * @return self Provides a fluent interface
      */
@@ -168,7 +168,7 @@ class PredicateSet implements PredicateInterface, Countable
     /**
      * Add predicate using AND operator
      *
-     * @param  PredicateInterface $predicate
+     * @param PredicateInterface $predicate
      *
      * @return self Provides a fluent interface
      */

@@ -61,7 +61,7 @@ class Update extends AbstractPreparableSql
     /**
      * Constructor
      *
-     * @param  null|string|TableIdentifier $table
+     * @param null|string|TableIdentifier $table
      */
     public function __construct($table = null)
     {
@@ -77,7 +77,7 @@ class Update extends AbstractPreparableSql
     /**
      * Specify table for statement
      *
-     * @param  string|TableIdentifier $table
+     * @param string|TableIdentifier $table
      * @return self Provides a fluent interface
      */
     public function table($table) : self
@@ -89,8 +89,8 @@ class Update extends AbstractPreparableSql
     /**
      * Set key/value pairs to update
      *
-     * @param  array $values Associative array of key values
-     * @param  string $flag One of the VALUES_* constants
+     * @param array $values Associative array of key values
+     * @param string $flag One of the VALUES_* constants
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
@@ -116,8 +116,8 @@ class Update extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param  Where|\Closure|string|array $predicate
-     * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
+     * @param Where|\Closure|string|array $predicate
+     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
@@ -134,9 +134,9 @@ class Update extends AbstractPreparableSql
     /**
      * Create join clause
      *
-     * @param  string|array $name
-     * @param  string $on
-     * @param  string $type one of the JOIN_* constants
+     * @param string|array $name
+     * @param string $on
+     * @param string $type one of the JOIN_* constants
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
@@ -241,7 +241,7 @@ class Update extends AbstractPreparableSql
      *
      * Proxies to "where" only
      *
-     * @param  string $name
+     * @param string $name
      * @return mixed
      */
     public function __get(string $name)

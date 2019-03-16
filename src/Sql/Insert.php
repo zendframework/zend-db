@@ -43,7 +43,7 @@ class Insert extends AbstractPreparableSql
     /**
      * Constructor
      *
-     * @param  null|string|TableIdentifier $table
+     * @param null|string|TableIdentifier $table
      */
     public function __construct($table = null)
     {
@@ -55,7 +55,7 @@ class Insert extends AbstractPreparableSql
     /**
      * Create INTO clause
      *
-     * @param  string|TableIdentifier $table
+     * @param string|TableIdentifier $table
      * @return self Provides a fluent interface
      */
     public function into($table) : self
@@ -67,7 +67,7 @@ class Insert extends AbstractPreparableSql
     /**
      * Specify columns
      *
-     * @param  array $columns
+     * @param array $columns
      * @return self Provides a fluent interface
      */
     public function columns(array $columns) : self
@@ -79,8 +79,8 @@ class Insert extends AbstractPreparableSql
     /**
      * Specify values to insert
      *
-     * @param  array|Select $values
-     * @param  string $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
+     * @param array|Select $values
+     * @param string $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
