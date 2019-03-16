@@ -352,11 +352,7 @@ class Select extends AbstractPreparableSql
                 'This Select object is already combined and cannot be combined with multiple Selects objects'
             );
         }
-        $this->combine = [
-            'select' => $select,
-            'type' => $type,
-            'modifier' => $modifier
-        ];
+        $this->combine = compact('select', 'type', 'modifier');
         return $this;
     }
 

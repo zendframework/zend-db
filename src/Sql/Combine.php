@@ -87,11 +87,7 @@ class Combine extends AbstractPreparableSql
             ));
         }
 
-        $this->combine[] = [
-            'select' => $select,
-            'type' => $type,
-            'modifier' => $modifier
-        ];
+        $this->combine[] = compact('select', 'type', 'modifier');
 
         return $this;
     }
