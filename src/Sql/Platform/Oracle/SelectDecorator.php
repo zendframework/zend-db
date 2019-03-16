@@ -105,10 +105,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             $number = $this->processInfo['subselectCount'] ? $this->processInfo['subselectCount'] : '';
 
             if ($this->limit === null) {
-                array_push(
-                    $sqls,
-                    ') b ) WHERE b_rownum > (:offset' . $number . ')'
-                );
+                $sqls[] = ') b ) WHERE b_rownum > (:offset' . $number . ')';
                 $parameterContainer->offsetSet(
                     'offset' . $number,
                     $this->offset,
@@ -116,16 +113,13 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
                 );
             } else {
                 // create bottom part of query, with offset and limit using row_number
-                array_push(
-                    $sqls,
-                    ') b WHERE rownum <= (:offset'
+                $sqls[] = ') b WHERE rownum <= (:offset'
                     . $number
                     . '+:limit'
                     . $number
                     . ')) WHERE b_rownum >= (:offset'
                     . $number
-                    . ' + 1)'
-                );
+                    . ' + 1)';
                 $parameterContainer->offsetSet(
                     'offset' . $number,
                     $this->offset,
@@ -140,18 +134,15 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             $this->processInfo['subselectCount']++;
         } else {
             if ($this->limit === null) {
-                array_push($sqls, ') b ) WHERE b_rownum > (' . (int) $this->offset . ')');
+                $sqls[] = ') b ) WHERE b_rownum > (' . (int)$this->offset . ')';
             } else {
-                array_push(
-                    $sqls,
-                    ') b WHERE rownum <= ('
-                    . (int) $this->offset
+                $sqls[] = ') b WHERE rownum <= ('
+                    . (int)$this->offset
                     . '+'
-                    . (int) $this->limit
+                    . (int)$this->limit
                     . ')) WHERE b_rownum >= ('
-                    . (int) $this->offset
-                    . ' + 1)'
-                );
+                    . (int)$this->offset
+                    . ' + 1)';
             }
         }
 
