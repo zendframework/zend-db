@@ -16,12 +16,10 @@ use function gettype;
 use function implode;
 use function in_array;
 use function is_array;
-use function is_integer;
+use function is_int;
 use function is_object;
 use function is_scalar;
 use function key;
-use Zend\Db\Sql\SqlInterface;
-use Zend\Db\Sql\ExpressionInterface;
 
 abstract class AbstractExpression implements ExpressionInterface
 {

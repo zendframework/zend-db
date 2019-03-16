@@ -14,7 +14,6 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 use Zend\Db\Sql\Select;
-use function array_push;
 use function array_shift;
 use function array_unshift;
 use function current;
