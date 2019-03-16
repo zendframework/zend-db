@@ -62,12 +62,12 @@ class Update extends AbstractPreparableSql
     /**
      * @var string|Where
      */
-    protected $where = null;
+    protected $where;
 
     /**
      * @var null|Join
      */
-    protected $joins = null;
+    protected $joins;
 
     /**
      * Constructor

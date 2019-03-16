@@ -41,13 +41,13 @@ class Insert extends AbstractPreparableSql
     /**
      * @var string|TableIdentifier
      */
-    protected $table            = null;
+    protected $table;
     protected $columns          = [];
 
     /**
      * @var array|Select
      */
-    protected $select           = null;
+    protected $select;
 
     /**
      * Constructor

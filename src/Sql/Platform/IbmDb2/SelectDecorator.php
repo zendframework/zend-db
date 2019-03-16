@@ -35,7 +35,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     /**
      * @var Select
      */
-    protected $subject = null;
+    protected $subject;
 
      /**
      * @var bool

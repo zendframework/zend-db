@@ -16,9 +16,9 @@ use Zend\Db\Sql\AbstractExpression;
 class Between extends AbstractExpression implements PredicateInterface
 {
     protected $specification = '%1$s BETWEEN %2$s AND %3$s';
-    protected $identifier    = null;
-    protected $minValue      = null;
-    protected $maxValue      = null;
+    protected $identifier;
+    protected $minValue;
+    protected $maxValue;
 
     /**
      * Constructor

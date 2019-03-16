@@ -26,7 +26,7 @@ class Platform extends AbstractPlatform
     /**
      * @var AdapterInterface
      */
-    protected $adapter = null;
+    protected $adapter;
 
     /**
      * @var PlatformInterface|null

@@ -117,12 +117,12 @@ class Select extends AbstractPreparableSql
     /**
      * @var string|array|TableIdentifier
      */
-    protected $table = null;
+    protected $table;
 
     /**
      * @var null|string|Expression
      */
-    protected $quantifier = null;
+    protected $quantifier;
 
     /**
      * @var array
@@ -132,12 +132,12 @@ class Select extends AbstractPreparableSql
     /**
      * @var null|Join
      */
-    protected $joins = null;
+    protected $joins;
 
     /**
      * @var Where
      */
-    protected $where = null;
+    protected $where;
 
     /**
      * @var array
@@ -147,22 +147,22 @@ class Select extends AbstractPreparableSql
     /**
      * @var null|array
      */
-    protected $group = null;
+    protected $group;
 
     /**
      * @var null|string|array
      */
-    protected $having = null;
+    protected $having;
 
     /**
      * @var int|null
      */
-    protected $limit = null;
+    protected $limit;
 
     /**
      * @var int|null
      */
-    protected $offset = null;
+    protected $offset;
 
     /**
      * @var array

@@ -22,8 +22,8 @@ use Zend\Db\Sql\Select;
  */
 class Predicate extends PredicateSet
 {
-    protected $unnest = null;
-    protected $nextPredicateCombineOperator = null;
+    protected $unnest;
+    protected $nextPredicateCombineOperator;
 
     /**
      * Begin nesting predicates

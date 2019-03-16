@@ -16,13 +16,13 @@ use Zend\Db\Adapter\Platform\PlatformInterface;
 class Sql
 {
     /** @var AdapterInterface */
-    protected $adapter = null;
+    protected $adapter;
 
     /** @var string|array|TableIdentifier */
-    protected $table = null;
+    protected $table;
 
     /** @var Platform\Platform */
-    protected $sqlPlatform = null;
+    protected $sqlPlatform;
 
     /**
      * @param AdapterInterface                  $adapter

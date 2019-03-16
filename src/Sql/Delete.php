@@ -55,7 +55,7 @@ class Delete extends AbstractPreparableSql
     /**
      * @var null|string|Where
      */
-    protected $where = null;
+    protected $where;
 
     /**
      * Constructor
