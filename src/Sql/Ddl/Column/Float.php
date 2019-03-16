@@ -27,11 +27,11 @@ class Float extends Floating
      * Raises a deprecation notice.
      */
     public function __construct(
-        $name,
-        $digits = null,
-        $decimal = null,
-        $nullable = false,
-        $default = null,
+        string $name = '',
+        ?int $digits = null,
+        ?int $decimal = null,
+        bool $nullable = false,
+        ?$default = null,
         array $options = []
     ) {
         trigger_error(

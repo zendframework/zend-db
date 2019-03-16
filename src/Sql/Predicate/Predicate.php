@@ -81,7 +81,7 @@ class Predicate extends PredicateSet
      */
     public function equalTo(
         $left, $right,
-        ?string $leftType = self::TYPE_IDENTIFIER,
+        string $leftType = self::TYPE_IDENTIFIER,
         ?string$rightType = self::TYPE_VALUE
     ) : self {
         $this->addPredicate(
@@ -108,8 +108,8 @@ class Predicate extends PredicateSet
     public function notEqualTo(
         $left,
         $right,
-        ?string $leftType = self::TYPE_IDENTIFIER,
-        ?string $rightType = self::TYPE_VALUE
+        string $leftType = self::TYPE_IDENTIFIER,
+        string $rightType = self::TYPE_VALUE
     ) : self {
         $this->addPredicate(
             new Operator($left, Operator::OPERATOR_NOT_EQUAL_TO, $right, $leftType, $rightType),
@@ -135,8 +135,8 @@ class Predicate extends PredicateSet
     public function lessThan(
         $left,
         $right,
-        ?string $leftType = self::TYPE_IDENTIFIER,
-        ?string $rightType = self::TYPE_VALUE
+        string $leftType = self::TYPE_IDENTIFIER,
+        string $rightType = self::TYPE_VALUE
     ) : self {
         $this->addPredicate(
             new Operator($left, Operator::OPERATOR_LESS_THAN, $right, $leftType, $rightType),
@@ -162,8 +162,8 @@ class Predicate extends PredicateSet
     public function greaterThan(
         $left,
         $right,
-        ?string $leftType = self::TYPE_IDENTIFIER,
-        ?string $rightType = self::TYPE_VALUE
+        string $leftType = self::TYPE_IDENTIFIER,
+        string $rightType = self::TYPE_VALUE
     ) : self {
         $this->addPredicate(
             new Operator($left, Operator::OPERATOR_GREATER_THAN, $right, $leftType, $rightType),
@@ -189,8 +189,8 @@ class Predicate extends PredicateSet
     public function lessThanOrEqualTo(
         $left,
         $right,
-        ?string $leftType = self::TYPE_IDENTIFIER,
-        ?string $rightType = self::TYPE_VALUE
+        string $leftType = self::TYPE_IDENTIFIER,
+        string $rightType = self::TYPE_VALUE
     ) : self {
         $this->addPredicate(
             new Operator($left, Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $right, $leftType, $rightType),
@@ -216,8 +216,8 @@ class Predicate extends PredicateSet
     public function greaterThanOrEqualTo(
         $left,
         $right,
-        ?string $leftType = self::TYPE_IDENTIFIER,
-        ?string $rightType = self::TYPE_VALUE
+        string $leftType = self::TYPE_IDENTIFIER,
+        string $rightType = self::TYPE_VALUE
     ) : self {
         $this->addPredicate(
             new Operator($left, Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $right, $leftType, $rightType),

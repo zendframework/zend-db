@@ -43,7 +43,7 @@ class ForeignKey extends AbstractConstraint
      * @param null|string       $onUpdateRule
      */
     public function __construct(
-        ?string $name,
+        string $name,
         ?$columns,
         string $referenceTable,
         ?$referenceColumn,

@@ -17,14 +17,14 @@ class Index extends AbstractIndex
 
     /**
      * @param  string|array|null $columns
-     * @param  null|string $name
+     * @param  string $name
      * @param array $lengths
      */
-    public function __construct($columns, $name = null, array $lengths = [])
+    public function __construct($columns, string $name = '', array $lengths = [])
     {
         $this->setColumns($columns);
 
-        $this->name    = null === $name ? null : (string) $name;
+        $this->setName($name);
         $this->lengths = $lengths;
     }
 

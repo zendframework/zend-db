@@ -35,12 +35,12 @@ class Column implements ColumnInterface
     protected $type = 'INTEGER';
 
     /**
-     * @param null|string $name
+     * @param string $name
      * @param bool        $nullable
      * @param mixed|null  $default
      * @param mixed[]     $options
      */
-    public function __construct(?string $name = null, bool $nullable = false, ?$default = null, array $options = [])
+    public function __construct(string $name = '', bool $nullable = false, ?$default = null, array $options = [])
     {
         $this->setName($name);
         $this->setNullable($nullable);
@@ -48,22 +48,14 @@ class Column implements ColumnInterface
         $this->setOptions($options);
     }
 
-    /**
-     * @param  string $name
-     *
-     * @return self Provides a fluent interface
-     */
-    public function setName($name) : self
+    public function setName(string $name) : self
     {
-        $this->name = (string) $name;
+        $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getName() : ?string
+    public function getName() : string
     {
         return $this->name;
     }

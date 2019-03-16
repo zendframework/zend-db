@@ -29,7 +29,7 @@ class PredicateSet implements PredicateInterface, Countable
      * @param  null|array $predicates
      * @param  string $defaultCombination
      */
-    public function __construct(array $predicates = null, ?string $defaultCombination = self::COMBINED_BY_AND)
+    public function __construct(array $predicates = null, string $defaultCombination = self::COMBINED_BY_AND)
     {
         $this->defaultCombination = $defaultCombination;
 
@@ -75,7 +75,7 @@ class PredicateSet implements PredicateInterface, Countable
      *
      * @throws Exception\InvalidArgumentException
      */
-    public function addPredicates($predicates, ?string $combination = self::OP_AND) : self
+    public function addPredicates($predicates, string $combination = self::OP_AND) : self
     {
         if ($predicates === null) {
             throw new Exception\InvalidArgumentException('Predicate cannot be null');

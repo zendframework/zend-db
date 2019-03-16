@@ -28,9 +28,9 @@ abstract class AbstractConstraint implements ConstraintInterface
 
     /**
      * @param null|string|array $columns
-     * @param null|string $name
+     * @param string $name
      */
-    public function __construct($columns = null, ?string $name = null)
+    public function __construct($columns = null, string $name = '')
     {
         if ($columns) {
             $this->setColumns($columns);
@@ -39,14 +39,9 @@ abstract class AbstractConstraint implements ConstraintInterface
         $this->setName($name);
     }
 
-    /**
-     * @param  string $name
-     *
-     * @return self Provides a fluent interface
-     */
     public function setName(string $name) : self
     {
-        $this->name = (string) $name;
+        $this->name = $name;
 
         return $this;
     }

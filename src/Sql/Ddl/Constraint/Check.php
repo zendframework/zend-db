@@ -23,9 +23,9 @@ class Check extends AbstractConstraint
 
     /**
      * @param  string|ExpressionInterface $expression
-     * @param  null|string $name
+     * @param  string $name
      */
-    public function __construct($expression, ?string $name)
+    public function __construct($expression, string $name = '')
     {
         $this->expression = $expression;
         $this->name       = $name;

@@ -21,8 +21,8 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
      * @param int|null $decimal
      */
     public function __construct(
-        ?string $name,
-        int $digits = null,
+        string $name = '',
+        ?int $digits = null,
         ?int $decimal = null,
         bool $nullable = false,
         ?$default = null,
