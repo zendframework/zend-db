@@ -43,11 +43,6 @@ class Platform extends AbstractPlatform
         $this->decorators['sqlite']    = $sqlitePlatform->getDecorators();
     }
 
-    /**
-     * @param string                             $type
-     * @param PlatformDecoratorInterface         $decorator
-     * @param AdapterInterface|PlatformInterface $adapterOrPlatform
-     */
     public function setTypeDecorator(
         string                     $type,
         PlatformDecoratorInterface $decorator,
@@ -60,7 +55,6 @@ class Platform extends AbstractPlatform
     /**
      * @param PreparableSqlInterface|SqlInterface     $subject
      * @param AdapterInterface|PlatformInterface|null $adapterOrPlatform
-     *
      * @return PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface
      */
     public function getTypeDecorator($subject, ?$adapterOrPlatform = null)
@@ -90,11 +84,6 @@ class Platform extends AbstractPlatform
         return $this->decorators[$platformName];
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws RuntimeException
-     */
     public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
     {
         if (! $this->subject instanceof PreparableSqlInterface) {
@@ -109,11 +98,6 @@ class Platform extends AbstractPlatform
         return $statementContainer;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws RuntimeException
-     */
     public function getSqlString(?PlatformInterface $adapterPlatform = null) : string
     {
         if (! $this->subject instanceof SqlInterface) {
@@ -135,9 +119,7 @@ class Platform extends AbstractPlatform
     }
     /**
      * @param null|PlatformInterface|AdapterInterface $adapterOrPlatform
-     *
      * @return PlatformInterface
-     *
      * @throws InvalidArgumentException
      */
     protected function resolvePlatform($adapterOrPlatform) : PlatformInterface
@@ -163,7 +145,6 @@ class Platform extends AbstractPlatform
 
     /**
      * @return PlatformInterface
-     *
      * @throws RuntimeException
      */
     protected function getDefaultPlatform() : PlatformInterface

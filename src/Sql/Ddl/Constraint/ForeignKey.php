@@ -35,12 +35,12 @@ class ForeignKey extends AbstractConstraint
     ];
 
     /**
-     * @param null|string       $name
+     * @param string $name
      * @param null|string|array $columns
-     * @param string            $referenceTable
+     * @param string $referenceTable
      * @param null|string|array $referenceColumn
-     * @param null|string       $onDeleteRule
-     * @param null|string       $onUpdateRule
+     * @param null|string $onDeleteRule
+     * @param null|string $onUpdateRule
      */
     public function __construct(
         string $name,
@@ -64,11 +64,6 @@ class ForeignKey extends AbstractConstraint
         }
     }
 
-    /**
-     * @param string $referenceTable
-     *
-     * @return self Provides a fluent interface
-     */
     public function setReferenceTable(string $referenceTable) : self
     {
         $this->referenceTable = $referenceTable;
@@ -76,9 +71,6 @@ class ForeignKey extends AbstractConstraint
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getReferenceTable() : string
     {
         return $this->referenceTable;
@@ -86,7 +78,7 @@ class ForeignKey extends AbstractConstraint
 
     /**
      * @param null|string|array $referenceColumn
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function setReferenceColumn(?$referenceColumn) : self
     {
@@ -95,18 +87,12 @@ class ForeignKey extends AbstractConstraint
         return $this;
     }
 
-    /**
-     * @return array
-     */
+
     public function getReferenceColumn() : array
     {
         return $this->referenceColumn;
     }
 
-    /**
-     * @param string $onDeleteRule
-     * @return self Provides a fluent interface
-     */
     public function setOnDeleteRule(string $onDeleteRule) : self
     {
         $this->onDeleteRule = $onDeleteRule;
@@ -114,18 +100,11 @@ class ForeignKey extends AbstractConstraint
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getOnDeleteRule() : string
     {
         return $this->onDeleteRule;
     }
 
-    /**
-     * @param string $onUpdateRule
-     * @return self Provides a fluent interface
-     */
     public function setOnUpdateRule(string $onUpdateRule) : self
     {
         $this->onUpdateRule = $onUpdateRule;
@@ -133,17 +112,11 @@ class ForeignKey extends AbstractConstraint
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getOnUpdateRule() : string
     {
         return $this->onUpdateRule;
     }
 
-    /**
-     * @return array
-     */
     public function getExpressionData() : array
     {
         $data         = parent::getExpressionData();

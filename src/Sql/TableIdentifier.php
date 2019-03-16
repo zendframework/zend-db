@@ -17,10 +17,6 @@ class TableIdentifier
     /** @var null|string */
     protected $schema;
 
-    /**
-     * @param string      $table
-     * @param null|string $schema
-     */
     public function __construct(string $table, ?string $schema = null)
     {
         if (! (is_string($table) || is_callable([$table, '__toString']))) {
@@ -58,7 +54,6 @@ class TableIdentifier
 
     /**
      * @param string $table
-     *
      * @deprecated please use the constructor and build a new {@see TableIdentifier} instead
      */
     public function setTable(string $table) : void
@@ -66,25 +61,18 @@ class TableIdentifier
         $this->table = $table;
     }
 
-    /**
-     * @return string
-     */
     public function getTable() : string
     {
         return $this->table;
     }
 
-    /**
-     * @return bool
-     */
     public function hasSchema() : bool
     {
         return ($this->schema !== null);
     }
 
     /**
-     * @param $schema
-     *
+     * @param null|string $schema
      * @deprecated please use the constructor and build a new {@see TableIdentifier} instead
      */
     public function setSchema(?string $schema) : void

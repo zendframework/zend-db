@@ -46,9 +46,6 @@ abstract class AbstractConstraint implements ConstraintInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName() : string
     {
         return $this->name;
@@ -56,8 +53,7 @@ abstract class AbstractConstraint implements ConstraintInterface
 
     /**
      * @param null|string|array $columns
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function setColumns(?$columns) : self
     {
@@ -66,28 +62,17 @@ abstract class AbstractConstraint implements ConstraintInterface
         return $this;
     }
 
-    /**
-     * @param string $column
-     *
-     * @return self Provides a fluent interface
-     */
     public function addColumn(string $column) : self
     {
         $this->columns[] = $column;
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getColumns() : array
     {
         return $this->columns;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getExpressionData() : array
     {
         $colCount = count($this->columns);

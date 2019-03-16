@@ -18,14 +18,8 @@ use Zend\Db\Sql\ExpressionInterface;
  */
 interface ColumnInterface extends ExpressionInterface
 {
-    /**
-     * @return string
-     */
     public function getName() : string;
 
-    /**
-     * @return bool
-     */
     public function isNullable() : bool;
 
     /**
@@ -33,8 +27,5 @@ interface ColumnInterface extends ExpressionInterface
      */
     public function getDefault();
 
-    /**
-     * @return array
-     */
     public function getOptions() : array;
 }

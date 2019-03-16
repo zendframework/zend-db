@@ -56,7 +56,7 @@ class Insert extends AbstractPreparableSql
      * Create INTO clause
      *
      * @param string|TableIdentifier $table
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function into($table) : self
     {
@@ -64,12 +64,6 @@ class Insert extends AbstractPreparableSql
         return $this;
     }
 
-    /**
-     * Specify columns
-     *
-     * @param array $columns
-     * @return self Provides a fluent interface
-     */
     public function columns(array $columns) : self
     {
         $this->columns = array_flip($columns);
@@ -81,7 +75,7 @@ class Insert extends AbstractPreparableSql
      *
      * @param array|Select $values
      * @param string $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
-     * @return self Provides a fluent interface
+     * @return self
      * @throws Exception\InvalidArgumentException
      */
     public function values($values, string $flag = self::VALUES_SET) : self

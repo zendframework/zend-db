@@ -14,11 +14,6 @@ abstract class AbstractLengthColumn extends Column
     /** @var int */
     protected $length;
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param int $length
-     */
     public function __construct(
         string $name = '',
         ?int $length = null,
@@ -31,10 +26,6 @@ abstract class AbstractLengthColumn extends Column
         parent::__construct($name, $nullable, $default, $options);
     }
 
-    /**
-     * @param int $length
-     * @return self Provides a fluent interface
-     */
     public function setLength(int $length) : self
     {
         $this->length = $length;
@@ -42,25 +33,16 @@ abstract class AbstractLengthColumn extends Column
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLength() : int
     {
         return $this->length;
     }
 
-    /**
-     * @return string
-     */
     protected function getLengthExpression() : string
     {
         return (string) $this->length;
     }
 
-    /**
-     * @return array
-     */
     public function getExpressionData() : array
     {
         $data = parent::getExpressionData();

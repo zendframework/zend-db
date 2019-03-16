@@ -24,9 +24,6 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
     /** @var PlatformDecoratorInterface[] */
     protected $decorators = [];
 
-    /**
-     * {@inheritDoc}
-     */
     public function setSubject($subject)
     {
         $this->subject = $subject;
@@ -34,12 +31,6 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
         return $this;
     }
 
-    /**
-     * @param string                     $type
-     * @param PlatformDecoratorInterface $decorator
-     *
-     * @return void
-     */
     public function setTypeDecorator(string $type, PlatformDecoratorInterface $decorator) : void
     {
         $this->decorators[$type] = $decorator;
@@ -47,7 +38,6 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
 
     /**
      * @param PreparableSqlInterface|SqlInterface $subject
-     *
      * @return PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface
      */
     public function getTypeDecorator($subject)
@@ -71,11 +61,6 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
         return $this->decorators;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws RuntimeException
-     */
     public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
     {
         if (! $this->subject instanceof PreparableSqlInterface) {
@@ -90,11 +75,6 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
         return $statementContainer;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws RuntimeException
-     */
     public function getSqlString(?PlatformInterface $adapterPlatform = null) : string
     {
         if (! $this->subject instanceof SqlInterface) {

@@ -31,9 +31,6 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->subject = $select;
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function renderTable(string $table, ?string $alias = null) : string
     {
         return $table . ($alias ? ' ' . $alias : '');
@@ -48,15 +45,6 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->specifications['LIMITOFFSET'] = null;
     }
 
-    /**
-     * @param PlatformInterface $platform
-     * @param DriverInterface $driver
-     * @param ParameterContainer $parameterContainer
-     * @param array $sqls
-     * @param array $parameters
-     *
-     * @return void
-     */
     protected function processLimitOffset(
         PlatformInterface  $platform,
         ?DriverInterface    $driver = null,

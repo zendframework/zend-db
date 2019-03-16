@@ -36,7 +36,6 @@ abstract class AbstractExpression implements ExpressionInterface
      *
      * @param mixed $argument
      * @param string $defaultType
-     *
      * @return array
      *
      * @throws Exception\InvalidArgumentException
@@ -81,7 +80,6 @@ abstract class AbstractExpression implements ExpressionInterface
     /**
      * @param mixed  $argument
      * @param string $argumentType
-     *
      * @return mixed[]
      *
      * @throws Exception\InvalidArgumentException

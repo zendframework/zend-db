@@ -83,11 +83,6 @@ class AlterTable extends AbstractSql implements SqlInterface
         $table ? $this->setTable($table) : null;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return self Provides a fluent interface
-     */
     public function setTable(string $name) : self
     {
         $this->table = $name;
@@ -97,8 +92,7 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @param ColumnInterface $column
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function addColumn(ColumnInterface $column) : self
     {
@@ -110,8 +104,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     /**
      * @param string $name
      * @param ColumnInterface $column
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function changeColumn(string $name, ColumnInterface $column) : self
     {
@@ -122,8 +115,7 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @param string $name
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function dropColumn(string $name) : self
     {
@@ -134,8 +126,7 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @param string $name
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function dropConstraint(string $name) : self
     {
@@ -146,8 +137,7 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @param ConstraintInterface $constraint
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function addConstraint(ConstraintInterface $constraint) : self
     {

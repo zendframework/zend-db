@@ -18,7 +18,6 @@ interface ExpressionInterface
 
     /**
      * @abstract
-     *
      * @return array of array|string should return an array in the format:
      *
      * array (

@@ -28,11 +28,7 @@ use function vsprintf;
 
 abstract class AbstractSql implements SqlInterface
 {
-    /**
-     * Specifications for Sql String generation
-     *
-     * @var string[]|array[]
-     */
+    /** @var string[]|array[] Specifications for Sql String generation */
     protected $specifications = [];
 
     /** @var string[] */
@@ -41,9 +37,6 @@ abstract class AbstractSql implements SqlInterface
     /** @var array */
     protected $instanceParameterIndex = [];
 
-    /**
-     * {@inheritDoc}
-     */
     public function getSqlString(?PlatformInterface $adapterPlatform = null) : string
     {
         $adapterPlatform = $adapterPlatform ?: new DefaultAdapterPlatform;
@@ -89,7 +82,6 @@ abstract class AbstractSql implements SqlInterface
      * @todo move TableIdentifier concatenation here
      * @param string $table
      * @param string|null $alias
-     *
      * @return string
      */
     protected function renderTable(string $table, ?string $alias = null) : string
@@ -105,7 +97,6 @@ abstract class AbstractSql implements SqlInterface
      * @param null|DriverInterface $driver
      * @param null|ParameterContainer $parameterContainer
      * @param null|string $namedParameterPrefix
-     *
      * @return string
      *
      * @throws Exception\RuntimeException
@@ -216,7 +207,6 @@ abstract class AbstractSql implements SqlInterface
     /**
      * @param string|array $specifications
      * @param array $parameters
-     *
      * @return string
      *
      * @throws Exception\RuntimeException
@@ -389,7 +379,6 @@ abstract class AbstractSql implements SqlInterface
      * @param null|DriverInterface                  $driver
      * @param null|ParameterContainer               $parameterContainer
      * @param null|string                           $namedParameterPrefix
-     *
      * @return string
      */
     protected function resolveColumnValue(
@@ -437,7 +426,6 @@ abstract class AbstractSql implements SqlInterface
      * @param PlatformInterface             $platform
      * @param DriverInterface               $driver
      * @param ParameterContainer            $parameterContainer
-     *
      * @return string
      */
     protected function resolveTable(

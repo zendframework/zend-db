@@ -21,11 +21,8 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     protected $subject;
 
     /**
-     * Set Subject
-     *
      * @param Select $select
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function setSubject($select) : self
     {
@@ -34,9 +31,6 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function localizeVariables() : void
     {
         parent::localizeVariables();

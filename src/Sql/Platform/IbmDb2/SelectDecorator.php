@@ -32,18 +32,11 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      /** @var bool */
     protected $supportsLimitOffset = false;
 
-
-   /**
-     * @return bool
-     */
     public function getIsSelectContainDistinct() : bool
     {
         return $this->isSelectContainDistinct;
     }
 
-    /**
-     * @param bool $isSelectContainDistinct
-     */
     public function setIsSelectContainDistinct(bool $isSelectContainDistinct) : void
     {
         $this->isSelectContainDistinct = $isSelectContainDistinct;
@@ -57,25 +50,17 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->subject = $select;
     }
 
-    /**
-     * @return bool
-     */
+
     public function getSupportsLimitOffset() : bool
     {
         return $this->supportsLimitOffset;
     }
 
-    /**
-     * @param bool $supportsLimitOffset
-     */
     public function setSupportsLimitOffset(bool $supportsLimitOffset) : void
     {
         $this->supportsLimitOffset = $supportsLimitOffset;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function renderTable(string $table, ?string $alias = null) : string
     {
         return $table . ' ' . $alias;
@@ -91,13 +76,6 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->specifications['LIMITOFFSET'] = null;
     }
 
-    /**
-     * @param PlatformInterface  $platform
-     * @param DriverInterface    $driver
-     * @param ParameterContainer $parameterContainer
-     * @param array              $sqls
-     * @param array              $parameters
-     */
     protected function processLimitOffset(
         PlatformInterface  $platform,
         ?DriverInterface    $driver = null,

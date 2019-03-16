@@ -35,8 +35,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
 
     /**
      * @param CreateTable $subject
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function setSubject($subject) : self
     {
@@ -45,11 +44,6 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
         return $this;
     }
 
-    /**
-     * @param string $sql
-     *
-     * @return array
-     */
     protected function getSqlInsertOffsets(string $sql) : array
     {
         $sqlLength   = strlen($sql);
@@ -80,9 +74,6 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
         return $insertStart;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function processColumns(?PlatformInterface $platform = null)
     {
         if (! $this->columns) {
@@ -151,22 +142,11 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
         return [$sqls];
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
     private function normalizeColumnOption(string $name) : string
     {
         return strtolower(str_replace(['-', '_', ' '], '', $name));
     }
 
-    /**
-     * @param string $columnA
-     * @param string $columnB
-     *
-     * @return int
-     */
     private function compareColumnOptions(string $columnA, string $columnB) : int
     {
         $columnA = $this->normalizeColumnOption($columnA);

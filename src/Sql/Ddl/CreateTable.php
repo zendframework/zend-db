@@ -30,9 +30,6 @@ class CreateTable extends AbstractSql implements SqlInterface
     /** @var bool */
     protected $isTemporary = false;
 
-    /**
-     * {@inheritDoc}
-     */
     protected $specifications = [
         self::TABLE => 'CREATE %1$sTABLE %2$s (',
         self::COLUMNS  => [
@@ -62,11 +59,6 @@ class CreateTable extends AbstractSql implements SqlInterface
         $this->setTemporary($isTemporary);
     }
 
-    /**
-     * @param bool $temporary
-     *
-     * @return self Provides a fluent interface
-     */
     public function setTemporary(bool $temporary) : self
     {
         $this->isTemporary = $temporary;
@@ -74,18 +66,11 @@ class CreateTable extends AbstractSql implements SqlInterface
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isTemporary() : bool
     {
         return $this->isTemporary;
     }
 
-    /**
-     * @param string $name
-     * @return self Provides a fluent interface
-     */
     public function setTable(string $name) : self
     {
         $this->table = $name;
@@ -93,10 +78,6 @@ class CreateTable extends AbstractSql implements SqlInterface
         return $this;
     }
 
-    /**
-     * @param ColumnInterface $column
-     * @return self Provides a fluent interface
-     */
     public function addColumn(ColumnInterface $column) : self
     {
         $this->columns[] = $column;
@@ -104,10 +85,6 @@ class CreateTable extends AbstractSql implements SqlInterface
         return $this;
     }
 
-    /**
-     * @param ConstraintInterface $constraint
-     * @return self Provides a fluent interface
-     */
     public function addConstraint(ConstraintInterface $constraint) : self
     {
         $this->constraints[] = $constraint;
@@ -115,11 +92,6 @@ class CreateTable extends AbstractSql implements SqlInterface
         return $this;
     }
 
-    /**
-     * @param string|null $key
-     *
-     * @return array
-     */
     public function getRawState(?string $key = null) : array
     {
         $rawState = [
@@ -131,11 +103,6 @@ class CreateTable extends AbstractSql implements SqlInterface
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
-    /**
-     * @param PlatformInterface $adapterPlatform
-     *
-     * @return string[]
-     */
     protected function processTable(?PlatformInterface $adapterPlatform = null) : array
     {
         return [
@@ -146,7 +113,6 @@ class CreateTable extends AbstractSql implements SqlInterface
 
     /**
      * @param PlatformInterface $adapterPlatform
-     *
      * @return string[][]|void
      */
     protected function processColumns(?PlatformInterface $adapterPlatform = null)
@@ -165,8 +131,7 @@ class CreateTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param PlatformInterface $adapterPlatform
-     *
+     * @param PlatformInterface|null $adapterPlatform
      * @return array|string|void
      */
     protected function processCombinedby(?PlatformInterface $adapterPlatform = null)
@@ -177,8 +142,7 @@ class CreateTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param PlatformInterface $adapterPlatform
-     *
+     * @param PlatformInterface|null $adapterPlatform
      * @return string[][]|void
      */
     protected function processConstraints(?PlatformInterface $adapterPlatform = null)
@@ -196,11 +160,6 @@ class CreateTable extends AbstractSql implements SqlInterface
         return [$sqls];
     }
 
-    /**
-     * @param PlatformInterface $adapterPlatform
-     *
-     * @return string[]
-     */
     protected function processStatementEnd(?PlatformInterface $adapterPlatform = null) : array
     {
         return ["\n)"];

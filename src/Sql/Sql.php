@@ -41,9 +41,6 @@ class Sql
         $this->sqlPlatform = $sqlPlatform ?: new Platform\Platform($adapter);
     }
 
-    /**
-     * @return null|AdapterInterface
-     */
     public function getAdapter() : ?AdapterInterface
     {
         return $this->adapter;
@@ -56,7 +53,7 @@ class Sql
 
     /**
      * @param string|array|TableIdentifier $table
-     * @return self Provides a fluent interface
+     * @return self
      * @throws Exception\InvalidArgumentException
      */
     public function setTable($table) : self
@@ -157,7 +154,6 @@ class Sql
      *
      * @param SqlInterface           $sqlObject
      * @param PlatformInterface|null $platform
-     *
      * @return string
      *
      * @deprecated Deprecated in 2.4. Use buildSqlString() instead

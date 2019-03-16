@@ -34,12 +34,6 @@ class Column implements ColumnInterface
     /** @var string */
     protected $type = 'INTEGER';
 
-    /**
-     * @param string $name
-     * @param bool        $nullable
-     * @param mixed|null  $default
-     * @param mixed[]     $options
-     */
     public function __construct(string $name = '', bool $nullable = false, ?$default = null, array $options = [])
     {
         $this->setName($name);
@@ -60,10 +54,6 @@ class Column implements ColumnInterface
         return $this->name;
     }
 
-    /**
-     * @param bool $nullable
-     * @return self Provides a fluent interface
-     */
     public function setNullable(bool $nullable) : self
     {
         $this->isNullable = $nullable;
@@ -71,9 +61,6 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isNullable() : bool
     {
         return $this->isNullable;
@@ -81,8 +68,7 @@ class Column implements ColumnInterface
 
     /**
      * @param null|string|int $default
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function setDefault(?$default) : self
     {
@@ -99,11 +85,6 @@ class Column implements ColumnInterface
         return $this->default;
     }
 
-    /**
-     * @param array $options
-     *
-     * @return self Provides a fluent interface
-     */
     public function setOptions(array $options) : self
     {
         $this->options = $options;
@@ -111,12 +92,6 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    /**
-     * @param string $name
-     * @param string $value
-     *
-     * @return self Provides a fluent interface
-     */
     public function setOption(string $name, string $value) : self
     {
         $this->options[$name] = $value;
@@ -124,19 +99,12 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
+
     public function getOptions() : array
     {
         return $this->options;
     }
 
-    /**
-     * @param ConstraintInterface $constraint
-     *
-     * @return self Provides a fluent interface
-     */
     public function addConstraint(ConstraintInterface $constraint) : self
     {
         $this->constraints[] = $constraint;
@@ -144,9 +112,7 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
+
     public function getExpressionData() : array
     {
         $spec = $this->specification;

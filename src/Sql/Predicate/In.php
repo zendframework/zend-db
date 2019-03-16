@@ -43,8 +43,7 @@ class In extends AbstractExpression implements PredicateInterface
      * Set identifier for comparison
      *
      * @param string|array $identifier
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function setIdentifier($identifier) : self
     {
@@ -55,7 +54,6 @@ class In extends AbstractExpression implements PredicateInterface
 
     /**
      * Get identifier of comparison
-     *
      * @return null|string|array
      */
     public function getIdentifier()
@@ -67,8 +65,7 @@ class In extends AbstractExpression implements PredicateInterface
      * Set set of values for IN comparison
      *
      * @param array|Select $valueSet
-     *
-     * @return self Provides a fluent interface
+     * @return self
      *
      * @throws Exception\InvalidArgumentException
      */
@@ -87,7 +84,6 @@ class In extends AbstractExpression implements PredicateInterface
 
     /**
      * Gets set of values in IN comparison
-     *
      * @return array|Select
      */
     public function getValueSet()
@@ -95,11 +91,6 @@ class In extends AbstractExpression implements PredicateInterface
         return $this->valueSet;
     }
 
-    /**
-     * Return array of parts for where statement
-     *
-     * @return array
-     */
     public function getExpressionData() : array
     {
         $identifier = $this->getIdentifier();

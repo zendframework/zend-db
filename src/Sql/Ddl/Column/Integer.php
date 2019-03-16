@@ -11,9 +11,7 @@ namespace Zend\Db\Sql\Ddl\Column;
 
 class Integer extends Column
 {
-    /**
-     * @return array
-     */
+
     public function getExpressionData() : array
     {
         $data    = parent::getExpressionData();

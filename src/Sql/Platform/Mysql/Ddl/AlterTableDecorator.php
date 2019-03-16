@@ -43,8 +43,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
     /**
      * @param AlterTable $subject
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function setSubject($subject) : self
     {
@@ -55,7 +54,6 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
     /**
      * @param string $sql
-     *
      * @return array
      */
     protected function getSqlInsertOffsets(string $sql) : array
@@ -88,11 +86,6 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         return $insertStart;
     }
 
-    /**
-     * @param PlatformInterface $adapterPlatform
-     *
-     * @return array
-     */
     protected function processAddColumns(?PlatformInterface $adapterPlatform = null) : array
     {
         $sqls = [];
@@ -158,11 +151,6 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         return [$sqls];
     }
 
-    /**
-     * @param PlatformInterface $adapterPlatform
-     *
-     * @return array
-     */
     protected function processChangeColumns(?PlatformInterface $adapterPlatform = null) : array
     {
         $sqls = [];
@@ -230,22 +218,11 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
         return [$sqls];
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
     private function normalizeColumnOption(string $name) : string
     {
         return strtolower(str_replace(['-', '_', ' '], '', $name));
     }
 
-    /**
-     * @param string $columnA
-     * @param string $columnB
-     *
-     * @return int
-     */
     private function compareColumnOptions(string $columnA, string $columnB) : int
     {
         $columnA = $this->normalizeColumnOption($columnA);

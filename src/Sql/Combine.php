@@ -58,8 +58,7 @@ class Combine extends AbstractPreparableSql
      * @param Select|array $select
      * @param string $type
      * @param string $modifier
-     *
-     * @return self Provides a fluent interface
+     * @return self
      *
      * @throws Exception\InvalidArgumentException
      */
@@ -97,7 +96,6 @@ class Combine extends AbstractPreparableSql
      *
      * @param Select|array $select
      * @param string       $modifier
-     *
      * @return self
      */
     public function union($select, string $modifier = '') : self
@@ -110,7 +108,6 @@ class Combine extends AbstractPreparableSql
      *
      * @param Select|array $select
      * @param string       $modifier
-     *
      * @return self
      */
     public function except($select, string $modifier = '') : self
@@ -123,7 +120,6 @@ class Combine extends AbstractPreparableSql
      *
      * @param Select|array $select
      * @param string $modifier
-     *
      * @return self
      */
     public function intersect($select, string $modifier = '') : self

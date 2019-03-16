@@ -38,15 +38,6 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->specifications['LIMITOFFSET'] = null;
     }
 
-    /**
-     * @param PlatformInterface $platform
-     * @param DriverInterface $driver
-     * @param ParameterContainer $parameterContainer
-     * @param $sqls
-     * @param $parameters
-     *
-     * @return void
-     */
     protected function processLimitOffset(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,

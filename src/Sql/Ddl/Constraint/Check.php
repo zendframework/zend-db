@@ -31,9 +31,6 @@ class Check extends AbstractConstraint
         $this->name       = $name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getExpressionData() : array
     {
         $newSpecTypes = [self::TYPE_LITERAL];

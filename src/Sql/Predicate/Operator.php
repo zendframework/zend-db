@@ -34,9 +34,6 @@ class Operator extends AbstractExpression implements PredicateInterface
     public const OPERATOR_GREATER_THAN_OR_EQUAL_TO  = '>=';
     public const OP_GTE                             = '>=';
 
-    /**
-     * {@inheritDoc}
-     */
     protected $allowedTypes  = [
         self::TYPE_IDENTIFIER,
         self::TYPE_VALUE,
@@ -98,8 +95,7 @@ class Operator extends AbstractExpression implements PredicateInterface
      * Set left side of operator
      *
      * @param int|float|bool|string $left
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function setLeft($left) : self
     {
@@ -115,7 +111,6 @@ class Operator extends AbstractExpression implements PredicateInterface
 
     /**
      * Get left side of operator
-     *
      * @return int|float|bool|string
      */
     public function getLeft()
@@ -127,9 +122,7 @@ class Operator extends AbstractExpression implements PredicateInterface
      * Set parameter type for left side of operator
      *
      * @param string $type TYPE_IDENTIFIER or TYPE_VALUE {@see allowedTypes}
-     *
-     * @return self Provides a fluent interface
-     *
+     * @return self
      * @throws Exception\InvalidArgumentException
      */
     public function setLeftType($type) : self
@@ -148,34 +141,18 @@ class Operator extends AbstractExpression implements PredicateInterface
         return $this;
     }
 
-    /**
-     * Get parameter type on left side of operator
-     *
-     * @return string
-     */
     public function getLeftType() : string
     {
         return $this->leftType;
     }
 
-    /**
-     * Set operator string
-     *
-     * @param string $operator
-     * @return self Provides a fluent interface
-     */
-    public function setOperator($operator) : self
+    public function setOperator(string $operator) : self
     {
         $this->operator = $operator;
 
         return $this;
     }
 
-    /**
-     * Get operator string
-     *
-     * @return string
-     */
     public function getOperator() : string
     {
         return $this->operator;
@@ -185,8 +162,7 @@ class Operator extends AbstractExpression implements PredicateInterface
      * Set right side of operator
      *
      * @param int|float|bool|string $right
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function setRight($right) : self
     {
@@ -202,7 +178,6 @@ class Operator extends AbstractExpression implements PredicateInterface
 
     /**
      * Get right side of operator
-     *
      * @return int|float|bool|string
      */
     public function getRight()
@@ -214,8 +189,7 @@ class Operator extends AbstractExpression implements PredicateInterface
      * Set parameter type for right side of operator
      *
      * @param string $type TYPE_IDENTIFIER or TYPE_VALUE {@see allowedTypes}
-     *
-     * @return self Provides a fluent interface
+     * @return self
      *
      * @throws Exception\InvalidArgumentException
      */
@@ -235,21 +209,11 @@ class Operator extends AbstractExpression implements PredicateInterface
         return $this;
     }
 
-    /**
-     * Get parameter type on right side of operator
-     *
-     * @return string
-     */
     public function getRightType() : string
     {
         return $this->rightType;
     }
 
-    /**
-     * Get predicate parts for where statement
-     *
-     * @return array
-     */
     public function getExpressionData() : array
     {
         list($values[], $types[]) = $this->normalizeArgument($this->left, $this->leftType);

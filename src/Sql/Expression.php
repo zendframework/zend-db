@@ -73,9 +73,7 @@ class Expression extends AbstractExpression
 
     /**
      * @param $parameters
-     *
-     * @return self Provides a fluent interface
-     *
+     * @return self
      * @throws Exception\InvalidArgumentException
      */
     public function setParameters($parameters) : self
@@ -96,10 +94,8 @@ class Expression extends AbstractExpression
 
     /**
      * @deprecated
-     *
      * @param array $types
-     *
-     * @return self Provides a fluent interface
+     * @return self
      */
     public function setTypes(array $types) : self
     {
@@ -109,7 +105,6 @@ class Expression extends AbstractExpression
 
     /**
      * @deprecated
-     *
      * @return array
      */
     public function getTypes() : array

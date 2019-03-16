@@ -14,12 +14,6 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     /** @var int|null */
     protected $decimal;
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param int      $digits
-     * @param int|null $decimal
-     */
     public function __construct(
         string $name = '',
         ?int $digits = null,
@@ -33,29 +27,16 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
         parent::__construct($name, $digits, $nullable, $default, $options);
     }
 
-    /**
-     * @param int $digits
-     *
-     * @return self
-     */
     public function setDigits(int $digits) : self
     {
         return $this->setLength($digits);
     }
 
-    /**
-     * @return int
-     */
     public function getDigits() : int
     {
         return $this->getLength();
     }
 
-    /**
-     * @param int|null $decimal
-     *
-     * @return self Provides a fluent interface
-     */
     public function setDecimal(?int $decimal) : self
     {
         $this->decimal = null === $decimal ? null : (int) $decimal;
@@ -63,17 +44,11 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getDecimal() : ?int
     {
         return $this->decimal;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getLengthExpression() : string
     {
         if ($this->decimal !== null) {
