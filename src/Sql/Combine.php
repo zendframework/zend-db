@@ -45,7 +45,7 @@ class Combine extends AbstractPreparableSql
      * @param string            $type
      * @param string            $modifier
      */
-    public function __construct($select = null, ?string $type = self::COMBINE_UNION, ?string $modifier = '')
+    public function __construct($select = null, string $type = self::COMBINE_UNION, string $modifier = '')
     {
         if ($select) {
             $this->combine($select, $type, $modifier);
@@ -63,7 +63,7 @@ class Combine extends AbstractPreparableSql
      *
      * @throws Exception\InvalidArgumentException
      */
-    public function combine($select, ?string $type = self::COMBINE_UNION, ?string $modifier = '') : self
+    public function combine($select, string $type = self::COMBINE_UNION, string $modifier = '') : self
     {
         if (is_array($select)) {
             foreach ($select as $combine) {
@@ -104,7 +104,7 @@ class Combine extends AbstractPreparableSql
      *
      * @return self
      */
-    public function union($select, ?string $modifier = '') : self
+    public function union($select, string $modifier = '') : self
     {
         return $this->combine($select, self::COMBINE_UNION, $modifier);
     }
@@ -117,7 +117,7 @@ class Combine extends AbstractPreparableSql
      *
      * @return self
      */
-    public function except($select, ?string $modifier = '') : self
+    public function except($select, string $modifier = '') : self
     {
         return $this->combine($select, self::COMBINE_EXCEPT, $modifier);
     }
@@ -130,27 +130,18 @@ class Combine extends AbstractPreparableSql
      *
      * @return self
      */
-    public function intersect($select, ?string $modifier = '') : self
+    public function intersect($select, string $modifier = '') : self
     {
         return $this->combine($select, self::COMBINE_INTERSECT, $modifier);
     }
 
-    /**
-     * Build sql string
-     *
-     * @param PlatformInterface  $platform
-     * @param DriverInterface    $driver
-     * @param ParameterContainer $parameterContainer
-     *
-     * @return string|void
-     */
     protected function buildSqlString(
         PlatformInterface  $platform,
-        DriverInterface    $driver = null,
-        ParameterContainer $parameterContainer = null
-    ) {
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ) : ?string {
         if (! $this->combine) {
-            return;
+            return null;
         }
 
         $sql = '';
@@ -170,9 +161,6 @@ class Combine extends AbstractPreparableSql
         return trim($sql, ' ');
     }
 
-    /**
-     * @return self Provides a fluent interface
-     */
     public function alignColumns() : self
     {
         if (! $this->combine) {
@@ -201,13 +189,6 @@ class Combine extends AbstractPreparableSql
         return $this;
     }
 
-    /**
-     * Get raw state
-     *
-     * @param string $key
-     *
-     * @return array
-     */
     public function getRawState(?string $key = null) : array
     {
         $rawState = [

@@ -30,7 +30,7 @@ class Expression extends AbstractExpression
      * @param string|array $parameters
      * @param array $types @deprecated will be dropped in version 3.0.0
      */
-    public function __construct(?string $expression = '', $parameters = null, array $types = [])
+    public function __construct(string $expression = '', $parameters = null, array $types = [])
     {
         if ($expression !== '') {
             $this->setExpression($expression);
@@ -55,13 +55,6 @@ class Expression extends AbstractExpression
         }
     }
 
-    /**
-     * @param string $expression
-     *
-     * @return self Provides a fluent interface
-     *
-     * @throws Exception\InvalidArgumentException
-     */
     public function setExpression(string $expression) : self
     {
         if (! is_string($expression) || $expression == '') {
@@ -73,9 +66,6 @@ class Expression extends AbstractExpression
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getExpression() : string
     {
         return $this->expression;
@@ -99,9 +89,6 @@ class Expression extends AbstractExpression
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getParameters() : array
     {
         return $this->parameters;
@@ -130,11 +117,6 @@ class Expression extends AbstractExpression
         return $this->types;
     }
 
-    /**
-     * @return array
-     *
-     * @throws Exception\RuntimeException
-     */
     public function getExpressionData() : array
     {
         $parameters = (is_scalar($this->parameters)) ? [$this->parameters] : $this->parameters;

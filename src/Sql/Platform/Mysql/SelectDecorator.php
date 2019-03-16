@@ -38,8 +38,8 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
     protected function processLimit(
         PlatformInterface  $platform,
-        DriverInterface    $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->limit === null && $this->offset !== null) {
             return [''];
@@ -61,8 +61,8 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
     protected function processOffset(
         PlatformInterface  $platform,
-        DriverInterface    $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->offset === null) {
             return;

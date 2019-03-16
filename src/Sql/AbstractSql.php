@@ -50,18 +50,11 @@ abstract class AbstractSql implements SqlInterface
         return $this->buildSqlString($adapterPlatform);
     }
 
-    /**
-     * @param PlatformInterface $platform
-     * @param null|DriverInterface $driver
-     * @param null|ParameterContainer $parameterContainer
-     *
-     * @return string|void
-     */
     protected function buildSqlString(
         PlatformInterface  $platform,
-        DriverInterface    $driver = null,
-        ParameterContainer $parameterContainer = null
-    ) {
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ) : string {
         $this->localizeVariables();
 
         $sqls       = [];
@@ -287,14 +280,6 @@ abstract class AbstractSql implements SqlInterface
         return vsprintf($specificationString, $topParameters);
     }
 
-    /**
-     * @param Select                  $subselect
-     * @param PlatformInterface       $platform
-     * @param null|DriverInterface    $driver
-     * @param null|ParameterContainer $parameterContainer
-     *
-     * @return string
-     */
     protected function processSubSelect(
         Select              $subselect,
         PlatformInterface   $platform,
@@ -327,24 +312,14 @@ abstract class AbstractSql implements SqlInterface
         return $decorator->buildSqlString($platform, $driver, $parameterContainer);
     }
 
-    /**
-     * @param Join $joins
-     * @param PlatformInterface $platform
-     * @param null|DriverInterface $driver
-     * @param null|ParameterContainer $parameterContainer
-     *
-     * @return string[]|void|null
-     *     otherwise
-     * @throws Exception\InvalidArgumentException for invalid JOIN table names.
-     */
     protected function processJoin(
         Join               $joins,
         PlatformInterface  $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ) : ?array {
         if (! $joins->count()) {
-            return;
+            return null;
         }
 
         // process joins
@@ -468,8 +443,8 @@ abstract class AbstractSql implements SqlInterface
     protected function resolveTable(
         $table,
         PlatformInterface  $platform,
-        DriverInterface    $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) : string {
         $schema = null;
 

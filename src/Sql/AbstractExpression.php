@@ -43,7 +43,7 @@ abstract class AbstractExpression implements ExpressionInterface
      *
      * @throws Exception\InvalidArgumentException
      */
-    protected function normalizeArgument($argument, ?string $defaultType = self::TYPE_VALUE) : array
+    protected function normalizeArgument($argument, string $defaultType = self::TYPE_VALUE) : array
     {
         if ($argument instanceof ExpressionInterface || $argument instanceof SqlInterface) {
             return $this->buildNormalizedArgument($argument, self::TYPE_VALUE);

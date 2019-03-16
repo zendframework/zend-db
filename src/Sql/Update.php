@@ -94,13 +94,13 @@ class Update extends AbstractPreparableSql
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function set(array $values, $flag = self::VALUES_SET) : self
+    public function set(array $values, string $flag = self::VALUES_SET) : self
     {
         if ($values === null) {
             throw new Exception\InvalidArgumentException('set() expects an array of values');
         }
 
-        if ($flag == self::VALUES_SET) {
+        if ($flag === self::VALUES_SET) {
             $this->set->clear();
         }
         $priority = is_numeric($flag) ? $flag : 0;
@@ -121,7 +121,7 @@ class Update extends AbstractPreparableSql
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND) : self
+    public function where($predicate, string $combination = Predicate\PredicateSet::OP_AND) : self
     {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
@@ -140,14 +140,14 @@ class Update extends AbstractPreparableSql
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function join($name, $on, $type = Join::JOIN_INNER) : self
+    public function join($name, string $on, string $type = Join::JOIN_INNER) : self
     {
         $this->joins->join($name, $on, [], $type);
 
         return $this;
     }
 
-    public function getRawState($key = null)
+    public function getRawState(string $key = null)
     {
         $rawState = [
             'emptyWhereProtection' => $this->emptyWhereProtection,
@@ -161,8 +161,8 @@ class Update extends AbstractPreparableSql
 
     protected function processUpdate(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         return sprintf(
             $this->specifications[static::SPECIFICATION_UPDATE],
@@ -172,8 +172,8 @@ class Update extends AbstractPreparableSql
 
     protected function processSet(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         $setSql = [];
         $i      = 0;
@@ -216,8 +216,8 @@ class Update extends AbstractPreparableSql
 
     protected function processWhere(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->where->count() == 0) {
             return;
@@ -230,8 +230,8 @@ class Update extends AbstractPreparableSql
 
     protected function processJoins(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
     }
@@ -244,9 +244,9 @@ class Update extends AbstractPreparableSql
      * @param  string $name
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
-        if (strtolower($name) == 'where') {
+        if (strtolower($name) === 'where') {
             return $this->where;
         }
     }

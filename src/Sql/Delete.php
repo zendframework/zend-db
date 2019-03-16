@@ -72,12 +72,7 @@ class Delete extends AbstractPreparableSql
         return $this;
     }
 
-    /**
-     * @param null $key
-     *
-     * @return mixed
-     */
-    public function getRawState($key = null)
+    public function getRawState(?string $key = null)
     {
         $rawState = [
             'emptyWhereProtection' => $this->emptyWhereProtection,
@@ -97,7 +92,7 @@ class Delete extends AbstractPreparableSql
      *
      * @return self Provides a fluent interface
      */
-    public function where($predicate, ?string $combination = Predicate\PredicateSet::OP_AND) : self
+    public function where($predicate, string $combination = Predicate\PredicateSet::OP_AND) : self
     {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
@@ -107,17 +102,10 @@ class Delete extends AbstractPreparableSql
         return $this;
     }
 
-    /**
-     * @param PlatformInterface       $platform
-     * @param DriverInterface|null    $driver
-     * @param ParameterContainer|null $parameterContainer
-     *
-     * @return string
-     */
     protected function processDelete(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) : string {
         return sprintf(
             $this->specifications[static::SPECIFICATION_DELETE],
@@ -125,20 +113,13 @@ class Delete extends AbstractPreparableSql
         );
     }
 
-    /**
-     * @param PlatformInterface       $platform
-     * @param DriverInterface|null    $driver
-     * @param ParameterContainer|null $parameterContainer
-     *
-     * @return void|string
-     */
     protected function processWhere(
         PlatformInterface   $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
-        if ($this->where->count() == 0) {
-            return;
+    ) : ?string {
+        if ($this->where->count() === 0) {
+            return null;
         }
 
         return sprintf(
@@ -147,16 +128,7 @@ class Delete extends AbstractPreparableSql
         );
     }
 
-    /**
-     * Property overloading
-     *
-     * Overloads "where" only.
-     *
-     * @param  string $name
-     *
-     * @return Where|null
-     */
-    public function __get($name)
+    public function __get(string $name) : ?Where
     {
         switch (strtolower($name)) {
             case 'where':

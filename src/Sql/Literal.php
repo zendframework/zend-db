@@ -11,38 +11,24 @@ namespace Zend\Db\Sql;
 
 class Literal implements ExpressionInterface
 {
-    /** @var string */
-    protected $literal = '';
+    protected $literal;
 
-    /**
-     * @param $literal
-     */
-    public function __construct($literal = '')
+    public function __construct(string $literal = '')
     {
         $this->literal = $literal;
     }
 
-    /**
-     * @param string $literal
-     * @return self Provides a fluent interface
-     */
-    public function setLiteral($literal) : self
+    public function setLiteral(string $literal) : self
     {
         $this->literal = $literal;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLiteral() : string
     {
         return $this->literal;
     }
 
-    /**
-     * @return array
-     */
     public function getExpressionData() : array
     {
         return [[

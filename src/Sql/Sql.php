@@ -78,6 +78,10 @@ class Sql
         return $this->sqlPlatform;
     }
 
+    /**
+     * @param null|string|array|TableIdentifier $table
+     * @return Select
+     */
     public function select($table = null) : Select
     {
         if ($this->table !== null && $table !== null) {
@@ -89,6 +93,10 @@ class Sql
         return new Select(($table) ?: $this->table);
     }
 
+    /**
+     * @param null|string|TableIdentifier $table
+     * @return Insert
+     */
     public function insert($table = null) : Insert
     {
         if ($this->table !== null && $table !== null) {
@@ -100,6 +108,10 @@ class Sql
         return new Insert(($table) ?: $this->table);
     }
 
+    /**
+     * @param null|string|TableIdentifier $table
+     * @return Update
+     */
     public function update($table = null) : Update
     {
         if ($this->table !== null && $table !== null) {
@@ -111,6 +123,10 @@ class Sql
         return new Update(($table) ?: $this->table);
     }
 
+    /**
+     * @param null|string|TableIdentifier $table
+     * @return Delete
+     */
     public function delete($table = null) : Delete
     {
         if ($this->table !== null && $table !== null) {
@@ -122,17 +138,10 @@ class Sql
         return new Delete(($table) ?: $this->table);
     }
 
-    /**
-     * @param PreparableSqlInterface $sqlObject
-     * @param StatementInterface     $statement
-     * @param AdapterInterface       $adapter
-     *
-     * @return StatementInterface
-     */
     public function prepareStatementForSqlObject(
         PreparableSqlInterface $sqlObject,
-        StatementInterface $statement = null,
-        AdapterInterface $adapter = null
+        ?StatementInterface $statement = null,
+        ?AdapterInterface $adapter = null
     ) : StatementInterface {
         $adapter   = $adapter ?: $this->adapter;
         $statement = $statement ?: $adapter->getDriver()->createStatement();
@@ -156,15 +165,7 @@ class Sql
         return $this->sqlPlatform->setSubject($sqlObject)->getSqlString($platform);
     }
 
-    /**
-     * @param SqlInterface     $sqlObject
-     * @param AdapterInterface $adapter
-     *
-     * @return string
-     *
-     * @throws Exception\InvalidArgumentException
-     */
-    public function buildSqlString(SqlInterface $sqlObject, AdapterInterface $adapter = null) : string
+    public function buildSqlString(SqlInterface $sqlObject, ?AdapterInterface $adapter = null) : string
     {
         return $this
             ->sqlPlatform

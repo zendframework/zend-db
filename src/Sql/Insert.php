@@ -84,10 +84,10 @@ class Insert extends AbstractPreparableSql
      * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function values($values, $flag = self::VALUES_SET) : self
+    public function values($values, string $flag = self::VALUES_SET) : self
     {
         if ($values instanceof Select) {
-            if ($flag == self::VALUES_MERGE) {
+            if ($flag === self::VALUES_MERGE) {
                 throw new Exception\InvalidArgumentException(
                     'A Zend\Db\Sql\Select instance cannot be provided with the merge flag'
                 );
@@ -102,14 +102,14 @@ class Insert extends AbstractPreparableSql
             );
         }
 
-        if ($this->select && $flag == self::VALUES_MERGE) {
+        if ($this->select && $flag === self::VALUES_MERGE) {
             throw new Exception\InvalidArgumentException(
                 'An array of values cannot be provided with the merge flag when a Zend\Db\Sql\Select instance already '
                 . 'exists as the value source'
             );
         }
 
-        if ($flag == self::VALUES_SET) {
+        if ($flag === self::VALUES_SET) {
             $this->columns = $this->isAssocativeArray($values)
                 ? $values
                 : array_combine(array_keys($this->columns), array_values($values));
@@ -134,24 +134,12 @@ class Insert extends AbstractPreparableSql
         return array_keys($array) !== range(0, count($array) - 1);
     }
 
-    /**
-     * Create INTO SELECT clause
-     *
-     * @param Select $select
-     * @return self
-     */
     public function select(Select $select) : self
     {
         return $this->values($select);
     }
 
-    /**
-     * Get raw state
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function getRawState($key = null)
+    public function getRawState(?string $key = null)
     {
         $rawState = [
             'table' => $this->table,
@@ -163,8 +151,8 @@ class Insert extends AbstractPreparableSql
 
     protected function processInsert(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->select) {
             return;
@@ -206,8 +194,8 @@ class Insert extends AbstractPreparableSql
 
     protected function processSelect(
         PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         if (! $this->select) {
             return;
@@ -225,31 +213,13 @@ class Insert extends AbstractPreparableSql
         );
     }
 
-    /**
-     * Overloading: variable setting
-     *
-     * Proxies to values, using VALUES_MERGE strategy
-     *
-     * @param  string $name
-     * @param  mixed $value
-     * @return self Provides a fluent interface
-     */
-    public function __set($name, $value)
+    public function __set(string $name, $value)
     {
         $this->columns[$name] = $value;
         return $this;
     }
 
-    /**
-     * Overloading: variable unset
-     *
-     * Proxies to values and columns
-     *
-     * @param  string $name
-     * @throws Exception\InvalidArgumentException
-     * @return void
-     */
-    public function __unset($name)
+    public function __unset(string $name)
     {
         if (! array_key_exists($name, $this->columns)) {
             throw new Exception\InvalidArgumentException(
@@ -260,29 +230,12 @@ class Insert extends AbstractPreparableSql
         unset($this->columns[$name]);
     }
 
-    /**
-     * Overloading: variable isset
-     *
-     * Proxies to columns; does a column of that name exist?
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function __isset($name)
+    public function __isset(string $name)
     {
         return array_key_exists($name, $this->columns);
     }
 
-    /**
-     * Overloading: variable retrieval
-     *
-     * Retrieves value by column name
-     *
-     * @param  string $name
-     * @throws Exception\InvalidArgumentException
-     * @return mixed
-     */
-    public function __get($name)
+    public function __get(string $name)
     {
         if (! array_key_exists($name, $this->columns)) {
             throw new Exception\InvalidArgumentException(

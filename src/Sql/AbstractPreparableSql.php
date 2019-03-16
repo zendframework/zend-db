@@ -15,11 +15,6 @@ use Zend\Db\Adapter\StatementContainerInterface;
 
 abstract class AbstractPreparableSql extends AbstractSql implements PreparableSqlInterface
 {
-    /**
-     * {@inheritDoc}
-     *
-     * @return StatementContainerInterface
-     */
     public function prepareStatement(
         AdapterInterface            $adapter,
         StatementContainerInterface $statementContainer
