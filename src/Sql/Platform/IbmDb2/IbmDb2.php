@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Zend\Db\Sql\Platform\IbmDb2;
 
 use Zend\Db\Sql\Platform\AbstractPlatform;
+use Zend\Db\Sql\Select;
 
 class IbmDb2 extends AbstractPlatform
 {
@@ -21,6 +22,6 @@ class IbmDb2 extends AbstractPlatform
      */
     public function __construct(SelectDecorator $selectDecorator = null)
     {
-        $this->setTypeDecorator('Zend\Db\Sql\Select', ($selectDecorator) ?: new SelectDecorator());
+        $this->setTypeDecorator(Select::class, ($selectDecorator) ?: new SelectDecorator());
     }
 }

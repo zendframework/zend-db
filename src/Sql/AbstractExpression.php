@@ -23,6 +23,8 @@ use function is_integer;
 use function is_object;
 use function is_scalar;
 use function key;
+use Zend\Db\Sql\SqlInterface;
+use Zend\Db\Sql\ExpressionInterface;
 
 abstract class AbstractExpression implements ExpressionInterface
 {
@@ -77,8 +79,8 @@ abstract class AbstractExpression implements ExpressionInterface
             'null',
             'scalar',
             'array',
-            'Zend\Db\Sql\ExpressionInterface',
-            'Zend\Db\Sql\SqlInterface',
+            ExpressionInterface::class,
+            SqlInterface::class,
             is_object($argument) ? get_class($argument) : gettype($argument)
         ));
     }

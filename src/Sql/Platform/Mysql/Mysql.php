@@ -13,13 +13,16 @@ declare(strict_types=1);
 namespace Zend\Db\Sql\Platform\Mysql;
 
 use Zend\Db\Sql\Platform\AbstractPlatform;
+use Zend\Db\Sql\Ddl\AlterTable;
+use Zend\Db\Sql\Ddl\CreateTable;
+use Zend\Db\Sql\Select;
 
 class Mysql extends AbstractPlatform
 {
     public function __construct()
     {
-        $this->setTypeDecorator('Zend\Db\Sql\Select', new SelectDecorator());
-        $this->setTypeDecorator('Zend\Db\Sql\Ddl\CreateTable', new Ddl\CreateTableDecorator());
-        $this->setTypeDecorator('Zend\Db\Sql\Ddl\AlterTable', new Ddl\AlterTableDecorator());
+        $this->setTypeDecorator(Select::class, new SelectDecorator());
+        $this->setTypeDecorator(CreateTable::class, new Ddl\CreateTableDecorator());
+        $this->setTypeDecorator(AlterTable::class, new Ddl\AlterTableDecorator());
     }
 }

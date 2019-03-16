@@ -163,8 +163,8 @@ class Platform extends AbstractPlatform
 
         throw new InvalidArgumentException(sprintf(
             '$adapterOrPlatform should be null, %s, or %s',
-            'Zend\Db\Adapter\AdapterInterface',
-            'Zend\Db\Adapter\Platform\PlatformInterface'
+            AdapterInterface::class,
+            PlatformInterface::class
         ));
     }
 

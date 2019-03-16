@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Zend\Db\Sql\Platform\Sqlite;
 
 use Zend\Db\Sql\Platform\AbstractPlatform;
+use Zend\Db\Sql\Select;
 
 class Sqlite extends AbstractPlatform
 {
@@ -23,6 +24,6 @@ class Sqlite extends AbstractPlatform
      */
     public function __construct()
     {
-        $this->setTypeDecorator('Zend\Db\Sql\Select', new SelectDecorator());
+        $this->setTypeDecorator(Select::class, new SelectDecorator());
     }
 }
