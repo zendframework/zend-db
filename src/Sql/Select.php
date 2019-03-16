@@ -539,7 +539,7 @@ class Select extends AbstractPreparableSql
     ) : ?array {
         $expr = 1;
 
-        list($table, $fromTable) = $this->resolveTable($this->table, $platform, $driver, $parameterContainer);
+        [$table, $fromTable] = $this->resolveTable($this->table, $platform, $driver, $parameterContainer);
         // process table columns
         $columns = [];
         foreach ($this->columns as $columnIndexOrAs => $column) {
@@ -690,7 +690,7 @@ class Select extends AbstractPreparableSql
             }
             if (is_int($k)) {
                 if (strpos($v, ' ') !== false) {
-                    list($k, $v) = preg_split('# #', $v, 2);
+                    [$k, $v] = preg_split('# #', $v, 2);
                 } else {
                     $k = $v;
                     $v = self::ORDER_ASCENDING;

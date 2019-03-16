@@ -481,7 +481,7 @@ abstract class AbstractSql implements SqlInterface
         $schema = null;
 
         if ($table instanceof TableIdentifier) {
-            list($table, $schema) = $table->getTableAndSchema();
+            [$table, $schema] = $table->getTableAndSchema();
         }
 
         if ($table instanceof Select) {
