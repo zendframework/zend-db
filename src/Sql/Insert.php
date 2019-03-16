@@ -24,10 +24,10 @@ class Insert extends AbstractPreparableSql
      *
      * @const
      */
-    const SPECIFICATION_INSERT = 'insert';
-    const SPECIFICATION_SELECT = 'select';
-    const VALUES_MERGE = 'merge';
-    const VALUES_SET   = 'set';
+    public const SPECIFICATION_INSERT = 'insert';
+    public const SPECIFICATION_SELECT = 'select';
+    public const VALUES_MERGE = 'merge';
+    public const VALUES_SET   = 'set';
     /**#@-*/
 
     /**

@@ -29,11 +29,11 @@ use function strtoupper;
  */
 class Combine extends AbstractPreparableSql
 {
-    const COLUMNS = 'columns';
-    const COMBINE = 'combine';
-    const COMBINE_UNION = 'union';
-    const COMBINE_EXCEPT = 'except';
-    const COMBINE_INTERSECT = 'intersect';
+    public const COLUMNS = 'columns';
+    public const COMBINE = 'combine';
+    public const COMBINE_UNION = 'union';
+    public const COMBINE_EXCEPT = 'except';
+    public const COMBINE_INTERSECT = 'intersect';
 
     /**
      * @var string[]

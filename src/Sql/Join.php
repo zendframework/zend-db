@@ -24,12 +24,12 @@ use Iterator;
  */
 class Join implements Iterator, Countable
 {
-    const JOIN_INNER       = 'inner';
-    const JOIN_OUTER       = 'outer';
-    const JOIN_LEFT        = 'left';
-    const JOIN_RIGHT       = 'right';
-    const JOIN_RIGHT_OUTER = 'right outer';
-    const JOIN_LEFT_OUTER  = 'left outer';
+    public const JOIN_INNER       = 'inner';
+    public const JOIN_OUTER       = 'outer';
+    public const JOIN_LEFT        = 'left';
+    public const JOIN_RIGHT       = 'right';
+    public const JOIN_RIGHT_OUTER = 'right outer';
+    public const JOIN_LEFT_OUTER  = 'left outer';
 
     /**
      * Current iterator position.

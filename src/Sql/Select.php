@@ -24,43 +24,43 @@ class Select extends AbstractPreparableSql
      * Constant
      * @const
      */
-    const SELECT = 'select';
-    const QUANTIFIER = 'quantifier';
-    const COLUMNS = 'columns';
-    const TABLE = 'table';
-    const JOINS = 'joins';
-    const WHERE = 'where';
-    const GROUP = 'group';
-    const HAVING = 'having';
-    const ORDER = 'order';
-    const LIMIT = 'limit';
-    const OFFSET = 'offset';
-    const QUANTIFIER_DISTINCT = 'DISTINCT';
-    const QUANTIFIER_ALL = 'ALL';
-    const JOIN_INNER = Join::JOIN_INNER;
-    const JOIN_OUTER = Join::JOIN_OUTER;
-    const JOIN_LEFT = Join::JOIN_LEFT;
-    const JOIN_RIGHT = Join::JOIN_RIGHT;
-    const JOIN_RIGHT_OUTER = Join::JOIN_RIGHT_OUTER;
-    const JOIN_LEFT_OUTER  = Join::JOIN_LEFT_OUTER;
-    const SQL_STAR = '*';
-    const ORDER_ASCENDING = 'ASC';
-    const ORDER_DESCENDING = 'DESC';
-    const COMBINE = 'combine';
-    const COMBINE_UNION = 'union';
-    const COMBINE_EXCEPT = 'except';
-    const COMBINE_INTERSECT = 'intersect';
+    public const SELECT = 'select';
+    public const QUANTIFIER = 'quantifier';
+    public const COLUMNS = 'columns';
+    public const TABLE = 'table';
+    public const JOINS = 'joins';
+    public const WHERE = 'where';
+    public const GROUP = 'group';
+    public const HAVING = 'having';
+    public const ORDER = 'order';
+    public const LIMIT = 'limit';
+    public const OFFSET = 'offset';
+    public const QUANTIFIER_DISTINCT = 'DISTINCT';
+    public const QUANTIFIER_ALL = 'ALL';
+    public const JOIN_INNER = Join::JOIN_INNER;
+    public const JOIN_OUTER = Join::JOIN_OUTER;
+    public const JOIN_LEFT = Join::JOIN_LEFT;
+    public const JOIN_RIGHT = Join::JOIN_RIGHT;
+    public const JOIN_RIGHT_OUTER = Join::JOIN_RIGHT_OUTER;
+    public const JOIN_LEFT_OUTER  = Join::JOIN_LEFT_OUTER;
+    public const SQL_STAR = '*';
+    public const ORDER_ASCENDING = 'ASC';
+    public const ORDER_DESCENDING = 'DESC';
+    public const COMBINE = 'combine';
+    public const COMBINE_UNION = 'union';
+    public const COMBINE_EXCEPT = 'except';
+    public const COMBINE_INTERSECT = 'intersect';
     /**#@-*/
 
     /**
      * @deprecated use JOIN_LEFT_OUTER instead
      */
-    const JOIN_OUTER_LEFT  = 'outer left';
+    public const JOIN_OUTER_LEFT  = 'outer left';
 
     /**
      * @deprecated use JOIN_LEFT_OUTER instead
      */
-    const JOIN_OUTER_RIGHT = 'outer right';
+    public const JOIN_OUTER_RIGHT = 'outer right';
 
     /**
      * @var array Specifications

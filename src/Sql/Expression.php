@@ -17,7 +17,7 @@ class Expression extends AbstractExpression
     /**
      * @const
      */
-    const PLACEHOLDER = '?';
+    public const PLACEHOLDER = '?';
 
     /**
      * @var string

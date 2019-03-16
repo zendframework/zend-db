@@ -18,7 +18,7 @@ use Zend\Db\Sql\TableIdentifier;
 
 class DropTable extends AbstractSql implements SqlInterface
 {
-    const TABLE = 'table';
+    public const TABLE = 'table';
 
     /**
      * @var array

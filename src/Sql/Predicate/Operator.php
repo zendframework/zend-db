@@ -19,23 +19,23 @@ use function is_array;
 
 class Operator extends AbstractExpression implements PredicateInterface
 {
-    const OPERATOR_EQUAL_TO                  = '=';
-    const OP_EQ                              = '=';
+    public const OPERATOR_EQUAL_TO                  = '=';
+    public const OP_EQ                              = '=';
 
-    const OPERATOR_NOT_EQUAL_TO              = '!=';
-    const OP_NE                              = '!=';
+    public const OPERATOR_NOT_EQUAL_TO              = '!=';
+    public const OP_NE                              = '!=';
 
-    const OPERATOR_LESS_THAN                 = '<';
-    const OP_LT                              = '<';
+    public const OPERATOR_LESS_THAN                 = '<';
+    public const OP_LT                              = '<';
 
-    const OPERATOR_LESS_THAN_OR_EQUAL_TO     = '<=';
-    const OP_LTE                             = '<=';
+    public const OPERATOR_LESS_THAN_OR_EQUAL_TO     = '<=';
+    public const OP_LTE                             = '<=';
 
-    const OPERATOR_GREATER_THAN              = '>';
-    const OP_GT                              = '>';
+    public const OPERATOR_GREATER_THAN              = '>';
+    public const OP_GT                              = '>';
 
-    const OPERATOR_GREATER_THAN_OR_EQUAL_TO  = '>=';
-    const OP_GTE                             = '>=';
+    public const OPERATOR_GREATER_THAN_OR_EQUAL_TO  = '>=';
+    public const OP_GTE                             = '>=';
 
     /**
      * {@inheritDoc}

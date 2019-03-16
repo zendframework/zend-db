@@ -20,9 +20,9 @@ use Zend\Db\Sql\TableIdentifier;
 
 class CreateTable extends AbstractSql implements SqlInterface
 {
-    const COLUMNS     = 'columns';
-    const CONSTRAINTS = 'constraints';
-    const TABLE       = 'table';
+    public const COLUMNS     = 'columns';
+    public const CONSTRAINTS = 'constraints';
+    public const TABLE       = 'table';
 
     /**
      * @var Column\ColumnInterface[]

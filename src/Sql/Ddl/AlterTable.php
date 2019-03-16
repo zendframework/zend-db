@@ -20,12 +20,12 @@ use Zend\Db\Sql\TableIdentifier;
 
 class AlterTable extends AbstractSql implements SqlInterface
 {
-    const ADD_COLUMNS      = 'addColumns';
-    const ADD_CONSTRAINTS  = 'addConstraints';
-    const CHANGE_COLUMNS   = 'changeColumns';
-    const DROP_COLUMNS     = 'dropColumns';
-    const DROP_CONSTRAINTS = 'dropConstraints';
-    const TABLE            = 'table';
+    public const ADD_COLUMNS      = 'addColumns';
+    public const ADD_CONSTRAINTS  = 'addConstraints';
+    public const CHANGE_COLUMNS   = 'changeColumns';
+    public const DROP_COLUMNS     = 'dropColumns';
+    public const DROP_CONSTRAINTS = 'dropConstraints';
+    public const TABLE            = 'table';
 
     /**
      * @var array
