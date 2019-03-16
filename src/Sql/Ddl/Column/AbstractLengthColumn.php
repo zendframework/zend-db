@@ -37,7 +37,7 @@ abstract class AbstractLengthColumn extends Column
      */
     public function setLength(int $length) : self
     {
-        $this->length = (int) $length;
+        $this->length = $length;
 
         return $this;
     }

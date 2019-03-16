@@ -71,7 +71,7 @@ class ForeignKey extends AbstractConstraint
      */
     public function setReferenceTable(string $referenceTable) : self
     {
-        $this->referenceTable = (string) $referenceTable;
+        $this->referenceTable = $referenceTable;
 
         return $this;
     }
@@ -109,7 +109,7 @@ class ForeignKey extends AbstractConstraint
      */
     public function setOnDeleteRule(string $onDeleteRule) : self
     {
-        $this->onDeleteRule = (string) $onDeleteRule;
+        $this->onDeleteRule = $onDeleteRule;
 
         return $this;
     }
@@ -128,7 +128,7 @@ class ForeignKey extends AbstractConstraint
      */
     public function setOnUpdateRule(string $onUpdateRule) : self
     {
-        $this->onUpdateRule = (string) $onUpdateRule;
+        $this->onUpdateRule = $onUpdateRule;
 
         return $this;
     }

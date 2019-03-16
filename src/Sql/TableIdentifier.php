@@ -30,7 +30,7 @@ class TableIdentifier
             ));
         }
 
-        $this->table = (string) $table;
+        $this->table = $table;
 
         if ('' === $this->table) {
             throw new Exception\InvalidArgumentException('$table must be a valid table name, empty string given');
@@ -46,7 +46,7 @@ class TableIdentifier
                 ));
             }
 
-            $this->schema = (string) $schema;
+            $this->schema = $schema;
 
             if ('' === $this->schema) {
                 throw new Exception\InvalidArgumentException(

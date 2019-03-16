@@ -226,7 +226,7 @@ class Select extends AbstractPreparableSql
     public function columns(array $columns, bool $prefixColumnsWithTable = true) : self
     {
         $this->columns = $columns;
-        $this->prefixColumnsWithTable = (bool) $prefixColumnsWithTable;
+        $this->prefixColumnsWithTable = $prefixColumnsWithTable;
         return $this;
     }
 

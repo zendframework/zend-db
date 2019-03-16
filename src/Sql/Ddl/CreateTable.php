@@ -69,7 +69,7 @@ class CreateTable extends AbstractSql implements SqlInterface
      */
     public function setTemporary(bool $temporary) : self
     {
-        $this->isTemporary = (bool) $temporary;
+        $this->isTemporary = $temporary;
 
         return $this;
     }
