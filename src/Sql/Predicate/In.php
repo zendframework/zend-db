@@ -9,9 +9,15 @@ declare(strict_types=1);
 
 namespace Zend\Db\Sql\Predicate;
 
+use Zend\Db\Sql\AbstractExpression;
 use Zend\Db\Sql\Exception;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\AbstractExpression;
+use function array_fill;
+use function count;
+use function gettype;
+use function implode;
+use function is_array;
+use function vsprintf;
 
 class In extends AbstractExpression implements PredicateInterface
 {
@@ -54,6 +60,7 @@ class In extends AbstractExpression implements PredicateInterface
 
     /**
      * Get identifier of comparison
+     *
      * @return null|string|array
      */
     public function getIdentifier()

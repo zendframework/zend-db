@@ -68,6 +68,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     protected function localizeVariables() : void
     {
         parent::localizeVariables();
+
         // set specifications
         unset($this->specifications[self::LIMIT]);
         unset($this->specifications[self::OFFSET]);
@@ -76,7 +77,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     }
 
     protected function processLimitOffset(
-        PlatformInterface  $platform,
+        PlatformInterface   $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null,
         array              &$sqls,
@@ -89,23 +90,27 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         if ($this->supportsLimitOffset) {
             // Note: db2_prepare/db2_execute fails with positional parameters, for LIMIT & OFFSET
             $limit = (int) $this->limit;
+
             if (! $limit) {
                 return;
             }
 
             $offset = (int) $this->offset;
+
             if ($offset) {
                 $sqls[] = sprintf('LIMIT %s OFFSET %s', $limit, $offset);
                 return;
             }
 
             $sqls[] = sprintf('LIMIT %s', $limit);
+
             return;
         }
 
         $selectParameters = $parameters[self::SELECT];
 
         $starSuffix = $platform->getIdentifierSeparator() . self::SQL_STAR;
+
         foreach ($selectParameters[0] as $i => $columnParameters) {
             if ($columnParameters[0] == self::SQL_STAR
                 || (isset($columnParameters[1]) && $columnParameters[1] == self::SQL_STAR)
@@ -133,8 +138,8 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
         if ($parameterContainer) {
             // create bottom part of query, with offset and limit using row_number
-            $limitParamName        = $driver->formatParameterName('limit');
-            $offsetParamName       = $driver->formatParameterName('offset');
+            $limitParamName  = $driver->formatParameterName('limit');
+            $offsetParamName = $driver->formatParameterName('offset');
 
             $sqls[] = sprintf(
             // @codingStandardsIgnoreStart
@@ -169,6 +174,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
         if (isset($sqls[self::ORDER])) {
             $orderBy = $sqls[self::ORDER];
+
             unset($sqls[self::ORDER]);
         } else {
             $orderBy = '';

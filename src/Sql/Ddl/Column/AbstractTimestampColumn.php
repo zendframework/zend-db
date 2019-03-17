@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Zend\Db\Sql\Ddl\Column;
 
+use function array_merge;
+
 /**
  * Class AbstractTimestampColumn
  * @package Zend\Db\Sql\Ddl\Column

@@ -14,6 +14,11 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 use Zend\Db\Sql\Select;
+use function array_shift;
+use function array_unshift;
+use function array_values;
+use function current;
+use function strpos;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
@@ -39,8 +44,8 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     }
 
     protected function processLimitOffset(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null,
         &$sqls,
         &$parameters

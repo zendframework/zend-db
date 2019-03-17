@@ -13,6 +13,7 @@ use Zend\Db\Sql\AbstractExpression;
 use Zend\Db\Sql\Exception;
 use function in_array;
 use function is_array;
+use function sprintf;
 
 class Operator extends AbstractExpression implements PredicateInterface
 {
@@ -222,7 +223,7 @@ class Operator extends AbstractExpression implements PredicateInterface
         return [[
             '%s ' . $this->operator . ' %s',
             $values,
-            $types
+            $types,
         ]];
     }
 }

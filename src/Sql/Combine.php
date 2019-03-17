@@ -14,22 +14,24 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use function array_key_exists;
 use function array_merge;
+use function compact;
 use function get_class;
 use function gettype;
 use function is_array;
 use function is_object;
 use function sprintf;
 use function strtoupper;
+use function trim;
 
 /**
  * Combine SQL statement - allows combining multiple select statements into one
  */
 class Combine extends AbstractPreparableSql
 {
-    public const COLUMNS = 'columns';
-    public const COMBINE = 'combine';
-    public const COMBINE_UNION = 'union';
-    public const COMBINE_EXCEPT = 'except';
+    public const COLUMNS           = 'columns';
+    public const COMBINE           = 'combine';
+    public const COMBINE_UNION     = 'union';
+    public const COMBINE_EXCEPT    = 'except';
     public const COMBINE_INTERSECT = 'intersect';
 
     /** @var string[] */
@@ -56,8 +58,8 @@ class Combine extends AbstractPreparableSql
      * Create combine clause
      *
      * @param Select|array $select
-     * @param string $type
-     * @param string $modifier
+     * @param string       $type
+     * @param string       $modifier
      * @return $this
      *
      * @throws Exception\InvalidArgumentException
@@ -119,7 +121,7 @@ class Combine extends AbstractPreparableSql
      * Create intersect clause
      *
      * @param Select|array $select
-     * @param string $modifier
+     * @param string       $modifier
      * @return self
      */
     public function intersect($select, string $modifier = '') : self
@@ -128,7 +130,7 @@ class Combine extends AbstractPreparableSql
     }
 
     protected function buildSqlString(
-        PlatformInterface  $platform,
+        PlatformInterface   $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) : ?string {

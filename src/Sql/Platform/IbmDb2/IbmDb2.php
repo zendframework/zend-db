@@ -16,6 +16,6 @@ class IbmDb2 extends AbstractPlatform
 {
     public function __construct(?SelectDecorator $selectDecorator = null)
     {
-        $this->setTypeDecorator(Select::class, $selectDecorator ?: new SelectDecorator());
+        $this->setTypeDecorator(Select::class, $selectDecorator ?? new SelectDecorator());
     }
 }

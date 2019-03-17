@@ -9,6 +9,14 @@ declare(strict_types=1);
 
 namespace Zend\Db\Sql;
 
+use function count;
+use function is_array;
+use function is_scalar;
+use function is_string;
+use function preg_match_all;
+use function str_ireplace;
+use function str_replace;
+
 class Expression extends AbstractExpression
 {
     /**
@@ -26,9 +34,9 @@ class Expression extends AbstractExpression
     protected $types = [];
 
     /**
-     * @param string $expression
+     * @param string            $expression
      * @param null|string|array $parameters
-     * @param array $types @deprecated will be dropped in version 3.0.0
+     * @param array             $types @deprecated will be dropped in version 3.0.0
      */
     public function __construct(string $expression = '', $parameters = null, array $types = [])
     {
@@ -100,6 +108,7 @@ class Expression extends AbstractExpression
     public function setTypes(array $types) : self
     {
         $this->types = $types;
+
         return $this;
     }
 
@@ -114,9 +123,9 @@ class Expression extends AbstractExpression
 
     public function getExpressionData() : array
     {
-        $parameters = is_scalar($this->parameters) ? [$this->parameters] : $this->parameters;
+        $parameters      = is_scalar($this->parameters) ? [$this->parameters] : $this->parameters;
         $parametersCount = count($parameters);
-        $expression = str_replace('%', '%%', $this->expression);
+        $expression      = str_replace('%', '%%', $this->expression);
 
         if ($parametersCount == 0) {
             return [
@@ -142,7 +151,7 @@ class Expression extends AbstractExpression
         return [[
             $expression,
             $values,
-            $types
+            $types,
         ]];
     }
 }

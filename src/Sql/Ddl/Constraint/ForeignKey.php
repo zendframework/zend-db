@@ -9,6 +9,12 @@ declare(strict_types=1);
 
 namespace Zend\Db\Sql\Ddl\Constraint;
 
+use function array_fill;
+use function array_merge;
+use function count;
+use function implode;
+use function sprintf;
+
 class ForeignKey extends AbstractConstraint
 {
     /** @var string */
@@ -31,21 +37,21 @@ class ForeignKey extends AbstractConstraint
     /** @var string[] */
     protected $referenceSpecification = [
         'REFERENCES %s ',
-        'ON DELETE %s ON UPDATE %s'
+        'ON DELETE %s ON UPDATE %s',
     ];
 
     /**
-     * @param string $name
+     * @param string            $name
      * @param null|string|array $columns
-     * @param string $referenceTable
+     * @param string            $referenceTable
      * @param null|string|array $referenceColumn
-     * @param null|string $onDeleteRule
-     * @param null|string $onUpdateRule
+     * @param null|string       $onDeleteRule
+     * @param null|string       $onUpdateRule
      */
     public function __construct(
-        string $name,
+        string  $name,
         $columns,
-        string $referenceTable,
+        string  $referenceTable,
         $referenceColumn,
         ?string $onDeleteRule = null,
         ?string $onUpdateRule = null
@@ -126,7 +132,8 @@ class ForeignKey extends AbstractConstraint
         $data[0][0] .= $this->referenceSpecification[0];
 
         if ($colCount) {
-            $values       = array_merge($values, $this->referenceColumn);
+            $values = array_merge($values, $this->referenceColumn);
+            
             $newSpecParts = array_fill(0, $colCount, '%s');
             $newSpecTypes = array_merge($newSpecTypes, array_fill(0, $colCount, self::TYPE_IDENTIFIER));
 
@@ -135,8 +142,9 @@ class ForeignKey extends AbstractConstraint
 
         $data[0][0] .= $this->referenceSpecification[1];
 
-        $values[]       = $this->onDeleteRule;
-        $values[]       = $this->onUpdateRule;
+        $values[] = $this->onDeleteRule;
+        $values[] = $this->onUpdateRule;
+
         $newSpecTypes[] = self::TYPE_LITERAL;
         $newSpecTypes[] = self::TYPE_LITERAL;
 

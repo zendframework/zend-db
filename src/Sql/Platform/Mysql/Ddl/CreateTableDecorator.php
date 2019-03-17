@@ -12,8 +12,14 @@ namespace Zend\Db\Sql\Platform\Mysql\Ddl;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Ddl\CreateTable;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
+use function count;
+use function range;
+use function str_replace;
 use function strlen;
 use function strpos;
+use function strtoupper;
+use function substr_replace;
+use function uksort;
 
 class CreateTableDecorator extends CreateTable implements PlatformDecoratorInterface
 {
@@ -99,37 +105,38 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
                 switch ($this->normalizeColumnOption($coName)) {
                     case 'unsigned':
                         $insert = ' UNSIGNED';
-                        $j = 0;
+                        $j      = 0;
                         break;
                     case 'zerofill':
                         $insert = ' ZEROFILL';
-                        $j = 0;
+                        $j      = 0;
                         break;
                     case 'identity':
                     case 'serial':
                     case 'autoincrement':
                         $insert = ' AUTO_INCREMENT';
-                        $j = 1;
+                        $j      = 1;
                         break;
                     case 'comment':
                         $insert = ' COMMENT ' . $platform->quoteValue($coValue);
-                        $j = 2;
+                        $j      = 2;
                         break;
                     case 'columnformat':
                     case 'format':
                         $insert = ' COLUMN_FORMAT ' . strtoupper($coValue);
-                        $j = 2;
+                        $j      = 2;
                         break;
                     case 'storage':
                         $insert = ' STORAGE ' . strtoupper($coValue);
-                        $j = 2;
+                        $j      = 2;
                         break;
                 }
 
                 if ($insert) {
-                    $j = isset($j) ? $j : 0;
-                    $sql = substr_replace($sql, $insert, $insertStart[$j], 0);
+                    $j                = isset($j) ? $j : 0;
+                    $sql              = substr_replace($sql, $insert, $insertStart[$j], 0);
                     $insertStartCount = count($insertStart);
+
                     for (; $j < $insertStartCount; ++$j) {
                         $insertStart[$j] += strlen($insert);
                     }
@@ -151,11 +158,13 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     {
         $columnA = $this->normalizeColumnOption($columnA);
         $columnA = isset($this->columnOptionSortOrder[$columnA])
-            ? $this->columnOptionSortOrder[$columnA] : count($this->columnOptionSortOrder);
+            ? $this->columnOptionSortOrder[$columnA]
+            : count($this->columnOptionSortOrder);
 
         $columnB = $this->normalizeColumnOption($columnB);
         $columnB = isset($this->columnOptionSortOrder[$columnB])
-            ? $this->columnOptionSortOrder[$columnB] : count($this->columnOptionSortOrder);
+            ? $this->columnOptionSortOrder[$columnB]
+            : count($this->columnOptionSortOrder);
 
         return $columnA - $columnB;
     }

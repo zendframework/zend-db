@@ -9,6 +9,11 @@ declare(strict_types=1);
 
 namespace Zend\Db\Sql\Ddl\Constraint;
 
+use function array_fill;
+use function array_merge;
+use function implode;
+use function sprintf;
+
 abstract class AbstractConstraint implements ConstraintInterface
 {
     /** @var string */
@@ -28,7 +33,7 @@ abstract class AbstractConstraint implements ConstraintInterface
 
     /**
      * @param null|string|array $columns
-     * @param string $name
+     * @param string            $name
      */
     public function __construct(?$columns = null, string $name = '')
     {
@@ -65,6 +70,7 @@ abstract class AbstractConstraint implements ConstraintInterface
     public function addColumn(string $column) : self
     {
         $this->columns[] = $column;
+
         return $this;
     }
 
@@ -75,24 +81,24 @@ abstract class AbstractConstraint implements ConstraintInterface
 
     public function getExpressionData() : array
     {
-        $colCount = count($this->columns);
+        $colCount     = count($this->columns);
         $newSpecTypes = [];
-        $values = [];
-        $newSpec = '';
+        $values       = [];
+        $newSpec      = '';
 
         if ($this->name) {
-            $newSpec .= $this->namedSpecification;
-            $values[] = $this->name;
+            $newSpec       .= $this->namedSpecification;
+            $values[]       = $this->name;
             $newSpecTypes[] = self::TYPE_IDENTIFIER;
         }
 
         $newSpec .= $this->specification;
 
         if ($colCount) {
-            $values = array_merge($values, $this->columns);
+            $values       = array_merge($values, $this->columns);
             $newSpecParts = array_fill(0, $colCount, '%s');
             $newSpecTypes = array_merge($newSpecTypes, array_fill(0, $colCount, self::TYPE_IDENTIFIER));
-            $newSpec .= sprintf($this->columnSpecification, implode(', ', $newSpecParts));
+            $newSpec     .= sprintf($this->columnSpecification, implode(', ', $newSpecParts));
         }
 
         return [[

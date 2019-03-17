@@ -9,9 +9,13 @@ declare(strict_types=1);
 
 namespace Zend\Db\Sql;
 
+use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Sql\Predicate\PredicateSet;
+use function array_key_exists;
+use function sprintf;
+use function strtolower;
 
 /**
  * @property Where $where
@@ -22,7 +26,7 @@ class Delete extends AbstractPreparableSql
      * @const
      */
     public const SPECIFICATION_DELETE = 'delete';
-    public const SPECIFICATION_WHERE = 'where';
+    public const SPECIFICATION_WHERE  = 'where';
     /**@#-*/
 
     /**
@@ -30,7 +34,7 @@ class Delete extends AbstractPreparableSql
      */
     protected $specifications = [
         self::SPECIFICATION_DELETE => 'DELETE FROM %1$s',
-        self::SPECIFICATION_WHERE => 'WHERE %1$s'
+        self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
     /** @var string|TableIdentifier */
@@ -55,6 +59,7 @@ class Delete extends AbstractPreparableSql
         if ($table) {
             $this->from($table);
         }
+
         $this->where = new Where();
     }
 
@@ -75,9 +80,9 @@ class Delete extends AbstractPreparableSql
     {
         $rawState = [
             'emptyWhereProtection' => $this->emptyWhereProtection,
-            'table' => $this->table,
-            'set' => $this->set,
-            'where' => $this->where
+            'table'                => $this->table,
+            'set'                  => $this->set,
+            'where'                => $this->where,
         ];
 
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
@@ -90,7 +95,7 @@ class Delete extends AbstractPreparableSql
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      * @return $this
      */
-    public function where($predicate, string $combination = Predicate\PredicateSet::OP_AND) : self
+    public function where($predicate, string $combination = PredicateSet::OP_AND) : self
     {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
@@ -101,8 +106,8 @@ class Delete extends AbstractPreparableSql
     }
 
     protected function processDelete(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) : string {
         return sprintf(
@@ -122,15 +127,14 @@ class Delete extends AbstractPreparableSql
 
         return sprintf(
             $this->specifications[static::SPECIFICATION_WHERE],
-            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where')
+            $this->processExpression($this->where, $platform, $driver, $parameterContainer, self::SPECIFICATION_WHERE)
         );
     }
 
     public function __get(string $name) : ?Where
     {
-        switch (strtolower($name)) {
-            case 'where':
-                return $this->where;
+        if (strtolower($name) === self::SPECIFICATION_WHERE) {
+            return $this->where;
         }
     }
 }

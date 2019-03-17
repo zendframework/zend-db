@@ -13,6 +13,16 @@ use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\Driver\Pdo\Pdo;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
+use function array_combine;
+use function array_flip;
+use function array_key_exists;
+use function array_keys;
+use function array_values;
+use function count;
+use function implode;
+use function is_array;
+use function is_scalar;
+use function range;
 
 class Insert extends AbstractPreparableSql
 {
@@ -23,8 +33,8 @@ class Insert extends AbstractPreparableSql
      */
     public const SPECIFICATION_INSERT = 'insert';
     public const SPECIFICATION_SELECT = 'select';
-    public const VALUES_MERGE = 'merge';
-    public const VALUES_SET   = 'set';
+    public const VALUES_MERGE         = 'merge';
+    public const VALUES_SET           = 'set';
     /**#@-*/
 
     /** @var array Specification array */
@@ -35,7 +45,7 @@ class Insert extends AbstractPreparableSql
 
     /** @var string|TableIdentifier */
     protected $table;
-    protected $columns          = [];
+    protected $columns = [];
 
     /** @var array|Select */
     protected $select;
@@ -61,12 +71,14 @@ class Insert extends AbstractPreparableSql
     public function into($table) : self
     {
         $this->table = $table;
+
         return $this;
     }
 
     public function columns(array $columns) : self
     {
         $this->columns = array_flip($columns);
+
         return $this;
     }
 
@@ -74,7 +86,7 @@ class Insert extends AbstractPreparableSql
      * Specify values to insert
      *
      * @param array|Select $values
-     * @param string $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
+     * @param string       $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
      * @return $this
      * @throws Exception\InvalidArgumentException
      */
@@ -86,7 +98,9 @@ class Insert extends AbstractPreparableSql
                     'A Zend\Db\Sql\Select instance cannot be provided with the merge flag'
                 );
             }
+
             $this->select = $values;
+
             return $this;
         }
 
@@ -112,6 +126,7 @@ class Insert extends AbstractPreparableSql
                 $this->columns[$column] = $value;
             }
         }
+
         return $this;
     }
 
@@ -136,16 +151,17 @@ class Insert extends AbstractPreparableSql
     public function getRawState(?string $key = null)
     {
         $rawState = [
-            'table' => $this->table,
+            'table'   => $this->table,
             'columns' => array_keys($this->columns),
-            'values' => array_values($this->columns)
+            'values'  => array_values($this->columns),
         ];
+
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
     protected function processInsert(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->select) {
@@ -167,6 +183,7 @@ class Insert extends AbstractPreparableSql
                 if ($driver instanceof Pdo) {
                     $column = 'c_' . $i++;
                 }
+
                 $values[] = $driver->formatParameterName($column);
                 $parameterContainer->offsetSet($column, $value);
             } else {
@@ -178,6 +195,7 @@ class Insert extends AbstractPreparableSql
                 );
             }
         }
+
         return sprintf(
             $this->specifications[static::SPECIFICATION_INSERT],
             $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
@@ -236,6 +254,7 @@ class Insert extends AbstractPreparableSql
                 'The key ' . $name . ' was not found in this objects column list'
             );
         }
+
         return $this->columns[$name];
     }
 }

@@ -12,6 +12,10 @@ namespace Zend\Db\Sql;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Driver\StatementInterface;
 use Zend\Db\Adapter\Platform\PlatformInterface;
+use Zend\Db\Sql\Platform\AbstractPlatform;
+use function is_array;
+use function is_string;
+
 
 class Sql
 {
@@ -27,18 +31,18 @@ class Sql
     /**
      * @param AdapterInterface                  $adapter
      * @param null|string|array|TableIdentifier $table
-     * @param null|Platform\AbstractPlatform    $sqlPlatform @deprecated since version 3.0
+     * @param null|AbstractPlatform             $sqlPlatform @deprecated since version 3.0
      */
     public function __construct(
-        AdapterInterface $adapter,
+        AdapterInterface           $adapter,
         $table = null,
-        ?Platform\AbstractPlatform $sqlPlatform = null
+        ?AbstractPlatform $sqlPlatform = null
     ) {
         $this->adapter = $adapter;
         if ($table) {
             $this->setTable($table);
         }
-        $this->sqlPlatform = $sqlPlatform ?: new Platform\Platform($adapter);
+        $this->sqlPlatform = $sqlPlatform ?? new Platform\Platform($adapter);
     }
 
     public function getAdapter() : ?AdapterInterface
@@ -90,7 +94,7 @@ class Sql
                 $this->table
             ));
         }
-        return new Select($table ?: $this->table);
+        return new Select($table ?? $this->table);
     }
 
     /**
@@ -105,7 +109,7 @@ class Sql
                 $this->table
             ));
         }
-        return new Insert($table ?: $this->table);
+        return new Insert($table ?? $this->table);
     }
 
     /**
@@ -120,7 +124,7 @@ class Sql
                 $this->table
             ));
         }
-        return new Update($table ?: $this->table);
+        return new Update($table ?? $this->table);
     }
 
     /**
@@ -140,11 +144,11 @@ class Sql
 
     public function prepareStatementForSqlObject(
         PreparableSqlInterface $sqlObject,
-        ?StatementInterface $statement = null,
-        ?AdapterInterface $adapter = null
+        ?StatementInterface    $statement = null,
+        ?AdapterInterface      $adapter = null
     ) : StatementInterface {
-        $adapter   = $adapter ?: $this->adapter;
-        $statement = $statement ?: $adapter->getDriver()->createStatement();
+        $adapter   = $adapter ?? $this->adapter;
+        $statement = $statement ?? $adapter->getDriver()->createStatement();
 
         return $this->sqlPlatform->setSubject($sqlObject)->prepareStatement($adapter, $statement);
     }
@@ -160,7 +164,7 @@ class Sql
      */
     public function getSqlStringForSqlObject(SqlInterface $sqlObject, ?PlatformInterface $platform = null) : string
     {
-        $platform = $platform ?: $this->adapter->getPlatform();
+        $platform = $platform ?? $this->adapter->getPlatform();
         return $this->sqlPlatform->setSubject($sqlObject)->getSqlString($platform);
     }
 

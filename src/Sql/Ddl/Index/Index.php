@@ -9,6 +9,11 @@ declare(strict_types=1);
 
 namespace Zend\Db\Sql\Ddl\Index;
 
+use function array_merge;
+use function count;
+use function implode;
+use function str_replace;
+
 class Index extends AbstractIndex
 {
     /** @var string */
@@ -19,14 +24,14 @@ class Index extends AbstractIndex
 
     /**
      * @param string|array|null $columns
-     * @param string $name
-     * @param array $lengths
+     * @param string            $name
+     * @param array             $lengths
      */
     public function __construct($columns, string $name = '', array $lengths = [])
     {
         $this->setColumns($columns);
-
         $this->setName($name);
+
         $this->lengths = $lengths;
     }
 
@@ -49,7 +54,7 @@ class Index extends AbstractIndex
     {
         $colCount     = count($this->columns);
         $values       = [];
-        $values[]     = $this->name ?: '';
+        $values[]     = $this->name ?? '';
         $newSpecTypes = [self::TYPE_IDENTIFIER];
         $newSpecParts = [];
 

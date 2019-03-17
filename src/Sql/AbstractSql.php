@@ -17,6 +17,7 @@ use Zend\Db\Sql\Exception\InvalidArgumentException;
 use Zend\Db\Sql\Exception\RuntimeException;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 use function count;
+use function get_object_vars;
 use function gettype;
 use function implode;
 use function is_array;
@@ -24,6 +25,7 @@ use function is_string;
 use function preg_replace;
 use function rtrim;
 use function sprintf;
+use function strtoupper;
 use function vsprintf;
 
 abstract class AbstractSql implements SqlInterface
@@ -39,7 +41,7 @@ abstract class AbstractSql implements SqlInterface
 
     public function getSqlString(?PlatformInterface $adapterPlatform = null) : string
     {
-        $adapterPlatform = ($adapterPlatform) ?: new DefaultAdapterPlatform;
+        $adapterPlatform = ($adapterPlatform) ?? new DefaultAdapterPlatform;
         return $this->buildSqlString($adapterPlatform);
     }
 
@@ -206,7 +208,7 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @param string|array $specifications
-     * @param array $parameters
+     * @param array        $parameters
      * @return string
      *
      * @throws Exception\RuntimeException

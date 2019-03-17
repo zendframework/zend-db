@@ -13,10 +13,17 @@ use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\StatementContainerInterface;
 use Zend\Db\Sql\Exception\InvalidArgumentException;
+use Zend\Db\Sql\Exception\RuntimeException;
+use Zend\Db\Sql\Platform\IbmDb2\IbmDb2;
+use Zend\Db\Sql\Platform\Mysql\Mysql;
+use Zend\Db\Sql\Platform\Oracle\Oracle;
+use Zend\Db\Sql\Platform\Sqlite\Sqlite;
+use Zend\Db\Sql\Platform\SqlServer\SqlServer;
 use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\SqlInterface;
-use Zend\Db\Sql\Exception\RuntimeException;
 use function is_a;
+use function str_replace;
+use function strtolower;
 
 class Platform extends AbstractPlatform
 {
@@ -30,11 +37,11 @@ class Platform extends AbstractPlatform
     {
         $this->defaultPlatform = $adapter->getPlatform();
 
-        $mySqlPlatform     = new Mysql\Mysql();
-        $sqlServerPlatform = new SqlServer\SqlServer();
-        $oraclePlatform    = new Oracle\Oracle();
-        $ibmDb2Platform    = new IbmDb2\IbmDb2();
-        $sqlitePlatform    = new Sqlite\Sqlite();
+        $mySqlPlatform     = new Mysql();
+        $sqlServerPlatform = new SqlServer();
+        $oraclePlatform    = new Oracle();
+        $ibmDb2Platform    = new IbmDb2();
+        $sqlitePlatform    = new Sqlite();
 
         $this->decorators['mysql']     = $mySqlPlatform->getDecorators();
         $this->decorators['sqlserver'] = $sqlServerPlatform->getDecorators();
@@ -115,6 +122,7 @@ class Platform extends AbstractPlatform
     protected function resolvePlatformName($adapterOrPlatform)
     {
         $platformName = $this->resolvePlatform($adapterOrPlatform)->getName();
+
         return str_replace([' ', '_'], '', strtolower($platformName));
     }
     /**

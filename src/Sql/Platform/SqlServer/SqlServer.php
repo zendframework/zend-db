@@ -9,15 +9,16 @@ declare(strict_types=1);
 
 namespace Zend\Db\Sql\Platform\SqlServer;
 
-use Zend\Db\Sql\Platform\AbstractPlatform;
 use Zend\Db\Sql\Ddl\CreateTable;
+use Zend\Db\Sql\Platform\AbstractPlatform;
+use Zend\Db\Sql\Platform\SqlServer\Ddl\CreateTableDecorator;
 use Zend\Db\Sql\Select;
 
 class SqlServer extends AbstractPlatform
 {
     public function __construct(?SelectDecorator $selectDecorator = null)
     {
-        $this->setTypeDecorator(Select::class, $selectDecorator ?: new SelectDecorator());
-        $this->setTypeDecorator(CreateTable::class, new Ddl\CreateTableDecorator());
+        $this->setTypeDecorator(Select::class, $selectDecorator ?? new SelectDecorator());
+        $this->setTypeDecorator(CreateTable::class, new CreateTableDecorator());
     }
 }

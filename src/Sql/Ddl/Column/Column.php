@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Zend\Db\Sql\Ddl\Column;
 
 use Zend\Db\Sql\Ddl\Constraint\ConstraintInterface;
+use function array_merge;
 
 class Column implements ColumnInterface
 {

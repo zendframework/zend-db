@@ -107,11 +107,11 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
                 switch ($this->normalizeColumnOption($coName)) {
                     case 'unsigned':
                         $insert = ' UNSIGNED';
-                        $j = 0;
+                        $j      = 0;
                         break;
                     case 'zerofill':
                         $insert = ' ZEROFILL';
-                        $j = 0;
+                        $j      = 0;
                         break;
                     case 'identity':
                     case 'serial':
@@ -121,33 +121,36 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
                         break;
                     case 'comment':
                         $insert = ' COMMENT ' . $adapterPlatform->quoteValue($coValue);
-                        $j = 2;
+                        $j      = 2;
                         break;
                     case 'columnformat':
                     case 'format':
                         $insert = ' COLUMN_FORMAT ' . strtoupper($coValue);
-                        $j = 2;
+                        $j      = 2;
                         break;
                     case 'storage':
                         $insert = ' STORAGE ' . strtoupper($coValue);
-                        $j = 2;
+                        $j      = 2;
                         break;
                     case 'after':
                         $insert = ' AFTER ' . $adapterPlatform->quoteIdentifier($coValue);
-                        $j = 2;
+                        $j      = 2;
                 }
 
                 if ($insert) {
-                    $j = isset($j) ? $j : 0;
-                    $sql = substr_replace($sql, $insert, $insertStart[$j], 0);
+                    $j                = isset($j) ? $j : 0;
+                    $sql              = substr_replace($sql, $insert, $insertStart[$j], 0);
                     $insertStartCount = count($insertStart);
+
                     for (; $j < $insertStartCount; ++$j) {
                         $insertStart[$j] += strlen($insert);
                     }
                 }
             }
+
             $sqls[$i] = $sql;
         }
+
         return [$sqls];
     }
 

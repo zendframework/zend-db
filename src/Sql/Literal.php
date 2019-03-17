@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Zend\Db\Sql;
 
+use function str_replace;
+
 class Literal implements ExpressionInterface
 {
     protected $literal;
@@ -21,6 +23,7 @@ class Literal implements ExpressionInterface
     public function setLiteral(string $literal) : self
     {
         $this->literal = $literal;
+
         return $this;
     }
 
@@ -34,7 +37,7 @@ class Literal implements ExpressionInterface
         return [[
             str_replace('%', '%%', $this->literal),
             [],
-            []
+            [],
         ]];
     }
 }

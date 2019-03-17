@@ -19,7 +19,7 @@ class DropTable extends AbstractSql implements SqlInterface
 
     /** @var array */
     protected $specifications = [
-        self::TABLE => 'DROP TABLE %1$s'
+        self::TABLE => 'DROP TABLE %1$s',
     ];
 
     /** @var string */

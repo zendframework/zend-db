@@ -9,11 +9,16 @@ declare(strict_types=1);
 
 namespace Zend\Db\Sql;
 
-use Zend\Db\Adapter\ParameterContainer;
-use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\Driver\Pdo\Pdo;
+use Zend\Db\Adapter\ParameterContainer;
+use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Stdlib\PriorityList;
+use function implode;
+use function is_numeric;
+use function is_string;
+use function sprintf;
+use function strtolower;
 
 /**
  * @property Where $where
@@ -36,7 +41,7 @@ class Update extends AbstractPreparableSql
         self::SPECIFICATION_UPDATE => 'UPDATE %1$s',
         self::SPECIFICATION_JOIN => [
             '%1$s' => [
-                [3 => '%1$s JOIN %2$s ON %3$s', 'combinedby' => ' ']
+                [3 => '%1$s JOIN %2$s ON %3$s', 'combinedby' => ' '],
             ]
         ],
         self::SPECIFICATION_SET => 'SET %1$s',
@@ -70,6 +75,7 @@ class Update extends AbstractPreparableSql
         }
         $this->where = new Where();
         $this->joins = new Join();
+
         $this->set = new PriorityList();
         $this->set->isLIFO(false);
     }
@@ -89,7 +95,7 @@ class Update extends AbstractPreparableSql
     /**
      * Set key/value pairs to update
      *
-     * @param array $values Associative array of key values
+     * @param array  $values Associative array of key values
      * @param string $flag One of the VALUES_* constants
      * @return $this
      * @throws Exception\InvalidArgumentException
@@ -117,7 +123,7 @@ class Update extends AbstractPreparableSql
      * Create where clause
      *
      * @param Where|\Closure|string|array $predicate
-     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
+     * @param string                      $combination One of the OP_* constants from Predicate\PredicateSet
      * @return $this
      * @throws Exception\InvalidArgumentException
      */
@@ -135,8 +141,8 @@ class Update extends AbstractPreparableSql
      * Create join clause
      *
      * @param string|array $name
-     * @param string $on
-     * @param string $type one of the JOIN_* constants
+     * @param string       $on
+     * @param string       $type one of the JOIN_* constants
      * @return $this
      * @throws Exception\InvalidArgumentException
      */
@@ -160,8 +166,8 @@ class Update extends AbstractPreparableSql
     }
 
     protected function processUpdate(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         return sprintf(
@@ -171,8 +177,8 @@ class Update extends AbstractPreparableSql
     }
 
     protected function processSet(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         $setSql = [];
@@ -215,8 +221,8 @@ class Update extends AbstractPreparableSql
     }
 
     protected function processWhere(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->where->count() == 0) {
@@ -229,8 +235,8 @@ class Update extends AbstractPreparableSql
     }
 
     protected function processJoins(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
@@ -254,6 +260,6 @@ class Update extends AbstractPreparableSql
     public function __clone()
     {
         $this->where = clone $this->where;
-        $this->set = clone $this->set;
+        $this->set   = clone $this->set;
     }
 }

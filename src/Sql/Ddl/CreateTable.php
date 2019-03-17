@@ -14,6 +14,7 @@ use Zend\Db\Sql\AbstractSql;
 use Zend\Db\Sql\Ddl\Column\ColumnInterface;
 use Zend\Db\Sql\Ddl\Constraint\ConstraintInterface;
 use Zend\Db\Sql\TableIdentifier;
+use function array_key_exists;
 
 class CreateTable extends AbstractSql implements SqlInterface
 {
@@ -34,14 +35,14 @@ class CreateTable extends AbstractSql implements SqlInterface
         self::TABLE => 'CREATE %1$sTABLE %2$s (',
         self::COLUMNS  => [
             "\n    %1\$s" => [
-                [1 => '%1$s', 'combinedby' => ",\n    "]
-            ]
+                [1 => '%1$s', 'combinedby' => ",\n    "],
+            ],
         ],
         'combinedBy' => ',',
         self::CONSTRAINTS => [
             "\n    %1\$s" => [
-                [1 => '%1$s', 'combinedby' => ",\n    "]
-            ]
+                [1 => '%1$s', 'combinedby' => ",\n    "],
+            ],
         ],
         'statementEnd' => '%1$s',
     ];
@@ -51,7 +52,7 @@ class CreateTable extends AbstractSql implements SqlInterface
 
     /**
      * @param string|TableIdentifier $table
-     * @param bool   $isTemporary
+     * @param bool                   $isTemporary
      */
     public function __construct($table = '', bool $isTemporary = false)
     {

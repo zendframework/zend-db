@@ -34,7 +34,7 @@ abstract class AbstractExpression implements ExpressionInterface
     /**
      * Normalize Argument
      *
-     * @param mixed $argument
+     * @param mixed  $argument
      * @param string $defaultType
      * @return array
      *

@@ -25,12 +25,14 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     public function setSubject($subject) : self
     {
         $this->subject = $subject;
+
         return $this;
     }
 
     protected function processTable(?PlatformInterface $adapterPlatform = null) : array
     {
         $table = ($this->isTemporary ? '#' : '') . ltrim($this->table, '#');
+
         return [
             '',
             $adapterPlatform->quoteIdentifier($table),

@@ -46,7 +46,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     }
 
     protected function processLimitOffset(
-        PlatformInterface  $platform,
+        PlatformInterface   $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null,
         array              &$sqls = [],
@@ -113,6 +113,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
                     $parameterContainer::TYPE_INTEGER
                 );
             }
+
             $this->processInfo['subselectCount']++;
         } else {
             if ($this->limit === null) {

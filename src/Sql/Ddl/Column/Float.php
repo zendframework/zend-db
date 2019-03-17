@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace Zend\Db\Sql\Ddl\Column;
 
+use function trigger_error;
+use function sprintf;
+
 /**
  * Stub class for backwards compatibility.
  *
@@ -28,11 +31,11 @@ class Float extends Floating
      */
     public function __construct(
         string $name = '',
-        ?int $digits = null,
-        ?int $decimal = null,
-        bool $nullable = false,
+        ?int   $digits = null,
+        ?int   $decimal = null,
+        bool   $nullable = false,
         $default = null,
-        array $options = []
+        array  $options = []
     ) {
         trigger_error(
             sprintf(

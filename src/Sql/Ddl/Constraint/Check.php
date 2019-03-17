@@ -11,6 +11,8 @@ namespace Zend\Db\Sql\Ddl\Constraint;
 
 use Zend\Db\Sql\ExpressionInterface;
 
+use function array_unshift;
+
 class Check extends AbstractConstraint
 {
     /** @var string|ExpressionInterface */
@@ -23,7 +25,7 @@ class Check extends AbstractConstraint
 
     /**
      * @param string|ExpressionInterface $expression
-     * @param string $name
+     * @param string                     $name
      */
     public function __construct($expression, string $name = '')
     {

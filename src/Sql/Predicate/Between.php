@@ -21,7 +21,7 @@ class Between extends AbstractExpression implements PredicateInterface
     /**
      * Constructor
      *
-     * @param null|string $identifier
+     * @param null|string           $identifier
      * @param null|int|float|string $minValue
      * @param null|int|float|string $maxValue
      */
@@ -67,6 +67,7 @@ class Between extends AbstractExpression implements PredicateInterface
 
     /**
      * Get minimum boundary for comparison
+     *
      * @return null|int|float|string
      */
     public function getMinValue()
@@ -89,6 +90,7 @@ class Between extends AbstractExpression implements PredicateInterface
 
     /**
      * Get maximum boundary for comparison
+     *
      * @return null|int|float|string
      */
     public function getMaxValue()

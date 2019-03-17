@@ -11,12 +11,17 @@ namespace Zend\Db\Sql\Predicate;
 
 use Countable;
 use Zend\Db\Sql\Exception;
+use function array_merge;
+use function count;
+use function in_array;
+use function is_string;
+use function sprintf;
+use function strpos;
 
 class PredicateSet implements PredicateInterface, Countable
 {
     public const COMBINED_BY_AND = 'AND';
     public const OP_AND          = 'AND';
-
     public const COMBINED_BY_OR  = 'OR';
     public const OP_OR           = 'OR';
 
@@ -58,7 +63,7 @@ class PredicateSet implements PredicateInterface, Countable
      * Add predicates to set
      *
      * @param PredicateInterface|\Closure|string|array $predicates
-     * @param string $combination
+     * @param string                                   $combination
      * @return $this
      *
      * @throws Exception\InvalidArgumentException
@@ -151,6 +156,7 @@ class PredicateSet implements PredicateInterface, Countable
     public function getExpressionData() : array
     {
         $parts = [];
+
         for ($i = 0, $count = count($this->predicates); $i < $count; $i++) {
             /** @var $predicate PredicateInterface */
             $predicate = $this->predicates[$i][1];

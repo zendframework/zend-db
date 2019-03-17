@@ -11,6 +11,12 @@ namespace Zend\Db\Sql;
 
 use Countable;
 use Iterator;
+use function array_shift;
+use function count;
+use function is_array;
+use function is_string;
+use function key;
+use function sprintf;
 
 /**
  * Aggregate JOIN specifications.
@@ -96,7 +102,7 @@ class Join implements Iterator, Countable
             'name'    => $name,
             'on'      => $on,
             'columns' => $columns,
-            'type'    => $type ? $type : self::JOIN_INNER
+            'type'    => $type ? $type : self::JOIN_INNER,
         ];
 
         return $this;
@@ -105,6 +111,7 @@ class Join implements Iterator, Countable
     public function reset() : self
     {
         $this->joins = [];
+
         return $this;
     }
 
