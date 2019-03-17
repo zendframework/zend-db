@@ -299,7 +299,7 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param string|array $order
+     * @param string|array|Expression $order
      * @return self
      */
     public function order($order) : self
