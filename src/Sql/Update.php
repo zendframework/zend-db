@@ -225,7 +225,7 @@ class Update extends AbstractPreparableSql
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
-        if ($this->where->count() == 0) {
+        if ($this->where->count() === 0) {
             return;
         }
         return sprintf(

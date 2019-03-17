@@ -65,7 +65,7 @@ class Expression extends AbstractExpression
 
     public function setExpression(string $expression) : self
     {
-        if (! is_string($expression) || $expression == '') {
+        if (! is_string($expression) || $expression === '') {
             throw new Exception\InvalidArgumentException('Supplied expression must be a string.');
         }
 
@@ -127,7 +127,7 @@ class Expression extends AbstractExpression
         $parametersCount = count($parameters);
         $expression      = str_replace('%', '%%', $this->expression);
 
-        if ($parametersCount == 0) {
+        if ($parametersCount === 0) {
             return [
                 str_ireplace(self::PLACEHOLDER, '', $expression)
             ];

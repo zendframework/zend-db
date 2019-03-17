@@ -566,7 +566,7 @@ class Select extends AbstractPreparableSql
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
-        if ($this->where->count() == 0) {
+        if ($this->where->count() === 0) {
             return;
         }
 
@@ -607,7 +607,7 @@ class Select extends AbstractPreparableSql
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
-        if ($this->having->count() == 0) {
+        if ($this->having->count() === 0) {
             return;
         }
         return [
@@ -686,7 +686,7 @@ class Select extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
-        if ($this->combine == []) {
+        if ($this->combine === []) {
             return;
         }
 

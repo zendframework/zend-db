@@ -48,7 +48,7 @@ class PredicateSet implements PredicateInterface, Countable
             $combination = $this->defaultCombination;
         }
 
-        if ($combination == self::OP_OR) {
+        if ($combination === self::OP_OR) {
             $this->orPredicate($predicate);
 
             return $this;

@@ -117,7 +117,7 @@ abstract class AbstractSql implements SqlInterface
         // static counter for the number of times this method was invoked across the PHP runtime
         static $runtimeExpressionPrefix = 0;
 
-        if ($parameterContainer && (! is_string($namedParameterPrefix) || $namedParameterPrefix == '')) {
+        if ($parameterContainer && (! is_string($namedParameterPrefix) || $namedParameterPrefix === '')) {
             $namedParameterPrefix = sprintf('expr%04dParam', ++$runtimeExpressionPrefix);
         } else {
             $namedParameterPrefix = preg_replace('/\s/', '__', $namedParameterPrefix);
@@ -179,9 +179,9 @@ abstract class AbstractSql implements SqlInterface
                         $parameterContainer,
                         $namedParameterPrefix . $vIndex . 'subpart'
                     );
-                } elseif ($type == ExpressionInterface::TYPE_IDENTIFIER) {
+                } elseif ($type === ExpressionInterface::TYPE_IDENTIFIER) {
                     $values[$vIndex] = $platform->quoteIdentifierInFragment($value);
-                } elseif ($type == ExpressionInterface::TYPE_VALUE) {
+                } elseif ($type === ExpressionInterface::TYPE_VALUE) {
                     // if prepareType is set, it means that this particular value must be
                     // passed back to the statement in a way it can be used as a placeholder value
                     if ($parameterContainer) {
@@ -193,7 +193,7 @@ abstract class AbstractSql implements SqlInterface
 
                     // if not a preparable statement, simply quote the value and move on
                     $values[$vIndex] = $platform->quoteValue($value);
-                } elseif ($type == ExpressionInterface::TYPE_LITERAL) {
+                } elseif ($type === ExpressionInterface::TYPE_LITERAL) {
                     $values[$vIndex] = $value;
                 }
             }
@@ -222,7 +222,7 @@ abstract class AbstractSql implements SqlInterface
         $parametersCount = count($parameters);
 
         foreach ($specifications as $specificationString => $paramSpecs) {
-            if ($parametersCount == count($paramSpecs)) {
+            if ($parametersCount === count($paramSpecs)) {
                 break;
             }
 

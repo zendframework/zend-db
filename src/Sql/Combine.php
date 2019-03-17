@@ -141,7 +141,7 @@ class Combine extends AbstractPreparableSql
         $sql = '';
 
         foreach ($this->combine as $i => $combine) {
-            $type = $i == 0
+            $type = $i === 0
                     ? ''
                     : strtoupper($combine['type'] . ($combine['modifier'] ? ' ' . $combine['modifier'] : ''));
             $select = $this->processSubSelect($combine['select'], $platform, $driver, $parameterContainer);
