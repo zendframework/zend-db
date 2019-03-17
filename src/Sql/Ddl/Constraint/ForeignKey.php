@@ -78,7 +78,7 @@ class ForeignKey extends AbstractConstraint
 
     /**
      * @param null|string|array $referenceColumn
-     * @return self
+     * @return $this
      */
     public function setReferenceColumn(?$referenceColumn) : self
     {

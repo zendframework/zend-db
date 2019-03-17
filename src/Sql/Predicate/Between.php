@@ -56,7 +56,7 @@ class Between extends AbstractExpression implements PredicateInterface
      * Set minimum boundary for comparison
      *
      * @param int|float|string $minValue
-     * @return self
+     * @return $this
      */
     public function setMinValue($minValue) : self
     {
@@ -78,7 +78,7 @@ class Between extends AbstractExpression implements PredicateInterface
      * Set maximum boundary for comparison
      *
      * @param int|float|string $maxValue
-     * @return self
+     * @return $this
      */
     public function setMaxValue($maxValue) : self
     {

@@ -43,7 +43,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
 
     /**
      * @param AlterTable $subject
-     * @return self
+     * @return $this
      */
     public function setSubject($subject) : self
     {

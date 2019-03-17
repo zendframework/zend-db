@@ -59,7 +59,7 @@ class Predicate extends PredicateSet
      * @param int|float|bool|string $right
      * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
      * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
-     * @return self
+     * @return $this
      */
     public function equalTo(
         $left,
@@ -85,7 +85,7 @@ class Predicate extends PredicateSet
      * @param int|float|bool|string $right
      * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
      * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
-     * @return self
+     * @return $this
      */
     public function notEqualTo(
         $left,
@@ -111,7 +111,7 @@ class Predicate extends PredicateSet
      * @param int|float|bool|string $right
      * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
      * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
-     * @return self
+     * @return $this
      */
     public function lessThan(
         $left,
@@ -137,7 +137,7 @@ class Predicate extends PredicateSet
      * @param int|float|bool|string $right
      * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
      * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
-     * @return self
+     * @return $this
      */
     public function greaterThan(
         $left,
@@ -163,7 +163,7 @@ class Predicate extends PredicateSet
      * @param int|float|bool|string $right
      * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
      * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
-     * @return self
+     * @return $this
      */
     public function lessThanOrEqualTo(
         $left,
@@ -189,7 +189,7 @@ class Predicate extends PredicateSet
      * @param int|float|bool|string $right
      * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
      * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
-     * @return self
+     * @return $this
      */
     public function greaterThanOrEqualTo(
         $left,
@@ -213,7 +213,7 @@ class Predicate extends PredicateSet
      *
      * @param string|Expression $identifier
      * @param string $like
-     * @return self
+     * @return $this
      */
     public function like($identifier, string $like) : self
     {
@@ -233,7 +233,7 @@ class Predicate extends PredicateSet
      *
      * @param string|Expression $identifier
      * @param string $notLike
-     * @return self
+     * @return $this
      */
     public function notLike($identifier, string $notLike) : self
     {
@@ -252,7 +252,7 @@ class Predicate extends PredicateSet
      *
      * @param $expression
      * @param $parameters
-     * @return self
+     * @return $this
      */
     public function expression($expression, ?$parameters = null) : self
     {
@@ -272,7 +272,7 @@ class Predicate extends PredicateSet
      * Literal predicate, for parameters, use expression()
      *
      * @param string $literal
-     * @return self
+     * @return $this
      */
     public function literal(string $literal) : self
     {
@@ -303,7 +303,7 @@ class Predicate extends PredicateSet
      * Utilizes IsNull predicate
      *
      * @param string|Expression $identifier
-     * @return self
+     * @return $this
      */
     public function isNull($identifier) : self
     {
@@ -323,7 +323,7 @@ class Predicate extends PredicateSet
      * Utilizes IsNotNull predicate
      *
      * @param string|Expression $identifier
-     * @return self
+     * @return $this
      */
     public function isNotNull($identifier) : self
     {
@@ -344,7 +344,7 @@ class Predicate extends PredicateSet
      *
      * @param string|Expression $identifier
      * @param array|Select|null $valueSet
-     * @return self
+     * @return s$this
      */
     public function in($identifier, ?$valueSet = null) : self
     {
@@ -365,7 +365,7 @@ class Predicate extends PredicateSet
      *
      * @param string|Expression $identifier
      * @param array|Select|null $valueSet
-     * @return self
+     * @return $this
      */
     public function notIn($identifier, ?$valueSet = null) : self
     {
@@ -386,7 +386,7 @@ class Predicate extends PredicateSet
      * @param string|Expression $identifier
      * @param int|float|string $minValue
      * @param int|float|string $maxValue
-     * @return self
+     * @return $this
      */
     public function between($identifier, $minValue, $maxValue) : self
     {
@@ -408,7 +408,7 @@ class Predicate extends PredicateSet
      * @param string|Expression $identifier
      * @param int|float|string $minValue
      * @param int|float|string $maxValue
-     * @return self
+     * @return $this
      */
     public function notBetween($identifier, $minValue, $maxValue) : self
     {
@@ -430,7 +430,7 @@ class Predicate extends PredicateSet
      * used fluently within where chains as any other concrete predicate.
      *
      * @param PredicateInterface $predicate
-     * @return self
+     * @return $this
      */
     public function predicate(PredicateInterface $predicate) : self
     {

@@ -78,7 +78,7 @@ class Update extends AbstractPreparableSql
      * Specify table for statement
      *
      * @param string|TableIdentifier $table
-     * @return self
+     * @return $this
      */
     public function table($table) : self
     {
@@ -91,7 +91,7 @@ class Update extends AbstractPreparableSql
      *
      * @param array $values Associative array of key values
      * @param string $flag One of the VALUES_* constants
-     * @return self
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
     public function set(array $values, string $flag = self::VALUES_SET) : self
@@ -118,7 +118,7 @@ class Update extends AbstractPreparableSql
      *
      * @param Where|\Closure|string|array $predicate
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
-     * @return self
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
     public function where($predicate, string $combination = Predicate\PredicateSet::OP_AND) : self
@@ -137,7 +137,7 @@ class Update extends AbstractPreparableSql
      * @param string|array $name
      * @param string $on
      * @param string $type one of the JOIN_* constants
-     * @return self
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
     public function join($name, string $on, string $type = Join::JOIN_INNER) : self

@@ -44,7 +44,7 @@ abstract class AbstractSql implements SqlInterface
     }
 
     protected function buildSqlString(
-        PlatformInterface  $platform,
+        PlatformInterface   $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) : ?string {
@@ -80,7 +80,7 @@ abstract class AbstractSql implements SqlInterface
      * Render table with alias in from/join parts
      *
      * @todo move TableIdentifier concatenation here
-     * @param string $table
+     * @param string      $table
      * @param string|null $alias
      * @return string
      */
@@ -92,11 +92,11 @@ abstract class AbstractSql implements SqlInterface
     /**
      * @staticvar int $runtimeExpressionPrefix
      *
-     * @param ExpressionInterface $expression
-     * @param PlatformInterface $platform
-     * @param null|DriverInterface $driver
+     * @param ExpressionInterface     $expression
+     * @param PlatformInterface       $platform
+     * @param null|DriverInterface    $driver
      * @param null|ParameterContainer $parameterContainer
-     * @param null|string $namedParameterPrefix
+     * @param null|string             $namedParameterPrefix
      * @return string
      *
      * @throws Exception\RuntimeException
@@ -156,7 +156,7 @@ abstract class AbstractSql implements SqlInterface
             // Process values and types (the middle and last position of the
             // expression data)
             $values = $part[1];
-            $types  = isset($part[2]) ? $part[2] : [];
+            $types  = isset($part[2]) ?? [];
 
             foreach ($values as $vIndex => $value) {
                 if (! isset($types[$vIndex])) {
@@ -303,8 +303,8 @@ abstract class AbstractSql implements SqlInterface
     }
 
     protected function processJoin(
-        Join               $joins,
-        PlatformInterface  $platform,
+        Join                $joins,
+        PlatformInterface   $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) : ?array {
@@ -430,7 +430,7 @@ abstract class AbstractSql implements SqlInterface
      */
     protected function resolveTable(
         $table,
-        PlatformInterface  $platform,
+        PlatformInterface   $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
@@ -446,7 +446,7 @@ abstract class AbstractSql implements SqlInterface
             $table = $platform->quoteIdentifier($table);
         }
 
-        if (is_string($schema) && $table) {
+        if ($schema && $table) {
             $table = $platform->quoteIdentifier($schema) . $platform->getIdentifierSeparator() . $table;
         }
 

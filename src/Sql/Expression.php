@@ -73,7 +73,7 @@ class Expression extends AbstractExpression
 
     /**
      * @param $parameters
-     * @return self
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
     public function setParameters($parameters) : self
@@ -95,7 +95,7 @@ class Expression extends AbstractExpression
     /**
      * @deprecated
      * @param array $types
-     * @return self
+     * @return $this
      */
     public function setTypes(array $types) : self
     {

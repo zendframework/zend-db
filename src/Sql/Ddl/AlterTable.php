@@ -47,7 +47,7 @@ class AlterTable extends AbstractSql implements SqlInterface
         self::TABLE => "ALTER TABLE %1\$s\n",
         self::ADD_COLUMNS  => [
             '%1$s' => [
-                [1 => "ADD COLUMN %1\$s,\n", 'combinedby' => '']
+                [1 => "ADD COLUMN %1\$s,\n", 'combinedby' => ''],
             ]
         ],
         self::CHANGE_COLUMNS  => [
@@ -92,7 +92,7 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @param ColumnInterface $column
-     * @return self
+     * @return $this
      */
     public function addColumn(ColumnInterface $column) : self
     {
@@ -104,7 +104,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     /**
      * @param string $name
      * @param ColumnInterface $column
-     * @return self
+     * @return $this
      */
     public function changeColumn(string $name, ColumnInterface $column) : self
     {
@@ -115,7 +115,7 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @param string $name
-     * @return self
+     * @return $this
      */
     public function dropColumn(string $name) : self
     {
@@ -126,7 +126,7 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @param string $name
-     * @return self
+     * @return $this
      */
     public function dropConstraint(string $name) : self
     {
@@ -137,7 +137,7 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @param ConstraintInterface $constraint
-     * @return self
+     * @return $this
      */
     public function addConstraint(ConstraintInterface $constraint) : self
     {

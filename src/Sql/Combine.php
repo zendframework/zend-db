@@ -58,7 +58,7 @@ class Combine extends AbstractPreparableSql
      * @param Select|array $select
      * @param string $type
      * @param string $modifier
-     * @return self
+     * @return $this
      *
      * @throws Exception\InvalidArgumentException
      */

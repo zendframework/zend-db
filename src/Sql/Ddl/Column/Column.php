@@ -68,7 +68,7 @@ class Column implements ColumnInterface
 
     /**
      * @param null|string|int $default
-     * @return self
+     * @return $this
      */
     public function setDefault(?$default) : self
     {

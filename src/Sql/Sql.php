@@ -53,7 +53,7 @@ class Sql
 
     /**
      * @param string|array|TableIdentifier $table
-     * @return self
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
     public function setTable($table) : self

@@ -161,7 +161,7 @@ class Select extends AbstractPreparableSql
      * Create from clause
      *
      * @param string|array|TableIdentifier $table
-     * @return self
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
     public function from($table) : self
@@ -190,7 +190,7 @@ class Select extends AbstractPreparableSql
 
     /**
      * @param string|Expression $quantifier DISTINCT|ALL
-     * @return self
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
     public function quantifier($quantifier) : self
@@ -202,6 +202,7 @@ class Select extends AbstractPreparableSql
             );
         }
         $this->quantifier = $quantifier;
+
         return $this;
     }
 
@@ -221,7 +222,7 @@ class Select extends AbstractPreparableSql
      *
      * @param array $columns
      * @param bool  $prefixColumnsWithTable
-     * @return self
+     * @return $this
      */
     public function columns(array $columns, bool $prefixColumnsWithTable = true) : self
     {
@@ -237,7 +238,7 @@ class Select extends AbstractPreparableSql
      * @param string|Predicate\Expression $on
      * @param string|array $columns
      * @param string $type one of the JOIN_* constants
-     * @return self
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
     public function join($name, $on, $columns = self::SQL_STAR, string $type = self::JOIN_INNER) : self
@@ -252,7 +253,7 @@ class Select extends AbstractPreparableSql
      *
      * @param Where|\Closure|string|array|Predicate\PredicateInterface $predicate
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
-     * @return self
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
     public function where($predicate, string $combination = Predicate\PredicateSet::OP_AND) : self
@@ -267,7 +268,7 @@ class Select extends AbstractPreparableSql
 
     /**
      * @param mixed $group
-     * @return self
+     * @return $this
      */
     public function group($group) : self
     {
@@ -286,7 +287,7 @@ class Select extends AbstractPreparableSql
      *
      * @param Where|\Closure|string|array $predicate
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
-     * @return self
+     * @return $this
      */
     public function having($predicate, string $combination = Predicate\PredicateSet::OP_AND) : self
     {
@@ -300,7 +301,7 @@ class Select extends AbstractPreparableSql
 
     /**
      * @param string|array|Expression $order
-     * @return self Provides a fluent interface
+     * @return $this Provides a fluent interface
      */
     public function order($order) : self
     {
@@ -394,7 +395,7 @@ class Select extends AbstractPreparableSql
     /**
      * @param string $index
      * @param array|string $specification
-     * @return self
+     * @return $this
      */
     public function setSpecification(string $index, $specification) : self
     {

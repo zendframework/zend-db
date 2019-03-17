@@ -59,7 +59,7 @@ class PredicateSet implements PredicateInterface, Countable
      *
      * @param PredicateInterface|\Closure|string|array $predicates
      * @param string $combination
-     * @return self
+     * @return $this
      *
      * @throws Exception\InvalidArgumentException
      */
