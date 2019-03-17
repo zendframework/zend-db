@@ -239,7 +239,7 @@ class Predicate extends PredicateSet
     {
         $this->addPredicate(
             new NotLike($identifier, $notLike),
-            $this->nextPredicateCombineOperator ? : $this->defaultCombination
+            $this->nextPredicateCombineOperator ?? $this->defaultCombination
         );
 
         $this->nextPredicateCombineOperator = null;
@@ -254,7 +254,7 @@ class Predicate extends PredicateSet
      * @param $parameters
      * @return $this
      */
-    public function expression($expression, ?$parameters = null) : self
+    public function expression($expression, $parameters = null) : self
     {
         $this->addPredicate(
             new Expression($expression, $parameters),
@@ -346,7 +346,7 @@ class Predicate extends PredicateSet
      * @param array|Select|null $valueSet
      * @return s$this
      */
-    public function in($identifier, ?$valueSet = null) : self
+    public function in($identifier, $valueSet = null) : self
     {
         $this->addPredicate(
             new In($identifier, $valueSet),
@@ -367,7 +367,7 @@ class Predicate extends PredicateSet
      * @param array|Select|null $valueSet
      * @return $this
      */
-    public function notIn($identifier, ?$valueSet = null) : self
+    public function notIn($identifier, $valueSet = null) : self
     {
         $this->addPredicate(
             new NotIn($identifier, $valueSet),

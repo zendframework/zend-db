@@ -30,7 +30,7 @@ class Expression extends AbstractExpression
      * @param null|string|array $parameters
      * @param array $types @deprecated will be dropped in version 3.0.0
      */
-    public function __construct(string $expression = '', ?$parameters = null, array $types = [])
+    public function __construct(string $expression = '', $parameters = null, array $types = [])
     {
         if ($expression !== '') {
             $this->setExpression($expression);
@@ -136,7 +136,7 @@ class Expression extends AbstractExpression
         }
 
         foreach ($parameters as $parameter) {
-            [$values[], $types[]] = $this->normalizeArgument($parameter, self::TYPE_VALUE);
+            list($values[], $types[]) = $this->normalizeArgument($parameter, self::TYPE_VALUE);
         }
 
         return [[

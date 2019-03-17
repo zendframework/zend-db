@@ -113,7 +113,7 @@ class CreateTable extends AbstractSql implements SqlInterface
 
     /**
      * @param PlatformInterface $adapterPlatform
-     * @return string[][]|void
+     * @return string[][]|null
      */
     protected function processColumns(?PlatformInterface $adapterPlatform = null)
     {
@@ -132,7 +132,7 @@ class CreateTable extends AbstractSql implements SqlInterface
 
     /**
      * @param PlatformInterface|null $adapterPlatform
-     * @return array|string|void
+     * @return array|string|null
      */
     protected function processCombinedby(?PlatformInterface $adapterPlatform = null)
     {
@@ -143,7 +143,7 @@ class CreateTable extends AbstractSql implements SqlInterface
 
     /**
      * @param PlatformInterface|null $adapterPlatform
-     * @return string[][]|void
+     * @return string[][]|null
      */
     protected function processConstraints(?PlatformInterface $adapterPlatform = null)
     {

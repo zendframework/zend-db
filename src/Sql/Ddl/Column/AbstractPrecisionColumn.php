@@ -15,11 +15,11 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     protected $decimal;
 
     public function __construct(
-        string $name = '',
+        ?string $name = null,
         ?int $digits = null,
         ?int $decimal = null,
         bool $nullable = false,
-        ?$default = null,
+        $default = null,
         array $options = []
     ) {
         $this->setDecimal($decimal);

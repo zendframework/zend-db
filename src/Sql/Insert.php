@@ -45,7 +45,7 @@ class Insert extends AbstractPreparableSql
      *
      * @param null|string|TableIdentifier $table
      */
-    public function __construct(?$table = null)
+    public function __construct($table = null)
     {
         if ($table) {
             $this->into($table);

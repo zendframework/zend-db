@@ -15,7 +15,7 @@ use function func_get_args;
 
 class Expression extends BaseExpression implements PredicateInterface
 {
-    public function __construct(?string $expression = null, ?$valueParameter = null)
+    public function __construct(?string $expression = null, $valueParameter = null)
     {
         if ($expression) {
             $this->setExpression($expression);

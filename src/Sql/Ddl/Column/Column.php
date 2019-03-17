@@ -19,7 +19,7 @@ class Column implements ColumnInterface
     /** @var bool */
     protected $isNullable = false;
 
-    /** @var string */
+    /** @var string|null */
     protected $name = '';
 
     /** @var array */
@@ -34,7 +34,7 @@ class Column implements ColumnInterface
     /** @var string */
     protected $type = 'INTEGER';
 
-    public function __construct(string $name = '', bool $nullable = false, ?$default = null, array $options = [])
+    public function __construct(?string $name = null, bool $nullable = false, $default = null, array $options = [])
     {
         $this->setName($name);
         $this->setNullable($nullable);
@@ -42,7 +42,7 @@ class Column implements ColumnInterface
         $this->setOptions($options);
     }
 
-    public function setName(string $name) : self
+    public function setName(?string $name) : self
     {
         $this->name = $name;
 
@@ -70,7 +70,7 @@ class Column implements ColumnInterface
      * @param null|string|int $default
      * @return $this
      */
-    public function setDefault(?$default) : self
+    public function setDefault($default) : self
     {
         $this->default = $default;
 

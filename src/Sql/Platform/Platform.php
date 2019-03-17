@@ -57,7 +57,7 @@ class Platform extends AbstractPlatform
      * @param AdapterInterface|PlatformInterface|null $adapterOrPlatform
      * @return PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface
      */
-    public function getTypeDecorator($subject, ?$adapterOrPlatform = null)
+    public function getTypeDecorator($subject, $adapterOrPlatform = null)
     {
         $platformName = $this->resolvePlatformName($adapterOrPlatform);
 

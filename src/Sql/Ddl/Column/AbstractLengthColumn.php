@@ -15,10 +15,10 @@ abstract class AbstractLengthColumn extends Column
     protected $length;
 
     public function __construct(
-        string $name = '',
+        ?string $name = null,
         ?int $length = null,
         bool $nullable = false,
-        ?$default = null,
+        $default = null,
         array $options = []
     ) {
         $this->setLength($length);

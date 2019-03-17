@@ -382,7 +382,7 @@ abstract class AbstractSql implements SqlInterface
      * @return string
      */
     protected function resolveColumnValue(
-        ?$column,
+        $column,
         PlatformInterface   $platform,
         ?DriverInterface    $driver = null,
         ?ParameterContainer $parameterContainer = null,

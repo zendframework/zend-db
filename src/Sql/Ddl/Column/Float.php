@@ -31,7 +31,7 @@ class Float extends Floating
         ?int $digits = null,
         ?int $decimal = null,
         bool $nullable = false,
-        ?$default = null,
+        $default = null,
         array $options = []
     ) {
         trigger_error(

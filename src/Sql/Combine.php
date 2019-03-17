@@ -45,7 +45,7 @@ class Combine extends AbstractPreparableSql
      * @param string            $type
      * @param string            $modifier
      */
-    public function __construct(?$select = null, string $type = self::COMBINE_UNION, string $modifier = '')
+    public function __construct($select = null, string $type = self::COMBINE_UNION, string $modifier = '')
     {
         if ($select) {
             $this->combine($select, $type, $modifier);

@@ -64,9 +64,9 @@ class Operator extends AbstractExpression implements PredicateInterface
      * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      */
     public function __construct(
-        ?$left = null,
+        $left = null,
         string $operator = self::OPERATOR_EQUAL_TO,
-        ?$right = null,
+        $right = null,
         string $leftType = self::TYPE_IDENTIFIER,
         string $rightType = self::TYPE_VALUE
     ) {

@@ -31,7 +31,7 @@ class Sql
      */
     public function __construct(
         AdapterInterface $adapter,
-        ?$table = null,
+        $table = null,
         ?Platform\AbstractPlatform $sqlPlatform = null
     ) {
         $this->adapter = $adapter;
@@ -82,7 +82,7 @@ class Sql
      * @param null|string|array|TableIdentifier $table
      * @return Select
      */
-    public function select(?$table = null) : Select
+    public function select($table = null) : Select
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -97,7 +97,7 @@ class Sql
      * @param null|string|TableIdentifier $table
      * @return Insert
      */
-    public function insert(?$table = null) : Insert
+    public function insert($table = null) : Insert
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -112,7 +112,7 @@ class Sql
      * @param null|string|TableIdentifier $table
      * @return Update
      */
-    public function update(?$table = null) : Update
+    public function update($table = null) : Update
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -127,7 +127,7 @@ class Sql
      * @param null|string|TableIdentifier $table
      * @return Delete
      */
-    public function delete(?$table = null) : Delete
+    public function delete($table = null) : Delete
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -135,7 +135,7 @@ class Sql
                 $this->table
             ));
         }
-        return new Delete($table ?: $this->table);
+        return new Delete($table ?? $this->table);
     }
 
     public function prepareStatementForSqlObject(

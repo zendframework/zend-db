@@ -44,9 +44,9 @@ class ForeignKey extends AbstractConstraint
      */
     public function __construct(
         string $name,
-        ?$columns,
+        $columns,
         string $referenceTable,
-        ?$referenceColumn,
+        $referenceColumn,
         ?string $onDeleteRule = null,
         ?string $onUpdateRule = null
     ) {
@@ -80,7 +80,7 @@ class ForeignKey extends AbstractConstraint
      * @param null|string|array $referenceColumn
      * @return $this
      */
-    public function setReferenceColumn(?$referenceColumn) : self
+    public function setReferenceColumn($referenceColumn) : self
     {
         $this->referenceColumn = (array) $referenceColumn;
 
