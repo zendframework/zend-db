@@ -41,7 +41,7 @@ abstract class AbstractSql implements SqlInterface
 
     public function getSqlString(?PlatformInterface $adapterPlatform = null) : string
     {
-        $adapterPlatform = ($adapterPlatform) ?? new DefaultAdapterPlatform;
+        $adapterPlatform = $adapterPlatform ?? new DefaultAdapterPlatform();
         return $this->buildSqlString($adapterPlatform);
     }
 
