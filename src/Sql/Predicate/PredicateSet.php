@@ -1,37 +1,40 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql\Predicate;
 
 use Countable;
 use Zend\Db\Sql\Exception;
+use function array_merge;
+use function count;
+use function in_array;
+use function is_string;
+use function sprintf;
+use function strpos;
 
 class PredicateSet implements PredicateInterface, Countable
 {
-    const COMBINED_BY_AND = 'AND';
-    const OP_AND          = 'AND';
+    public const COMBINED_BY_AND = 'AND';
+    public const OP_AND          = 'AND';
+    public const COMBINED_BY_OR  = 'OR';
+    public const OP_OR           = 'OR';
 
-    const COMBINED_BY_OR  = 'OR';
-    const OP_OR           = 'OR';
-
+    /** @var string  */
     protected $defaultCombination = self::COMBINED_BY_AND;
+
+    /** @var PredicateInterface[] */
     protected $predicates         = [];
 
-    /**
-     * Constructor
-     *
-     * @param  null|array $predicates
-     * @param  string $defaultCombination
-     */
-    public function __construct(array $predicates = null, $defaultCombination = self::COMBINED_BY_AND)
+    public function __construct(?array $predicates = null, string $defaultCombination = self::COMBINED_BY_AND)
     {
         $this->defaultCombination = $defaultCombination;
+
         if ($predicates) {
             foreach ($predicates as $predicate) {
                 $this->addPredicate($predicate);
@@ -39,25 +42,20 @@ class PredicateSet implements PredicateInterface, Countable
         }
     }
 
-    /**
-     * Add predicate to set
-     *
-     * @param  PredicateInterface $predicate
-     * @param  string $combination
-     * @return self Provides a fluent interface
-     */
-    public function addPredicate(PredicateInterface $predicate, $combination = null)
+    public function addPredicate(PredicateInterface $predicate, ?string $combination = null) : self
     {
         if ($combination === null || ! in_array($combination, [self::OP_AND, self::OP_OR])) {
             $combination = $this->defaultCombination;
         }
 
-        if ($combination == self::OP_OR) {
+        if ($combination === self::OP_OR) {
             $this->orPredicate($predicate);
+
             return $this;
         }
 
         $this->andPredicate($predicate);
+
         return $this;
     }
 
@@ -65,30 +63,38 @@ class PredicateSet implements PredicateInterface, Countable
      * Add predicates to set
      *
      * @param PredicateInterface|\Closure|string|array $predicates
-     * @param string $combination
-     * @return self Provides a fluent interface
+     * @param string                                   $combination
+     * @return $this
+     *
      * @throws Exception\InvalidArgumentException
      */
-    public function addPredicates($predicates, $combination = self::OP_AND)
+    public function addPredicates($predicates, string $combination = self::OP_AND) : self
     {
         if ($predicates === null) {
             throw new Exception\InvalidArgumentException('Predicate cannot be null');
         }
+
         if ($predicates instanceof PredicateInterface) {
             $this->addPredicate($predicates, $combination);
+
             return $this;
         }
+
         if ($predicates instanceof \Closure) {
             $predicates($this);
+
             return $this;
         }
+
         if (is_string($predicates)) {
             // String $predicate should be passed as an expression
             $predicates = (strpos($predicates, Expression::PLACEHOLDER) !== false)
                 ? new Expression($predicates) : new Literal($predicates);
             $this->addPredicate($predicates, $combination);
+
             return $this;
         }
+
         if (is_array($predicates)) {
             foreach ($predicates as $pkey => $pvalue) {
                 // loop through predicates
@@ -120,65 +126,48 @@ class PredicateSet implements PredicateInterface, Countable
                     $predicates = (strpos($pvalue, Expression::PLACEHOLDER) !== false)
                         ? new Expression($pvalue) : new Literal($pvalue);
                 }
+
                 $this->addPredicate($predicates, $combination);
             }
         }
+
         return $this;
     }
 
-    /**
-     * Return the predicates
-     *
-     * @return PredicateInterface[]
-     */
-    public function getPredicates()
+    public function getPredicates() : array
     {
         return $this->predicates;
     }
 
-    /**
-     * Add predicate using OR operator
-     *
-     * @param  PredicateInterface $predicate
-     * @return self Provides a fluent interface
-     */
-    public function orPredicate(PredicateInterface $predicate)
+    public function orPredicate(PredicateInterface $predicate) : self
     {
         $this->predicates[] = [self::OP_OR, $predicate];
+
         return $this;
     }
 
-    /**
-     * Add predicate using AND operator
-     *
-     * @param  PredicateInterface $predicate
-     * @return self Provides a fluent interface
-     */
-    public function andPredicate(PredicateInterface $predicate)
+    public function andPredicate(PredicateInterface $predicate) : self
     {
         $this->predicates[] = [self::OP_AND, $predicate];
+
         return $this;
     }
 
-    /**
-     * Get predicate parts for where statement
-     *
-     * @return array
-     */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         $parts = [];
+
         for ($i = 0, $count = count($this->predicates); $i < $count; $i++) {
             /** @var $predicate PredicateInterface */
             $predicate = $this->predicates[$i][1];
 
-            if ($predicate instanceof PredicateSet) {
+            if ($predicate instanceof self) {
                 $parts[] = '(';
             }
 
             $parts = array_merge($parts, $predicate->getExpressionData());
 
-            if ($predicate instanceof PredicateSet) {
+            if ($predicate instanceof self) {
                 $parts[] = ')';
             }
 
@@ -186,15 +175,11 @@ class PredicateSet implements PredicateInterface, Countable
                 $parts[] = sprintf(' %s ', $this->predicates[$i + 1][0]);
             }
         }
+
         return $parts;
     }
 
-    /**
-     * Get count of attached predicates
-     *
-     * @return int
-     */
-    public function count()
+    public function count() : int
     {
         return count($this->predicates);
     }

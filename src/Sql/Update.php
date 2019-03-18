@@ -1,22 +1,26 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql;
 
-use Zend\Db\Adapter\ParameterContainer;
-use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\Driver\Pdo\Pdo;
+use Zend\Db\Adapter\ParameterContainer;
+use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Stdlib\PriorityList;
+use function implode;
+use function is_numeric;
+use function is_string;
+use function sprintf;
+use function strtolower;
 
 /**
- *
  * @property Where $where
  */
 class Update extends AbstractPreparableSql
@@ -24,55 +28,45 @@ class Update extends AbstractPreparableSql
     /**@#++
      * @const
      */
-    const SPECIFICATION_UPDATE = 'update';
-    const SPECIFICATION_SET = 'set';
-    const SPECIFICATION_WHERE = 'where';
-    const SPECIFICATION_JOIN = 'joins';
+    public const SPECIFICATION_UPDATE = 'update';
+    public const SPECIFICATION_SET = 'set';
+    public const SPECIFICATION_WHERE = 'where';
+    public const SPECIFICATION_JOIN = 'joins';
 
-    const VALUES_MERGE = 'merge';
-    const VALUES_SET   = 'set';
+    public const VALUES_MERGE = 'merge';
+    public const VALUES_SET   = 'set';
     /**@#-**/
 
     protected $specifications = [
         self::SPECIFICATION_UPDATE => 'UPDATE %1$s',
         self::SPECIFICATION_JOIN => [
             '%1$s' => [
-                [3 => '%1$s JOIN %2$s ON %3$s', 'combinedby' => ' ']
+                [3 => '%1$s JOIN %2$s ON %3$s', 'combinedby' => ' '],
             ]
         ],
         self::SPECIFICATION_SET => 'SET %1$s',
         self::SPECIFICATION_WHERE => 'WHERE %1$s',
     ];
 
-    /**
-     * @var string|TableIdentifier
-     */
+    /** @var string|TableIdentifier */
     protected $table = '';
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $emptyWhereProtection = true;
 
-    /**
-     * @var PriorityList
-     */
+    /** @var PriorityList */
     protected $set;
 
-    /**
-     * @var string|Where
-     */
-    protected $where = null;
+    /** @var string|Where */
+    protected $where;
 
-    /**
-     * @var null|Join
-     */
-    protected $joins = null;
+    /** @var null|Join */
+    protected $joins;
 
     /**
      * Constructor
      *
-     * @param  null|string|TableIdentifier $table
+     * @param null|string|TableIdentifier $table
      */
     public function __construct($table = null)
     {
@@ -81,6 +75,7 @@ class Update extends AbstractPreparableSql
         }
         $this->where = new Where();
         $this->joins = new Join();
+
         $this->set = new PriorityList();
         $this->set->isLIFO(false);
     }
@@ -88,10 +83,10 @@ class Update extends AbstractPreparableSql
     /**
      * Specify table for statement
      *
-     * @param  string|TableIdentifier $table
-     * @return self Provides a fluent interface
+     * @param string|TableIdentifier $table
+     * @return $this
      */
-    public function table($table)
+    public function table($table) : self
     {
         $this->table = $table;
         return $this;
@@ -100,18 +95,18 @@ class Update extends AbstractPreparableSql
     /**
      * Set key/value pairs to update
      *
-     * @param  array $values Associative array of key values
-     * @param  string $flag One of the VALUES_* constants
-     * @return self Provides a fluent interface
+     * @param array  $values Associative array of key values
+     * @param string $flag One of the VALUES_* constants
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
-    public function set(array $values, $flag = self::VALUES_SET)
+    public function set(array $values, string $flag = self::VALUES_SET) : self
     {
         if ($values === null) {
             throw new Exception\InvalidArgumentException('set() expects an array of values');
         }
 
-        if ($flag == self::VALUES_SET) {
+        if ($flag === self::VALUES_SET) {
             $this->set->clear();
         }
         $priority = is_numeric($flag) ? $flag : 0;
@@ -127,12 +122,12 @@ class Update extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param  Where|\Closure|string|array $predicate
-     * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
-     * @return self Provides a fluent interface
+     * @param Where|\Closure|string|array $predicate
+     * @param string                      $combination One of the OP_* constants from Predicate\PredicateSet
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
-    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND)
+    public function where($predicate, string $combination = Predicate\PredicateSet::OP_AND) : self
     {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
@@ -145,20 +140,20 @@ class Update extends AbstractPreparableSql
     /**
      * Create join clause
      *
-     * @param  string|array $name
-     * @param  string $on
-     * @param  string $type one of the JOIN_* constants
-     * @return self Provides a fluent interface
+     * @param string|array $name
+     * @param string       $on
+     * @param string       $type one of the JOIN_* constants
+     * @return $this
      * @throws Exception\InvalidArgumentException
      */
-    public function join($name, $on, $type = Join::JOIN_INNER)
+    public function join($name, string $on, string $type = Join::JOIN_INNER) : self
     {
         $this->joins->join($name, $on, [], $type);
 
         return $this;
     }
 
-    public function getRawState($key = null)
+    public function getRawState(?string $key = null)
     {
         $rawState = [
             'emptyWhereProtection' => $this->emptyWhereProtection,
@@ -171,9 +166,9 @@ class Update extends AbstractPreparableSql
     }
 
     protected function processUpdate(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         return sprintf(
             $this->specifications[static::SPECIFICATION_UPDATE],
@@ -182,9 +177,9 @@ class Update extends AbstractPreparableSql
     }
 
     protected function processSet(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         $setSql = [];
         $i      = 0;
@@ -226,11 +221,11 @@ class Update extends AbstractPreparableSql
     }
 
     protected function processWhere(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
-        if ($this->where->count() == 0) {
+        if ($this->where->count() === 0) {
             return;
         }
         return sprintf(
@@ -240,9 +235,9 @@ class Update extends AbstractPreparableSql
     }
 
     protected function processJoins(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null
+        PlatformInterface   $platform,
+        ?DriverInterface    $driver = null,
+        ?ParameterContainer $parameterContainer = null
     ) {
         return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
     }
@@ -252,26 +247,19 @@ class Update extends AbstractPreparableSql
      *
      * Proxies to "where" only
      *
-     * @param  string $name
+     * @param string $name
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
-        if (strtolower($name) == 'where') {
+        if (strtolower($name) === 'where') {
             return $this->where;
         }
     }
 
-    /**
-     * __clone
-     *
-     * Resets the where object each time the Update is cloned.
-     *
-     * @return void
-     */
     public function __clone()
     {
         $this->where = clone $this->where;
-        $this->set = clone $this->set;
+        $this->set   = clone $this->set;
     }
 }

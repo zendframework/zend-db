@@ -1,56 +1,43 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql;
 
+use function str_replace;
+
 class Literal implements ExpressionInterface
 {
-    /**
-     * @var string
-     */
-    protected $literal = '';
+    protected $literal;
 
-    /**
-     * @param $literal
-     */
-    public function __construct($literal = '')
+    public function __construct(string $literal = '')
     {
         $this->literal = $literal;
     }
 
-    /**
-     * @param string $literal
-     * @return self Provides a fluent interface
-     */
-    public function setLiteral($literal)
+    public function setLiteral(string $literal) : self
     {
         $this->literal = $literal;
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLiteral()
+    public function getLiteral() : string
     {
         return $this->literal;
     }
 
-    /**
-     * @return array
-     */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         return [[
             str_replace('%', '%%', $this->literal),
             [],
-            []
+            [],
         ]];
     }
 }

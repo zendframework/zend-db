@@ -1,14 +1,22 @@
 <?php
 /**
- * @link      http://github.com/zendframework/zend-db for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql;
 
 use Countable;
 use Iterator;
+use function array_shift;
+use function count;
+use function is_array;
+use function is_string;
+use function key;
+use function sprintf;
 
 /**
  * Aggregate JOIN specifications.
@@ -24,85 +32,45 @@ use Iterator;
  */
 class Join implements Iterator, Countable
 {
-    const JOIN_INNER       = 'inner';
-    const JOIN_OUTER       = 'outer';
-    const JOIN_LEFT        = 'left';
-    const JOIN_RIGHT       = 'right';
-    const JOIN_RIGHT_OUTER = 'right outer';
-    const JOIN_LEFT_OUTER  = 'left outer';
+    public const JOIN_INNER       = 'inner';
+    public const JOIN_OUTER       = 'outer';
+    public const JOIN_LEFT        = 'left';
+    public const JOIN_RIGHT       = 'right';
+    public const JOIN_RIGHT_OUTER = 'right outer';
+    public const JOIN_LEFT_OUTER  = 'left outer';
 
-    /**
-     * Current iterator position.
-     *
-     * @var int
-     */
+    /** @var int */
     private $position = 0;
 
-    /**
-     * JOIN specifications
-     *
-     * @var array
-     */
+    /** @var array */
     protected $joins = [];
 
-    /**
-     * Initialize iterator position.
-     */
-    public function __construct()
+    public function rewind() : void
     {
         $this->position = 0;
     }
 
-    /**
-     * Rewind iterator.
-     */
-    public function rewind()
-    {
-        $this->position = 0;
-    }
-
-    /**
-     * Return current join specification.
-     *
-     * @return array
-     */
-    public function current()
+    public function current() : array
     {
         return $this->joins[$this->position];
     }
 
-    /**
-     * Return the current iterator index.
-     *
-     * @return int
-     */
-    public function key()
+    public function key() : int
     {
         return $this->position;
     }
 
-    /**
-     * Advance to the next JOIN specification.
-     */
-    public function next()
+    public function next() : void
     {
         ++$this->position;
     }
 
-    /**
-     * Is the iterator at a valid position?
-     *
-     * @return bool
-     */
-    public function valid()
+    public function valid() : bool
     {
         return isset($this->joins[$this->position]);
     }
 
-    /**
-     * @return array
-     */
-    public function getJoins()
+    public function getJoins() : array
     {
         return $this->joins;
     }
@@ -115,10 +83,10 @@ class Join implements Iterator, Countable
      *     of column names, or (a) specification(s) such as SQL_STAR representing
      *     the columns to join.
      * @param string $type The JOIN type to use; see the JOIN_* constants.
-     * @return self Provides a fluent interface
+     * @return $this
      * @throws Exception\InvalidArgumentException for invalid $name values.
      */
-    public function join($name, $on, $columns = [Select::SQL_STAR], $type = Join::JOIN_INNER)
+    public function join($name, $on, $columns = [Select::SQL_STAR], string $type = Join::JOIN_INNER) : self
     {
         if (is_array($name) && (! is_string(key($name)) || count($name) !== 1)) {
             throw new Exception\InvalidArgumentException(
@@ -134,29 +102,20 @@ class Join implements Iterator, Countable
             'name'    => $name,
             'on'      => $on,
             'columns' => $columns,
-            'type'    => $type ? $type : Join::JOIN_INNER
+            'type'    => $type ? $type : self::JOIN_INNER,
         ];
 
         return $this;
     }
 
-    /**
-     * Reset to an empty list of JOIN specifications.
-     *
-     * @return self Provides a fluent interface
-     */
-    public function reset()
+    public function reset() : self
     {
         $this->joins = [];
+
         return $this;
     }
 
-    /**
-     * Get count of attached predicates
-     *
-     * @return int
-     */
-    public function count()
+    public function count() : int
     {
         return count($this->joins);
     }

@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2005-2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Db\Sql\Predicate;
 
@@ -14,48 +14,40 @@ use Zend\Db\Sql\AbstractExpression;
 class Between extends AbstractExpression implements PredicateInterface
 {
     protected $specification = '%1$s BETWEEN %2$s AND %3$s';
-    protected $identifier    = null;
-    protected $minValue      = null;
-    protected $maxValue      = null;
+    protected $identifier;
+    protected $minValue;
+    protected $maxValue;
 
     /**
      * Constructor
      *
-     * @param  string $identifier
-     * @param  int|float|string $minValue
-     * @param  int|float|string $maxValue
+     * @param null|string           $identifier
+     * @param null|int|float|string $minValue
+     * @param null|int|float|string $maxValue
      */
-    public function __construct($identifier = null, $minValue = null, $maxValue = null)
+    public function __construct(?string $identifier = null, $minValue = null, $maxValue = null)
     {
         if ($identifier) {
             $this->setIdentifier($identifier);
         }
+
         if ($minValue !== null) {
             $this->setMinValue($minValue);
         }
+
         if ($maxValue !== null) {
             $this->setMaxValue($maxValue);
         }
     }
 
-    /**
-     * Set identifier for comparison
-     *
-     * @param  string $identifier
-     * @return self Provides a fluent interface
-     */
-    public function setIdentifier($identifier)
+    public function setIdentifier(string $identifier) : self
     {
         $this->identifier = $identifier;
+
         return $this;
     }
 
-    /**
-     * Get identifier of comparison
-     *
-     * @return null|string
-     */
-    public function getIdentifier()
+    public function getIdentifier() : ?string
     {
         return $this->identifier;
     }
@@ -63,12 +55,13 @@ class Between extends AbstractExpression implements PredicateInterface
     /**
      * Set minimum boundary for comparison
      *
-     * @param  int|float|string $minValue
-     * @return self Provides a fluent interface
+     * @param int|float|string $minValue
+     * @return $this
      */
-    public function setMinValue($minValue)
+    public function setMinValue($minValue) : self
     {
         $this->minValue = $minValue;
+
         return $this;
     }
 
@@ -85,12 +78,13 @@ class Between extends AbstractExpression implements PredicateInterface
     /**
      * Set maximum boundary for comparison
      *
-     * @param  int|float|string $maxValue
-     * @return self Provides a fluent interface
+     * @param int|float|string $maxValue
+     * @return $this
      */
-    public function setMaxValue($maxValue)
+    public function setMaxValue($maxValue) : self
     {
         $this->maxValue = $maxValue;
+
         return $this;
     }
 
@@ -104,34 +98,19 @@ class Between extends AbstractExpression implements PredicateInterface
         return $this->maxValue;
     }
 
-    /**
-     * Set specification string to use in forming SQL predicate
-     *
-     * @param  string $specification
-     * @return self Provides a fluent interface
-     */
-    public function setSpecification($specification)
+    public function setSpecification(string $specification) : self
     {
         $this->specification = $specification;
+
         return $this;
     }
 
-    /**
-     * Get specification string to use in forming SQL predicate
-     *
-     * @return string
-     */
-    public function getSpecification()
+    public function getSpecification() : string
     {
         return $this->specification;
     }
 
-    /**
-     * Return "where" parts
-     *
-     * @return array
-     */
-    public function getExpressionData()
+    public function getExpressionData() : array
     {
         list($values[], $types[]) = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
         list($values[], $types[]) = $this->normalizeArgument($this->minValue, self::TYPE_VALUE);
