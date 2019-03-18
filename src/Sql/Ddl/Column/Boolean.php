@@ -13,9 +13,4 @@ class Boolean extends Column
 {
     /** @var string */
     protected $type = 'BOOLEAN';
-
-    public function setNullable(bool $nullable) : self
-    {
-        return parent::setNullable(false);
-    }
 }
