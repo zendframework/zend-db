@@ -12,6 +12,7 @@
     <title>SQL Abstraction - zend-db</title>
 
     <link rel="stylesheet" href="../css/styles-18b942728f.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.min.js"></script>
 </head>
 <body id="page-top">
 
@@ -66,7 +67,7 @@
                     
     <div class="subnavigation hidden-print">
         <h4 class="subnavigation__title">
-            <a href="..">zend-db</a>
+            <a href="">zend-db</a>
         </h4>
 
         <h5 class="subnavigation__subtitle">Table of Contents</h5>
@@ -75,7 +76,7 @@
             
                 
                     <li class="subnavigation__list-item ">
-                        <a href=".." class="subnavigation__link">zend-db</a>
+                        <a href="" class="subnavigation__link">zend-db</a>
                     </li>
                 
             
@@ -86,43 +87,43 @@
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../adapter/" class="subnavigation__link">Adapters</a>
+        <a href="adapter/" class="subnavigation__link">Adapters</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../result-set/" class="subnavigation__link">Result Sets</a>
+        <a href="result-set/" class="subnavigation__link">Result Sets</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item subnavigation__list-item--active">
-        <a href="./" class="subnavigation__link">SQL Abstraction</a>
+        <a href="sql/" class="subnavigation__link">SQL Abstraction</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../sql-ddl/" class="subnavigation__link">DDL Abstraction</a>
+        <a href="sql-ddl/" class="subnavigation__link">DDL Abstraction</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../table-gateway/" class="subnavigation__link">Table Gateways</a>
+        <a href="table-gateway/" class="subnavigation__link">Table Gateways</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../row-gateway/" class="subnavigation__link">Row Gateways</a>
+        <a href="row-gateway/" class="subnavigation__link">Row Gateways</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../metadata/" class="subnavigation__link">RDBMS Metadata</a>
+        <a href="metadata/" class="subnavigation__link">RDBMS Metadata</a>
     </li>
 
                             
@@ -206,7 +207,7 @@
         <li><a href="https://docs.zendframework.com/">Documentation</a></li>
 
         
-            <li><a href="..">zend-db</a></li>
+            <li><a href="">zend-db</a></li>
 
             
                 
@@ -377,7 +378,7 @@ specify various select statement parts:</p>
 $select-&gt;from('foo');
 
 // As an array to specify an alias
-// (produces SELECT &quot;t&quot;.* FROM &quot;table&quot; AS &quot;t&quot;)
+// (produces SELECT "t".* FROM "table" AS "t")
 $select-&gt;from(['t' =&gt; 'table']);
 
 // Using a Sql\TableIdentifier:
@@ -398,7 +399,7 @@ $select-&gt;columns([
 // Sql function call on the column
 // (produces CONCAT_WS('/', 'bar', 'bax') AS 'foo')
 $select-&gt;columns([
-    'foo' =&gt; new \Zend\Db\Sql\Expression(&quot;CONCAT_WS('/', 'bar', 'bax')&quot;)
+    'foo' =&gt; new \Zend\Db\Sql\Expression("CONCAT_WS('/', 'bar', 'bax')")
 ]);</code></pre>
 
 <h3 id="join">join()</h3>
@@ -443,7 +444,7 @@ This enables code like the following:</p>
 <p>If you provide a <em>string</em>, this string will be used to create a
 <code>Zend\Db\Sql\Predicate\Expression</code> instance, and its contents will be applied
 as-is, with no quoting:</p>
-<pre class="codehilite"><code class="language-php">// SELECT &quot;foo&quot;.* FROM &quot;foo&quot; WHERE x = 5
+<pre class="codehilite"><code class="language-php">// SELECT "foo".* FROM "foo" WHERE x = 5
 $select-&gt;from('foo')-&gt;where('x = 5');</code></pre>
 
 <p>If you provide an array with integer indices, the value can be one of:</p>
@@ -454,7 +455,7 @@ $select-&gt;from('foo')-&gt;where('x = 5');</code></pre>
 <p>In either case, the instances are pushed onto the <code>Where</code> stack with the
 <code>$combination</code> provided (defaulting to <code>AND</code>).</p>
 <p>As an example:</p>
-<pre class="codehilite"><code class="language-php">// SELECT &quot;foo&quot;.* FROM &quot;foo&quot; WHERE x = 5 AND y = z
+<pre class="codehilite"><code class="language-php">// SELECT "foo".* FROM "foo" WHERE x = 5 AND y = z
 $select-&gt;from('foo')-&gt;where(['x = 5', 'y = z']);</code></pre>
 
 <p>If you provide an associative array with string keys, any value with a string
@@ -482,7 +483,7 @@ key will be cast as follows:</p>
 </tbody>
 </table></div>
 <p>As an example:</p>
-<pre class="codehilite"><code class="language-php">// SELECT &quot;foo&quot;.* FROM &quot;foo&quot; WHERE &quot;c1&quot; IS NULL AND &quot;c2&quot; IN (?, ?, ?) AND &quot;c3&quot; IS NOT NULL
+<pre class="codehilite"><code class="language-php">// SELECT "foo".* FROM "foo" WHERE "c1" IS NULL AND "c2" IN (?, ?, ?) AND "c3" IS NOT NULL
 $select-&gt;from('foo')-&gt;where([
     'c1' =&gt; null,
     'c2' =&gt; [1, 2, 3],
@@ -876,7 +877,7 @@ $where-&gt;addPredicate(
         
         <li class="page-nav__item">
             
-                <a rel="prev" class="page-nav__link page-nav__link--prev" href="../result-set/">
+                <a rel="prev" class="page-nav__link page-nav__link--prev" href="result-set/">
                     <i class="fa fa-chevron-left"></i> Previous
                 </a>
             
@@ -885,7 +886,7 @@ $where-&gt;addPredicate(
         
         <li class="page-nav__item">
             
-                <a rel="next" class="page-nav__link page-nav__link--next" href="../sql-ddl/">
+                <a rel="next" class="page-nav__link page-nav__link--next" href="sql-ddl/">
                     Next <i class="fa fa-chevron-right"></i>
                 </a>
             
@@ -920,7 +921,7 @@ $where-&gt;addPredicate(
                     
     <div class="subnavigation hidden-print">
         <h4 class="subnavigation__title">
-            <a href="..">zend-db</a>
+            <a href="">zend-db</a>
         </h4>
 
         <h5 class="subnavigation__subtitle">Table of Contents</h5>
@@ -929,7 +930,7 @@ $where-&gt;addPredicate(
             
                 
                     <li class="subnavigation__list-item ">
-                        <a href=".." class="subnavigation__link">zend-db</a>
+                        <a href="" class="subnavigation__link">zend-db</a>
                     </li>
                 
             
@@ -940,43 +941,43 @@ $where-&gt;addPredicate(
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../adapter/" class="subnavigation__link">Adapters</a>
+        <a href="adapter/" class="subnavigation__link">Adapters</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../result-set/" class="subnavigation__link">Result Sets</a>
+        <a href="result-set/" class="subnavigation__link">Result Sets</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item subnavigation__list-item--active">
-        <a href="./" class="subnavigation__link">SQL Abstraction</a>
+        <a href="sql/" class="subnavigation__link">SQL Abstraction</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../sql-ddl/" class="subnavigation__link">DDL Abstraction</a>
+        <a href="sql-ddl/" class="subnavigation__link">DDL Abstraction</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../table-gateway/" class="subnavigation__link">Table Gateways</a>
+        <a href="table-gateway/" class="subnavigation__link">Table Gateways</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../row-gateway/" class="subnavigation__link">Row Gateways</a>
+        <a href="row-gateway/" class="subnavigation__link">Row Gateways</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../metadata/" class="subnavigation__link">RDBMS Metadata</a>
+        <a href="metadata/" class="subnavigation__link">RDBMS Metadata</a>
     </li>
 
                             
@@ -1058,9 +1059,8 @@ $where-&gt;addPredicate(
         var base_url = '..',
             siteName = 'zend-db';
     </script>
-    <script src="../js/scripts-0bcb0a3bb3.js"></script>
-        <script src="../search/require.js"></script>
-        <script src="../search/search.js"></script>
+    <script src="../js/scripts-edc4cfa790.js"></script>
+        <script src="../search/main.js"></script>
 
     
     <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
@@ -1089,6 +1089,14 @@ $where-&gt;addPredicate(
             </div>
         </div>
     </div>
+
+<script>
+// Anchors
+anchors.options.placement = 'left';
+anchors.add(
+    '.content h1:not(.content__title), .content h2, .content > h3, .content h4, .content h5'
+);
+</script>
 
 
 
