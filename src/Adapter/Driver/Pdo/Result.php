@@ -129,7 +129,7 @@ class Result implements Iterator, ResultInterface
      */
     public function setFetchMode($fetchMode)
     {
-        if (! in_array($fetchMode, self::VALID_FETCH_MODES)) {
+        if (! in_array($fetchMode, self::VALID_FETCH_MODES, true)) {
             throw new Exception\InvalidArgumentException(
                 'The fetch mode must be one of the PDO::FETCH_* constants.'
             );
