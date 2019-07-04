@@ -33,7 +33,7 @@ class Result implements Iterator, ResultInterface
     /**
      * @var array
      */
-    private const VALID_FETCH_MODES = [
+    const VALID_FETCH_MODES = [
         \PDO::FETCH_LAZY,       // 1
         \PDO::FETCH_ASSOC,      // 2
         \PDO::FETCH_NUM,        // 3
