@@ -27,9 +27,9 @@ class Mysql extends AbstractPlatform
     protected $quoteIdentifierTo = '``';
 
     /**
-     * @var \mysqli|\PDO
+     * @var \mysqli|Mysqli\Mysqli|Pdo\Pdo
      */
-    protected $resource = null;
+    protected $driver = null;
 
     /**
      * NOTE: Include dashes for MySQL only, need tests for others platforms
@@ -39,7 +39,7 @@ class Mysql extends AbstractPlatform
     protected $quoteIdentifierFragmentPattern = '/([^0-9,a-z,A-Z$_\-:])/i';
 
     /**
-     * @param null|\Zend\Db\Adapter\Driver\Mysqli\Mysqli|\Zend\Db\Adapter\Driver\Pdo\Pdo|\mysqli|\PDO $driver
+     * @param null|\Zend\Db\Adapter\Driver\Mysqli\Mysqli|\Zend\Db\Adapter\Driver\Pdo\Pdo|\mysqli $driver
      */
     public function __construct($driver = null)
     {
@@ -49,7 +49,7 @@ class Mysql extends AbstractPlatform
     }
 
     /**
-     * @param \Zend\Db\Adapter\Driver\Mysqli\Mysqli|\Zend\Db\Adapter\Driver\Pdo\Pdo|\mysqli|\PDO $driver
+     * @param \Zend\Db\Adapter\Driver\Mysqli\Mysqli|\Zend\Db\Adapter\Driver\Pdo\Pdo|\mysqli $driver
      * @return self Provides a fluent interface
      * @throws \Zend\Db\Adapter\Exception\InvalidArgumentException
      */
@@ -59,14 +59,13 @@ class Mysql extends AbstractPlatform
         if ($driver instanceof Mysqli\Mysqli
             || ($driver instanceof Pdo\Pdo && $driver->getDatabasePlatformName() == 'Mysql')
             || ($driver instanceof \mysqli)
-            || ($driver instanceof \PDO && $driver->getAttribute(\PDO::ATTR_DRIVER_NAME) == 'mysql')
         ) {
-            $this->resource = $driver;
+            $this->driver = $driver;
             return $this;
         }
 
         throw new Exception\InvalidArgumentException(
-            '$driver must be a Mysqli or Mysql PDO Zend\Db\Adapter\Driver, Mysqli instance or MySQL PDO instance'
+            '$driver must be a Mysqli, Mysql PDO Zend\Db\Adapter\Driver or Mysqli instance'
         );
     }
 
@@ -91,16 +90,9 @@ class Mysql extends AbstractPlatform
      */
     public function quoteValue($value)
     {
-        if ($this->resource instanceof DriverInterface) {
-            $this->resource = $this->resource->getConnection()->getResource();
-        }
-        if ($this->resource instanceof \mysqli) {
-            return '\'' . $this->resource->real_escape_string($value) . '\'';
-        }
-        if ($this->resource instanceof \PDO) {
-            return $this->resource->quote($value);
-        }
-        return parent::quoteValue($value);
+        $quotedViaResource = $this->quoteViaResource($value);
+
+        return $quotedViaResource !== null ? $quotedViaResource : parent::quoteValue($value);
     }
 
     /**
@@ -108,15 +100,31 @@ class Mysql extends AbstractPlatform
      */
     public function quoteTrustedValue($value)
     {
-        if ($this->resource instanceof DriverInterface) {
-            $this->resource = $this->resource->getConnection()->getResource();
+        $quotedViaResource = $this->quoteViaResource($value);
+
+        return $quotedViaResource !== null ? $quotedViaResource : parent::quoteTrustedValue($value);
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return null|string
+     */
+    protected function quoteViaResource($value)
+    {
+        if ($this->driver instanceof DriverInterface) {
+            $resource = $this->driver->getConnection()->getResource();
+        } else {
+            $resource = $this->driver;
         }
-        if ($this->resource instanceof \mysqli) {
-            return '\'' . $this->resource->real_escape_string($value) . '\'';
+
+        if ($resource instanceof \mysqli) {
+            return '\'' . $resource->real_escape_string($value) . '\'';
         }
-        if ($this->resource instanceof \PDO) {
-            return $this->resource->quote($value);
+        if ($resource instanceof \PDO) {
+            return $resource->quote($value);
         }
-        return parent::quoteTrustedValue($value);
+
+        return null;
     }
 }
