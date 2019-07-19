@@ -64,9 +64,6 @@ class PostgresqlTest extends TestCase
         if (! $this->adapters['pdo_pgsql'] instanceof \PDO) {
             $this->markTestSkipped('Postgres (PDO_PGSQL) not configured in unit test configuration file');
         }
-        $pgsql = new Postgresql($this->adapters['pdo_pgsql']);
-        $value = $pgsql->quoteValue('value');
-        self::assertEquals('\'value\'', $value);
 
         $pgsql = new Postgresql(new Pdo\Pdo(new Pdo\Connection($this->adapters['pdo_pgsql'])));
         $value = $pgsql->quoteValue('value');

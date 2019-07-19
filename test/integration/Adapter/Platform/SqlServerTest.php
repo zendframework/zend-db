@@ -10,6 +10,7 @@
 namespace ZendIntegrationTest\Db\Adapter\Platform;
 
 use PHPUnit\Framework\TestCase;
+use Zend\Db\Adapter\Driver\Pdo;
 use Zend\Db\Adapter\Platform\SqlServer;
 
 /**
@@ -54,7 +55,7 @@ class SqlServerTest extends TestCase
         if (! $this->adapters['pdo_sqlsrv']) {
             $this->markTestSkipped('SQLServer (pdo_sqlsrv) not configured in unit test configuration file');
         }
-        $sqlite = new SqlServer($this->adapters['pdo_sqlsrv']);
+        $sqlite = new SqlServer(new Pdo\Pdo($this->adapters['pdo_sqlsrv']));
         $value = $sqlite->quoteValue('value');
         self::assertEquals('\'value\'', $value);
     }
