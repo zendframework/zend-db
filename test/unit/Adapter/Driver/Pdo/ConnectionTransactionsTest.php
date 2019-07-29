@@ -136,6 +136,11 @@ class ConnectionTransactionsTest extends TestCase
 
         // Rollback
         $this->wrapper->rollback();
+        self::assertTrue($this->wrapper->inTransaction());
+        self::assertSame(1, $this->wrapper->getNestedTransactionsCount());
+
+        // 2nd Rollback
+        $this->wrapper->rollback();
         self::assertFalse($this->wrapper->inTransaction());
         self::assertSame(0, $this->wrapper->getNestedTransactionsCount());
     }

@@ -9,6 +9,7 @@
 
 namespace ZendTest\Db\Adapter\Driver\Pdo;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Zend\Db\Adapter\Driver\Pdo\Connection;
 
@@ -50,7 +51,7 @@ class ConnectionTest extends TestCase
         $this->connection->setConnectionParameters(['dsn' => $dsn]);
         try {
             $this->connection->connect();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
         $responseString = $this->connection->getDsn();
 
@@ -71,7 +72,7 @@ class ConnectionTest extends TestCase
         ]);
         try {
             $this->connection->connect();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
         $responseString = $this->connection->getDsn();
 
@@ -110,7 +111,7 @@ class ConnectionTest extends TestCase
         ]);
         try {
             $this->connection->connect();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
         $responseString = $this->connection->getDsn();
 
@@ -119,5 +120,36 @@ class ConnectionTest extends TestCase
         $this->assertContains('dbname=foo', $responseString);
         $this->assertContains('port=1433', $responseString);
         $this->assertContains('version=7.3', $responseString);
+    }
+
+    public function testNestedTransactionsNoErrors()
+    {
+        $dsn = 'sqlite::memory:';
+        $this->connection->setConnectionParameters(['dsn' => $dsn]);
+        $this->connection->connect();
+
+        $nestedTransaction = static function (Connection $connection) {
+            $connection->beginTransaction();
+            try {
+                throw new Exception('Custom exception message!');
+            } catch (Exception $ex) {
+                $connection->rollback();
+                throw $ex;
+            }
+        };
+
+        $parentTransaction = static function (Connection $connection) use ($nestedTransaction) {
+            $connection->beginTransaction();
+            try {
+                $nestedTransaction($connection);
+                $connection->commit();
+            } catch (Exception $ex) {
+                $connection->rollback();
+                throw $ex;
+            }
+        };
+
+        $this->expectExceptionMessage('Custom exception message');
+        $parentTransaction($this->connection);
     }
 }

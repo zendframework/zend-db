@@ -352,10 +352,11 @@ class Connection extends AbstractConnection
             throw new Exception\RuntimeException('Must call beginTransaction() before you can rollback');
         }
 
-        $this->resource->rollBack();
-
-        $this->inTransaction           = false;
-        $this->nestedTransactionsCount = 0;
+        --$this->nestedTransactionsCount;
+        if ($this->nestedTransactionsCount === 0) {
+            $this->resource->rollBack();
+            $this->inTransaction = false;
+        }
 
         return $this;
     }
