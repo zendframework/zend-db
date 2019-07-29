@@ -30,6 +30,11 @@ class Connection extends AbstractConnection
     protected $dsn = null;
 
     /**
+     * @var int
+     */
+    protected $internalNestedTransactionCount = 0;
+
+    /**
      * Constructor
      *
      * @param  array|\PDO|null                    $connectionParameters
@@ -307,7 +312,8 @@ class Connection extends AbstractConnection
             $this->inTransaction = true;
         }
 
-        $this->nestedTransactionsCount ++;
+        ++$this->nestedTransactionsCount;
+        ++$this->internalNestedTransactionCount;
 
         return $this;
     }
@@ -322,7 +328,8 @@ class Connection extends AbstractConnection
         }
 
         if ($this->inTransaction) {
-            $this->nestedTransactionsCount -= 1;
+            --$this->nestedTransactionsCount;
+            --$this->internalNestedTransactionCount;
         }
 
         /*
@@ -348,13 +355,14 @@ class Connection extends AbstractConnection
             throw new Exception\RuntimeException('Must be connected before you can rollback');
         }
 
-        if (! $this->inTransaction()) {
+        if (! $this->inTransaction() && $this->internalNestedTransactionCount === 0) {
             throw new Exception\RuntimeException('Must call beginTransaction() before you can rollback');
         }
 
-        --$this->nestedTransactionsCount;
-        if ($this->nestedTransactionsCount === 0) {
+        --$this->internalNestedTransactionCount;
+        if ($this->nestedTransactionsCount) {
             $this->resource->rollBack();
+            $this->nestedTransactionsCount = 0;
             $this->inTransaction = false;
         }
 

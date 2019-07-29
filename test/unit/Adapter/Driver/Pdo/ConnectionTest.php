@@ -152,4 +152,32 @@ class ConnectionTest extends TestCase
         $this->expectExceptionMessage('Custom exception message');
         $parentTransaction($this->connection);
     }
+
+    public function testNestedTransactionErrorOnParentCommitIfNestedRollback()
+    {
+        $dsn = 'sqlite::memory:';
+        $this->connection->setConnectionParameters(['dsn' => $dsn]);
+        $this->connection->connect();
+
+        $this->connection->beginTransaction();
+        $this->connection->beginTransaction();
+        $this->connection->rollback();
+
+        // As PDO does not support nested transaction this commit cannot be successful.
+        // Everything what was executed between opening transactions is rollbacked.
+        $this->expectExceptionMessage('There is no active transaction');
+        $this->connection->commit();
+    }
+
+    public function testNestedTransactionNoErrorsOnParentAndNestedRollback()
+    {
+        $dsn = 'sqlite::memory:';
+        $this->connection->setConnectionParameters(['dsn' => $dsn]);
+        $this->connection->connect();
+
+        $this->connection->beginTransaction();
+        $this->connection->beginTransaction();
+        $this->connection->rollback();
+        $this->connection->rollback();
+    }
 }
