@@ -158,7 +158,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * Get select result prototype
      *
-     * @return ResultSet
+     * @return ResultSetInterface
      */
     public function getResultSetPrototype()
     {
@@ -177,7 +177,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * Select
      *
      * @param Where|\Closure|string|array $where
-     * @return ResultSet
+     * @return ResultSetInterface
      */
     public function select($where = null)
     {
@@ -199,7 +199,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * @param Select $select
      * @return ResultSetInterface
-     * @throws \RuntimeException
      */
     public function selectWith(Select $select)
     {
@@ -211,7 +210,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     /**
      * @param Select $select
-     * @return ResultSet
+     * @return ResultSetInterface
      * @throws Exception\RuntimeException
      */
     protected function executeSelect(Select $select)
