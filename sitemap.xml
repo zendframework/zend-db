@@ -2,42 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
      <loc>https://docs.zendframework.com/zend-db/</loc>
-     <lastmod>2019-04-29</lastmod>
+     <lastmod>2019-10-01</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://docs.zendframework.com/zend-db/adapter/</loc>
-     <lastmod>2019-04-29</lastmod>
+     <lastmod>2019-10-01</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://docs.zendframework.com/zend-db/result-set/</loc>
-     <lastmod>2019-04-29</lastmod>
+     <lastmod>2019-10-01</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://docs.zendframework.com/zend-db/sql/</loc>
-     <lastmod>2019-04-29</lastmod>
+     <lastmod>2019-10-01</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://docs.zendframework.com/zend-db/sql-ddl/</loc>
-     <lastmod>2019-04-29</lastmod>
+     <lastmod>2019-10-01</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://docs.zendframework.com/zend-db/table-gateway/</loc>
-     <lastmod>2019-04-29</lastmod>
+     <lastmod>2019-10-01</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://docs.zendframework.com/zend-db/row-gateway/</loc>
-     <lastmod>2019-04-29</lastmod>
+     <lastmod>2019-10-01</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://docs.zendframework.com/zend-db/metadata/</loc>
-     <lastmod>2019-04-29</lastmod>
+     <lastmod>2019-10-01</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>

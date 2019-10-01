@@ -280,7 +280,7 @@
 metadata information about tables, columns, constraints, triggers, and other
 information from a database in a standardized way. The primary interface for
 <code>Metadata</code> is:</p>
-<pre class="codehilite"><code class="language-php">namespace Zend\Db\Metadata;
+<p> <pre class=codehilite><code class=language-php>namespace Zend\Db\Metadata;
 
 interface MetadataInterface
 {
@@ -305,8 +305,7 @@ interface MetadataInterface
     public function getTriggerNames(string $schema = null) : string[];
     public function getTriggers(string $schema = null) : Object\TriggerObject[];
     public function getTrigger(string $triggerName, string $schema = null) : Object\TriggerObject;
-}</code></pre>
-
+}</code></pre></p>
 <h2 id="basic-usage">Basic Usage</h2>
 <p>Usage of <code>Zend\Db\Metadata</code> involves:</p>
 <ul>
@@ -317,7 +316,7 @@ interface MetadataInterface
 </ul>
 <p>The <code>Metadata::get*Names()</code> methods will return arrays of strings, while the
 other methods will return value objects specific to the type queried.</p>
-<pre class="codehilite"><code class="language-php">$metadata = new Zend\Db\Metadata\Metadata($adapter);
+<p> <pre class=codehilite><code class=language-php>$metadata = new Zend\Db\Metadata\Metadata($adapter);
 
 // get the table names
 $tableNames = $metadata-&gt;getTableNames();
@@ -359,13 +358,12 @@ foreach ($tableNames as $tableName) {
     }
 
     echo '----' . PHP_EOL;
-}</code></pre>
-
+}</code></pre></p>
 <h2 id="metadata-value-objects">Metadata value objects</h2>
 <p>Metadata returns value objects that provide an interface to help developers
 better explore the metadata. Below is the API for the various value objects:</p>
-<h3 id="tableobject">TableObject</h3>
-<pre class="codehilite"><code class="language-php">class Zend\Db\Metadata\Object\TableObject
+<h3>TableObject</h3>
+<p> <pre class=codehilite><code class=language-php>class Zend\Db\Metadata\Object\TableObject
 {
     public function __construct($name);
     public function setColumns(array $columns);
@@ -374,10 +372,9 @@ better explore the metadata. Below is the API for the various value objects:</p>
     public function getConstraints();
     public function setName($name);
     public function getName();
-}</code></pre>
-
-<h3 id="columnobject">ColumnObject</h3>
-<pre class="codehilite"><code class="language-php">class Zend\Db\Metadata\Object\ColumnObject
+}</code></pre></p>
+<h3>ColumnObject</h3>
+<p> <pre class=codehilite><code class=language-php>class Zend\Db\Metadata\Object\ColumnObject
 {
     public function __construct($name, $tableName, $schemaName = null);
     public function setName($name);
@@ -410,10 +407,9 @@ better explore the metadata. Below is the API for the various value objects:</p>
     public function setErratas(array $erratas);
     public function getErrata($errataName);
     public function setErrata($errataName, $errataValue);
-}</code></pre>
-
-<h3 id="constraintobject">ConstraintObject</h3>
-<pre class="codehilite"><code class="language-php">class Zend\Db\Metadata\Object\ConstraintObject
+}</code></pre></p>
+<h3>ConstraintObject</h3>
+<p> <pre class=codehilite><code class=language-php>class Zend\Db\Metadata\Object\ConstraintObject
 {
     public function __construct($name, $tableName, $schemaName = null);
     public function setName($name);
@@ -446,10 +442,9 @@ better explore the metadata. Below is the API for the various value objects:</p>
     public function isForeignKey();
     public function isCheck();
 
-}</code></pre>
-
-<h3 id="triggerobject">TriggerObject</h3>
-<pre class="codehilite"><code class="language-php">class Zend\Db\Metadata\Object\TriggerObject
+}</code></pre></p>
+<h3>TriggerObject</h3>
+<p> <pre class=codehilite><code class=language-php>class Zend\Db\Metadata\Object\TriggerObject
 {
     public function getName();
     public function setName($name);
@@ -481,7 +476,7 @@ better explore the metadata. Below is the API for the various value objects:</p>
     public function setActionReferenceNewRow($actionReferenceNewRow);
     public function getCreated();
     public function setCreated($created);
-}</code></pre>
+}</code></pre></p>
 
 
 
@@ -511,7 +506,7 @@ better explore the metadata. Below is the API for the various value objects:</p>
     <div class="help-wanted">
         <p>
             Found a mistake or want to contribute to the documentation?
-            <a href="https://github.com/zendframework/zend-db/edit/master/docs/metadata.md" target="_blank" class="help-wanted__link">
+            <a href="https://github.com/zendframework/zend-db/edit/master/docs/book/metadata.md" target="_blank" class="help-wanted__link">
                 Edit this page on GitHub!
             </a>
         </p>
