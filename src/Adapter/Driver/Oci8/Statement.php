@@ -289,10 +289,17 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
                         $type = SQLT_BIN;
                         break;
                     case ParameterContainer::TYPE_LOB:
+                    case ParameterContainer::TYPE_CLOB:
                         $type = OCI_B_CLOB;
                         $clob = oci_new_descriptor($this->driver->getConnection()->getResource(), OCI_DTYPE_LOB);
                         $clob->writetemporary($value, OCI_TEMP_CLOB);
                         $value = $clob;
+                        break;
+                    case ParameterContainer::TYPE_BLOB:
+                        $type = OCI_B_BLOB;
+                        $blob = oci_new_descriptor($this->driver->getConnection()->getResource(), OCI_DTYPE_LOB);
+                        $blob->writetemporary($value, OCI_TEMP_BLOB);
+                        $value = $blob;
                         break;
                     case ParameterContainer::TYPE_STRING:
                     default:
