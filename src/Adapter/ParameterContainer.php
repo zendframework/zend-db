@@ -22,6 +22,8 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     const TYPE_BINARY  = 'binary';
     const TYPE_STRING  = 'string';
     const TYPE_LOB     = 'lob';
+    const TYPE_BLOB = 'blob';
+    const TYPE_CLOB = 'clob';
 
     /**
      * Data
