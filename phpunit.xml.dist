@@ -43,11 +43,12 @@
         <env name="TESTS_ZEND_DB_ADAPTER_DRIVER_SQLSRV_PASSWORD" value="Password123" />
         <env name="TESTS_ZEND_DB_ADAPTER_DRIVER_SQLSRV_DATABASE" value="zenddb_test" />
 
-        <env name="TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8" value="false" />
-        <env name="TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8_HOSTNAME" value="" />
+        <env name="TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8" value="true"/>
         <env name="TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8_USERNAME" value="" />
         <env name="TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8_PASSWORD" value="" />
         <env name="TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8_DATABASE" value="" />
+        <env name="TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8_CHARSET" value=""/>
+        <env name="TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8_CONNECTIONSTRING" value=""/>
 
         <env name="TESTS_ZEND_DB_ADAPTER_DRIVER_IBMDB2" value="false" />
         <env name="TESTS_ZEND_DB_ADAPTER_DRIVER_IBMDB2_HOSTNAME" value="" />
