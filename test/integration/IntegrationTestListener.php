@@ -9,9 +9,7 @@
 
 namespace ZendIntegrationTest\Db;
 
-use Exception;
 use PDO;
-use PDOException;
 use PHPUnit\Framework\BaseTestListener;
 use PHPUnit_Framework_TestSuite as TestSuite;
 use ZendIntegrationTest\Db\Platform\FixtureLoader;
@@ -39,6 +37,9 @@ class IntegrationTestListener extends BaseTestListener
         }
         if (getenv('TESTS_ZEND_DB_ADAPTER_DRIVER_PGSQL')) {
             $this->fixtureLoader = new \ZendIntegrationTest\Db\Platform\PgsqlFixtureLoader();
+        }
+        if (getenv('TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8')) {
+            $this->fixtureLoader = new \ZendIntegrationTest\Db\Platform\Oci8FixtureLoader();
         }
 
         if (! isset($this->fixtureLoader)) {
