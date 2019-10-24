@@ -22,6 +22,7 @@ matrix:
         - LEGACY_DEPS="phpunit/phpunit zendframework/zend-hydrator"
         - TEST_INTEGRATION=true
         - TESTS_ZEND_DB_ADAPTER_DRIVER_MYSQL=true
+        - TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8=true
     - php: 5.6
       env:
         - DEPS=latest
@@ -36,6 +37,14 @@ matrix:
         - LEGACY_DEPS="phpunit/phpunit zendframework/zend-hydrator"
         - TEST_INTEGRATION=true
         - TESTS_ZEND_DB_ADAPTER_DRIVER_MYSQL=true
+    - php: 7.0
+        services:
+          - oci8
+        env:
+          - DEPS=locked
+          - LEGACY_DEPS="phpunit/phpunit zendframework/zend-hydrator"
+          - TEST_INTEGRATION=true
+          - TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8=true
     - php: 7.0
       env:
         - DEPS=latest
@@ -52,6 +61,7 @@ matrix:
         - TEST_COVERAGE=true
         - TEST_INTEGRATION=true
         - TESTS_ZEND_DB_ADAPTER_DRIVER_MYSQL=true
+        - TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8=true
     - php: 7.1
       env:
         - DEPS=latest
@@ -65,6 +75,7 @@ matrix:
         - DEPS=locked
         - TEST_INTEGRATION=true
         - TESTS_ZEND_DB_ADAPTER_DRIVER_MYSQL=true
+        - TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8=true
     - php: 7.2
       services:
         - postgresql
@@ -74,6 +85,7 @@ matrix:
         - DEPS=locked
         - TEST_INTEGRATION=true
         - TESTS_ZEND_DB_ADAPTER_DRIVER_PGSQL=true
+        - TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8=true
     - php: 7.2
       env:
         - DEPS=latest
