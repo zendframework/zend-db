@@ -29,7 +29,7 @@ class SequenceFeature extends AbstractFeature
     /**
      * @var string
      */
-    protected $schemaName = NULL;
+    protected $schemaName = null;
 
     /**
      * @var int
@@ -46,7 +46,7 @@ class SequenceFeature extends AbstractFeature
         $this->primaryKeyField = $primaryKeyField;
         $this->sequenceName    = $sequenceName;
 
-        if($sequenceName instanceof TableIdentifier) {
+        if ($sequenceName instanceof TableIdentifier) {
             $this->sequenceName = $sequenceName->getTable();
             $this->schemaName = $sequenceName->getSchema();
         }
@@ -101,7 +101,7 @@ class SequenceFeature extends AbstractFeature
                 break;
             case 'PostgreSQL':
                 $sql = 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')';
-                if($this->schemaName !== NULL) {
+                if ($this->schemaName !== null) {
                     $sql = 'SELECT NEXTVAL(\'"' . $this->schemaName . '"."' . $this->sequenceName . '"\')';
                 }
                 break;
@@ -132,7 +132,7 @@ class SequenceFeature extends AbstractFeature
                 break;
             case 'PostgreSQL':
                 $sql = 'SELECT CURRVAL(\'' . $this->sequenceName . '\')';
-                if($this->schemaName !== NULL) {
+                if ($this->schemaName !== null) {
                     $sql = 'SELECT CURRVAL(\'"' . $this->schemaName . '"."' . $this->sequenceName . '"\')';
                 }
                 break;
