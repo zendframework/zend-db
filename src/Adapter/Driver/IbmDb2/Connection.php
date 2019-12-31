@@ -149,7 +149,28 @@ class Connection extends AbstractConnection
     public function disconnect()
     {
         if ($this->resource) {
-            db2_close($this->resource);
+            
+            // localize
+            $p = $this->connectionParameters;
+
+            // given a list of key names, test for existence in $p
+            $findParameterValue = function (array $names) use ($p) {
+                foreach ($names as $name) {
+                    if (isset($p[$name])) {
+                        return $p[$name];
+                    }
+                }
+    
+                return;
+            };
+            $isPersistent = $findParameterValue(['persistent', 'PERSISTENT', 'Persistent']);
+            
+            if ((bool) $isPersistent) {
+                db2_pclose($this->resource);
+            } else {
+                db2_close($this->resource);    
+            }
+                        
             $this->resource = null;
         }
 
