@@ -1,4 +1,9 @@
 <?php
+/**
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
+ */
 
 namespace ZendIntegrationTest\Db\Adapter\Driver\Oci8;
 
@@ -11,7 +16,6 @@ use Zend\Db\Adapter\Driver\Oci8\Connection;
  */
 class ConnectionTest extends TestCase
 {
-    
     use TraitSetup;
     
     public function testConnectionOk()

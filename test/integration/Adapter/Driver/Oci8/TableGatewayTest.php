@@ -1,4 +1,9 @@
 <?php
+/**
+ * @see       https://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2019 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
+ */
 
 namespace ZendIntegrationTest\Db\Adapter\Driver\Oci8;
 
@@ -70,7 +75,7 @@ class TableGatewayTest extends TestCase
         $data->setFromArray(['CONTENT_BLOB' => $blob]);
         $data->offsetSetErrata('CONTENT_BLOB', ParameterContainer::TYPE_BLOB);
         
-        $sql = "UPDATE TEST SET CONTENT_BLOB= :CONTENT_BLOB WHERE ID = 1";
+        $sql = 'UPDATE TEST SET CONTENT_BLOB = :CONTENT_BLOB WHERE ID = 1';
         $stm = $tableGateway->getAdapter()->getDriver()->createStatement($sql);
         $stm->setParameterContainer($data);
         $stm->execute();
@@ -103,7 +108,7 @@ class TableGatewayTest extends TestCase
         $data->setFromArray(['CONTENT_CLOB' => $clob]);
         $data->offsetSetErrata('CONTENT_CLOB', ParameterContainer::TYPE_CLOB);
         
-        $sql = "UPDATE TEST SET CONTENT_CLOB= :CONTENT_CLOB WHERE ID = 1";
+        $sql = 'UPDATE TEST SET CONTENT_CLOB = :CONTENT_CLOB WHERE ID = 1';
         $stm = $tableGateway->getAdapter()->getDriver()->createStatement($sql);
         $stm->setParameterContainer($data);
         $stm->execute();
@@ -136,7 +141,7 @@ class TableGatewayTest extends TestCase
         $data->setFromArray(['CONTENT_CLOB' => $clob]);
         $data->offsetSetErrata('CONTENT_CLOB', ParameterContainer::TYPE_LOB);
         
-        $sql = "UPDATE TEST SET CONTENT_CLOB= :CONTENT_CLOB WHERE ID = 2";
+        $sql = 'UPDATE TEST SET CONTENT_CLOB = :CONTENT_CLOB WHERE ID = 2';
         $stm = $tableGateway->getAdapter()->getDriver()->createStatement($sql);
         $stm->setParameterContainer($data);
         $stm->execute();
