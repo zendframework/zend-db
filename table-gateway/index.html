@@ -279,7 +279,7 @@
 <p>The Table Gateway subcomponent provides an object-oriented representation of a
 database table; its methods mirror the most common table operations. In code,
 the interface resembles:</p>
-<p> <pre class=codehilite><code class=language-php>namespace Zend\Db\TableGateway;
+<pre class=codehilite><code class=language-php>namespace Zend\Db\TableGateway;
 
 use Zend\Db\ResultSet\ResultSetInterface;
 use Zend\Db\Sql\Where;
@@ -295,7 +295,7 @@ interface TableGatewayInterface
         array $joins = null
     ) : int;
     public function delete(Where|callable|string|array $where) : int;
-}</code></pre></p>
+}</code></pre>
 <p>There are two primary implementations of the <code>TableGatewayInterface</code>,
 <code>AbstractTableGateway</code> and <code>TableGateway</code>. The <code>AbstractTableGateway</code> is an
 abstract basic implementation that provides functionality for <code>select()</code>,
@@ -311,7 +311,7 @@ order to be consumed and utilized to its fullest.</p>
 <h2 id="quick-start">Quick start</h2>
 <p>The following example uses <code>Zend\Db\TableGateway\TableGateway</code>, which defines
 the following API:</p>
-<p> <pre class=codehilite><code class=language-php>namespace Zend\Db\TableGateway;
+<pre class=codehilite><code class=language-php>namespace Zend\Db\TableGateway;
 
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\ResultSet\ResultSet;
@@ -356,7 +356,7 @@ class TableGateway extends AbstractTableGateway
     public function delete(Sql\Where|callable|string|array $where) : int;
     public function deleteWith(Sql\Delete $delete) : int;
     public function getLastInsertValue() : int;
-}</code></pre></p>
+}</code></pre>
 <p>The concrete <code>TableGateway</code> object uses constructor injection for getting
 dependencies and options into the instance. The table name and an instance of
 an <code>Adapter</code> are all that is required to create an instance.</p>
@@ -364,7 +364,7 @@ an <code>Adapter</code> are all that is required to create an instance.</p>
 or metadata, and when <code>select()</code> is executed, a simple <code>ResultSet</code> object with
 the populated <code>Adapter</code>'s <code>Result</code> (the datasource) will be returned and ready
 for iteration.</p>
-<p> <pre class=codehilite><code class=language-php>use Zend\Db\TableGateway\TableGateway;
+<pre class=codehilite><code class=language-php>use Zend\Db\TableGateway\TableGateway;
 
 $projectTable = new TableGateway('project', $adapter);
 $rowset = $projectTable-&gt;select(['type' =&gt; 'PHP']);
@@ -379,11 +379,11 @@ $artistTable = new TableGateway('artist', $adapter);
 $rowset      = $artistTable-&gt;select(['id' =&gt; 2]);
 $artistRow   = $rowset-&gt;current();
 
-var_dump($artistRow);</code></pre></p>
+var_dump($artistRow);</code></pre>
 <p>The <code>select()</code> method takes the same arguments as
 <code>Zend\Db\Sql\Select::where()</code>; arguments will be passed to the <code>Select</code>
 instance used to build the SELECT query. This means the following is possible:</p>
-<p> <pre class=codehilite><code class=language-php>use Zend\Db\TableGateway\TableGateway;
+<pre class=codehilite><code class=language-php>use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 
 $artistTable = new TableGateway('artist', $adapter);
@@ -392,7 +392,7 @@ $artistTable = new TableGateway('artist', $adapter);
 $rowset = $artistTable-&gt;select(function (Select $select) {
     $select-&gt;where-&gt;like('name', 'Brit%');
     $select-&gt;order('name ASC')-&gt;limit(2);
-});</code></pre></p>
+});</code></pre>
 <h2 id="tablegateway-features">TableGateway Features</h2>
 <p>The Features API allows for extending the functionality of the base
 <code>TableGateway</code> object without having to polymorphically extend the base class.
