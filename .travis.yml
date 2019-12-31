@@ -38,13 +38,13 @@ matrix:
         - TEST_INTEGRATION=true
         - TESTS_ZEND_DB_ADAPTER_DRIVER_MYSQL=true
     - php: 7.0
-        services:
-          - oci8
-        env:
-          - DEPS=locked
-          - LEGACY_DEPS="phpunit/phpunit zendframework/zend-hydrator"
-          - TEST_INTEGRATION=true
-          - TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8=true
+      services:
+        - oci8
+      env:
+        - DEPS=locked
+        - LEGACY_DEPS="phpunit/phpunit zendframework/zend-hydrator"
+        - TEST_INTEGRATION=true
+        - TESTS_ZEND_DB_ADAPTER_DRIVER_OCI8=true
     - php: 7.0
       env:
         - DEPS=latest
