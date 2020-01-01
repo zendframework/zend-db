@@ -14,6 +14,7 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 use Zend\Db\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
+use Zend\Db\Exception\RuntimeException;
 
 abstract class AbstractSql implements SqlInterface
 {
@@ -428,9 +429,31 @@ abstract class AbstractSql implements SqlInterface
         if ($column === null) {
             return 'NULL';
         }
-        return $isIdentifier
-                ? $fromTable . $platform->quoteIdentifierInFragment($column)
-                : $platform->quoteValue($column);
+
+        if ($isIdentifier) {
+            $matches = [];
+            preg_match(
+                '#(?:(?<table>[^\s].*?)\.(?=\S)){0,1}(?:(?<star>\.{0,1}\*(?=\s*$))|(?<column>[^\s].*?)(?:\s*$|(?:\s+as\s+(?<alias>.*(?:\S)))))#i',
+                $column,
+                $matches
+            );
+            if (!empty($matches['table'])) {
+                $fromTable = $platform->quoteIdentifier($matches['table']) . $platform->getIdentifierSeparator();
+            }
+            if (Select::SQL_STAR === $matches['star']) {
+                return $fromTable . Select::SQL_STAR;
+            }
+            if (array_key_exists('column', $matches) && !empty($matches['column'])) {
+                $column = $platform->quoteIdentifier($matches['column']);
+                if (array_key_exists('alias', $matches)) {
+                    $column .= ' AS ' . $platform->quoteIdentifier($matches['alias']);
+                }
+                return $fromTable . $column;
+            }
+            throw new RuntimeException('Invalid column name');
+        }
+
+        return $platform->quoteValue($column);
     }
 
     /**
