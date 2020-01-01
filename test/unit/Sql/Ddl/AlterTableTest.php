@@ -10,6 +10,7 @@
 namespace ZendTest\Db\Sql\Ddl;
 
 use PHPUnit\Framework\TestCase;
+use Zend\Db\Metadata\Object\ConstraintObject;
 use Zend\Db\Sql\Ddl\AlterTable;
 use Zend\Db\Sql\Ddl\Column;
 use Zend\Db\Sql\Ddl\Constraint;
@@ -68,8 +69,9 @@ class AlterTableTest extends TestCase
     public function testDropConstraint()
     {
         $at = new AlterTable();
-        self::assertSame($at, $at->dropConstraint('foo'));
-        self::assertEquals(['foo'], $at->getRawState($at::DROP_CONSTRAINTS));
+        $constraint = new ConstraintObject('foo', null);
+        $this->assertSame($at, $at->dropConstraint($constraint));
+        $this->assertEquals([$constraint], $at->getRawState($at::DROP_CONSTRAINTS));
     }
 
     /**
@@ -95,14 +97,16 @@ class AlterTableTest extends TestCase
         $at->changeColumn('name', new Column\Varchar('new_name', 50));
         $at->dropColumn('foo');
         $at->addConstraint(new Constraint\ForeignKey('my_fk', 'other_id', 'other_table', 'id', 'CASCADE', 'CASCADE'));
-        $at->dropConstraint('my_index');
+        $at->dropConstraint(new ConstraintObject('my_index', null));
+        $at->dropConstraint(new Constraint\UniqueKey(null, 'my_unique_index'));
         $expected = <<<EOS
 ALTER TABLE "foo"
  ADD COLUMN "another" VARCHAR(255) NOT NULL,
  CHANGE COLUMN "name" "new_name" VARCHAR(50) NOT NULL,
  DROP COLUMN "foo",
  ADD CONSTRAINT "my_fk" FOREIGN KEY ("other_id") REFERENCES "other_table" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
- DROP CONSTRAINT "my_index"
+ DROP CONSTRAINT "my_index",
+ DROP CONSTRAINT "my_unique_index"
 EOS;
 
         $actual = $at->getSqlString();

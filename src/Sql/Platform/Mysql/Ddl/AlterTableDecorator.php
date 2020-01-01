@@ -10,7 +10,11 @@
 namespace Zend\Db\Sql\Platform\Mysql\Ddl;
 
 use Zend\Db\Adapter\Platform\PlatformInterface;
+use Zend\Db\Metadata\Object\ConstraintObject;
 use Zend\Db\Sql\Ddl\AlterTable;
+use Zend\Db\Sql\Ddl\Constraint\ForeignKey;
+use Zend\Db\Sql\Ddl\Constraint\PrimaryKey;
+use Zend\Db\Sql\Ddl\Index\AbstractIndex;
 use Zend\Db\Sql\Platform\PlatformDecoratorInterface;
 
 class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterface
@@ -43,6 +47,11 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     public function setSubject($subject)
     {
         $this->subject = $subject;
+        $this->subject->specifications[self::DROP_CONSTRAINTS] = [
+            "%1\$s" => [
+                [2 => "DROP %1\$s %2\$s,\n", 'combinedby' => " "],
+            ]
+        ];
 
         return $this;
     }
@@ -247,5 +256,38 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
             ? $this->columnOptionSortOrder[$columnB] : count($this->columnOptionSortOrder);
 
         return $columnA - $columnB;
+    }
+
+    protected function processDropConstraints(PlatformInterface $adapterPlatform = null)
+    {
+        $sqls = [];
+        foreach ($this->dropConstraints as $constraint) {
+            $sqls[] = [
+                $this->getConstraintType($constraint),
+                $adapterPlatform->quoteIdentifier($constraint->getName())
+            ];
+        }
+
+        return [$sqls];
+    }
+
+    /**
+     * @param $constraint
+     * @return string
+     */
+    protected function getConstraintType($constraint)
+    {
+        if ($constraint instanceof ConstraintObject) {
+            return $constraint->getType();
+        }
+        if ($constraint instanceof PrimaryKey) {
+            return 'PRIMARY KEY';
+        } elseif ($constraint instanceof ForeignKey) {
+            return 'FOREIGN KEY';
+        } elseif ($constraint instanceof AbstractIndex) {
+            return 'INDEX';
+        } else {
+            return 'KEY';
+        }
     }
 }

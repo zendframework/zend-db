@@ -102,8 +102,32 @@ $table->changeColumn('name', Column\Varchar('new_name', 50));
 You may also *drop* existing columns or constraints:
 
 ```php
+use \Zend\Db\Metadata\Object\ConstraintObject;
+
 $table->dropColumn('foo');
-$table->dropConstraint('my_index');
+
+$constraint = new ConstraintObject('my_index', null);
+$table->dropConstraint($constraint);
+```
+
+Notice: On MySQL, you need to specify the type of constraint you want to drop.
+To do so you may use a `\Zend\Db\Metadata\Object\ConstraintObject` and set its
+type accordingly or directly a subclass of
+`\Zend\Db\Sql\Ddl\Constraint\ConstraintInterface`.
+```php
+use \Zend\Db\Metadata\Object\ConstraintObject;
+
+$fkConstraint = new ConstraintObject('my_fk', null);
+$fkConstraint->setType('FOREIGN KEY');
+$table->dropConstraint($fkConstraint);
+```
+
+```php
+use \Zend\Db\Sql\Ddl\Constraint\UniqueKey;
+$idxConstraint = new \Zend\Db\Sql\Ddl\Constraint\UniqueKey(
+    null, 'my_unique_index'
+);
+$table->dropConstraint($idxConstraint);
 ```
 
 ## Dropping Tables
