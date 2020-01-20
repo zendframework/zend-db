@@ -2,7 +2,7 @@
 
 > ## Repository abandoned 2019-12-31
 >
-> This repository has moved to laminas/laminas-db.
+> This repository has moved to [laminas/laminas-db](https://github.com/laminas/laminas-db).
 
 [![Build Status](https://secure.travis-ci.org/zendframework/zend-db.svg?branch=master)](https://secure.travis-ci.org/zendframework/zend-db)
 [![Coverage Status](https://coveralls.io/repos/github/zendframework/zend-db/badge.svg?branch=master)](https://coveralls.io/github/zendframework/zend-db?branch=master)
