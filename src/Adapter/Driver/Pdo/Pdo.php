@@ -13,6 +13,7 @@ use PDOStatement;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\Driver\Feature\AbstractFeature;
 use Zend\Db\Adapter\Driver\Feature\DriverFeatureInterface;
+use Zend\Db\Adapter\Driver\StatementInterface;
 use Zend\Db\Adapter\Exception;
 use Zend\Db\Adapter\Profiler;
 
@@ -327,5 +328,15 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
     public function getLastGeneratedValue($name = null)
     {
         return $this->connection->getLastGeneratedValue($name);
+    }
+
+    /**
+     * @inheritdoc
+     * @param StatementInterface|null $statement
+     * @return $this
+     */
+    public function checkConnection(StatementInterface $statement = null)
+    {
+        return $this;
     }
 }

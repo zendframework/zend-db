@@ -313,7 +313,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
                 $driver = new Driver\Oci8\Oci8($parameters);
                 break;
             case 'pgsql':
-                $driver = new Driver\Pgsql\Pgsql($parameters);
+                $driver = new Driver\Pgsql\Pgsql($parameters, null, null, $options);
                 break;
             case 'ibmdb2':
                 $driver = new Driver\IbmDb2\IbmDb2($parameters);

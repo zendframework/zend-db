@@ -202,6 +202,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         }
 
         $sql = ($sql) ?: $this->sql;
+        $this->driver->checkConnection($this);
 
         $this->resource = $this->mysqli->prepare($sql);
         if (! $this->resource instanceof \mysqli_stmt) {

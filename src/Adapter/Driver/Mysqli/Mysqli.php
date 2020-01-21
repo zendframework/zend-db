@@ -11,6 +11,7 @@ namespace Zend\Db\Adapter\Driver\Mysqli;
 
 use mysqli_stmt;
 use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Adapter\Driver\StatementInterface;
 use Zend\Db\Adapter\Exception;
 use Zend\Db\Adapter\Profiler;
 
@@ -61,6 +62,7 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
             $connection = new Connection($connection);
         }
 
+        $this->options = array_merge($this->options, $options);
         $options = array_intersect_key(array_merge($this->options, $options), $this->options);
 
         $this->registerConnection($connection);
@@ -258,5 +260,40 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
     public function getLastGeneratedValue()
     {
         return $this->getConnection()->getLastGeneratedValue();
+    }
+
+    /**
+     * Check connection if not exists -> try to reconnect.
+     * Depends on configuration value `reconnect_tries`
+     *
+     * @param StatementInterface|null $statement
+     * @return $this
+     */
+    public function checkConnection(StatementInterface $statement = null)
+    {
+
+        $reconnectTries = array_key_exists('reconnect_tries', $this->options)
+            ? $this->options['reconnect_tries'] : 0;
+
+        /**
+         * @var \mysqli $mysqli
+         */
+        $mysqli = $this->connection->getResource();
+
+        for ($i = 0; $i < $reconnectTries; ++$i) {
+            if ($mysqli->ping()) {
+                if ($statement instanceof Statement) {
+                    $statement->initialize($mysqli);
+                }
+
+                return $this;
+            }
+
+            $mysqli = $this->connection
+                ->disconnect()
+                ->connect()
+                ->getResource();
+        }
+        return $this;
     }
 }
