@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-     <loc>https://docs.zendframework.com/zend-db/</loc>
-     <lastmod>2020-01-16</lastmod>
+     <loc>https://docs.zendframework.com/</loc>
+     <lastmod>2020-01-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-db/adapter/</loc>
-     <lastmod>2020-01-16</lastmod>
+     <loc>https://docs.zendframework.com/adapter/</loc>
+     <lastmod>2020-01-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-db/result-set/</loc>
-     <lastmod>2020-01-16</lastmod>
+     <loc>https://docs.zendframework.com/result-set/</loc>
+     <lastmod>2020-01-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-db/sql/</loc>
-     <lastmod>2020-01-16</lastmod>
+     <loc>https://docs.zendframework.com/sql/</loc>
+     <lastmod>2020-01-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-db/sql-ddl/</loc>
-     <lastmod>2020-01-16</lastmod>
+     <loc>https://docs.zendframework.com/sql-ddl/</loc>
+     <lastmod>2020-01-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-db/table-gateway/</loc>
-     <lastmod>2020-01-16</lastmod>
+     <loc>https://docs.zendframework.com/table-gateway/</loc>
+     <lastmod>2020-01-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-db/row-gateway/</loc>
-     <lastmod>2020-01-16</lastmod>
+     <loc>https://docs.zendframework.com/row-gateway/</loc>
+     <lastmod>2020-01-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-db/metadata/</loc>
-     <lastmod>2020-01-16</lastmod>
+     <loc>https://docs.zendframework.com/metadata/</loc>
+     <lastmod>2020-01-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>

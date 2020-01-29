@@ -7,12 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Database abstraction layer, SQL abstraction, result set abstraction, and RowDataGateway and TableDataGateway implementations">  
-    <link rel="canonical" href="https://docs.zendframework.com/zend-db/sql-ddl/">
+    <link rel="canonical" href="https://docs.zendframework.com/sql-ddl/">
     <link rel="shortcut icon" href="../img/favicon.ico">
 
     <title>DDL Abstraction - zend-db - Zend Framework Docs</title>
 
-    <link rel="stylesheet" href="../css/styles-5cfabd53ee.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body id="page-top">
 
@@ -191,9 +191,9 @@
     <div class="laminas-announcement">
     <div class="container">
         <div class="row">
-            <div class="col-xs-12">
-                Zend Framework transitions to the Linux Foundation. <a href="https://getlaminas.org">Learn More.</a>
-            </div>
+            <div class="col-xs-12"><strong>
+                This package has moved. Visit its replacement, <a href="https://docs.laminas.dev/laminas-db/">laminas/laminas-db.</a>
+            </strong></div>
         </div>
     </div>
 </div>
@@ -293,7 +293,7 @@ constraints, and indexes for a database/schema.</p>
 example, <code>CREATE TABLE</code> is modeled by the <code>CreateTable</code> class; this is likewise
 the same for <code>ALTER TABLE</code> (as <code>AlterTable</code>), and <code>DROP TABLE</code> (as
 <code>DropTable</code>). You can create instances using a number of approaches:</p>
-<pre class=codehilite><code class=language-php>use Zend\Db\Sql\Ddl;
+<pre><code class="language-php">use Zend\Db\Sql\Ddl;
 use Zend\Db\Sql\TableIdentifier;
 
 $table = new Ddl\CreateTable();
@@ -305,30 +305,40 @@ $table = new Ddl\CreateTable('bar');
 $table = new Ddl\CreateTable(new TableIdentifier('bar', 'foo'));
 
 // Optionally, as a temporary table:
-$table = new Ddl\CreateTable('bar', true);</code></pre>
+$table = new Ddl\CreateTable('bar', true);
+</code></pre>
+
 <p>You can also set the table after instantiation:</p>
-<pre class=codehilite><code class=language-php>$table-&gt;setTable('bar');</code></pre>
+<pre><code class="language-php">$table-&gt;setTable('bar');
+</code></pre>
+
 <p>Currently, columns are added by creating a column object (described in the
 <a href="#currently-supported-data-types">data type table below</a>):</p>
-<pre class=codehilite><code class=language-php>use Zend\Db\Sql\Ddl\Column;
+<pre><code class="language-php">use Zend\Db\Sql\Ddl\Column;
 
 $table-&gt;addColumn(new Column\Integer('id'));
-$table-&gt;addColumn(new Column\Varchar('name', 255));</code></pre>
+$table-&gt;addColumn(new Column\Varchar('name', 255));
+</code></pre>
+
 <p>Beyond adding columns to a table, you may also add constraints:</p>
-<pre class=codehilite><code class=language-php>use Zend\Db\Sql\Ddl\Constraint;
+<pre><code class="language-php">use Zend\Db\Sql\Ddl\Constraint;
 
 $table-&gt;addConstraint(new Constraint\PrimaryKey('id'));
 $table-&gt;addConstraint(
     new Constraint\UniqueKey(['name', 'foo'], 'my_unique_key')
-);</code></pre>
+);
+</code></pre>
+
 <p>You can also use the <code>AUTO_INCREMENT</code> attribute for MySQL:</p>
-<pre class=codehilite><code class=language-php>use Zend\Db\Sql\Ddl\Column;
+<pre><code class="language-php">use Zend\Db\Sql\Ddl\Column;
 
 $column = new Column\Integer('id');
-$column-&gt;setOption('AUTO_INCREMENT', true);</code></pre>
+$column-&gt;setOption('AUTO_INCREMENT', true);
+</code></pre>
+
 <h2 id="altering-tables">Altering Tables</h2>
 <p>Similar to <code>CreateTable</code>, you may also use <code>AlterTable</code> instances:</p>
-<pre class=codehilite><code class=language-php>use Zend\Db\Sql\Ddl;
+<pre><code class="language-php">use Zend\Db\Sql\Ddl;
 use Zend\Db\Sql\TableIdentifier;
 
 $table = new Ddl\AlterTable();
@@ -340,34 +350,42 @@ $table = new Ddl\AlterTable('bar');
 $table = new Ddl\AlterTable(new TableIdentifier('bar', 'foo'));
 
 // Optionally, as a temporary table:
-$table = new Ddl\AlterTable('bar', true);</code></pre>
+$table = new Ddl\AlterTable('bar', true);
+</code></pre>
+
 <p>The primary difference between a <code>CreateTable</code> and <code>AlterTable</code> is that the
 <code>AlterTable</code> takes into account that the table and its assets already exist.
 Therefore, while you still have <code>addColumn()</code> and <code>addConstraint()</code>, you will
 also have the ability to <em>alter</em> existing columns:</p>
-<pre class=codehilite><code class=language-php>use Zend\Db\Sql\Ddl\Column;
+<pre><code class="language-php">use Zend\Db\Sql\Ddl\Column;
 
-$table-&gt;changeColumn('name', Column\Varchar('new_name', 50));</code></pre>
+$table-&gt;changeColumn('name', Column\Varchar('new_name', 50));
+</code></pre>
+
 <p>You may also <em>drop</em> existing columns or constraints:</p>
-<pre class=codehilite><code class=language-php>$table-&gt;dropColumn('foo');
-$table-&gt;dropConstraint('my_index');</code></pre>
+<pre><code class="language-php">$table-&gt;dropColumn('foo');
+$table-&gt;dropConstraint('my_index');
+</code></pre>
+
 <h2 id="dropping-tables">Dropping Tables</h2>
 <p>To drop a table, create a <code>DropTable</code> instance:</p>
-<pre class=codehilite><code class=language-php>use Zend\Db\Sql\Ddl;
+<pre><code class="language-php">use Zend\Db\Sql\Ddl;
 use Zend\Db\Sql\TableIdentifier;
 
 // With a table name:
 $drop = new Ddl\DropTable('bar');
 
 // With a schema name &quot;foo&quot;:
-$drop = new Ddl\DropTable(new TableIdentifier('bar', 'foo'));</code></pre>
+$drop = new Ddl\DropTable(new TableIdentifier('bar', 'foo'));
+</code></pre>
+
 <h2 id="executing-ddl-statements">Executing DDL Statements</h2>
 <p>After a DDL statement object has been created and configured, at some point you
 will need to execute the statement. This requires an <code>Adapter</code> instance and a
 properly seeded <code>Sql</code> instance.</p>
 <p>The workflow looks something like this, with <code>$ddl</code> being a <code>CreateTable</code>,
 <code>AlterTable</code>, or <code>DropTable</code> instance:</p>
-<pre class=codehilite><code class=language-php>use Zend\Db\Sql\Sql;
+<pre><code class="language-php">use Zend\Db\Sql\Sql;
 
 // Existence of $adapter is assumed.
 $sql = new Sql($adapter);
@@ -375,7 +393,9 @@ $sql = new Sql($adapter);
 $adapter-&gt;query(
     $sql-&gt;getSqlStringForSqlObject($ddl),
     $adapter::QUERY_MODE_EXECUTE
-);</code></pre>
+);
+</code></pre>
+
 <p>By passing the <code>$ddl</code> object through the <code>$sql</code> instance's
 <code>getSqlStringForSqlObject()</code> method, we ensure that any platform specific
 specializations/modifications are utilized to create a platform specific SQL
@@ -658,7 +678,7 @@ must implement <code>Zend\Db\Sql\Ddl\Constraint\ConstraintInterface</code>.</p>
             
             <div class="col-md-9">
                 <h4 class="footer__headline">Copyright</h4>
-                <p>&copy; 2006-2020 by <a href="https://www.zend.com/">Zend</a>, a <a href="https://www.roguewave.com/">Rogue Wave Company</a>.</p>
+                <p>&copy; 2006-2020 by <a href="https://www.zend.com/">Zend</a> by <a href="https://www.perforce.com/">Perforce</a>.</p>
             </div>
 
             
@@ -666,10 +686,10 @@ must implement <code>Zend\Db\Sql\Ddl\Constraint\ConstraintInterface</code>.</p>
                 <h4 class="footer__headline">Support</h4>
                 <ul class="support__list">
                     <li class="support__list-item">
-                        <a href="https://discourse.zendframework.com" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
+                        <a href="https://discourse.laminas.dev" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
                     </li>
                     <li class="support__list-item">
-                        <a href="https://zendframework-slack.herokuapp.com" class="support__link" title="Chat"><i class="fa fa-slack"></i></a>
+                        <a href="https://laminas.dev/chat/" class="support__link" title="Chat"><i class="fa fa-slack"></i></a>
                     </li>
                     <li class="support__list-item">
                         <a href="https://github.com/zendframework" class="support__link" title="Github"><i class="fa fa-github"></i></a>
@@ -677,27 +697,28 @@ must implement <code>Zend\Db\Sql\Ddl\Constraint\ConstraintInterface</code>.</p>
                     <li class="support__list-item">
                         <a href="https://twitter.com/zfdevteam" class="support__link" title="Twitter"><i class="fa fa-twitter"></i></a>
                     </li>
-                    <li class="support__list-item">
-                        <a href="https://tinyletter.com/mwopzend" class="support__link" title="Newsletter"><i class="fa fa-envelope"></i></a>
-                    </li>
-                    <li class="support__list-item">
-                        <a href="https://framework.zend.com/blog/feed-rss.xml" class="support__link" title="Blog feed"><i class="fa fa-rss"></i></a>
-                    </li>
-                    <li class="support__list-item">
-                        <a href="https://framework.zend.com/security/feed" class="support__link" title="Security feed"><i class="fa fa-rss-square"></i></a>
-                    </li>
                 </ul>
             </div>
         </div>
     </div>
 </footer>
 
+<nav class="cookie-bar navbar navbar-fixed-bottom navbar-default hidden">
+    <div class="container">
+        <p class="navbar-text">
+            We use cookies to allow you to dismiss dialogs such as the Laminas
+            Project notification.
+        </p>
+        <button type="button" class="cookie-button btn btn-default navbar-btn">Allow Cookies</button>
+    </div>
+</nav>
+
     <script>
         var base_url = '..',
             siteName = 'zend-db';
     </script>
-    <script src="../js/scripts-8d7ae56abf.js"></script>
-        <script src="../search/main.js"></script>
+    <script src="/js/scripts.js"></script>
+    <script src="../search/main.js"></script>
 
     
     <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">

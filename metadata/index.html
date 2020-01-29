@@ -7,12 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Database abstraction layer, SQL abstraction, result set abstraction, and RowDataGateway and TableDataGateway implementations">  
-    <link rel="canonical" href="https://docs.zendframework.com/zend-db/metadata/">
+    <link rel="canonical" href="https://docs.zendframework.com/metadata/">
     <link rel="shortcut icon" href="../img/favicon.ico">
 
     <title>RDBMS Metadata - zend-db - Zend Framework Docs</title>
 
-    <link rel="stylesheet" href="../css/styles-5cfabd53ee.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body id="page-top">
 
@@ -191,9 +191,9 @@
     <div class="laminas-announcement">
     <div class="container">
         <div class="row">
-            <div class="col-xs-12">
-                Zend Framework transitions to the Linux Foundation. <a href="https://getlaminas.org">Learn More.</a>
-            </div>
+            <div class="col-xs-12"><strong>
+                This package has moved. Visit its replacement, <a href="https://docs.laminas.dev/laminas-db/">laminas/laminas-db.</a>
+            </strong></div>
         </div>
     </div>
 </div>
@@ -266,7 +266,7 @@
 metadata information about tables, columns, constraints, triggers, and other
 information from a database in a standardized way. The primary interface for
 <code>Metadata</code> is:</p>
-<pre class=codehilite><code class=language-php>namespace Zend\Db\Metadata;
+<pre><code class="language-php">namespace Zend\Db\Metadata;
 
 interface MetadataInterface
 {
@@ -291,7 +291,9 @@ interface MetadataInterface
     public function getTriggerNames(string $schema = null) : string[];
     public function getTriggers(string $schema = null) : Object\TriggerObject[];
     public function getTrigger(string $triggerName, string $schema = null) : Object\TriggerObject;
-}</code></pre>
+}
+</code></pre>
+
 <h2 id="basic-usage">Basic Usage</h2>
 <p>Usage of <code>Zend\Db\Metadata</code> involves:</p>
 <ul>
@@ -302,7 +304,7 @@ interface MetadataInterface
 </ul>
 <p>The <code>Metadata::get*Names()</code> methods will return arrays of strings, while the
 other methods will return value objects specific to the type queried.</p>
-<pre class=codehilite><code class=language-php>$metadata = new Zend\Db\Metadata\Metadata($adapter);
+<pre><code class="language-php">$metadata = new Zend\Db\Metadata\Metadata($adapter);
 
 // get the table names
 $tableNames = $metadata-&gt;getTableNames();
@@ -344,12 +346,14 @@ foreach ($tableNames as $tableName) {
     }
 
     echo '----' . PHP_EOL;
-}</code></pre>
+}
+</code></pre>
+
 <h2 id="metadata-value-objects">Metadata value objects</h2>
 <p>Metadata returns value objects that provide an interface to help developers
 better explore the metadata. Below is the API for the various value objects:</p>
 <h3>TableObject</h3>
-<pre class=codehilite><code class=language-php>class Zend\Db\Metadata\Object\TableObject
+<pre><code class="language-php">class Zend\Db\Metadata\Object\TableObject
 {
     public function __construct($name);
     public function setColumns(array $columns);
@@ -358,9 +362,11 @@ better explore the metadata. Below is the API for the various value objects:</p>
     public function getConstraints();
     public function setName($name);
     public function getName();
-}</code></pre>
+}
+</code></pre>
+
 <h3>ColumnObject</h3>
-<pre class=codehilite><code class=language-php>class Zend\Db\Metadata\Object\ColumnObject
+<pre><code class="language-php">class Zend\Db\Metadata\Object\ColumnObject
 {
     public function __construct($name, $tableName, $schemaName = null);
     public function setName($name);
@@ -393,9 +399,11 @@ better explore the metadata. Below is the API for the various value objects:</p>
     public function setErratas(array $erratas);
     public function getErrata($errataName);
     public function setErrata($errataName, $errataValue);
-}</code></pre>
+}
+</code></pre>
+
 <h3>ConstraintObject</h3>
-<pre class=codehilite><code class=language-php>class Zend\Db\Metadata\Object\ConstraintObject
+<pre><code class="language-php">class Zend\Db\Metadata\Object\ConstraintObject
 {
     public function __construct($name, $tableName, $schemaName = null);
     public function setName($name);
@@ -428,9 +436,11 @@ better explore the metadata. Below is the API for the various value objects:</p>
     public function isForeignKey();
     public function isCheck();
 
-}</code></pre>
+}
+</code></pre>
+
 <h3>TriggerObject</h3>
-<pre class=codehilite><code class=language-php>class Zend\Db\Metadata\Object\TriggerObject
+<pre><code class="language-php">class Zend\Db\Metadata\Object\TriggerObject
 {
     public function getName();
     public function setName($name);
@@ -462,7 +472,8 @@ better explore the metadata. Below is the API for the various value objects:</p>
     public function setActionReferenceNewRow($actionReferenceNewRow);
     public function getCreated();
     public function setCreated($created);
-}</code></pre>
+}
+</code></pre>
 
 
 
@@ -616,7 +627,7 @@ better explore the metadata. Below is the API for the various value objects:</p>
             
             <div class="col-md-9">
                 <h4 class="footer__headline">Copyright</h4>
-                <p>&copy; 2006-2020 by <a href="https://www.zend.com/">Zend</a>, a <a href="https://www.roguewave.com/">Rogue Wave Company</a>.</p>
+                <p>&copy; 2006-2020 by <a href="https://www.zend.com/">Zend</a> by <a href="https://www.perforce.com/">Perforce</a>.</p>
             </div>
 
             
@@ -624,10 +635,10 @@ better explore the metadata. Below is the API for the various value objects:</p>
                 <h4 class="footer__headline">Support</h4>
                 <ul class="support__list">
                     <li class="support__list-item">
-                        <a href="https://discourse.zendframework.com" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
+                        <a href="https://discourse.laminas.dev" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
                     </li>
                     <li class="support__list-item">
-                        <a href="https://zendframework-slack.herokuapp.com" class="support__link" title="Chat"><i class="fa fa-slack"></i></a>
+                        <a href="https://laminas.dev/chat/" class="support__link" title="Chat"><i class="fa fa-slack"></i></a>
                     </li>
                     <li class="support__list-item">
                         <a href="https://github.com/zendframework" class="support__link" title="Github"><i class="fa fa-github"></i></a>
@@ -635,27 +646,28 @@ better explore the metadata. Below is the API for the various value objects:</p>
                     <li class="support__list-item">
                         <a href="https://twitter.com/zfdevteam" class="support__link" title="Twitter"><i class="fa fa-twitter"></i></a>
                     </li>
-                    <li class="support__list-item">
-                        <a href="https://tinyletter.com/mwopzend" class="support__link" title="Newsletter"><i class="fa fa-envelope"></i></a>
-                    </li>
-                    <li class="support__list-item">
-                        <a href="https://framework.zend.com/blog/feed-rss.xml" class="support__link" title="Blog feed"><i class="fa fa-rss"></i></a>
-                    </li>
-                    <li class="support__list-item">
-                        <a href="https://framework.zend.com/security/feed" class="support__link" title="Security feed"><i class="fa fa-rss-square"></i></a>
-                    </li>
                 </ul>
             </div>
         </div>
     </div>
 </footer>
 
+<nav class="cookie-bar navbar navbar-fixed-bottom navbar-default hidden">
+    <div class="container">
+        <p class="navbar-text">
+            We use cookies to allow you to dismiss dialogs such as the Laminas
+            Project notification.
+        </p>
+        <button type="button" class="cookie-button btn btn-default navbar-btn">Allow Cookies</button>
+    </div>
+</nav>
+
     <script>
         var base_url = '..',
             siteName = 'zend-db';
     </script>
-    <script src="../js/scripts-8d7ae56abf.js"></script>
-        <script src="../search/main.js"></script>
+    <script src="/js/scripts.js"></script>
+    <script src="../search/main.js"></script>
 
     
     <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">

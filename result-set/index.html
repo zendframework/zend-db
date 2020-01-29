@@ -7,12 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Database abstraction layer, SQL abstraction, result set abstraction, and RowDataGateway and TableDataGateway implementations">  
-    <link rel="canonical" href="https://docs.zendframework.com/zend-db/result-set/">
+    <link rel="canonical" href="https://docs.zendframework.com/result-set/">
     <link rel="shortcut icon" href="../img/favicon.ico">
 
     <title>Result Sets - zend-db - Zend Framework Docs</title>
 
-    <link rel="stylesheet" href="../css/styles-5cfabd53ee.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body id="page-top">
 
@@ -191,9 +191,9 @@
     <div class="laminas-announcement">
     <div class="container">
         <div class="row">
-            <div class="col-xs-12">
-                Zend Framework transitions to the Linux Foundation. <a href="https://getlaminas.org">Learn More.</a>
-            </div>
+            <div class="col-xs-12"><strong>
+                This package has moved. Visit its replacement, <a href="https://docs.laminas.dev/laminas-db/">laminas/laminas-db.</a>
+            </strong></div>
         </div>
     </div>
 </div>
@@ -276,14 +276,16 @@ assume an instance of a <code>ResultSetInterface</code> should be returned. In m
 the prototype pattern will be used by consuming object to clone a prototype of
 a <code>ResultSet</code> and return a specialized <code>ResultSet</code> with a specific data source
 injected. <code>ResultSetInterface</code> is defined as follows:</p>
-<pre class=codehilite><code class=language-php>use Countable;
+<pre><code class="language-php">use Countable;
 use Traversable;
 
 interface ResultSetInterface extends Traversable, Countable
 {
     public function initialize(mixed $dataSource) : void;
     public function getFieldCount() : int;
-}</code></pre>
+}
+</code></pre>
+
 <h2 id="quick-start">Quick start</h2>
 <p><code>Zend\Db\ResultSet\ResultSet</code> is the most basic form of a <code>ResultSet</code> object
 that will expose each row as either an <code>ArrayObject</code>-like object or an array of
@@ -292,7 +294,7 @@ row data. By default, <code>Zend\Db\Adapter\Adapter</code> will use a prototypic
 <code>Zend\Db\Adapter\Adapter::query()</code> method.</p>
 <p>The following is an example workflow similar to what one might find inside
 <code>Zend\Db\Adapter\Adapter::query()</code>:</p>
-<pre class=codehilite><code class=language-php>use Zend\Db\Adapter\Driver\ResultInterface;
+<pre><code class="language-php">use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\ResultSet;
 
 $statement = $driver-&gt;createStatement('SELECT * FROM users');
@@ -306,13 +308,15 @@ if ($result instanceof ResultInterface &amp;&amp; $result-&gt;isQueryResult()) {
     foreach ($resultSet as $row) {
         echo $row-&gt;my_column . PHP_EOL;
     }
-}</code></pre>
+}
+</code></pre>
+
 <h2 id="zend92db92resultset92resultset-and-zend92db92resultset92abstractresultset">Zend\Db\ResultSet\ResultSet and Zend\Db\ResultSet\AbstractResultSet</h2>
 <p>For most purposes, either an instance of <code>Zend\Db\ResultSet\ResultSet</code> or a
 derivative of <code>Zend\Db\ResultSet\AbstractResultSet</code> will be used. The
 implementation of the <code>AbstractResultSet</code> offers the following core
 functionality:</p>
-<pre class=codehilite><code class=language-php>namespace Zend\Db\ResultSet;
+<pre><code class="language-php">namespace Zend\Db\ResultSet;
 
 use Iterator;
 
@@ -334,7 +338,9 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
 
     /** get rows as array */
     public function toArray() : array;
-}</code></pre>
+}
+</code></pre>
+
 <h2 id="zend92db92resultset92hydratingresultset">Zend\Db\ResultSet\HydratingResultSet</h2>
 <p><code>Zend\Db\ResultSet\HydratingResultSet</code> is a more flexible <code>ResultSet</code> object
 that allows the developer to choose an appropriate "hydration strategy" for
@@ -345,12 +351,14 @@ row data.</p>
 <p>The <code>HydratingResultSet</code> depends on
 <a href="https://docs.zendframework.com/zend-hydrator">zend-hydrator</a>, which you will
 need to install:</p>
-<pre class=codehilite><code class=language-bash>$ composer require zendframework/zend-hydrator</code></pre>
+<pre><code class="language-bash">$ composer require zendframework/zend-hydrator
+</code></pre>
+
 <p>In the example below, rows from the database will be iterated, and during
 iteration, <code>HydratingResultSet</code> will use the <code>Reflection</code> based hydrator to
 inject the row data directly into the protected members of the cloned
 <code>UserEntity</code> object:</p>
-<pre class=codehilite><code class=language-php>use Zend\Db\Adapter\Driver\ResultInterface;
+<pre><code class="language-php">use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Hydrator\Reflection as ReflectionHydrator;
 
@@ -391,7 +399,9 @@ if ($result instanceof ResultInterface &amp;&amp; $result-&gt;isQueryResult()) {
     foreach ($resultSet as $user) {
         echo $user-&gt;getFirstName() . ' ' . $user-&gt;getLastName() . PHP_EOL;
     }
-}</code></pre>
+}
+</code></pre>
+
 <p>For more information, see the <a href="https://docs.zendframework.com/zend-hydrator/">zend-hydrator</a>
 documentation to get a better sense of the different strategies that can be
 employed in order to populate a target object.</p>
@@ -552,7 +562,7 @@ employed in order to populate a target object.</p>
             
             <div class="col-md-9">
                 <h4 class="footer__headline">Copyright</h4>
-                <p>&copy; 2006-2020 by <a href="https://www.zend.com/">Zend</a>, a <a href="https://www.roguewave.com/">Rogue Wave Company</a>.</p>
+                <p>&copy; 2006-2020 by <a href="https://www.zend.com/">Zend</a> by <a href="https://www.perforce.com/">Perforce</a>.</p>
             </div>
 
             
@@ -560,10 +570,10 @@ employed in order to populate a target object.</p>
                 <h4 class="footer__headline">Support</h4>
                 <ul class="support__list">
                     <li class="support__list-item">
-                        <a href="https://discourse.zendframework.com" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
+                        <a href="https://discourse.laminas.dev" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
                     </li>
                     <li class="support__list-item">
-                        <a href="https://zendframework-slack.herokuapp.com" class="support__link" title="Chat"><i class="fa fa-slack"></i></a>
+                        <a href="https://laminas.dev/chat/" class="support__link" title="Chat"><i class="fa fa-slack"></i></a>
                     </li>
                     <li class="support__list-item">
                         <a href="https://github.com/zendframework" class="support__link" title="Github"><i class="fa fa-github"></i></a>
@@ -571,27 +581,28 @@ employed in order to populate a target object.</p>
                     <li class="support__list-item">
                         <a href="https://twitter.com/zfdevteam" class="support__link" title="Twitter"><i class="fa fa-twitter"></i></a>
                     </li>
-                    <li class="support__list-item">
-                        <a href="https://tinyletter.com/mwopzend" class="support__link" title="Newsletter"><i class="fa fa-envelope"></i></a>
-                    </li>
-                    <li class="support__list-item">
-                        <a href="https://framework.zend.com/blog/feed-rss.xml" class="support__link" title="Blog feed"><i class="fa fa-rss"></i></a>
-                    </li>
-                    <li class="support__list-item">
-                        <a href="https://framework.zend.com/security/feed" class="support__link" title="Security feed"><i class="fa fa-rss-square"></i></a>
-                    </li>
                 </ul>
             </div>
         </div>
     </div>
 </footer>
 
+<nav class="cookie-bar navbar navbar-fixed-bottom navbar-default hidden">
+    <div class="container">
+        <p class="navbar-text">
+            We use cookies to allow you to dismiss dialogs such as the Laminas
+            Project notification.
+        </p>
+        <button type="button" class="cookie-button btn btn-default navbar-btn">Allow Cookies</button>
+    </div>
+</nav>
+
     <script>
         var base_url = '..',
             siteName = 'zend-db';
     </script>
-    <script src="../js/scripts-8d7ae56abf.js"></script>
-        <script src="../search/main.js"></script>
+    <script src="/js/scripts.js"></script>
+    <script src="../search/main.js"></script>
 
     
     <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
