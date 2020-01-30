@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#296](https://github.com/zendframework/zend-db/pull/296) Broader PDO fetch style check.
 
 ### Deprecated
 
