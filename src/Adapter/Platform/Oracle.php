@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       http://github.com/zendframework/zend-db for the canonical source repository
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://github.com/zendframework/zend-db/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Db\Adapter\Platform;
@@ -12,7 +10,7 @@ namespace Zend\Db\Adapter\Platform;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\Driver\Oci8\Oci8;
 use Zend\Db\Adapter\Driver\Pdo\Pdo;
-use \Zend\Db\Adapter\Exception\InvalidArgumentException;
+use Zend\Db\Adapter\Exception\InvalidArgumentException;
 
 class Oracle extends AbstractPlatform
 {
@@ -76,18 +74,6 @@ class Oracle extends AbstractPlatform
     public function getName()
     {
         return 'Oracle';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function quoteIdentifierChain($identifierChain)
-    {
-        if ($this->quoteIdentifiers === false) {
-            return implode('.', (array) $identifierChain);
-        }
-
-        return '"' . implode('"."', (array) str_replace('"', '\\"', $identifierChain)) . '"';
     }
 
     /**
