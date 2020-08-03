@@ -64,9 +64,6 @@ class MysqlTest extends TestCase
         if (! $this->adapters['pdo_mysql'] instanceof \PDO) {
             $this->markTestSkipped('MySQL (PDO_Mysql) not configured in unit test configuration file');
         }
-        $mysql = new Mysql($this->adapters['pdo_mysql']);
-        $value = $mysql->quoteValue('value');
-        self::assertEquals('\'value\'', $value);
 
         $mysql = new Mysql(new Pdo\Pdo(new Pdo\Connection($this->adapters['pdo_mysql'])));
         $value = $mysql->quoteValue('value');

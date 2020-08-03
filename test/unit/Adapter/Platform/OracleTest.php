@@ -84,7 +84,7 @@ class OracleTest extends TestCase
     {
         $this->expectException('Zend\Db\Adapter\Exception\InvalidArgumentException');
         $this->expectExceptionMessage(
-            '$driver must be a Oci8 or Oracle PDO Zend\Db\Adapter\Driver, Oci8 instance, or Oci PDO instance'
+            '$driver must be a Oci8, Oracle PDO Zend\Db\Adapter\Driver or Oci8 instance'
         );
         $this->platform->setDriver(null);
     }

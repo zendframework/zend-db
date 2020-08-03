@@ -26,12 +26,12 @@ class Sqlite extends AbstractPlatform
     protected $quoteIdentifierTo = '\'';
 
     /**
-     * @var \PDO
+     * @var Pdo\Pdo
      */
-    protected $resource = null;
+    protected $driver = null;
 
     /**
-     * @param null|\Zend\Db\Adapter\Driver\Pdo\Pdo||\PDO $driver
+     * @param null|\Zend\Db\Adapter\Driver\Pdo\Pdo
      */
     public function __construct($driver = null)
     {
@@ -41,21 +41,19 @@ class Sqlite extends AbstractPlatform
     }
 
     /**
-     * @param \Zend\Db\Adapter\Driver\Pdo\Pdo|\PDO $driver
+     * @param \Zend\Db\Adapter\Driver\Pdo\Pdo $driver
      * @return self Provides a fluent interface
      * @throws \Zend\Db\Adapter\Exception\InvalidArgumentException
      */
     public function setDriver($driver)
     {
-        if (($driver instanceof \PDO && $driver->getAttribute(\PDO::ATTR_DRIVER_NAME) == 'sqlite')
-            || ($driver instanceof Pdo\Pdo && $driver->getDatabasePlatformName() == 'Sqlite')
-        ) {
-            $this->resource = $driver;
+        if ($driver instanceof Pdo\Pdo && $driver->getDatabasePlatformName() == 'Sqlite') {
+            $this->driver = $driver;
             return $this;
         }
 
         throw new Exception\InvalidArgumentException(
-            '$driver must be a Sqlite PDO Zend\Db\Adapter\Driver, Sqlite PDO instance'
+            '$driver must be a Sqlite PDO Zend\Db\Adapter\Driver'
         );
     }
 
@@ -72,7 +70,7 @@ class Sqlite extends AbstractPlatform
      */
     public function quoteValue($value)
     {
-        $resource = $this->resource;
+        $resource = $this->driver;
 
         if ($resource instanceof DriverInterface) {
             $resource = $resource->getConnection()->getResource();
@@ -90,7 +88,7 @@ class Sqlite extends AbstractPlatform
      */
     public function quoteTrustedValue($value)
     {
-        $resource = $this->resource;
+        $resource = $this->driver;
 
         if ($resource instanceof DriverInterface) {
             $resource = $resource->getConnection()->getResource();
