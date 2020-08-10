@@ -12,6 +12,7 @@ namespace Zend\Db\TableGateway\Feature;
 use Zend\Db\Sql\Insert;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\Adapter\Driver\StatementInterface;
+use Zend\Db\Sql\TableIdentifier;
 
 class SequenceFeature extends AbstractFeature
 {
@@ -24,6 +25,11 @@ class SequenceFeature extends AbstractFeature
      * @var string
      */
     protected $sequenceName;
+
+    /**
+     * @var string
+     */
+    protected $schemaName = null;
 
     /**
      * @var int
@@ -39,6 +45,11 @@ class SequenceFeature extends AbstractFeature
     {
         $this->primaryKeyField = $primaryKeyField;
         $this->sequenceName    = $sequenceName;
+
+        if ($sequenceName instanceof TableIdentifier) {
+            $this->sequenceName = $sequenceName->getTable();
+            $this->schemaName = $sequenceName->getSchema();
+        }
     }
 
     /**
@@ -90,6 +101,9 @@ class SequenceFeature extends AbstractFeature
                 break;
             case 'PostgreSQL':
                 $sql = 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')';
+                if ($this->schemaName !== null) {
+                    $sql = 'SELECT NEXTVAL(\'"' . $this->schemaName . '"."' . $this->sequenceName . '"\')';
+                }
                 break;
             default:
                 return;
@@ -118,6 +132,9 @@ class SequenceFeature extends AbstractFeature
                 break;
             case 'PostgreSQL':
                 $sql = 'SELECT CURRVAL(\'' . $this->sequenceName . '\')';
+                if ($this->schemaName !== null) {
+                    $sql = 'SELECT CURRVAL(\'"' . $this->schemaName . '"."' . $this->sequenceName . '"\')';
+                }
                 break;
             default:
                 return;
